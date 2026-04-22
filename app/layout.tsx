@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import { Toaster } from "sonner";
@@ -7,6 +8,8 @@ import Footer from "@/components/layout/Footer";
 import JsonLd from "@/components/seo/JsonLd";
 import { makeOrganizationSchema, makeWebsiteSchema } from "@/lib/schema";
 import { getSiteUrl } from "@/lib/site";
+
+const GA_MEASUREMENT_ID = "G-F5M3QMLTL1";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -35,6 +38,18 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <JsonLd data={structuredData} />
         <ConvexClientProvider>
           <div className="flex min-h-screen flex-col">
