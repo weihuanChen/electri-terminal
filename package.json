@@ -6,12 +6,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export:catalog-content": "node scripts/export-catalog-content.mjs",
+    "export:family-product-images": "node scripts/export-family-product-images.mjs",
+    "apply:copy-tasks": "node scripts/apply-copy-tasks.mjs",
+    "migrate:family-page-content": "node scripts/migrate-family-page-content.mjs",
+    "backfill:variant-explanations": "node scripts/backfill-variant-explanations.mjs"
   },
   "dependencies": {
+    "@convex-dev/r2": "^0.9.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-table": "^8.21.3",
+    "convex": "^1.32.0",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
+    "nodemailer": "^8.0.5",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-hook-form": "^7.71.2",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

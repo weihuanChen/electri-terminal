@@ -1,0 +1,44 @@
+[
+  {
+    "categorySlug": "din-rail-terminal-blocks",
+    "name": "UK Terminal Blocks",
+    "slug": "uk-terminal-blocks",
+    "brand": "Electri Pro",
+    "summary": "Universal screw terminal block series",
+    "content": "General purpose DIN rail terminal block series for industrial control cabinets.",
+    "highlights": [
+      "Reliable screw connection",
+      "Industrial grade copper conductor",
+      "UL and CE certified"
+    ],
+    "attributes": {
+      "material": "copper",
+      "plating": "tin",
+      "certifications": ["UL", "CE"]
+    },
+    "mediaItems": [
+      {
+        "type": "product",
+        "url": "https://cdn.example.com/families/uk-terminal-blocks/hero.jpg",
+        "alt": "UK terminal blocks family image",
+        "sortOrder": 0
+      },
+      {
+        "type": "dimension",
+        "url": "https://cdn.example.com/families/uk-terminal-blocks/dimension-overview.jpg",
+        "alt": "UK terminal blocks dimension overview",
+        "sortOrder": 10
+      },
+      {
+        "type": "application",
+        "url": "https://cdn.example.com/families/uk-terminal-blocks/application.jpg",
+        "alt": "UK terminal blocks installed in panel",
+        "sortOrder": 20
+      }
+    ],
+    "status": "published",
+    "sortOrder": 10,
+    "seoTitle": "UK Terminal Blocks",
+    "seoDescription": "Universal DIN rail terminal block series for industrial applications."
+  }
+]

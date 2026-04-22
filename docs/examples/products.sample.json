@@ -1,0 +1,46 @@
+[
+  {
+    "categorySlug": "ring-terminals",
+    "familySlug": "heat-shrink-ring-terminals",
+    "productCode": "RHB-RING-01",
+    "model": "RHB Ring Terminal",
+    "slug": "heat-shrink-ring-terminals-rhb-series",
+    "title": "Heat Shrink Ring Terminals",
+    "shortTitle": "RHB Series",
+    "brand": "Maikasen",
+    "summary": "Heat shrink ring terminal product page covering multiple stud sizes and conductor ranges.",
+    "content": "Product-level content for the RHB series. Use this entity as the canonical detail page and place size-by-size differences in product variants.",
+    "featureBullets": [
+      "Heat shrink insulation",
+      "Tinned copper conductor barrel",
+      "Multiple stud size options"
+    ],
+    "attributes": {
+      "terminal_type": "ring",
+      "insulated": true,
+      "material": "copper",
+      "plating": "tin",
+      "certifications": ["cULus"]
+    },
+    "mediaItems": [
+      {
+        "type": "product",
+        "url": "https://cdn.example.com/products/rhb-series/front.webp",
+        "alt": "RHB series front view",
+        "sortOrder": 0
+      },
+      {
+        "type": "dimension",
+        "url": "https://cdn.example.com/products/rhb-series/drawing.webp",
+        "alt": "RHB series dimension drawing",
+        "sortOrder": 10
+      }
+    ],
+    "status": "published",
+    "isFeatured": false,
+    "origin": "China",
+    "sortOrder": 10,
+    "seoTitle": "Heat Shrink Ring Terminals",
+    "seoDescription": "Heat shrink ring terminals with multiple stud sizes and conductor ranges."
+  }
+]

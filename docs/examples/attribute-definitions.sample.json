@@ -1,0 +1,77 @@
+[
+  {
+    "fieldKey": "d2_mm",
+    "label": "D2",
+    "fieldType": "number",
+    "unitKey": "mm",
+    "groupName": "dimension",
+    "description": "Main D2 dimension",
+    "displayPrecision": 1,
+    "filterMode": "range_bucket"
+  },
+  {
+    "fieldKey": "length_mm",
+    "label": "Length",
+    "fieldType": "number",
+    "unitKey": "mm",
+    "groupName": "dimension",
+    "displayPrecision": 1,
+    "filterMode": "range_bucket"
+  },
+  {
+    "fieldKey": "wire_range_mm2",
+    "label": "Wire Range",
+    "fieldType": "range",
+    "unitKey": "mm2",
+    "groupName": "connection",
+    "description": "Supported conductor cross section",
+    "displayPrecision": 2,
+    "filterMode": "range_bucket"
+  },
+  {
+    "fieldKey": "awg_range",
+    "label": "AWG Range",
+    "fieldType": "range",
+    "unitKey": "awg",
+    "groupName": "connection",
+    "displayPrecision": 0,
+    "filterMode": "range_bucket"
+  },
+  {
+    "fieldKey": "material",
+    "label": "Material",
+    "fieldType": "enum",
+    "options": ["copper", "aluminum", "brass"],
+    "groupName": "material",
+    "filterMode": "exact"
+  },
+  {
+    "fieldKey": "plating",
+    "label": "Plating",
+    "fieldType": "enum",
+    "options": ["tin", "silver", "nickel"],
+    "groupName": "material",
+    "filterMode": "exact"
+  },
+  {
+    "fieldKey": "thread_type",
+    "label": "Thread Type",
+    "fieldType": "string",
+    "groupName": "connection",
+    "filterMode": "exact"
+  },
+  {
+    "fieldKey": "waterproof",
+    "label": "Waterproof",
+    "fieldType": "boolean",
+    "groupName": "feature",
+    "filterMode": "exact"
+  },
+  {
+    "fieldKey": "certifications",
+    "label": "Certifications",
+    "fieldType": "array",
+    "groupName": "compliance",
+    "filterMode": "exact"
+  }
+]

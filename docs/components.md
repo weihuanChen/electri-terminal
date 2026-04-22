@@ -1,0 +1,48 @@
+# Shared Components
+TopUtilityBar
+MainHeader
+MegaMenu
+Breadcrumb
+SectionHeader
+CTAButton
+TrustBadge
+InquiryBanner
+Footer
+
+# Homepage Components
+HeroSection
+CategoryGrid
+CategoryCard
+FeaturedSeriesSection
+SeriesCard
+ApplicationGrid
+ApplicationCard
+CapabilityGrid
+CertificationSection
+ResourceArticleGrid
+BottomRFQSection
+
+# Category Page Components
+CategoryHero
+SubcategoryNav
+FilterSidebar
+CategoryToolbar
+ProductFamilyGrid
+ProductFamilyCard
+CategoryDownloads
+CategoryFAQ
+RelatedArticles
+CategoryInquiryCTA
+# Product Page Components
+ProductHero
+ProductGallery
+QuickSpecList
+QuickInfoBar
+AnchorNav
+ProductOverview
+SpecificationTable
+DownloadList
+CertificationBadges
+RelatedProductGrid
+ProductFAQ
+ProductInquiryForm

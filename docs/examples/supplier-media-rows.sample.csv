@@ -1,0 +1,6 @@
+supplier_name,source_file,source_page,category_slug,family_slug,sku_code,media_role,file_url,alt_text,sort_order,target_layer
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,,product,https://cdn.example.com/families/uk-terminal-blocks/hero.jpg,UK terminal blocks family image,0,family
+Supplier A,catalog-2026.pdf,13,din-rail-terminal-blocks,uk-terminal-blocks,,dimension,https://cdn.example.com/families/uk-terminal-blocks/dimension-overview.jpg,UK terminal blocks dimension overview,10,family
+Supplier A,catalog-2026.pdf,14,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,product,https://cdn.example.com/products/uk2.5/front.jpg,UK 2.5 front view,0,product
+Supplier A,catalog-2026.pdf,14,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,dimension,https://cdn.example.com/products/uk2.5/dimension.jpg,UK 2.5 dimension drawing,10,product
+Supplier A,catalog-2026.pdf,15,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,packaging,https://cdn.example.com/products/uk2.5/package.jpg,UK 2.5 packaging,20,product

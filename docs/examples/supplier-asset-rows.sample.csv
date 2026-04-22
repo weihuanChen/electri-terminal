@@ -1,0 +1,4 @@
+supplier_name,source_file,category_slug,family_slug,sku_code,asset_type,title,file_url,preview_image,language,version,target_entity_type,target_entity_slug
+Supplier A,uk2.5-assets.zip,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,cad,UK 2.5 CAD Drawing,https://cdn.example.com/assets/uk2-5.step,https://cdn.example.com/assets/uk2-5-preview.jpg,en,v1,product,uk-2-5
+Supplier A,certificates.pdf,din-rail-terminal-blocks,uk-terminal-blocks,,certificate,UK Terminal Blocks UL Certificate,https://cdn.example.com/assets/uk-terminal-blocks-ul.pdf,https://cdn.example.com/assets/uk-terminal-blocks-ul-cover.jpg,en,2026,family,uk-terminal-blocks
+Supplier A,catalog.pdf,din-rail-terminal-blocks,,,catalog,DIN Rail Terminal Blocks Catalog,https://cdn.example.com/assets/din-rail-terminal-blocks-catalog.pdf,https://cdn.example.com/assets/din-rail-terminal-blocks-catalog-cover.jpg,en,2026,category,din-rail-terminal-blocks

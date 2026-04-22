@@ -1,0 +1,44 @@
+[
+  {
+    "productSlug": "heat-shrink-ring-terminals-rhb-series",
+    "skuCode": "RHB1.25-4",
+    "itemNo": "RHB1.25-4",
+    "shortTitle": "RHB1.25-4",
+    "sortOrder": 10,
+    "status": "published",
+    "moq": 1000,
+    "packageInfo": "1000 pcs/pack",
+    "attributes": {
+      "stud_size_metric_mm": 4,
+      "stud_size_american": "#8",
+      "wire_range_mm2": [0.5, 1.5],
+      "awg_range": [16, 22],
+      "max_current_a": 19,
+      "pcs_per_pack": 1000,
+      "d2_mm": 4.3,
+      "w_mm": 8.0,
+      "l_mm": 15.8
+    }
+  },
+  {
+    "productSlug": "heat-shrink-ring-terminals-rhb-series",
+    "skuCode": "RHB1.25-5",
+    "itemNo": "RHB1.25-5",
+    "shortTitle": "RHB1.25-5",
+    "sortOrder": 20,
+    "status": "published",
+    "moq": 1000,
+    "packageInfo": "1000 pcs/pack",
+    "attributes": {
+      "stud_size_metric_mm": 5,
+      "stud_size_american": "#10",
+      "wire_range_mm2": [0.5, 1.5],
+      "awg_range": [16, 22],
+      "max_current_a": 19,
+      "pcs_per_pack": 1000,
+      "d2_mm": 5.3,
+      "w_mm": 9.8,
+      "l_mm": 17.8
+    }
+  }
+]

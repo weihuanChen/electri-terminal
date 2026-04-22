@@ -1,0 +1,572 @@
+[
+  {
+    "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+    "slug": "terminals",
+    "name": "Terminals",
+    "status": "published",
+    "level": 0,
+    "path": "/categories/terminals",
+    "sortOrder": 10,
+    "isVisibleInNav": true,
+    "parent": null,
+    "description": "Electrical terminals are essential components used to connect wires and cables to electrical systems, ensuring safe, stable, and efficient current transmission. Designed for a wide range of applications, terminals support various connection methods, including crimping, fastening, and quick-disconnect solutions.\r\n\r\nA complete range of terminals includes ring terminals, fork terminals, blade terminals, pin terminals, splice connectors, and cable lugs. Each type is engineered for specific connection requirements, from high-current power distribution to compact control panel wiring.\r\n\r\nManufactured from high-conductivity materials such as copper and brass, and often enhanced with protective plating or insulation, electrical terminals provide durability, corrosion resistance, and long-term performance. They are widely used in automotive systems, industrial equipment, electrical panels, and power distribution networks.",
+    "shortDescription": "Electrical terminals provide secure and reliable connections for wires and cables across industrial, automotive, and electrical systems.",
+    "seoTitle": "Electrical Terminals for Industrial Wiring",
+    "seoDescription": "Electrical terminals are essential components used to create secure and reliable connections in wiring systems. Different types of terminals are designed for various connection methods, wire sizes, and application environments.",
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 0,
+    "familySlugs": [],
+    "families": [],
+    "createdAt": 1774692258158,
+    "updatedAt": 1776318055404
+  },
+  {
+    "_id": "js79wqwsq9x91ncp0h74k04jjn83rxyp",
+    "slug": "ring-terminals",
+    "name": "Ring Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/ring-terminals",
+    "sortOrder": 1,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Ring terminals are essential electrical connectors designed to provide secure, stable, and vibration-resistant wire connections. These ring terminal connectors feature a closed-loop design that ensures reliable attachment to studs or screws, making them ideal for demanding environments.\r\n\r\nOur electrical ring terminals are manufactured from high-conductivity copper with optional tin plating for enhanced corrosion resistance. Available in insulated and non-insulated types, they support a wide range of wire sizes and applications.\r\n\r\nCommonly used in automotive wiring, industrial control panels, power distribution systems, and marine equipment, ring terminals offer excellent mechanical strength and electrical performance. Their easy installation and long service life make them a preferred choice for professionals.",
+    "shortDescription": "High-quality ring terminals for secure and reliable electrical connections in industrial, automotive, and power distribution applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 4,
+    "familySlugs": [
+      "angled-ring-terminals",
+      "cold-press-ring-terminals",
+      "heat-shrink-ring-terminals",
+      "standard-ring-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7c8d6bntnjya0ynfsxnh8jk983swfz",
+        "slug": "angled-ring-terminals",
+        "name": "Angled Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled ring terminals featuring a brazed-seam barrel design and refined surface finishing."
+      },
+      {
+        "_id": "kn7frgwjgsa5zg9nk7esa2s15d83spc4",
+        "slug": "cold-press-ring-terminals",
+        "name": "Cold Press Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold-press ring terminals with reinforced seam construction and refined surface finishing."
+      },
+      {
+        "_id": "kn79f3a17ja890h5btx0q95trh83r70e",
+        "slug": "heat-shrink-ring-terminals",
+        "name": "Heat Shrink Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat shrink ring terminals."
+      },
+      {
+        "_id": "kn76yhqpcvmq9e9ax8xtpf205183rf7f",
+        "slug": "standard-ring-terminals",
+        "name": "Ring Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 1,
+        "brand": "Maikasen",
+        "summary": "Ring terminals for stud-based electrical connection points."
+      }
+    ],
+    "createdAt": 1774692258501,
+    "updatedAt": 1776136076387
+  },
+  {
+    "_id": "js70m3g1a1qazrbzwg2hnrb3v183rxbc",
+    "slug": "fork-terminals",
+    "name": "Fork Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/fork-terminals",
+    "sortOrder": 2,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Fork terminals, also known as spade or U-type terminals, are designed for quick and secure wire connections where frequent removal or servicing is required. Unlike ring terminals, fork terminals feature an open-ended design that allows them to be easily installed or removed without fully detaching the fastener.\r\n\r\nThese electrical fork terminals are typically made from high-conductivity copper or brass and are available with tin plating for enhanced corrosion resistance. They come in both insulated and non-insulated versions, supporting a wide range of wire sizes and stud dimensions.\r\n\r\nFork terminals are widely used in automotive systems, industrial control panels, electrical equipment, and maintenance-intensive environments. Their ease of installation and flexibility make them ideal for applications requiring fast assembly and reliable electrical performance.",
+    "shortDescription": "Fork terminals provide secure and removable electrical connections, allowing easy installation and maintenance in automotive, industrial, and electrical systems.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "standard-fork-terminals",
+      "heat-shrink-fork-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn73b68aqnp9rjqx3m2bjbdqrx83sr3s",
+        "slug": "standard-fork-terminals",
+        "name": "Fork Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fork terminals provide a reliable termination point where wires can be easily connected and disconnected from a screw or stud."
+      },
+      {
+        "_id": "kn7f84pxjmn6dx56n3wwjdf0px83rksm",
+        "slug": "heat-shrink-fork-terminals",
+        "name": "Heat Shrink Fork Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat-shrink fork terminals."
+      }
+    ],
+    "createdAt": 1774692259546,
+    "updatedAt": 1776136138347
+  },
+  {
+    "_id": "js7e1qhskkcfvzmpdh8pz1a7w983rhjz",
+    "slug": "flag-terminals",
+    "name": "Flag Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/flag-terminals",
+    "sortOrder": 3,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Flag terminals, also known as right-angle terminals, are specialized electrical connectors designed to provide secure wire termination in tight or space-limited environments. Their unique 90-degree connection orientation allows wires to be routed efficiently, reducing stress on connections and improving overall system layout.\r\n\r\nThese electrical flag terminals are typically manufactured from high-conductivity copper or brass and are often tin-plated to enhance corrosion resistance and durability. Available in insulated and non-insulated options, they support a wide range of wire gauges and terminal sizes to meet various application requirements.\r\n\r\nFlag terminals are widely used in automotive wiring, control panels, appliances, and electronic equipment where space optimization and organized wiring are critical. Their compact design and reliable performance make them ideal for high-density installations and professional electrical assemblies.",
+    "shortDescription": "Flag terminals provide right-angle wire connections for space-constrained electrical applications in automotive, industrial, and electronic systems.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "standard-flag-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn74rtrbxq412xaza5zh33c2wd83s9ms",
+        "slug": "standard-flag-terminals",
+        "name": "Flag Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These flag terminals feature a standard seam-construction approach and a thicker copper section at the wire-connection area."
+      }
+    ],
+    "createdAt": 1774692260308,
+    "updatedAt": 1776136202536
+  },
+  {
+    "_id": "js71jf2dtzb7t2wwmsb04jshr983r7sk",
+    "slug": "pin-terminals",
+    "name": "Pin Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/pin-terminals",
+    "sortOrder": 4,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Pin terminals, also known as wire pin connectors, are designed to ensure secure and reliable wire insertion into terminal blocks and connector systems. Their solid or crimped pin structure prevents wire strand fraying and ensures consistent electrical contact, making them ideal for precision wiring applications.\r\n\r\nThese electrical pin terminals are typically made from high-conductivity copper with tin plating for enhanced corrosion resistance and improved conductivity. Available in insulated and non-insulated types, they accommodate a wide range of wire sizes and are compatible with various terminal block designs.\r\n\r\nPin terminals are widely used in control panels, industrial automation systems, power distribution units, and electrical cabinets. Their compact design and ease of installation make them especially suitable for high-density wiring environments where reliability and organization are critical.",
+    "shortDescription": "Pin terminals provide secure and efficient wire connections for terminal blocks and connectors in industrial, electrical, and control applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "cold-press-pin-terminals",
+      "standard-pin-terminals",
+      "plug-in-needle-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7b2ep3zxs38z0pnbcpqk9k0983rk7d",
+        "slug": "cold-press-pin-terminals",
+        "name": "Cold Press Pin Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold-press pin terminals with reinforced seam construction and refined surface finishing."
+      },
+      {
+        "_id": "kn7epm9z53a0yzartnj8h464a583re7k",
+        "slug": "standard-pin-terminals",
+        "name": "Pin Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Pin terminals for wire termination and connection."
+      },
+      {
+        "_id": "kn73c1azt5nky3pt5w6g6xn2qh83s1vc",
+        "slug": "plug-in-needle-terminals",
+        "name": "Plug-In Needle Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "This family features plug-in needle-style pin terminals."
+      }
+    ],
+    "createdAt": 1774692259906,
+    "updatedAt": 1776136176096
+  },
+  {
+    "_id": "js71hm0vkn1c6bz5959xmp4bj183r4jj",
+    "slug": "blade-terminals",
+    "name": "Blade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/blade-terminals",
+    "sortOrder": 5,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Blade terminals are widely used electrical connectors designed for quick and efficient wire termination in a variety of low- and medium-voltage applications. With a flat blade-style connection interface, blade terminals allow fast installation, easy maintenance, and dependable electrical contact in panels, harnesses, appliances, and control systems.\r\n\r\nOur blade terminals are available in insulated and non-insulated options, supporting multiple wire sizes and terminal dimensions to meet different installation needs. Manufactured from high-conductivity copper or brass and optionally finished with tin plating, they offer excellent conductivity, corrosion resistance, and long-term performance.\r\n\r\nBlade terminals are commonly used in automotive wiring, home appliances, industrial control equipment, lighting systems, and general electrical assemblies. Their compact design and convenient mating structure make them an ideal solution for applications requiring efficient assembly and reliable signal or power transmission.",
+    "shortDescription": "Blade terminals provide fast, secure, and reliable wire connections for automotive, appliance, industrial, and electrical equipment applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "angled-blade-terminals",
+      "standard-blade-terminals",
+      "square-tongue-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7ac44nnkvf9t7m60czbhayes83r2we",
+        "slug": "angled-blade-terminals",
+        "name": "Angled Blade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled blade terminals featuring an offset connection orientation."
+      },
+      {
+        "_id": "kn7ccsykrrkzbr1d05q54z5c1183rnzf",
+        "slug": "standard-blade-terminals",
+        "name": "Blade Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Blade terminals for creating secure and reliable electrical connections."
+      },
+      {
+        "_id": "kn7cc7t2by1b1trvtrx1m2mv9183rk6n",
+        "slug": "square-tongue-terminals",
+        "name": "Square Tongue Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Square-tongue blade terminals."
+      }
+    ],
+    "createdAt": 1774692259205,
+    "updatedAt": 1776136159113
+  },
+  {
+    "_id": "js70p4z6xnwfk90zhqeh4peggn83sfsx",
+    "slug": "copper-lugs",
+    "name": "Copper Lugs",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/copper-lugs",
+    "sortOrder": 6,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Copper lugs, also known as cable lugs or copper cable terminals, are designed for terminating electrical cables in high-current and power distribution applications. Made from high-purity copper, these lugs ensure excellent electrical conductivity, low resistance, and reliable long-term performance.\r\n\r\nOur copper lugs are available in a wide range of sizes to accommodate different cable cross-sections and stud diameters. They are typically tin-plated to enhance corrosion resistance, making them suitable for harsh environments, including outdoor and industrial installations.\r\n\r\nThese electrical copper lugs are widely used in power distribution systems, switchgear, transformers, renewable energy systems, and industrial equipment. Their robust construction ensures strong mechanical connections and stable electrical performance, even under high load conditions.",
+    "shortDescription": "Copper lugs provide high-conductivity and secure connections for power distribution, electrical systems, and heavy-duty industrial applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "angled-copper-lugs",
+      "standard-copper-lugs"
+    ],
+    "families": [
+      {
+        "_id": "kn77e5xh56efp9ces8q3xz383n83sr0j",
+        "slug": "angled-copper-lugs",
+        "name": "Angled Copper Lugs",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled copper lugs."
+      },
+      {
+        "_id": "kn784r0r80nrrp1bc7awmktmpd83rgfa",
+        "slug": "standard-copper-lugs",
+        "name": "Copper Lugs (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These copper lugs feature brazed-seam construction and a refined surface finish."
+      }
+    ],
+    "createdAt": 1774692262160,
+    "updatedAt": 1776136373697
+  },
+  {
+    "_id": "js77cps21d42d35nmaqrvx2dgs83sghy",
+    "slug": "spade-terminals",
+    "name": "Spade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/spade-terminals",
+    "sortOrder": 17,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Spade terminals are versatile electrical connectors designed for fast, secure, and service-friendly wire connections. Featuring a forked or flat spade-shaped end, these terminals allow easy installation and removal without fully detaching the fastener, making them ideal for applications requiring frequent maintenance.\r\n\r\nThese electrical spade terminals are typically manufactured from high-conductivity copper or brass and are often tin-plated to enhance corrosion resistance and durability. Available in both insulated and non-insulated types, they support a wide range of wire gauges and stud sizes.\r\n\r\nSpade terminals are widely used in automotive wiring, industrial control systems, electrical panels, and general-purpose wiring applications. Their ease of use, flexibility, and reliable electrical performance make them a preferred choice for technicians and engineers.",
+    "shortDescription": "Spade terminals provide quick, secure, and easily removable wire connections for automotive, industrial, and electrical applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "standard-spade-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn76a6cc83ns2t3jvntn8gcpr983rnga",
+        "slug": "standard-spade-terminals",
+        "name": "Spade Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Spade terminals provide a reliable connection point where easy installation and removal are required. The spade (or fork) shape allows quick connection and disconnection without removing the fastener."
+      }
+    ],
+    "createdAt": 1774692258865,
+    "updatedAt": 1776074735973
+  },
+  {
+    "_id": "js7b3bm1xbf9hr1aqzjwvesedd83rzwv",
+    "slug": "cord-end-terminals",
+    "name": "Cord End Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/cord-end-terminals",
+    "sortOrder": 30,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Cord end terminals, also known as ferrules or wire end sleeves, are designed to terminate stranded wires for insertion into terminal blocks and connectors. By enclosing the wire strands in a metal sleeve, these terminals prevent fraying, ensure consistent contact, and improve overall electrical reliability.\r\n\r\nThese cord end terminals are typically made from high-conductivity copper with tin plating for corrosion resistance and long-term performance. They are available in insulated and non-insulated versions, as well as single and twin entry designs, to accommodate different wiring requirements.\r\n\r\nCord end terminals are widely used in electrical panels, industrial control systems, automation equipment, and power distribution units. Their ability to create clean, organized, and durable connections makes them essential for professional wiring applications and high-density terminal installations.",
+    "shortDescription": "Cord end terminals provide secure and reliable wire termination for stranded wires in terminal blocks, improving connection quality and safety.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "standard-cord-end-terminals",
+      "twin-cord-end-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7dgsad9q3sdqpqzzdtmf6bh583rx43",
+        "slug": "standard-cord-end-terminals",
+        "name": "Cord End Terminals (Standard Type)",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cord end terminals for creating secure and reliable wire terminations. Refined contact finishing and robust barrel construction."
+      },
+      {
+        "_id": "kn7ej9knab9v93558hb3vn7cjn83rcee",
+        "slug": "twin-cord-end-terminals",
+        "name": "Twin Cord End Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These twin cord-end terminals feature brazed-seam construction and refined contact finishing."
+      }
+    ],
+    "createdAt": 1774692261351,
+    "updatedAt": 1776136308618
+  },
+  {
+    "_id": "js72h0pj1mtzwbss28pn8zeq1n83s26d",
+    "slug": "quick-disconnect-terminals",
+    "name": "Quick Disconnect Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/quick-disconnect-terminals",
+    "sortOrder": 70,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Quick disconnect terminals, also known as quick connect terminals or faston connectors, are designed for rapid and reliable electrical connections without the need for permanent fastening. Featuring a male and female tab system, these terminals allow wires to be easily connected and disconnected, making them ideal for applications requiring frequent servicing or replacement.\r\n\r\nThese electrical quick disconnect terminals are typically made from high-conductivity copper or brass and are often tin-plated for improved corrosion resistance and durability. Available in insulated and non-insulated options, they support a wide range of wire sizes and tab dimensions to meet diverse application requirements.\r\n\r\nQuick disconnect terminals are widely used in automotive wiring, household appliances, industrial equipment, HVAC systems, and electronic assemblies. Their ease of use, flexibility, and dependable electrical performance make them a preferred choice for both OEM manufacturing and maintenance applications.",
+    "shortDescription": "Quick disconnect terminals provide fast, secure, and tool-free wire connections for easy installation, maintenance, and replacement.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "female-quick-disconnects",
+      "fully-insulated-quick-disconnects",
+      "heat-shrink-quick-disconnects"
+    ],
+    "families": [
+      {
+        "_id": "kn7fsfdbj5mbpebsrr7hjd3n4583sybc",
+        "slug": "female-quick-disconnects",
+        "name": "Female Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "This series features female quick-disconnect terminals."
+      },
+      {
+        "_id": "kn72sgeq71bwgxmb9bx2m79tm183sy33",
+        "slug": "fully-insulated-quick-disconnects",
+        "name": "Fully Insulated Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fully insulated quick disconnects."
+      },
+      {
+        "_id": "kn78ea2zntkc0kmvk54bwd500583sxh6",
+        "slug": "heat-shrink-quick-disconnects",
+        "name": "Heat Shrink Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat shrink quick disconnects with a brazed-seam barrel construction."
+      }
+    ],
+    "createdAt": 1774692260663,
+    "updatedAt": 1776136274574
+  },
+  {
+    "_id": "js79t70v32k7p9sw483w35dk8d83rndm",
+    "slug": "splice-connectors",
+    "name": "Splice Connectors",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/splice-connectors",
+    "sortOrder": 90,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Splice connectors are designed to join two or more wires together, providing a secure and efficient electrical connection without the need for soldering. These connectors are widely used in electrical installations, repairs, and maintenance where quick and reliable wire splicing is required.\r\n\r\nManufactured from high-conductivity copper or aluminum with optional tin plating, splice connectors offer excellent electrical performance and corrosion resistance. They are available in various types, including crimp splice connectors, heat shrink connectors, and insulation displacement connectors, to suit different application needs.\r\n\r\nSplice connectors are commonly used in automotive wiring, industrial systems, household electrical installations, and communication networks. Their ease of installation and strong mechanical bonding make them ideal for both professional electricians and DIY users.",
+    "shortDescription": "Splice connectors provide fast and reliable wire-to-wire connections for electrical systems, ensuring secure splicing in various applications.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "butt-splice-connectors",
+      "parallel-splice-connectors"
+    ],
+    "families": [
+      {
+        "_id": "kn72mexav1g4bs0streskkc7hd83rtvw",
+        "slug": "butt-splice-connectors",
+        "name": "Butt Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Butt splice connectors for creating inline splices between wires."
+      },
+      {
+        "_id": "kn73mgdxga0xmtdyymasc7g0h983sywr",
+        "slug": "parallel-splice-connectors",
+        "name": "Parallel Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Parallel splice connectors."
+      }
+    ],
+    "createdAt": 1774692261700,
+    "updatedAt": 1776136351043
+  },
+  {
+    "_id": "js71vj63kyzw8r7e743pfb0gps83s8bt",
+    "slug": "terminal-sleeves-accessories",
+    "name": "Terminal Sleeves Accessories",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/terminal-sleeves-accessories",
+    "sortOrder": 100,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Terminal sleeves accessories are essential components used to protect, insulate, and enhance the performance of electrical terminals and connectors. These accessories include insulating sleeves, protective covers, heat shrink tubing, and terminal boots, all designed to improve safety, durability, and reliability in electrical systems.\r\n\r\nManufactured from high-quality insulating materials such as PVC, nylon, and heat shrink polymers, terminal sleeves offer excellent resistance to heat, abrasion, and environmental factors. They help prevent accidental contact, reduce the risk of short circuits, and extend the lifespan of electrical connections.\r\n\r\nTerminal sleeves accessories are widely used in automotive wiring, industrial control systems, electrical panels, and power distribution equipment. They are especially important in environments where insulation, organization, and protection of connections are critical.",
+    "shortDescription": "Terminal sleeves accessories provide insulation, protection, and enhanced safety for electrical terminals and wire connections.",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "terminal-sleeves"
+    ],
+    "families": [
+      {
+        "_id": "kn793ee4570rmf9zprnj3q8tpx83r9ew",
+        "slug": "terminal-sleeves",
+        "name": "Terminal Sleeves",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Terminal sleeves for creating secure and insulated wire terminations."
+      }
+    ],
+    "createdAt": 1774692261007,
+    "updatedAt": 1776136329795
+  }
+]

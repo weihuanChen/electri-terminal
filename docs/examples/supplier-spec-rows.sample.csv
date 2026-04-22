@@ -1,0 +1,10 @@
+supplier_name,source_file,source_page,category_slug,family_slug,sku_code,model,title,raw_field_name,raw_field_value,target_field_key,target_layer
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Material,Copper,material,family
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Plating,Tin,plating,family
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Certification,"UL, CE",certifications,family
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,D2,2.2 mm,d2_mm,product
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Length,42.5 mm,length_mm,product
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Wire Range,0.2-0.5 mm2,wire_range_mm2,product
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,AWG,22-26 AWG,awg_range,product
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Thread Type,M3,thread_type,product
+Supplier A,catalog-2026.pdf,12,din-rail-terminal-blocks,uk-terminal-blocks,UK2.5,UK 2.5,UK 2.5 Terminal Block,Waterproof,No,waterproof,product

@@ -1,0 +1,59 @@
+[
+  {
+    "asset": {
+      "title": "UK 2.5 CAD Drawing",
+      "type": "cad",
+      "fileUrl": "https://cdn.example.com/assets/uk2-5.step",
+      "previewImage": "https://cdn.example.com/assets/uk2-5-preview.jpg",
+      "language": "en",
+      "version": "v1",
+      "isPublic": true,
+      "requireLeadForm": false
+    },
+    "relations": [
+      {
+        "entityType": "product",
+        "entitySlug": "uk-2-5",
+        "sortOrder": 10
+      }
+    ]
+  },
+  {
+    "asset": {
+      "title": "UK Terminal Blocks UL Certificate",
+      "type": "certificate",
+      "fileUrl": "https://cdn.example.com/assets/uk-terminal-blocks-ul.pdf",
+      "previewImage": "https://cdn.example.com/assets/uk-terminal-blocks-ul-cover.jpg",
+      "language": "en",
+      "version": "2026",
+      "isPublic": true,
+      "requireLeadForm": false
+    },
+    "relations": [
+      {
+        "entityType": "family",
+        "entitySlug": "uk-terminal-blocks",
+        "sortOrder": 10
+      }
+    ]
+  },
+  {
+    "asset": {
+      "title": "DIN Rail Terminal Blocks Catalog",
+      "type": "catalog",
+      "fileUrl": "https://cdn.example.com/assets/din-rail-terminal-blocks-catalog.pdf",
+      "previewImage": "https://cdn.example.com/assets/din-rail-terminal-blocks-catalog-cover.jpg",
+      "language": "en",
+      "version": "2026",
+      "isPublic": true,
+      "requireLeadForm": false
+    },
+    "relations": [
+      {
+        "entityType": "category",
+        "entitySlug": "din-rail-terminal-blocks",
+        "sortOrder": 10
+      }
+    ]
+  }
+]

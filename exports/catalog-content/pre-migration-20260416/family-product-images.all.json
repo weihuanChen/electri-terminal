@@ -1,0 +1,3353 @@
+{
+  "generatedAt": "2026-04-16T11:51:44.685Z",
+  "status": "all",
+  "totals": {
+    "families": 24,
+    "products": 70,
+    "familyImages": 49,
+    "productImages": 140
+  },
+  "families": [
+    {
+      "_id": "kn7ac44nnkvf9t7m60czbhayes83r2we",
+      "slug": "angled-blade-terminals",
+      "name": "Angled Blade Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+        "gallery": [
+          "https://assets.electriterminal.com/families/v3/product-family/angled-blade-terminals-product-family.webp"
+        ],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+            "alt": "90-degree-non-insulated-blade-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/families/v3/product-family/angled-blade-terminals-product-family.webp",
+            "alt": "Angled Blade Terminals ring terminal connectors family, multiple sizes and wire gauge options, copper crimp terminals for electrical wiring",
+            "sortOrder": 1
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01-cad.webp",
+            "alt": "90-degree-non-insulated-blade-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+          "https://assets.electriterminal.com/families/v3/product-family/angled-blade-terminals-product-family.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01-cad.webp"
+        ],
+        "count": 3
+      },
+      "products": [
+        {
+          "_id": "ks7edbvapgm24cz1y1x58t6wx583rx7n",
+          "slug": "90-degree-non-insulated-blade-terminals-g01",
+          "title": "90 Degree Non-Insulated Blade Terminals (90D-DBNB1.25-10 to 90D-DBNB8-14)",
+          "skuCode": "90-degree-non-insulated-blade-terminals-g01",
+          "model": "90-degree-non-insulated-blade-terminals-g01",
+          "status": "published",
+          "sortOrder": 130,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+                "alt": "90 Degree Non-Insulated Blade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01-cad.webp",
+                "alt": "90 Degree Non-Insulated Blade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-page-028-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn77e5xh56efp9ces8q3xz383n83sr0j",
+      "slug": "angled-copper-lugs",
+      "name": "Angled Copper Lugs",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+            "alt": "45-degree-sc-dtga-copper-lugs product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02-cad.webp",
+            "alt": "45-degree-sc-dtga-copper-lugs CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks71n8h69ag2dxgea0s05fmbcx83s8jq",
+          "slug": "90-degree-sc-dtga-copper-lugs-g01",
+          "title": "90 Degree SC (DTGA) Copper Connecting Terminals (90D-SC10-10 to 90D-SC95-8)",
+          "skuCode": "90-degree-sc-dtga-copper-lugs-g01",
+          "model": "90-degree-sc-dtga-copper-lugs-g01",
+          "status": "published",
+          "sortOrder": 660,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-123-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-123-g02.webp",
+                "alt": "90 Degree SC (DTGA) Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-123-g02-cad.webp",
+                "alt": "90 Degree SC (DTGA) Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-123-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-123-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7c0ddggvf0hmsysvdqh59jjh83r5m5",
+          "slug": "45-degree-sc-dtga-copper-lugs-g01",
+          "title": "45 Degree SC (DTGA) Copper Connecting Terminals (45D-SC10-10 to 45D-SC95-8)",
+          "skuCode": "45-degree-sc-dtga-copper-lugs-g01",
+          "model": "45-degree-sc-dtga-copper-lugs-g01",
+          "status": "published",
+          "sortOrder": 670,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+                "alt": "45 Degree SC (DTGA) Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02-cad.webp",
+                "alt": "45 Degree SC (DTGA) Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-page-124-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7191qrjwstdc2dfgtby272qn83s3a3",
+          "slug": "90-degree-lyf-copper-lugs-g01",
+          "title": "90 Degree LYF Copper Connecting Terminals (90D-LYF10-4 to 90D-LYF95-8)",
+          "skuCode": "90-degree-lyf-copper-lugs-g01",
+          "model": "90-degree-lyf-copper-lugs-g01",
+          "status": "published",
+          "sortOrder": 680,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-125-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-125-g01.webp",
+                "alt": "90 Degree LYF Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-125-g01-cad.webp",
+                "alt": "90 Degree LYF Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-125-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-125-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7f9knk92bdwwm95cdmbcseyd83r0w4",
+          "slug": "90-degree-gph-copper-lugs-g01",
+          "title": "90 Degree GPH Copper Connecting Terminals (90D-GPH10-10 to 90D-GPH95-8)",
+          "skuCode": "90-degree-gph-copper-lugs-g01",
+          "model": "90-degree-gph-copper-lugs-g01",
+          "status": "published",
+          "sortOrder": 690,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01.webp",
+                "alt": "90 Degree GPH Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01-cad.webp",
+                "alt": "90 Degree GPH Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01.webp",
+                "alt": "90 Degree GPH Copper Connecting Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01-cad.webp",
+                "alt": "90 Degree GPH Copper Connecting Terminals CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-lyf-copper-lug-page-126-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 4,
+      "productImageCount": 8
+    },
+    {
+      "_id": "kn7c8d6bntnjya0ynfsxnh8jk983swfz",
+      "slug": "angled-ring-terminals",
+      "name": "Angled Ring Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+            "alt": "90-degree-non-insulated-ring-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01-cad.webp",
+            "alt": "90-degree-non-insulated-ring-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks71xrk5h56v20fgkzz4zfjhz583rj8s",
+          "slug": "90-degree-non-insulated-ring-terminals-g01",
+          "title": "90 Degree Non-Insulated Ring Terminals (TO Type) (90D-RNB1.25-10 to 90D-RNB8-8)",
+          "skuCode": "90-degree-non-insulated-ring-terminals-g01",
+          "model": "90-degree-non-insulated-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 80,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01-cad.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01-cad.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks79t09stfh8am1wss0k7x72h183sddj",
+          "slug": "90-degree-non-insulated-ring-terminals-g02",
+          "title": "90 Degree Non-Insulated Ring Terminals (TO Type) (90D-RNB14-10 to 90D-RNB38-8S)",
+          "skuCode": "90-degree-non-insulated-ring-terminals-g02",
+          "model": "90-degree-non-insulated-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 90,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-020-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-020-g02.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-020-g02-cad.webp",
+                "alt": "90 Degree Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-020-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-020-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn7ccsykrrkzbr1d05q54z5c1183rnzf",
+      "slug": "standard-blade-terminals",
+      "name": "Blade Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+            "alt": "non-insulated-blade-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01-cad.webp",
+            "alt": "non-insulated-blade-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7fwrwv0v0cx2bkjqe66vfxf583setr",
+          "slug": "non-insulated-blade-terminals-g01",
+          "title": "Non-Insulated Blade Terminals (DBNB1.25-10 to DBNB8-14)",
+          "skuCode": "non-insulated-blade-terminals-g01",
+          "model": "non-insulated-blade-terminals-g01",
+          "status": "published",
+          "sortOrder": 120,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+                "alt": "Non-Insulated Blade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01-cad.webp",
+                "alt": "Non-Insulated Blade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-blade-terminal-dbnb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7442tsese35h618pte4ttm6983rwrb",
+          "slug": "nylon-insulated-blade-terminals-g01",
+          "title": "Nylon-Insulated Blade Terminals (DBNY1.25-10 to DBNY8-14)",
+          "skuCode": "nylon-insulated-blade-terminals-g01",
+          "model": "nylon-insulated-blade-terminals-g01",
+          "status": "published",
+          "sortOrder": 410,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-blade-terminal-dbny-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-blade-terminal-dbny-g01.webp",
+                "alt": "Nylon-Insulated Blade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-blade-terminal-dbny-g01-cad.webp",
+                "alt": "Nylon-Insulated Blade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-blade-terminal-dbny-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-blade-terminal-dbny-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn72mexav1g4bs0streskkc7hd83rtvw",
+      "slug": "butt-splice-connectors",
+      "name": "Butt Splice Connectors",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "output/page-098/v3/origin_doc_assets/product_image.jpg",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "output/page-098/v3/origin_doc_assets/product_image.jpg",
+            "alt": "Butt Splice Connectors product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "output/page-098/v3/origin_doc_assets/cad_image.jpg",
+            "alt": "Butt Splice Connectors CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "output/page-098/v3/origin_doc_assets/product_image.jpg",
+          "output/page-098/v3/origin_doc_assets/cad_image.jpg"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7bjq4cj1qzcmhpwj9agbhggx83s69v",
+          "slug": "butt-splice-connectors-g01",
+          "title": "Butt Splice Connectors (BNT0.5 to BNT80)",
+          "skuCode": "butt-splice-connectors-g01",
+          "model": "butt-splice-connectors-g01",
+          "status": "published",
+          "sortOrder": 560,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-bnt-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-bnt-g02.webp",
+                "alt": "Butt Splice Connectors product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-bnt-g02-cad.webp",
+                "alt": "Butt Splice Connectors CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-bnt-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-bnt-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn7b2ep3zxs38z0pnbcpqk9k0983rk7d",
+      "slug": "cold-press-pin-terminals",
+      "name": "Cold Press Pin Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+            "alt": "pin-cold-press-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01-cad.webp",
+            "alt": "pin-cold-press-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks77pf77md0mqfmhtvxatz218583r3ym",
+          "slug": "pin-cold-press-terminals-g01",
+          "title": "Pin Cold Terminals (IT0.5-1 to IT6-4)",
+          "skuCode": "pin-cold-press-terminals-g01",
+          "model": "pin-cold-press-terminals-g01",
+          "status": "published",
+          "sortOrder": 230,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+                "alt": "Pin Cold Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01-cad.webp",
+                "alt": "Pin Cold Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-it-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks75x3nz3qgnjte5xpzgp3ex1n83rnk8",
+          "slug": "pin-cold-press-terminals-g02",
+          "title": "Pin Cold Terminals (OT-1000A to OT-80A)",
+          "skuCode": "pin-cold-press-terminals-g02",
+          "model": "pin-cold-press-terminals-g02",
+          "status": "published",
+          "sortOrder": 240,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-ot-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-ot-g01.webp",
+                "alt": "Pin Cold Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-ot-g01-cad.webp",
+                "alt": "Pin Cold Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-ot-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/copper-pin-cold-press-terminal-ot-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn7frgwjgsa5zg9nk7esa2s15d83spc4",
+      "slug": "cold-press-ring-terminals",
+      "name": "Cold Press Ring Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+            "alt": "circular-cold-press-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01-cad.webp",
+            "alt": "circular-cold-press-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks77rj43vvqnmykzb8qtn9x1mx83r0dc",
+          "slug": "circular-cold-press-terminals-g01",
+          "title": "Circular Cold Press Terminals (OT0.5-3 to OTZ50-8)",
+          "skuCode": "circular-cold-press-terminals-g01",
+          "model": "circular-cold-press-terminals-g01",
+          "status": "published",
+          "sortOrder": 160,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+                "alt": "Circular Cold Press Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01-cad.webp",
+                "alt": "Circular Cold Press Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+                "alt": "Circular Cold Press Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01-cad.webp",
+                "alt": "Circular Cold Press Terminals CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7aye8dj8fvhc88n9qg51rvqn83r2e6",
+          "slug": "circular-cold-press-terminals-g02",
+          "title": "Circular Cold Press Terminals (OT10-10 to OTS25-8)",
+          "skuCode": "circular-cold-press-terminals-g02",
+          "model": "circular-cold-press-terminals-g02",
+          "status": "published",
+          "sortOrder": 170,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g02.webp",
+                "alt": "Circular Cold Press Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g02-cad.webp",
+                "alt": "Circular Cold Press Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks79yh8ng56tctbczrw3qkhajd83sdns",
+          "slug": "circular-cold-press-terminals-g03",
+          "title": "Circular Cold Press Terminals (OT35-10 to OTS70-10)",
+          "skuCode": "circular-cold-press-terminals-g03",
+          "model": "circular-cold-press-terminals-g03",
+          "status": "published",
+          "sortOrder": 180,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g03.webp",
+                "alt": "Circular Cold Press Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g03-cad.webp",
+                "alt": "Circular Cold Press Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks77xez5qk7hyhagqjr890sgkx83r5wc",
+          "slug": "circular-cold-press-terminals-g04",
+          "title": "Circular Cold Press Terminals (OT120-10 to OTS95-10)",
+          "skuCode": "circular-cold-press-terminals-g04",
+          "model": "circular-cold-press-terminals-g04",
+          "status": "published",
+          "sortOrder": 190,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g04.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g04.webp",
+                "alt": "Circular Cold Press Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g04-cad.webp",
+                "alt": "Circular Cold Press Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g04.webp",
+              "https://assets.electriterminal.com/products/v3/webp/circular-cold-press-terminal-ot-g04-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 4,
+      "productImageCount": 8
+    },
+    {
+      "_id": "kn784r0r80nrrp1bc7awmktmpd83rgfa",
+      "slug": "standard-copper-lugs",
+      "name": "Copper Lugs (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+            "alt": "awg-american-standard-copper-tube-lugs product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+            "alt": "awg-american-standard-copper-tube-lugs CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks79cnd9w6zdzc0ysdy3yn8cwd83r8jf",
+          "slug": "sc-dtga-copper-lugs-g02",
+          "title": "SC (DTGA) Series Copper Connecting Terminals (SC1.5-4 to SC800-BL)",
+          "skuCode": "sc-dtga-copper-lugs-g02",
+          "model": "sc-dtga-copper-lugs-g02",
+          "status": "published",
+          "sortOrder": 580,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4-cad.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4-cad.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals CAD drawing",
+                "sortOrder": 30
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals product image",
+                "sortOrder": 40
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4-cad.webp",
+                "alt": "SC (DTGA) Series Copper Connecting Terminals CAD drawing",
+                "sortOrder": 50
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-sc-g02-sc1-5-4-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks76ktkc1bgs6m0pzda113v93183s2pm",
+          "slug": "ksc-dtga-bell-mouth-copper-lugs-g02",
+          "title": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) (KSC1.5-4 to KSC800-BL)",
+          "skuCode": "ksc-dtga-bell-mouth-copper-lugs-g02",
+          "model": "ksc-dtga-bell-mouth-copper-lugs-g02",
+          "status": "published",
+          "sortOrder": 590,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03-cad.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03-cad.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) CAD drawing",
+                "sortOrder": 30
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) product image",
+                "sortOrder": 40
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03-cad.webp",
+                "alt": "KSC (DTGA) Series Copper Connecting Terminals (Bell Mouth) CAD drawing",
+                "sortOrder": 50
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-sc-dtga-copper-lug-ksc-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks72t9637hcwxbx5xs41f65x9x83rd1w",
+          "slug": "awg-american-standard-copper-tube-lugs-g01",
+          "title": "AWG American Standard Copper Tube Terminals (1012 to AD80-10)",
+          "skuCode": "awg-american-standard-copper-tube-lugs-g01",
+          "model": "awg-american-standard-copper-tube-lugs-g01",
+          "status": "published",
+          "sortOrder": 600,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 30
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 40
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 50
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 60
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 70
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 80
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 90
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+                "alt": "AWG American Standard Copper Tube Terminals product image",
+                "sortOrder": 100
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp",
+                "alt": "AWG American Standard Copper Tube Terminals CAD drawing",
+                "sortOrder": 110
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-page-106-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7c5b6kbfbnkwy108pwv8ajms83s399",
+          "slug": "dtgy-marine-copper-lugs-g01",
+          "title": "DTGY Marine Series Copper Connecting Terminals (JG10-10 to JG70-8)",
+          "skuCode": "dtgy-marine-copper-lugs-g01",
+          "model": "dtgy-marine-copper-lugs-g01",
+          "status": "published",
+          "sortOrder": 610,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g02.webp",
+                "alt": "DTGY Marine Series Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g02-cad.webp",
+                "alt": "DTGY Marine Series Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks741y8vmefnp0n9bseg030sph83sa0q",
+          "slug": "dtgy-marine-copper-lugs-g02",
+          "title": "DTGY Marine Series Copper Connecting Terminals (JG120-10 to JG95-8)",
+          "skuCode": "dtgy-marine-copper-lugs-g02",
+          "model": "dtgy-marine-copper-lugs-g02",
+          "status": "published",
+          "sortOrder": 620,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g03.webp",
+                "alt": "DTGY Marine Series Copper Connecting Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g03-cad.webp",
+                "alt": "DTGY Marine Series Copper Connecting Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-jg-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 5,
+      "productImageCount": 10
+    },
+    {
+      "_id": "kn7dgsad9q3sdqpqzzdtmf6bh583rx43",
+      "slug": "standard-cord-end-terminals",
+      "name": "Cord End Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+            "alt": "non-insulated-cord-end-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01-cad.webp",
+            "alt": "non-insulated-cord-end-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks72c4yjpk3esce0tgxh61bff183rt25",
+          "slug": "vinyl-insulated-cord-end-terminals-g01",
+          "title": "Vinyl-Insulated Cord End Terminals (TG-JT Type) (E0306 to E95-25)",
+          "skuCode": "vinyl-insulated-cord-end-terminals-g01",
+          "model": "vinyl-insulated-cord-end-terminals-g01",
+          "status": "published",
+          "sortOrder": 520,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092.webp",
+                "alt": "Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092-cad.webp",
+                "alt": "Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092.webp",
+                "alt": "Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092-cad.webp",
+                "alt": "Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-e-g01-e10-12-page-092-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks767p0k5598yzc9zhs5bcr12983rqw2",
+          "slug": "non-insulated-cord-end-terminals-g01",
+          "title": "Non-Insulated Cord End Terminals (TG-JT Type) (EN0206 to EN7512)",
+          "skuCode": "non-insulated-cord-end-terminals-g01",
+          "model": "non-insulated-cord-end-terminals-g01",
+          "status": "published",
+          "sortOrder": 540,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+                "alt": "Non-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01-cad.webp",
+                "alt": "Non-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7d8s7teh386q9xrdm1c8daz583s1he",
+          "slug": "non-insulated-cord-end-terminals-g02",
+          "title": "Non-Insulated Cord End Terminals (TG-JT Type) (EN10-12 to EN95-25)",
+          "skuCode": "non-insulated-cord-end-terminals-g02",
+          "model": "non-insulated-cord-end-terminals-g02",
+          "status": "published",
+          "sortOrder": 550,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g02.webp",
+                "alt": "Non-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g02-cad.webp",
+                "alt": "Non-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-en-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 3,
+      "productImageCount": 6
+    },
+    {
+      "_id": "kn7fsfdbj5mbpebsrr7hjd3n4583sybc",
+      "slug": "female-quick-disconnects",
+      "name": "Female Quick Disconnects",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+            "alt": "nylon-insulated-female-quick-disconnects product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01-cad.webp",
+            "alt": "nylon-insulated-female-quick-disconnects CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks76dw8txe6zm4q32dck3rgzmh83s4g8",
+          "slug": "vinyl-insulated-female-quick-disconnects-g01",
+          "title": "Vinyl-Insulated Female Quick Disconnects (FDV1.25-1105 to FDV5.5-375)",
+          "skuCode": "vinyl-insulated-female-quick-disconnects-g01",
+          "model": "vinyl-insulated-female-quick-disconnects-g01",
+          "status": "published",
+          "sortOrder": 430,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01.webp",
+                "alt": "Vinyl-Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01-cad.webp",
+                "alt": "Vinyl-Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks72yk7ad8c1kw2jm58rpsx2qn83szbg",
+          "slug": "nylon-insulated-female-quick-disconnects-g01",
+          "title": "Nylon-Insulated Female Quick Disconnects (FDNY1.25-1105 to FDNY5.5-375)",
+          "skuCode": "nylon-insulated-female-quick-disconnects-g01",
+          "model": "nylon-insulated-female-quick-disconnects-g01",
+          "status": "published",
+          "sortOrder": 460,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+                "alt": "Nylon-Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01-cad.webp",
+                "alt": "Nylon-Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn74rtrbxq412xaza5zh33c2wd83s9ms",
+      "slug": "standard-flag-terminals",
+      "name": "Flag Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+            "alt": "non-insulated-flag-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5-cad.webp",
+            "alt": "non-insulated-flag-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7ckapj94qj6t23v193rq8g7s83r51e",
+          "slug": "non-insulated-flag-terminals-g01",
+          "title": "Non-Insulated Flag Terminals (FGNB1-5 to FGNB80-12)",
+          "skuCode": "non-insulated-flag-terminals-g01",
+          "model": "non-insulated-flag-terminals-g01",
+          "status": "published",
+          "sortOrder": 150,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+                "alt": "Non-Insulated Flag Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5-cad.webp",
+                "alt": "Non-Insulated Flag Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+                "alt": "Non-Insulated Flag Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5-cad.webp",
+                "alt": "Non-Insulated Flag Terminals CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-flag-terminal-fgnb-g01-fgnb1-5-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn73b68aqnp9rjqx3m2bjbdqrx83sr3s",
+      "slug": "standard-fork-terminals",
+      "name": "Fork Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+            "alt": "non-insulated-fork-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2-cad.webp",
+            "alt": "non-insulated-fork-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks76nkt2dwptw6nseek3f251d583swgm",
+          "slug": "non-insulated-fork-terminals-g01",
+          "title": "Non-Insulated Fork Type Terminals (TU Type) (SNB0.5-2 to SNB8-8)",
+          "skuCode": "non-insulated-fork-terminals-g01",
+          "model": "non-insulated-fork-terminals-g01",
+          "status": "published",
+          "sortOrder": 100,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2-cad.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2-cad.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g01-snb0-5-2-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7410d2kewtwbxsxanr3mb4yd83r0ve",
+          "slug": "non-insulated-fork-terminals-g02",
+          "title": "Non-Insulated Fork Type Terminals (TU Type) (SNB14-10 to 90D-SNB8-8)",
+          "skuCode": "non-insulated-fork-terminals-g02",
+          "model": "non-insulated-fork-terminals-g02",
+          "status": "published",
+          "sortOrder": 110,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02-cad.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02-cad.webp",
+                "alt": "Non-Insulated Fork Type Terminals (TU Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-fork-terminal-snb-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn72sgeq71bwgxmb9bx2m79tm183sy33",
+      "slug": "fully-insulated-quick-disconnects",
+      "name": "Fully Insulated Quick Disconnects",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+            "alt": "double-crimp-vinyl-fully-insulated-female-quick-disconnects product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01-cad.webp",
+            "alt": "double-crimp-vinyl-fully-insulated-female-quick-disconnects CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks74rtbvnb9taybp880zecgh9183rzhv",
+          "slug": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g01",
+          "title": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects (RVD1.25-10 to RVD5.5-8)",
+          "skuCode": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g01",
+          "model": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g01",
+          "status": "published",
+          "sortOrder": 350,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01-cad.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks770e95x8yskjg80c41me4vw183sc0g",
+          "slug": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g02",
+          "title": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects (SVD1.25-3.2 to FDD5.5-375D)",
+          "skuCode": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g02",
+          "model": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g02",
+          "status": "published",
+          "sortOrder": 360,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02-cad.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02-cad.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-svd-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7cr6szgxsb054twfchxd979583sx4x",
+          "slug": "vinyl-fully-insulated-female-quick-disconnects-g01",
+          "title": "Vinyl-Fully Insulated Female Quick Disconnects (FDFV1.25-1105 to FDFV5.5-250)",
+          "skuCode": "vinyl-fully-insulated-female-quick-disconnects-g01",
+          "model": "vinyl-fully-insulated-female-quick-disconnects-g01",
+          "status": "published",
+          "sortOrder": 440,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-fully-insulated-female-quick-disconnects-fdfv-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-fully-insulated-female-quick-disconnects-fdfv-g01.webp",
+                "alt": "Vinyl-Fully Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-fully-insulated-female-quick-disconnects-fdfv-g01-cad.webp",
+                "alt": "Vinyl-Fully Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-fully-insulated-female-quick-disconnects-fdfv-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-fully-insulated-female-quick-disconnects-fdfv-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks727d04frz2ajmj60ghcvxpxx83s2y0",
+          "slug": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g05",
+          "title": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects (FDFD1.25-1105D to FDFD5.5-250D)",
+          "skuCode": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g05",
+          "model": "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g05",
+          "status": "published",
+          "sortOrder": 450,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-fdfd-g05.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-fdfd-g05.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-fdfd-g05-cad.webp",
+                "alt": "Double Crimp Vinyl-Fully Insulated Female Quick Disconnects CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-fdfd-g05.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-fdfd-g05-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 4,
+      "productImageCount": 8
+    },
+    {
+      "_id": "kn7f84pxjmn6dx56n3wwjdf0px83rksm",
+      "slug": "heat-shrink-fork-terminals",
+      "name": "Heat Shrink Fork Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+            "alt": "shb-heat-shrink-fork-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01-cad.webp",
+            "alt": "shb-heat-shrink-fork-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks73sajwf19aekcck6zkzr714h83s05t",
+          "slug": "shb-heat-shrink-fork-terminals-g01",
+          "title": "SHB Heat Shrink Fork Terminals (SHB1.25-3.2 to SHB5.5-8)",
+          "skuCode": "shb-heat-shrink-fork-terminals-g01",
+          "model": "shb-heat-shrink-fork-terminals-g01",
+          "status": "published",
+          "sortOrder": 490,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+                "alt": "SHB Heat Shrink Fork Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01-cad.webp",
+                "alt": "SHB Heat Shrink Fork Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-shb-heat-shrink-fork-terminal-shb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn78ea2zntkc0kmvk54bwd500583sxh6",
+      "slug": "heat-shrink-quick-disconnects",
+      "name": "Heat Shrink Quick Disconnects",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+            "alt": "fdh-heat-shrink-female-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01-cad.webp",
+            "alt": "fdh-heat-shrink-female-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7d327nme0vbp0fg3nfte4vtn83s5fw",
+          "slug": "fdh-heat-shrink-female-terminals-g01",
+          "title": "FDH Heat Shrink Female Terminals (FDH1.25-1105 to FDH5.5-375)",
+          "skuCode": "fdh-heat-shrink-female-terminals-g01",
+          "model": "fdh-heat-shrink-female-terminals-g01",
+          "status": "published",
+          "sortOrder": 500,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+                "alt": "FDH Heat Shrink Female Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01-cad.webp",
+                "alt": "FDH Heat Shrink Female Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn79f3a17ja890h5btx0q95trh83r70e",
+      "slug": "heat-shrink-ring-terminals",
+      "name": "Heat Shrink Ring Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+            "alt": "rhb-heat-shrink-ring-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01-cad.webp",
+            "alt": "rhb-heat-shrink-ring-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7an1s1gywbpgvg6kcp1feggd83sx6r",
+          "slug": "rhb-heat-shrink-ring-terminals-g01",
+          "title": "RHB Heat Shrink Ring Terminals (RHB1.25-10 to RHB1.25-8L)",
+          "skuCode": "rhb-heat-shrink-ring-terminals-g01",
+          "model": "rhb-heat-shrink-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 470,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+                "alt": "RHB Heat Shrink Ring Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01-cad.webp",
+                "alt": "RHB Heat Shrink Ring Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks76252fa2df5kffepen4x17vd83sbgv",
+          "slug": "rhb-heat-shrink-ring-terminals-g02",
+          "title": "RHB Heat Shrink Ring Terminals (RHB2-10 to RHB5.5-8)",
+          "skuCode": "rhb-heat-shrink-ring-terminals-g02",
+          "model": "rhb-heat-shrink-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 480,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g02.webp",
+                "alt": "RHB Heat Shrink Ring Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g02-cad.webp",
+                "alt": "RHB Heat Shrink Ring Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-rhb-heat-shrink-ring-terminal-rhb-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 2,
+      "productImageCount": 4
+    },
+    {
+      "_id": "kn73mgdxga0xmtdyymasc7g0h983sywr",
+      "slug": "parallel-splice-connectors",
+      "name": "Parallel Splice Connectors",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "output/page-099/v3/origin_doc_assets/product_image.jpg",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "output/page-099/v3/origin_doc_assets/product_image.jpg",
+            "alt": "Parallel Splice Connectors product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "output/page-099/v3/origin_doc_assets/cad_image.jpg",
+            "alt": "Parallel Splice Connectors CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "output/page-099/v3/origin_doc_assets/product_image.jpg",
+          "output/page-099/v3/origin_doc_assets/cad_image.jpg"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7dqxezz3852vnpvvqz90krks83sfax",
+          "slug": "parallel-splice-connectors-g01",
+          "title": "Parallel Splice Connectors (PNT0.5 to PNT80)",
+          "skuCode": "parallel-splice-connectors-g01",
+          "model": "parallel-splice-connectors-g01",
+          "status": "published",
+          "sortOrder": 570,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-pnt-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-pnt-g02.webp",
+                "alt": "Parallel Splice Connectors product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-pnt-g02-cad.webp",
+                "alt": "Parallel Splice Connectors CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-pnt-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-cord-end-terminal-pnt-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn7epm9z53a0yzartnj8h464a583re7k",
+      "slug": "standard-pin-terminals",
+      "name": "Pin Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+            "alt": "nylon-insulated-pin-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01-cad.webp",
+            "alt": "nylon-insulated-pin-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks75zwk7sags69mz7qbwnncb5s83rqvw",
+          "slug": "non-insulated-pin-terminals-g01",
+          "title": "Non-Insulated Pin Terminals (PTNB0.5-10 to PTNB95-25)",
+          "skuCode": "non-insulated-pin-terminals-g01",
+          "model": "non-insulated-pin-terminals-g01",
+          "status": "published",
+          "sortOrder": 140,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-ptnb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-ptnb-g01.webp",
+                "alt": "Non-Insulated Pin Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-ptnb-g01-cad.webp",
+                "alt": "Non-Insulated Pin Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-ptnb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-blade-terminal-ptnb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7fqtg13nn8zw4sy1dxakeyqx83r1s2",
+          "slug": "vinyl-insulated-pin-terminals-g01",
+          "title": "Vinyl-Insulated Pin Terminals (TZ-JTK Type) (LSV1.25-3.5 to PTV5.5-18)",
+          "skuCode": "vinyl-insulated-pin-terminals-g01",
+          "model": "vinyl-insulated-pin-terminals-g01",
+          "status": "published",
+          "sortOrder": 340,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-pin-terminal-ptv-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-pin-terminal-ptv-g01.webp",
+                "alt": "Vinyl-Insulated Pin Terminals (TZ-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-pin-terminal-ptv-g01-cad.webp",
+                "alt": "Vinyl-Insulated Pin Terminals (TZ-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-pin-terminal-ptv-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-pin-terminal-ptv-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks73wvmf9njcen3s7b57detsw583rsy1",
+          "slug": "nylon-insulated-pin-terminals-g01",
+          "title": "Nylon-Insulated Pin Terminals (TZ-JTK Type) (LSNY1.25-3.5 to PTNY5.5-18)",
+          "skuCode": "nylon-insulated-pin-terminals-g01",
+          "model": "nylon-insulated-pin-terminals-g01",
+          "status": "published",
+          "sortOrder": 420,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+                "alt": "Nylon-Insulated Pin Terminals (TZ-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01-cad.webp",
+                "alt": "Nylon-Insulated Pin Terminals (TZ-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-pin-terminal-ptny-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 3,
+      "productImageCount": 6
+    },
+    {
+      "_id": "kn73c1azt5nky3pt5w6g6xn2qh83s1vc",
+      "slug": "plug-in-needle-terminals",
+      "name": "Plug-In Needle Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+            "alt": "plug-in-needle-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02-cad.webp",
+            "alt": "plug-in-needle-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks720fas1s36y4z4m9b1fhfts183rzh9",
+          "slug": "plug-in-needle-terminals-g02",
+          "title": "Plug-In Needle Terminals (C451.5 to C4570)",
+          "skuCode": "plug-in-needle-terminals-g02",
+          "model": "plug-in-needle-terminals-g02",
+          "status": "published",
+          "sortOrder": 200,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-c-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-c-g01.webp",
+                "alt": "Plug-In Needle Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-c-g01-cad.webp",
+                "alt": "Plug-In Needle Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-c-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-c-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7agktxsxcbjtsc4qvvvc0jmn83s0xb",
+          "slug": "plug-in-needle-terminals-g03",
+          "title": "Plug-In Needle Terminals (UT0.5-3 to UT6-8)",
+          "skuCode": "plug-in-needle-terminals-g03",
+          "model": "plug-in-needle-terminals-g03",
+          "status": "published",
+          "sortOrder": 210,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-ut-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-ut-g01.webp",
+                "alt": "Plug-In Needle Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-ut-g01-cad.webp",
+                "alt": "Plug-In Needle Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-ut-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-ut-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks72a8azyhjvsx8j50rm3ntxsh83sms7",
+          "slug": "plug-in-needle-terminals-g04",
+          "title": "Plug-In Needle Terminals (JB0.75-3 to JC1-4)",
+          "skuCode": "plug-in-needle-terminals-g04",
+          "model": "plug-in-needle-terminals-g04",
+          "status": "published",
+          "sortOrder": 220,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-jb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-jb-g01.webp",
+                "alt": "Plug-In Needle Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-jb-g01-cad.webp",
+                "alt": "Plug-In Needle Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-jb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-jb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7atmjs6zjenty9mdfgqm5g2d83rab6",
+          "slug": "plug-in-needle-terminals-g01",
+          "title": "Plug-In Needle Terminals (10 to 95)",
+          "skuCode": "plug-in-needle-terminals-g01",
+          "model": "plug-in-needle-terminals-g01",
+          "status": "published",
+          "sortOrder": 700,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+                "alt": "Plug-In Needle Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02-cad.webp",
+                "alt": "Plug-In Needle Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-c45-blade-welding-terminal-page-128-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 4,
+      "productImageCount": 8
+    },
+    {
+      "_id": "kn76a6cc83ns2t3jvntn8gcpr983rnga",
+      "slug": "standard-spade-terminals",
+      "name": "Spade Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+            "alt": "non-insulated-spade-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01-cad.webp",
+            "alt": "non-insulated-spade-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks7frt5311cefttd4qnp4vrqz183svmg",
+          "slug": "non-insulated-spade-terminals-g01",
+          "title": "Non-Insulated Spade Terminals (TO Type) (RNB125-10 to RNB180-8)",
+          "skuCode": "non-insulated-spade-terminals-g01",
+          "model": "non-insulated-spade-terminals-g01",
+          "status": "published",
+          "sortOrder": 50,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+                "alt": "Non-Insulated Spade Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01-cad.webp",
+                "alt": "Non-Insulated Spade Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7b31z2amnaejtnwd5f8tvmax83sbwy",
+          "slug": "non-insulated-spade-terminals-g02",
+          "title": "Non-Insulated Spade Terminals (TO Type) (RNB200-10 to RNB325-8)",
+          "skuCode": "non-insulated-spade-terminals-g02",
+          "model": "non-insulated-spade-terminals-g02",
+          "status": "published",
+          "sortOrder": 60,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g02.webp",
+                "alt": "Non-Insulated Spade Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g02-cad.webp",
+                "alt": "Non-Insulated Spade Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks71qdwbyf4hwbj5axgv9x2yvx83sfyz",
+          "slug": "vinyl-insulated-spade-terminals-g01",
+          "title": "Vinyl-Insulated Spade Terminals (SV0.5-2 to SV8-8)",
+          "skuCode": "vinyl-insulated-spade-terminals-g01",
+          "model": "vinyl-insulated-spade-terminals-g01",
+          "status": "published",
+          "sortOrder": 300,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+                "alt": "Vinyl-Insulated Spade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2-cad.webp",
+                "alt": "Vinyl-Insulated Spade Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+                "alt": "Vinyl-Insulated Spade Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2-cad.webp",
+                "alt": "Vinyl-Insulated Spade Terminals CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks70spyzjcm2hh3vbhy02k3b9h83rf2d",
+          "slug": "easy-entry-insulated-spade-terminals-g01",
+          "title": "Easy Entry Insulated Spade Terminals (SVE1.25-3.2 to SVE3.5-8)",
+          "skuCode": "easy-entry-insulated-spade-terminals-g01",
+          "model": "easy-entry-insulated-spade-terminals-g01",
+          "status": "published",
+          "sortOrder": 310,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve1-25-3-2.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve1-25-3-2.webp",
+                "alt": "Easy Entry Insulated Spade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve1-25-3-2-cad.webp",
+                "alt": "Easy Entry Insulated Spade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve1-25-3-2.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve1-25-3-2-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks76x6nnw9w9w4x5tqprr9c9jx83ry3e",
+          "slug": "easy-entry-insulated-spade-terminals-g02",
+          "title": "Easy Entry Insulated Spade Terminals (SVE14-10 to SVE8-8)",
+          "skuCode": "easy-entry-insulated-spade-terminals-g02",
+          "model": "easy-entry-insulated-spade-terminals-g02",
+          "status": "published",
+          "sortOrder": 320,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve14-10.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve14-10.webp",
+                "alt": "Easy Entry Insulated Spade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve14-10-cad.webp",
+                "alt": "Easy Entry Insulated Spade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve14-10.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sve-g03-sve14-10-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks75v54peqbypcmv6bzq7fcyq983sf7d",
+          "slug": "easy-entry-insulated-spade-terminals-g03",
+          "title": "Easy Entry Insulated Spade Terminals (DBV1.25-10 to DBV8-14)",
+          "skuCode": "easy-entry-insulated-spade-terminals-g03",
+          "model": "easy-entry-insulated-spade-terminals-g03",
+          "status": "published",
+          "sortOrder": 330,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-dbv-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-dbv-g03.webp",
+                "alt": "Easy Entry Insulated Spade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-dbv-g03-cad.webp",
+                "alt": "Easy Entry Insulated Spade Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-dbv-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-dbv-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7f0v06p4xvn5bztw791zvmvx83rpxr",
+          "slug": "nylon-insulated-spade-terminals-g01",
+          "title": "Nylon-Insulated Spade Terminals (SNY1.25-3.2 to SNY8-8)",
+          "skuCode": "nylon-insulated-spade-terminals-g01",
+          "model": "nylon-insulated-spade-terminals-g01",
+          "status": "published",
+          "sortOrder": 400,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2.webp",
+                "alt": "Nylon-Insulated Spade Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2-cad.webp",
+                "alt": "Nylon-Insulated Spade Terminals CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2.webp",
+                "alt": "Nylon-Insulated Spade Terminals product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2-cad.webp",
+                "alt": "Nylon-Insulated Spade Terminals CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 7,
+      "productImageCount": 14
+    },
+    {
+      "_id": "kn7cc7t2by1b1trvtrx1m2mv9183rk6n",
+      "slug": "square-tongue-terminals",
+      "name": "Square Tongue Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+            "alt": "square-tongue-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01-cad.webp",
+            "alt": "square-tongue-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks70z8sprhm8dcfvtdg31b3jh583sj01",
+          "slug": "square-tongue-terminals-g01",
+          "title": "Square Tongue Terminals (SQNB100-10 to SQNB80-8)",
+          "skuCode": "square-tongue-terminals-g01",
+          "model": "square-tongue-terminals-g01",
+          "status": "published",
+          "sortOrder": 70,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+                "alt": "Square Tongue Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01-cad.webp",
+                "alt": "Square Tongue Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-square-tongue-terminal-sqnb-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn793ee4570rmf9zprnj3q8tpx83r9ew",
+      "slug": "terminal-sleeves",
+      "name": "Terminal Sleeves",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+            "alt": "pvc-insulated-terminal-sleeves product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01-cad.webp",
+            "alt": "pvc-insulated-terminal-sleeves CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+          "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks76kwhjss95chk30ftrhcctr183sbzf",
+          "slug": "pvc-insulated-terminal-sleeves-g01",
+          "title": "PVC Insulated Terminal Sleeves (V1.25 to V80)",
+          "skuCode": "pvc-insulated-terminal-sleeves-g01",
+          "model": "pvc-insulated-terminal-sleeves-g01",
+          "status": "published",
+          "sortOrder": 510,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+                "alt": "PVC Insulated Terminal Sleeves product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01-cad.webp",
+                "alt": "PVC Insulated Terminal Sleeves CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/pvc-insulated-terminal-sleeves-v-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 1,
+      "productImageCount": 2
+    },
+    {
+      "_id": "kn7ej9knab9v93558hb3vn7cjn83rcee",
+      "slug": "twin-cord-end-terminals",
+      "name": "Twin Cord End Terminals",
+      "status": "published",
+      "sortOrder": 0,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+            "alt": "twin-vinyl-insulated-cord-end-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109-cad.webp",
+            "alt": "twin-vinyl-insulated-cord-end-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks784sr6m71xyf7xtrnvda8vs983ra7y",
+          "slug": "twin-vinyl-insulated-cord-end-terminals-g01",
+          "title": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) (TE0508 to TE7512)",
+          "skuCode": "twin-vinyl-insulated-cord-end-terminals-g01",
+          "model": "twin-vinyl-insulated-cord-end-terminals-g01",
+          "status": "published",
+          "sortOrder": 530,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-te-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-te-g01.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-te-g01-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-te-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-cord-end-terminal-te-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks74v834apc5hqt2yenn4f2vm183rnnr",
+          "slug": "twin-vinyl-insulated-cord-end-terminals-g04",
+          "title": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) (TLK0.75-3 to TLK6-8)",
+          "skuCode": "twin-vinyl-insulated-cord-end-terminals-g04",
+          "model": "twin-vinyl-insulated-cord-end-terminals-g04",
+          "status": "published",
+          "sortOrder": 630,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-109-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks74xy50dawkhtmwak2yw9sf7s83sphm",
+          "slug": "twin-vinyl-insulated-cord-end-terminals-g03",
+          "title": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) (TLK120-10 to T630-20)",
+          "skuCode": "twin-vinyl-insulated-cord-end-terminals-g03",
+          "model": "twin-vinyl-insulated-cord-end-terminals-g03",
+          "status": "published",
+          "sortOrder": 640,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-awg-american-standard-copper-tube-lug-tlk-g05-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks756kk8rnb7dae41h3w5m5cc583rwfh",
+          "slug": "twin-vinyl-insulated-cord-end-terminals-g02",
+          "title": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) (T1.5-4 to T95-8)",
+          "skuCode": "twin-vinyl-insulated-cord-end-terminals-g02",
+          "model": "twin-vinyl-insulated-cord-end-terminals-g02",
+          "status": "published",
+          "sortOrder": 650,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120-cad.webp",
+                "alt": "Twin Vinyl-Insulated Cord End Terminals (TG-JT Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-twin-vinyl-insulated-cord-end-terminal-t-g01-t1-5-4-page-120-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 4,
+      "productImageCount": 8
+    },
+    {
+      "_id": "kn76yhqpcvmq9e9ax8xtpf205183rf7f",
+      "slug": "standard-ring-terminals",
+      "name": "Ring Terminals (Standard Type)",
+      "status": "published",
+      "sortOrder": 1,
+      "imageResources": {
+        "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+        "gallery": [],
+        "mediaItems": [
+          {
+            "type": "product",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+            "alt": "non-insulated-ring-terminals product image",
+            "sortOrder": 0
+          },
+          {
+            "type": "dimension",
+            "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2-cad.webp",
+            "alt": "non-insulated-ring-terminals CAD drawing",
+            "sortOrder": 0
+          }
+        ],
+        "allUrls": [
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2-cad.webp"
+        ],
+        "count": 2
+      },
+      "products": [
+        {
+          "_id": "ks71skge4jxwxneytzvjdfb2m183s0y4",
+          "slug": "non-insulated-ring-terminals-g01",
+          "title": "Non-Insulated Ring Terminals (TO Type) (RNB0.5-2 to RNB3.5-8)",
+          "skuCode": "non-insulated-ring-terminals-g01",
+          "model": "non-insulated-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 10,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks78y7qwtjks1r3zzj593x142d83sk9r",
+          "slug": "non-insulated-ring-terminals-g02",
+          "title": "Non-Insulated Ring Terminals (TO Type) (RNB5.5-10 to RNB8-8)",
+          "skuCode": "non-insulated-ring-terminals-g02",
+          "model": "non-insulated-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 20,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7ekqvy5rbdyx3vq4ryb2ar4n83s9bj",
+          "slug": "non-insulated-ring-terminals-g03",
+          "title": "Non-Insulated Ring Terminals (TO Type) (RNB14-10 to RNB60-8S)",
+          "skuCode": "non-insulated-ring-terminals-g03",
+          "model": "non-insulated-ring-terminals-g03",
+          "status": "published",
+          "sortOrder": 30,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              },
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 20
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 30
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks749mgbxtyay1jhfznk67gnnx83sj2w",
+          "slug": "non-insulated-ring-terminals-g04",
+          "title": "Non-Insulated Ring Terminals (TO Type) (RNB100-10 to RNB80-8)",
+          "skuCode": "non-insulated-ring-terminals-g04",
+          "model": "non-insulated-ring-terminals-g04",
+          "status": "published",
+          "sortOrder": 40,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g04.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g04.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g04-cad.webp",
+                "alt": "Non-Insulated Ring Terminals (TO Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g04.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g04-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7cmj24ntcss9e92faprhjmwh83sw9w",
+          "slug": "vinyl-insulated-ring-terminals-g01",
+          "title": "Vinyl-Insulated Ring Terminals (TO-JTK Type) (RV0.5-2 to RV2-8L)",
+          "skuCode": "vinyl-insulated-ring-terminals-g01",
+          "model": "vinyl-insulated-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 250,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g01.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g01-cad.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks72js9zjkb7xs2jbmksytejv183s6b3",
+          "slug": "vinyl-insulated-ring-terminals-g02",
+          "title": "Vinyl-Insulated Ring Terminals (TO-JTK Type) (RV3.5-10 to RV8-8)",
+          "skuCode": "vinyl-insulated-ring-terminals-g02",
+          "model": "vinyl-insulated-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 260,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g02.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g02-cad.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks72f56w0c9w4d92c2w1wth0ds83rv47",
+          "slug": "vinyl-insulated-ring-terminals-g03",
+          "title": "Vinyl-Insulated Ring Terminals (TO-JTK Type) (RV14-10 to RV38-8S)",
+          "skuCode": "vinyl-insulated-ring-terminals-g03",
+          "model": "vinyl-insulated-ring-terminals-g03",
+          "status": "published",
+          "sortOrder": 270,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g03.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g03-cad.webp",
+                "alt": "Vinyl-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rv-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks70b0ts02hff7jeqd2d9h7fss83rcp6",
+          "slug": "easy-entry-insulated-ring-terminals-g01",
+          "title": "Easy Entry Insulated Ring Terminals (RVE1.25-10 to RVE3.5-8)",
+          "skuCode": "easy-entry-insulated-ring-terminals-g01",
+          "model": "easy-entry-insulated-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 280,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve1-25-10.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve1-25-10.webp",
+                "alt": "Easy Entry Insulated Ring Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve1-25-10-cad.webp",
+                "alt": "Easy Entry Insulated Ring Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve1-25-10.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve1-25-10-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7em81f5jbe1mggrpjveqtjz183szz0",
+          "slug": "easy-entry-insulated-ring-terminals-g02",
+          "title": "Easy Entry Insulated Ring Terminals (RVE14-10 to RVE8-8)",
+          "skuCode": "easy-entry-insulated-ring-terminals-g02",
+          "model": "easy-entry-insulated-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 290,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve14-10.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve14-10.webp",
+                "alt": "Easy Entry Insulated Ring Terminals product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve14-10-cad.webp",
+                "alt": "Easy Entry Insulated Ring Terminals CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve14-10.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-rve-g03-rve14-10-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks76kxhgwmjcecnk8c81nn9ze583sbks",
+          "slug": "nylon-insulated-ring-terminals-g01",
+          "title": "Nylon-Insulated Ring Terminals (TO-JTK Type) (RNY1.25-10 to RNY2-8L)",
+          "skuCode": "nylon-insulated-ring-terminals-g01",
+          "model": "nylon-insulated-ring-terminals-g01",
+          "status": "published",
+          "sortOrder": 370,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g01.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g01.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g01-cad.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g01.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g01-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7fjfmyy3m17yehbgn8cjcym583s5q2",
+          "slug": "nylon-insulated-ring-terminals-g02",
+          "title": "Nylon-Insulated Ring Terminals (TO-JTK Type) (RNY3.5-10 to RNY8-8)",
+          "skuCode": "nylon-insulated-ring-terminals-g02",
+          "model": "nylon-insulated-ring-terminals-g02",
+          "status": "published",
+          "sortOrder": 380,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g02.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g02.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g02-cad.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g02.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g02-cad.webp"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "_id": "ks7ev974xsfm6mngn1m4dpjah983s0wx",
+          "slug": "nylon-insulated-ring-terminals-g03",
+          "title": "Nylon-Insulated Ring Terminals (TO-JTK Type) (RNY14-10 to RNY38-8S)",
+          "skuCode": "nylon-insulated-ring-terminals-g03",
+          "model": "nylon-insulated-ring-terminals-g03",
+          "status": "published",
+          "sortOrder": 390,
+          "images": {
+            "primary": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g03.webp",
+            "gallery": [],
+            "mediaItems": [
+              {
+                "type": "product",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g03.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) product image",
+                "sortOrder": 0
+              },
+              {
+                "type": "dimension",
+                "url": "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g03-cad.webp",
+                "alt": "Nylon-Insulated Ring Terminals (TO-JTK Type) CAD drawing",
+                "sortOrder": 10
+              }
+            ],
+            "allUrls": [
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g03.webp",
+              "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-rny-g03-cad.webp"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "productCount": 12,
+      "productImageCount": 24
+    }
+  ]
+}

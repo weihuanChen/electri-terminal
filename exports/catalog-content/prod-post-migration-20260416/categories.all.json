@@ -1,0 +1,572 @@
+[
+  {
+    "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+    "slug": "terminals",
+    "name": "Terminals",
+    "status": "published",
+    "level": 0,
+    "path": "/categories/terminals",
+    "sortOrder": 10,
+    "isVisibleInNav": true,
+    "parent": null,
+    "description": "Terminals product catalog.",
+    "shortDescription": "Terminal products",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 0,
+    "familySlugs": [],
+    "families": [],
+    "createdAt": 1776341737985,
+    "updatedAt": 1776341737985
+  },
+  {
+    "_id": "js74dxt8hky7v1x402t969v6dx84yyyd",
+    "slug": "blade-terminals",
+    "name": "Blade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/blade-terminals",
+    "sortOrder": 10,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Blade Terminals under terminals.",
+    "shortDescription": "Blade Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "angled-blade-terminals",
+      "blade-terminals",
+      "square-tongue-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn797rj0x6d70m2bj68yy1hbe584z07b",
+        "slug": "angled-blade-terminals",
+        "name": "Angled Blade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled Blade Terminals series."
+      },
+      {
+        "_id": "kn73jacpf0s80efrb2r5v9yvph84yy5x",
+        "slug": "blade-terminals",
+        "name": "Blade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Blade Terminals series."
+      },
+      {
+        "_id": "kn76wre9ekvqd8y4targxtbgys84yjka",
+        "slug": "square-tongue-terminals",
+        "name": "Square Tongue Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Square Tongue Terminals series."
+      }
+    ],
+    "createdAt": 1776341739411,
+    "updatedAt": 1776341739411
+  },
+  {
+    "_id": "js725056m3k9ps1r8bmr36z35h84zqjt",
+    "slug": "copper-lugs",
+    "name": "Copper Lugs",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/copper-lugs",
+    "sortOrder": 20,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Copper Lugs under terminals.",
+    "shortDescription": "Copper Lugs",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "angled-copper-lugs",
+      "copper-lugs"
+    ],
+    "families": [
+      {
+        "_id": "kn7ewzan9r7x0kq7khc0d0nx4d84y20r",
+        "slug": "angled-copper-lugs",
+        "name": "Angled Copper Lugs",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled Copper Lugs series."
+      },
+      {
+        "_id": "kn74nv0zy53mqhemb0qx79by0h84yz3n",
+        "slug": "copper-lugs",
+        "name": "Copper Lugs",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Copper Lugs series."
+      }
+    ],
+    "createdAt": 1776341743220,
+    "updatedAt": 1776341743220
+  },
+  {
+    "_id": "js70z4pwdnhjend8e30df5d3c984z5d8",
+    "slug": "cord-end-terminals",
+    "name": "Cord End Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/cord-end-terminals",
+    "sortOrder": 30,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Cord End Terminals under terminals.",
+    "shortDescription": "Cord End Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "cord-end-terminals",
+      "twin-cord-end-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7ce6r4638snb4qj0myf5kk5x84y9mn",
+        "slug": "cord-end-terminals",
+        "name": "Cord End Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cord End Terminals series."
+      },
+      {
+        "_id": "kn7b8y65psa61ez4xhj3kmz3mn84yt71",
+        "slug": "twin-cord-end-terminals",
+        "name": "Twin Cord End Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Twin Cord End Terminals series."
+      }
+    ],
+    "createdAt": 1776341742277,
+    "updatedAt": 1776341742277
+  },
+  {
+    "_id": "js7a6z47x876006xa5akcswveh84zc6r",
+    "slug": "flag-terminals",
+    "name": "Flag Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/flag-terminals",
+    "sortOrder": 40,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Flag Terminals under terminals.",
+    "shortDescription": "Flag Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "flag-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn72wrmaf7m9sgehkfg9f0w6c984zc1w",
+        "slug": "flag-terminals",
+        "name": "Flag Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Flag Terminals series."
+      }
+    ],
+    "createdAt": 1776341740857,
+    "updatedAt": 1776341740857
+  },
+  {
+    "_id": "js7f2hwrwargwe83cv7qj8w1d184ztm1",
+    "slug": "fork-terminals",
+    "name": "Fork Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/fork-terminals",
+    "sortOrder": 50,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Fork Terminals under terminals.",
+    "shortDescription": "Fork Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "fork-terminals",
+      "heat-shrink-fork-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn76kec6ndfp1qhjqx3bqge80h84zye8",
+        "slug": "fork-terminals",
+        "name": "Fork Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fork Terminals series."
+      },
+      {
+        "_id": "kn71xxqym361n5j0ft4gan24v584yxab",
+        "slug": "heat-shrink-fork-terminals",
+        "name": "Heat Shrink Fork Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat Shrink Fork Terminals series."
+      }
+    ],
+    "createdAt": 1776341739928,
+    "updatedAt": 1776341739928
+  },
+  {
+    "_id": "js7b0fffhnbx0b64vbaxysaabx84z7sj",
+    "slug": "pin-terminals",
+    "name": "Pin Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/pin-terminals",
+    "sortOrder": 60,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Pin Terminals under terminals.",
+    "shortDescription": "Pin Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "cold-press-pin-terminals",
+      "pin-terminals",
+      "plug-in-needle-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7eyj1f7zey0tekw1brs5fdy184yqdb",
+        "slug": "cold-press-pin-terminals",
+        "name": "Cold Press Pin Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold Press Pin Terminals series."
+      },
+      {
+        "_id": "kn737af6d29vzszmhjp1swebc184ymca",
+        "slug": "pin-terminals",
+        "name": "Pin Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Pin Terminals series."
+      },
+      {
+        "_id": "kn72wnpnb5tfc5dxdkqpv26gc584zy9q",
+        "slug": "plug-in-needle-terminals",
+        "name": "Plug-In Needle Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Plug-In Needle Terminals series."
+      }
+    ],
+    "createdAt": 1776341740395,
+    "updatedAt": 1776341740395
+  },
+  {
+    "_id": "js7edpjf4he0zp0xxw1a4fr5mx84z57n",
+    "slug": "quick-disconnect-terminals",
+    "name": "Quick Disconnect Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/quick-disconnect-terminals",
+    "sortOrder": 70,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Quick Disconnect Terminals under terminals.",
+    "shortDescription": "Quick Disconnect Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "female-quick-disconnects",
+      "fully-insulated-quick-disconnects",
+      "heat-shrink-quick-disconnects"
+    ],
+    "families": [
+      {
+        "_id": "kn781cjgpqfe643qg79rve8an584ynqs",
+        "slug": "female-quick-disconnects",
+        "name": "Female Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Female Quick Disconnects series."
+      },
+      {
+        "_id": "kn776ejbtyf10e293zcp7sxkad84zm0w",
+        "slug": "fully-insulated-quick-disconnects",
+        "name": "Fully Insulated Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fully Insulated Quick Disconnects series."
+      },
+      {
+        "_id": "kn7d7epkkkryhv0pk2dvevmx8n84z6x5",
+        "slug": "heat-shrink-quick-disconnects",
+        "name": "Heat Shrink Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat Shrink Quick Disconnects series."
+      }
+    ],
+    "createdAt": 1776341741303,
+    "updatedAt": 1776341741303
+  },
+  {
+    "_id": "js72k4znedhpbmgja9xa6fdwch84y7z9",
+    "slug": "ring-terminals",
+    "name": "Ring Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/ring-terminals",
+    "sortOrder": 80,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Ring Terminals under terminals.",
+    "shortDescription": "Ring Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 4,
+    "familySlugs": [
+      "angled-ring-terminals",
+      "cold-press-ring-terminals",
+      "heat-shrink-ring-terminals",
+      "ring-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn70rrwh1d1bmyzmr5ahz1nr5s84z8e6",
+        "slug": "angled-ring-terminals",
+        "name": "Angled Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled Ring Terminals series."
+      },
+      {
+        "_id": "kn730zgn4bdb4assfa07bey2ps84y0en",
+        "slug": "cold-press-ring-terminals",
+        "name": "Cold Press Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold Press Ring Terminals series."
+      },
+      {
+        "_id": "kn7ab9t4fpe2qyw53ry4esb03h84yr00",
+        "slug": "heat-shrink-ring-terminals",
+        "name": "Heat Shrink Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat Shrink Ring Terminals series."
+      },
+      {
+        "_id": "kn7fv8dgn5254yc4xzc4d77kcd84y4xm",
+        "slug": "ring-terminals",
+        "name": "Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Ring Terminals series."
+      }
+    ],
+    "createdAt": 1776341738470,
+    "updatedAt": 1776341738470
+  },
+  {
+    "_id": "js72rhtt04e9w6v51jrtwv7mmx84zzbc",
+    "slug": "spade-terminals",
+    "name": "Spade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/spade-terminals",
+    "sortOrder": 90,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Spade Terminals under terminals.",
+    "shortDescription": "Spade Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "spade-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7753np7s0wq45j8bjh3h3cqh84zw6b",
+        "slug": "spade-terminals",
+        "name": "Spade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Spade Terminals series."
+      }
+    ],
+    "createdAt": 1776341738923,
+    "updatedAt": 1776341738923
+  },
+  {
+    "_id": "js79brmtzwdmv7yhhjm1kmwzm584zjy4",
+    "slug": "splice-connectors",
+    "name": "Splice Connectors",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/splice-connectors",
+    "sortOrder": 100,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Splice Connectors under terminals.",
+    "shortDescription": "Splice Connectors",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "butt-splice-connectors",
+      "parallel-splice-connectors"
+    ],
+    "families": [
+      {
+        "_id": "kn7fq709mgccsvek35h2nxqhe584yvxn",
+        "slug": "butt-splice-connectors",
+        "name": "Butt Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Butt Splice Connectors series."
+      },
+      {
+        "_id": "kn7az5s7rq4616d7kmezpdnrg184yhvf",
+        "slug": "parallel-splice-connectors",
+        "name": "Parallel Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Parallel Splice Connectors series."
+      }
+    ],
+    "createdAt": 1776341742740,
+    "updatedAt": 1776341742740
+  },
+  {
+    "_id": "js71gnqq45z2hr8c057yj2waex84zrd3",
+    "slug": "terminal-sleeves-accessories",
+    "name": "Terminal Sleeves Accessories",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/terminal-sleeves-accessories",
+    "sortOrder": 100,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7d43g1edavk70xhh1dhwtybh84zw8n",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Terminal Sleeves Accessories under terminals.",
+    "shortDescription": "Terminal Sleeves Accessories",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "terminal-sleeves"
+    ],
+    "families": [
+      {
+        "_id": "kn73hp6vttj9sgj6k7a66ygwnd84z92e",
+        "slug": "terminal-sleeves",
+        "name": "Terminal Sleeves",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Terminal Sleeves series."
+      }
+    ],
+    "createdAt": 1776341741770,
+    "updatedAt": 1776341741770
+  }
+]

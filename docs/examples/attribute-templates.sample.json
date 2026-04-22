@@ -1,0 +1,93 @@
+[
+  {
+    "template": {
+      "name": "DIN Rail Terminal Block Specs",
+      "categorySlug": "din-rail-terminal-blocks",
+      "description": "Default attribute template for DIN rail terminal blocks",
+      "status": "published"
+    },
+    "fields": [
+      {
+        "fieldKey": "d2_mm",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "D2",
+        "sortOrder": 10
+      },
+      {
+        "fieldKey": "length_mm",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Length",
+        "sortOrder": 20
+      },
+      {
+        "fieldKey": "wire_range_mm2",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Wire Range",
+        "sortOrder": 30
+      },
+      {
+        "fieldKey": "awg_range",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "AWG",
+        "sortOrder": 40
+      },
+      {
+        "fieldKey": "material",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Material",
+        "sortOrder": 50
+      },
+      {
+        "fieldKey": "plating",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Plating",
+        "sortOrder": 60
+      },
+      {
+        "fieldKey": "thread_type",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Thread Type",
+        "sortOrder": 70
+      },
+      {
+        "fieldKey": "waterproof",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Waterproof",
+        "sortOrder": 80
+      },
+      {
+        "fieldKey": "certifications",
+        "isRequired": false,
+        "isFilterable": true,
+        "isSearchable": false,
+        "isVisibleOnFrontend": true,
+        "importAlias": "Certification",
+        "sortOrder": 90
+      }
+    ]
+  }
+]

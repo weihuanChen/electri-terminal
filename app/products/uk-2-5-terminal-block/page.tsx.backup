@@ -1,0 +1,527 @@
+import Breadcrumb from "@/components/shared/Breadcrumb";
+import { ProductDetailSidebar } from "@/components/shared/TechnicalSidebar";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
+export const metadata = {
+    title: "UK-2.5 Universal Terminal Block | Industrial Electrical Components",
+    description: "UK-2.5 screw terminal block. Rated 800V/32A, wire size 0.2-4mm². Universal screw connection for industrial control cabinets and automation systems.",
+};
+
+export default function UK25TerminalBlockPage() {
+    const breadcrumbItems = [
+        { label: "Home", href: "/" },
+        { label: "Products", href: "/products" },
+        { label: "Terminal Blocks", href: "/categories/terminal-blocks" },
+        { label: "Screw Terminal Blocks", href: "/families/screw-terminal-blocks" },
+        { label: "UK-2.5 Terminal Block" },
+    ];
+
+    const relatedProducts = [
+        {
+            name: "UK-2.5N",
+            description: "Universal terminal block with neutral disconnect",
+            voltage: "800V",
+            current: "32A",
+            href: "/products/uk-2-5n"
+        },
+        {
+            name: "UK-4",
+            description: "Larger terminal for higher current applications",
+            voltage: "800V",
+            current: "41A",
+            href: "/products/uk-4"
+        },
+        {
+            name: "UK-6",
+            description: "Heavy-duty terminal for power applications",
+            voltage: "1000V",
+            current: "57A",
+            href: "/products/uk-6"
+        },
+        {
+            name: "UK-2.5-PE",
+            description: "Ground terminal with DIN rail connection",
+            voltage: "800V",
+            current: "32A",
+            href: "/products/uk-2-5-pe"
+        }
+    ];
+
+    return (
+        <div className="min-h-screen bg-white">
+            {/* 1. Breadcrumb Navigation */}
+            <div className="border-b border-gray-300">
+                <div className="container max-w-7xl mx-auto px-4 py-3">
+                    <Breadcrumb items={breadcrumbItems} />
+                </div>
+            </div>
+
+            {/* Main Content with Sidebar */}
+            <div className="container max-w-7xl mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    {/* Main Content */}
+                    <main className="lg:col-span-3">
+            {/* 2. Product Overview */}
+            <section className="border-b border-gray-200">
+                <div className="container max-w-7xl mx-auto px-4 py-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        {/* Product Image */}
+                        <div className="order-2 lg:order-1">
+                            <div className="bg-gray-100 border border-gray-300 h-[500px] relative">
+                                <Image
+                                    src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&auto=format&fit=crop"
+                                    alt="UK-2.5 Universal Terminal Block"
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                />
+                            </div>
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="order-1 lg:order-2">
+                            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                                UK-2.5 Universal Terminal Block
+                            </h1>
+
+                            <p className="text-gray-700 leading-relaxed mb-6">
+                                Universal screw terminal block for industrial control cabinets and automation systems.
+                                The UK-2.5 features proven screw connection technology with high contact force and vibration resistance.
+                                Suitable for a wide range of applications requiring reliable electrical connections.
+                            </p>
+
+                            {/* Basic Specifications */}
+                            <div className="border border-gray-300 mb-6">
+                                <div className="grid grid-cols-2 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Rated Voltage</span>
+                                    </div>
+                                    <div className="p-3">
+                                        <span className="text-sm font-medium text-gray-900">800V</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Rated Current</span>
+                                    </div>
+                                    <div className="p-3">
+                                        <span className="text-sm font-medium text-gray-900">32A</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Connection Type</span>
+                                    </div>
+                                    <div className="p-3">
+                                        <span className="text-sm font-medium text-gray-900">Screw Connection</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Mounting</span>
+                                    </div>
+                                    <div className="p-3">
+                                        <span className="text-sm font-medium text-gray-900">35mm DIN Rail</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Link
+                                href="/rfq"
+                                className="inline-block px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-700 transition-colors"
+                            >
+                                Request Quote
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                        {/* 3. Product Features */}
+                        <section className="border-b border-gray-200 mb-8">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Product Features</h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">Universal Screw Connection</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Proven screw connection technology with high contact force. Suitable for all wire types with ferrules.
+                                    </p>
+                                </div>
+
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">High Conductivity</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Copper alloy current bar with tin plating ensures low contact resistance and reliable current transmission.
+                                    </p>
+                                </div>
+
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">Flame-Retardant Housing</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Polyamide 6.6 (PA66) housing with V0 flammability rating. High mechanical strength and temperature resistance.
+                                    </p>
+                                </div>
+
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">Vibration-Resistant Design</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Gas-tight connection with high contact force ensures reliability in high-vibration environments.
+                                    </p>
+                                </div>
+
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">Easy Installation</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Standard screw driver operation. Clearly visible conductor entry for easy wiring.
+                                    </p>
+                                </div>
+
+                                <div className="border border-gray-300 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-2">International Approvals</h3>
+                                    <p className="text-sm text-gray-600">
+                                        Certified for international use with CE, UL, CSA, and other major certifications.
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* 4. Technical Specifications Table */}
+                        <section className="border-b border-gray-200 mb-8">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Technical Specifications</h2>
+
+                            <div className="max-w-4xl">
+                                <div className="border border-gray-300">
+                                    {/* Electrical Specifications */}
+                                    <div className="border-b border-gray-300">
+                                        <div className="bg-gray-50 px-4 py-2 border-b border-gray-300">
+                                            <h3 className="font-semibold text-gray-900 text-sm">Electrical Specifications</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Rated Voltage</span>
+                                            </div>
+                                            <div className="p-3 md:col-span-2">
+                                                <span className="text-sm text-gray-900">800V</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Rated Current</span>
+                                            </div>
+                                            <div className="p-3 md:col-span-2">
+                                                <span className="text-sm text-gray-900">32A</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Wire Size (Solid)</span>
+                                            </div>
+                                            <div className="p-3 md:col-span-2">
+                                                <span className="text-sm text-gray-900">0.2 - 4 mm²</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Wire Size (Stranded with Ferrule)</span>
+                                            </div>
+                                            <div className="p-3 md:col-span-2">
+                                                <span className="text-sm text-gray-900">0.25 - 4 mm²</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Cross-Section</span>
+                                            </div>
+                                            <div className="p-3 md:col-span-2">
+                                                <span className="text-sm text-gray-900">AWG 24-12</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mechanical Specifications */}
+                                    <div className="border-b border-gray-300">
+                                        <div className="bg-gray-50 px-4 py-2 border-b border-gray-300">
+                                            <h3 className="font-semibold text-gray-900 text-sm">Mechanical Specifications</h3>
+                                        </div>
+                                    <h3 className="font-semibold text-gray-900 text-sm">Mechanical Specifications</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Mounting Type</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">35mm DIN Rail (EN 60715)</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Screw Type</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">M3 Steel Screw</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Torque</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">0.5 - 0.6 Nm</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Number of Connection Points</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">2 (one per level)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Material Specifications */}
+                            <div className="border-b border-gray-300">
+                                <div className="bg-gray-50 px-4 py-2 border-b border-gray-300">
+                                    <h3 className="font-semibold text-gray-900 text-sm">Material Specifications</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Housing Material</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">Polyamide 6.6 (PA66)</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Housing Color</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">Gray</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Conductor Material</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">Copper Alloy, Tin Plated</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Screw Material</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">Steel with Corrosion Protection</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Flammability Rating</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">V0 according to UL 94</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Environmental Specifications */}
+                            <div>
+                                <div className="bg-gray-50 px-4 py-2 border-b border-gray-300">
+                                    <h3 className="font-semibold text-gray-900 text-sm">Environmental Specifications</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Operating Temperature</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">-40°C to +105°C</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-300">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Storage Temperature</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">-40°C to +85°C</span>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3">
+                                    <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                        <span className="text-sm text-gray-600">Protection Rating</span>
+                                    </div>
+                                    <div className="p-3 md:col-span-2">
+                                        <span className="text-sm text-gray-900">IP20</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        {/* 5. Product Dimensions */}
+                        <section className="border-b border-gray-200 mb-8">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Product Dimensions</h2>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {/* Dimensional Drawing Placeholder */}
+                                <div className="border border-gray-300">
+                                    <div className="bg-gray-100 h-[400px] relative">
+                                        <Image
+                                            src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&auto=format&fit=crop"
+                                            alt="UK-2.5 Dimensional Drawing"
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                    <div className="p-4 border-t border-gray-300">
+                                        <p className="text-sm text-gray-600">Fig 1. UK-2.5 Terminal Block Dimensional Drawing</p>
+                                    </div>
+                                </div>
+
+                                {/* Dimensional Table */}
+                                <div>
+                                    <div className="border border-gray-300">
+                                        <div className="grid grid-cols-2 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm font-semibold text-gray-900">Parameter</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm font-semibold text-gray-900">Dimension (mm)</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Width (A)</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm text-gray-900">5.2</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Height (B)</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm text-gray-900">86.5</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Depth (C)</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm text-gray-900">48.5</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 border-b border-gray-300">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Center Distance (D)</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm text-gray-900">5.2</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2">
+                                            <div className="p-3 bg-gray-50 border-r border-gray-300">
+                                                <span className="text-sm text-gray-600">Weight (per unit)</span>
+                                            </div>
+                                            <div className="p-3">
+                                                <span className="text-sm text-gray-900">15g</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <h3 className="font-semibold text-gray-900 mb-3">Certifications</h3>
+                                        <ul className="space-y-2 text-sm text-gray-700">
+                                            <li>• CE Marking</li>
+                                            <li>• UL Listed</li>
+                                            <li>• CSA Certified</li>
+                                            <li>• RoHS Compliant</li>
+                                            <li>• IEC 60947-7-1 compliant</li>
+                                            <li>• GL (Germanischer Lloyd)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* 6. Applications */}
+                        <section className="border-b border-gray-200 mb-8">
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Applications</h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {[
+                                    {
+                                        name: "Industrial Automation",
+                                        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop"
+                                    },
+                                    {
+                                        name: "Control Cabinets",
+                                        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop"
+                                    },
+                                    {
+                                        name: "Power Distribution",
+                                        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop"
+                                    }
+                                ].map((app, idx) => (
+                                    <div key={idx} className="border border-gray-300">
+                                        <div className="h-48 bg-gray-100 relative">
+                                            <Image
+                                                src={app.image}
+                                                alt={app.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <div className="p-4 text-center">
+                                            <p className="font-medium text-gray-900">{app.name}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* 7. Related Products */}
+                        <section>
+                            <h2 className="text-xl font-semibold text-gray-900 mb-6">Related Products</h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {relatedProducts.map((product, idx) => (
+                                    <Link
+                                        key={idx}
+                                        href={product.href}
+                                        className="border border-gray-300 p-5 hover:border-gray-500 transition-colors"
+                                    >
+                                        <div className="aspect-square bg-gray-100 mb-4 relative">
+                                            <Image
+                                                src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&auto=format&fit=crop"
+                                                alt={product.name}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                                        <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                                        <div className="text-sm text-gray-700">
+                                            <p>{product.voltage} / {product.current}</p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    </main>
+
+                    {/* Product Detail Sidebar */}
+                    <aside className="lg:col-span-1">
+                        <ProductDetailSidebar activePath="/products/uk-2-5-terminal-block" />
+                    </aside>
+                </div>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,572 @@
+[
+  {
+    "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+    "slug": "terminals",
+    "name": "Terminals",
+    "status": "published",
+    "level": 0,
+    "path": "/categories/terminals",
+    "sortOrder": 10,
+    "isVisibleInNav": true,
+    "parent": null,
+    "description": "Terminals product catalog.",
+    "shortDescription": "Terminal products",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 0,
+    "familySlugs": [],
+    "families": [],
+    "createdAt": 1774692258158,
+    "updatedAt": 1774692258158
+  },
+  {
+    "_id": "js71hm0vkn1c6bz5959xmp4bj183r4jj",
+    "slug": "blade-terminals",
+    "name": "Blade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/blade-terminals",
+    "sortOrder": 10,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Blade Terminals under terminals.",
+    "shortDescription": "Blade Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "angled-blade-terminals",
+      "blade-terminals",
+      "square-tongue-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7ac44nnkvf9t7m60czbhayes83r2we",
+        "slug": "angled-blade-terminals",
+        "name": "Angled Blade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled blade terminals featuring an offset connection orientation."
+      },
+      {
+        "_id": "kn7ccsykrrkzbr1d05q54z5c1183rnzf",
+        "slug": "blade-terminals",
+        "name": "Blade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Blade terminals for creating secure and reliable electrical connections."
+      },
+      {
+        "_id": "kn7cc7t2by1b1trvtrx1m2mv9183rk6n",
+        "slug": "square-tongue-terminals",
+        "name": "Square Tongue Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Square-tongue blade terminals."
+      }
+    ],
+    "createdAt": 1774692259205,
+    "updatedAt": 1774692259205
+  },
+  {
+    "_id": "js70p4z6xnwfk90zhqeh4peggn83sfsx",
+    "slug": "copper-lugs",
+    "name": "Copper Lugs",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/copper-lugs",
+    "sortOrder": 20,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Copper Lugs under terminals.",
+    "shortDescription": "Copper Lugs",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "angled-copper-lugs",
+      "copper-lugs"
+    ],
+    "families": [
+      {
+        "_id": "kn77e5xh56efp9ces8q3xz383n83sr0j",
+        "slug": "angled-copper-lugs",
+        "name": "Angled Copper Lugs",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled copper lugs."
+      },
+      {
+        "_id": "kn784r0r80nrrp1bc7awmktmpd83rgfa",
+        "slug": "copper-lugs",
+        "name": "Copper Lugs",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These copper lugs feature brazed-seam construction and a refined surface finish."
+      }
+    ],
+    "createdAt": 1774692262160,
+    "updatedAt": 1774692262160
+  },
+  {
+    "_id": "js7b3bm1xbf9hr1aqzjwvesedd83rzwv",
+    "slug": "cord-end-terminals",
+    "name": "Cord End Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/cord-end-terminals",
+    "sortOrder": 30,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Cord End Terminals under terminals.",
+    "shortDescription": "Cord End Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "cord-end-terminals",
+      "twin-cord-end-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7dgsad9q3sdqpqzzdtmf6bh583rx43",
+        "slug": "cord-end-terminals",
+        "name": "Cord End Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cord end terminals for creating secure and reliable wire terminations. Refined contact finishing and robust barrel construction."
+      },
+      {
+        "_id": "kn7ej9knab9v93558hb3vn7cjn83rcee",
+        "slug": "twin-cord-end-terminals",
+        "name": "Twin Cord End Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These twin cord-end terminals feature brazed-seam construction and refined contact finishing."
+      }
+    ],
+    "createdAt": 1774692261351,
+    "updatedAt": 1774692261351
+  },
+  {
+    "_id": "js7e1qhskkcfvzmpdh8pz1a7w983rhjz",
+    "slug": "flag-terminals",
+    "name": "Flag Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/flag-terminals",
+    "sortOrder": 40,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Flag Terminals under terminals.",
+    "shortDescription": "Flag Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "flag-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn74rtrbxq412xaza5zh33c2wd83s9ms",
+        "slug": "flag-terminals",
+        "name": "Flag Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "These flag terminals feature a standard seam-construction approach and a thicker copper section at the wire-connection area."
+      }
+    ],
+    "createdAt": 1774692260308,
+    "updatedAt": 1774692260308
+  },
+  {
+    "_id": "js70m3g1a1qazrbzwg2hnrb3v183rxbc",
+    "slug": "fork-terminals",
+    "name": "Fork Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/fork-terminals",
+    "sortOrder": 50,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Fork Terminals under terminals.",
+    "shortDescription": "Fork Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "fork-terminals",
+      "heat-shrink-fork-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn73b68aqnp9rjqx3m2bjbdqrx83sr3s",
+        "slug": "fork-terminals",
+        "name": "Fork Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fork terminals provide a reliable termination point where wires can be easily connected and disconnected from a screw or stud."
+      },
+      {
+        "_id": "kn7f84pxjmn6dx56n3wwjdf0px83rksm",
+        "slug": "heat-shrink-fork-terminals",
+        "name": "Heat Shrink Fork Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat-shrink fork terminals."
+      }
+    ],
+    "createdAt": 1774692259546,
+    "updatedAt": 1774692259546
+  },
+  {
+    "_id": "js71jf2dtzb7t2wwmsb04jshr983r7sk",
+    "slug": "pin-terminals",
+    "name": "Pin Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/pin-terminals",
+    "sortOrder": 60,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Pin Terminals under terminals.",
+    "shortDescription": "Pin Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "cold-press-pin-terminals",
+      "pin-terminals",
+      "plug-in-needle-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7b2ep3zxs38z0pnbcpqk9k0983rk7d",
+        "slug": "cold-press-pin-terminals",
+        "name": "Cold Press Pin Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold-press pin terminals with reinforced seam construction and refined surface finishing."
+      },
+      {
+        "_id": "kn7epm9z53a0yzartnj8h464a583re7k",
+        "slug": "pin-terminals",
+        "name": "Pin Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Pin terminals for wire termination and connection."
+      },
+      {
+        "_id": "kn73c1azt5nky3pt5w6g6xn2qh83s1vc",
+        "slug": "plug-in-needle-terminals",
+        "name": "Plug-In Needle Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "This family features plug-in needle-style pin terminals."
+      }
+    ],
+    "createdAt": 1774692259906,
+    "updatedAt": 1774692259906
+  },
+  {
+    "_id": "js72h0pj1mtzwbss28pn8zeq1n83s26d",
+    "slug": "quick-disconnect-terminals",
+    "name": "Quick Disconnect Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/quick-disconnect-terminals",
+    "sortOrder": 70,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Quick Disconnect Terminals under terminals.",
+    "shortDescription": "Quick Disconnect Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 3,
+    "familySlugs": [
+      "female-quick-disconnects",
+      "fully-insulated-quick-disconnects",
+      "heat-shrink-quick-disconnects"
+    ],
+    "families": [
+      {
+        "_id": "kn7fsfdbj5mbpebsrr7hjd3n4583sybc",
+        "slug": "female-quick-disconnects",
+        "name": "Female Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "This series features female quick-disconnect terminals."
+      },
+      {
+        "_id": "kn72sgeq71bwgxmb9bx2m79tm183sy33",
+        "slug": "fully-insulated-quick-disconnects",
+        "name": "Fully Insulated Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Fully insulated quick disconnects."
+      },
+      {
+        "_id": "kn78ea2zntkc0kmvk54bwd500583sxh6",
+        "slug": "heat-shrink-quick-disconnects",
+        "name": "Heat Shrink Quick Disconnects",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat shrink quick disconnects with a brazed-seam barrel construction."
+      }
+    ],
+    "createdAt": 1774692260663,
+    "updatedAt": 1774692260663
+  },
+  {
+    "_id": "js79wqwsq9x91ncp0h74k04jjn83rxyp",
+    "slug": "ring-terminals",
+    "name": "Ring Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/ring-terminals",
+    "sortOrder": 80,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Ring Terminals under terminals.",
+    "shortDescription": "Ring Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 4,
+    "familySlugs": [
+      "angled-ring-terminals",
+      "cold-press-ring-terminals",
+      "heat-shrink-ring-terminals",
+      "ring-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn7c8d6bntnjya0ynfsxnh8jk983swfz",
+        "slug": "angled-ring-terminals",
+        "name": "Angled Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Angled ring terminals featuring a brazed-seam barrel design and refined surface finishing."
+      },
+      {
+        "_id": "kn7frgwjgsa5zg9nk7esa2s15d83spc4",
+        "slug": "cold-press-ring-terminals",
+        "name": "Cold Press Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Cold-press ring terminals with reinforced seam construction and refined surface finishing."
+      },
+      {
+        "_id": "kn79f3a17ja890h5btx0q95trh83r70e",
+        "slug": "heat-shrink-ring-terminals",
+        "name": "Heat Shrink Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Heat shrink ring terminals."
+      },
+      {
+        "_id": "kn76yhqpcvmq9e9ax8xtpf205183rf7f",
+        "slug": "ring-terminals",
+        "name": "Ring Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Ring terminals for stud-based electrical connection points."
+      }
+    ],
+    "createdAt": 1774692258501,
+    "updatedAt": 1774692258501
+  },
+  {
+    "_id": "js77cps21d42d35nmaqrvx2dgs83sghy",
+    "slug": "spade-terminals",
+    "name": "Spade Terminals",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/spade-terminals",
+    "sortOrder": 90,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Spade Terminals under terminals.",
+    "shortDescription": "Spade Terminals",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "spade-terminals"
+    ],
+    "families": [
+      {
+        "_id": "kn76a6cc83ns2t3jvntn8gcpr983rnga",
+        "slug": "spade-terminals",
+        "name": "Spade Terminals",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Spade terminals provide a reliable connection point where easy installation and removal are required. The spade (or fork) shape allows quick connection and disconnection without removing the fastener."
+      }
+    ],
+    "createdAt": 1774692258865,
+    "updatedAt": 1774692258865
+  },
+  {
+    "_id": "js79t70v32k7p9sw483w35dk8d83rndm",
+    "slug": "splice-connectors",
+    "name": "Splice Connectors",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/splice-connectors",
+    "sortOrder": 100,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Splice Connectors under terminals.",
+    "shortDescription": "Splice Connectors",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 2,
+    "familySlugs": [
+      "butt-splice-connectors",
+      "parallel-splice-connectors"
+    ],
+    "families": [
+      {
+        "_id": "kn72mexav1g4bs0streskkc7hd83rtvw",
+        "slug": "butt-splice-connectors",
+        "name": "Butt Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Butt splice connectors for creating inline splices between wires."
+      },
+      {
+        "_id": "kn73mgdxga0xmtdyymasc7g0h983sywr",
+        "slug": "parallel-splice-connectors",
+        "name": "Parallel Splice Connectors",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Parallel splice connectors."
+      }
+    ],
+    "createdAt": 1774692261700,
+    "updatedAt": 1774692261700
+  },
+  {
+    "_id": "js71vj63kyzw8r7e743pfb0gps83s8bt",
+    "slug": "terminal-sleeves-accessories",
+    "name": "Terminal Sleeves Accessories",
+    "status": "published",
+    "level": 1,
+    "path": "/categories/terminals/terminal-sleeves-accessories",
+    "sortOrder": 100,
+    "isVisibleInNav": true,
+    "parent": {
+      "_id": "js7bgmfcb73x4cfdbeymss21r183sfjy",
+      "slug": "terminals",
+      "name": "Terminals"
+    },
+    "description": "Terminal Sleeves Accessories under terminals.",
+    "shortDescription": "Terminal Sleeves Accessories",
+    "seoTitle": null,
+    "seoDescription": null,
+    "canonical": null,
+    "templateKey": null,
+    "familyCount": 1,
+    "familySlugs": [
+      "terminal-sleeves"
+    ],
+    "families": [
+      {
+        "_id": "kn793ee4570rmf9zprnj3q8tpx83r9ew",
+        "slug": "terminal-sleeves",
+        "name": "Terminal Sleeves",
+        "status": "published",
+        "sortOrder": 0,
+        "brand": "Maikasen",
+        "summary": "Terminal sleeves for creating secure and insulated wire terminations."
+      }
+    ],
+    "createdAt": 1774692261007,
+    "updatedAt": 1774692261007
+  }
+]

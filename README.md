@@ -20,6 +20,29 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## SMTP for Inquiry Forms
+
+Inquiry forms (`/contact`, `/rfq`, product inquiry form) now submit to `POST /api/inquiries`.
+
+Set these environment variables in `.env.local`:
+
+```bash
+SMTP_HOST=smtp.your-domain.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your-mailbox@your-domain.com
+SMTP_PASS=your-mailbox-password
+SMTP_FROM=Electri Pro <your-mailbox@your-domain.com>
+SMTP_TO=sales@your-domain.com
+# Optional:
+SMTP_CC=manager@your-domain.com
+```
+
+Notes:
+- `SMTP_TO` is the destination mailbox that receives inquiry emails.
+- The submitter email is set as `replyTo`.
+- If Convex is available, inquiry records are also written into the `inquiries` table.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
