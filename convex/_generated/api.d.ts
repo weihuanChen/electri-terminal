@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as actions_r2 from "../actions/r2.js";
 import type * as admin_index from "../admin/index.js";
 import type * as frontend from "../frontend.js";
 import type * as http from "../http.js";
@@ -57,6 +58,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "actions/r2": typeof actions_r2;
   "admin/index": typeof admin_index;
   frontend: typeof frontend;
   http: typeof http;

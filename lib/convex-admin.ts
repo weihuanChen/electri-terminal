@@ -111,6 +111,7 @@ function getConvexClient() {
 type UntypedConvexClient = {
   query: (name: string, args?: Record<string, unknown>) => Promise<unknown>;
   mutation: (name: string, args?: Record<string, unknown>) => Promise<unknown>;
+  action: (name: string, args?: Record<string, unknown>) => Promise<unknown>;
 };
 
 function getUntypedClient() {
@@ -151,6 +152,20 @@ export async function mutateAdmin<T>(
     const message = getReadableErrorMessage(error);
     throw new Error(
       `Convex mutation failed: ${name}. ${message}. Check NEXT_PUBLIC_CONVEX_URL and deploy status.`
+    );
+  }
+}
+
+export async function actionAdmin<T>(
+  name: string,
+  args: Record<string, unknown> = {}
+) {
+  try {
+    return (await getUntypedClient().action(name, args)) as T;
+  } catch (error) {
+    const message = getReadableErrorMessage(error);
+    throw new Error(
+      `Convex action failed: ${name}. ${message}. Check NEXT_PUBLIC_CONVEX_URL and deploy status.`
     );
   }
 }

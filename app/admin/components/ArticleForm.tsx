@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   createArticleAction,
   updateArticleAction,
 } from "../actions";
 import { AdminImageField } from "./ui/AdminImageField";
+import { buildPublicAssetUrl, shouldBypassNextImageOptimization } from "@/lib/images";
+import { MediaAssetPickerModal } from "./MediaAssetPickerModal";
 
 interface Article {
   _id: string;
@@ -43,11 +46,33 @@ interface Product {
   title: string;
 }
 
+interface Asset {
+  _id: string;
+  title: string;
+  type: string;
+  fileUrl?: string;
+  objectKey?: string;
+  originalFilename?: string;
+  accessUrl?: string | null;
+  previewImage?: string;
+  fileSize?: number;
+  mimeType?: string;
+  isPublic: boolean;
+}
+
+interface R2MetadataItem {
+  key: string;
+  size?: number;
+  contentType?: string;
+}
+
 interface ArticleFormProps {
   article?: Article;
   categories?: Category[];
   families?: Family[];
   products?: Product[];
+  assets?: Asset[];
+  r2Items?: R2MetadataItem[];
 }
 
 type ArticleStatus = Article["status"];
@@ -63,11 +88,14 @@ export function ArticleForm({
   categories = [],
   families = [],
   products = [],
+  assets = [],
+  r2Items = [],
 }: ArticleFormProps) {
   const router = useRouter();
   const isEdit = !!article;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     type: article?.type || "blog" as const,
@@ -87,6 +115,59 @@ export function ArticleForm({
     seoDescription: article?.seoDescription || "",
     canonical: article?.canonical || "",
   });
+
+  const imageAssets = useMemo(() => {
+    const imageUrlPattern = /\.(png|jpe?g|gif|webp|svg|avif)(\?.*)?$/i;
+    const fromAssets = assets
+      .filter((asset) => asset.isPublic)
+      .map((asset) => {
+        const resolvedUrl = asset.objectKey
+          ? buildPublicAssetUrl(asset.objectKey)
+          : asset.fileUrl || asset.accessUrl || "";
+
+        return {
+          ...asset,
+          resolvedUrl,
+          previewUrl: asset.previewImage || resolvedUrl,
+        };
+      })
+      .filter((asset) => {
+        if (!asset.resolvedUrl) return false;
+        if (asset.type === "image") return true;
+        if (asset.mimeType?.startsWith("image/")) return true;
+        return imageUrlPattern.test(asset.resolvedUrl);
+      });
+
+    const fromR2 = r2Items
+      .map((item) => ({
+        _id: `r2:${item.key}`,
+        title: item.key.split("/").pop() || item.key,
+        type: "image",
+        objectKey: item.key,
+        originalFilename: item.key.split("/").pop() || item.key,
+        resolvedUrl: buildPublicAssetUrl(item.key),
+        previewUrl: buildPublicAssetUrl(item.key),
+        fileSize: item.size,
+        mimeType: item.contentType,
+      }))
+      .filter((asset) => {
+        if (asset.mimeType?.startsWith("image/")) return true;
+        return imageUrlPattern.test(asset.resolvedUrl);
+      });
+
+    const merged = new Map<string, (typeof fromAssets)[number]>();
+    for (const item of fromAssets) {
+      merged.set(item.objectKey || item.resolvedUrl, item);
+    }
+    for (const item of fromR2) {
+      const key = item.objectKey || item.resolvedUrl;
+      if (!merged.has(key)) {
+        merged.set(key, item);
+      }
+    }
+
+    return Array.from(merged.values());
+  }, [assets, r2Items]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -272,6 +353,45 @@ export function ArticleForm({
             placeholder="支持 /images/article-cover.jpg 或 https://example.com/article-cover.jpg"
           />
 
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">媒体库图片（R2）</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  点击按钮弹出媒体库，可按路径筛选并选择图片。
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(true)}
+                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                媒体库图片
+              </button>
+            </div>
+
+            {formData.coverImage ? (
+              <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="relative h-14 w-20 flex-none overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
+                  <Image
+                    src={formData.coverImage}
+                    alt="Cover preview"
+                    fill
+                    unoptimized={shouldBypassNextImageOptimization(formData.coverImage)}
+                    className="object-cover"
+                  />
+                </div>
+                <p className="min-w-0 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                  {formData.coverImage}
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                当前未选择封面图，可使用 URL 输入或媒体库选择。
+              </p>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               文章内容
@@ -445,6 +565,17 @@ export function ArticleForm({
           {isLoading ? "保存中..." : isEdit ? "保存更改" : "创建文章"}
         </button>
       </div>
+
+      <MediaAssetPickerModal
+        open={isMediaPickerOpen}
+        assets={imageAssets}
+        selectedUrl={formData.coverImage}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(url) => {
+          setFormData((current) => ({ ...current, coverImage: url }));
+          setIsMediaPickerOpen(false);
+        }}
+      />
     </form>
   );
 }

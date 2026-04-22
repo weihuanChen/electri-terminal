@@ -53,5 +53,6 @@ export const assetType = v.union(
   v.literal("datasheet"),
   v.literal("certificate"),
   v.literal("cad"),
-  v.literal("manual")
+  v.literal("manual"),
+  v.literal("image")
 );

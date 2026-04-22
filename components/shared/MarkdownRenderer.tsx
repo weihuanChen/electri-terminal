@@ -12,12 +12,12 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-function stripParaMarkers(markdown: string) {
-  return markdown.replace(/<!--\s*\/?PARA:[\s\S]*?-->/gi, "");
+function stripEditorMarkers(markdown: string) {
+  return markdown.replace(/<!--\s*\/?(?:PARA|FAQ):[\s\S]*?-->/gi, "");
 }
 
 export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
-  const normalizedContent = stripParaMarkers(content);
+  const normalizedContent = stripEditorMarkers(content);
 
   return (
     <div className={["markdown-body", className].filter(Boolean).join(" ")}>

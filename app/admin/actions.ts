@@ -925,7 +925,13 @@ export async function createAssetAction(formData: FormData) {
   await requireAdmin();
 
   const title = str(formData, "title");
-  const type = str(formData, "type") as "catalog" | "datasheet" | "certificate" | "cad" | "manual";
+  const type = str(formData, "type") as
+    | "catalog"
+    | "datasheet"
+    | "certificate"
+    | "cad"
+    | "manual"
+    | "image";
   const fileUrl = optionalStr(formData, "fileUrl");
   const objectKey = optionalStr(formData, "objectKey");
 
@@ -962,7 +968,13 @@ export async function updateAssetAction(formData: FormData) {
 
   const id = str(formData, "id") as Id<"assets">;
   const title = str(formData, "title");
-  const type = str(formData, "type") as "catalog" | "datasheet" | "certificate" | "cad" | "manual";
+  const type = str(formData, "type") as
+    | "catalog"
+    | "datasheet"
+    | "certificate"
+    | "cad"
+    | "manual"
+    | "image";
   const fileUrl = optionalStr(formData, "fileUrl");
   const objectKey = optionalStr(formData, "objectKey");
 

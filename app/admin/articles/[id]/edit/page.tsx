@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData, getArticle } from "@/lib/convex-admin";
+import { actionAdmin, loadAdminData, getArticle } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../../components/DashboardLayout";
 import { ArticleForm } from "../../../components/ArticleForm";
 import { notFound } from "next/navigation";
@@ -11,8 +11,21 @@ export default async function EditArticlePage({
 }) {
   await requireAdmin();
   const { id } = await params;
-  const article = await getArticle(id);
-  const { categories, families, products } = await loadAdminData();
+  const [article, adminData, r2Data] = await Promise.all([
+    getArticle(id),
+    loadAdminData(),
+    actionAdmin<{
+      items: Array<{
+        key: string;
+        size?: number;
+        lastModified?: string;
+      }>;
+    }>("actions/r2:listBucketObjects", {
+      pageSize: 500,
+      maxItems: 5000,
+    }).catch(() => ({ items: [] })),
+  ]);
+  const { categories, families, products, assets } = adminData;
 
   if (!article) {
     notFound();
@@ -30,6 +43,8 @@ export default async function EditArticlePage({
           categories={categories}
           families={families}
           products={products}
+          assets={assets}
+          r2Items={r2Data.items}
         />
       </div>
     </DashboardLayout>

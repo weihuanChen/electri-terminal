@@ -8,7 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { createAssetAction, deleteAssetAction, updateAssetAction } from "../actions";
 import { AdminImageField } from "./ui/AdminImageField";
 
-type AssetType = "catalog" | "datasheet" | "certificate" | "cad" | "manual";
+type AssetType = "catalog" | "datasheet" | "certificate" | "cad" | "manual" | "image";
 
 interface Asset {
   _id: string;
@@ -37,6 +37,7 @@ const assetTypeOptions: Array<{ value: AssetType; label: string }> = [
   { value: "certificate", label: "Certificate" },
   { value: "cad", label: "CAD" },
   { value: "manual", label: "Manual" },
+  { value: "image", label: "Image" },
 ];
 
 export function AssetForm({ asset }: AssetFormProps) {

@@ -1067,7 +1067,8 @@ export const listPublicResources = query({
         v.literal("datasheet"),
         v.literal("certificate"),
         v.literal("cad"),
-        v.literal("manual")
+        v.literal("manual"),
+        v.literal("image")
       )
     ),
     search: v.optional(v.string()),

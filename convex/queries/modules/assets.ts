@@ -18,7 +18,8 @@ export const listAssets = query({
         v.literal("datasheet"),
         v.literal("certificate"),
         v.literal("cad"),
-        v.literal("manual")
+        v.literal("manual"),
+        v.literal("image")
       )
     ),
     limit: v.optional(v.number()),
@@ -43,5 +44,45 @@ export const getAssetById = query({
     const asset = await ctx.db.get(args.id);
     if (!asset) return null;
     return await withResolvedUrl(asset);
+  },
+});
+
+export const listR2Metadata = query({
+  args: {
+    pageSize: v.optional(v.number()),
+    maxItems: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const pageSize = Math.min(Math.max(args.pageSize ?? 200, 1), 500);
+    const maxItems = Math.min(Math.max(args.maxItems ?? 2000, 1), 5000);
+
+    let cursor: string | null = null;
+    let isDone = false;
+    const items: Array<{
+      bucket: string;
+      key: string;
+      size?: number;
+      contentType?: string;
+      lastModified: string;
+      link: string;
+      bucketLink: string;
+      url: string;
+      sha256?: string;
+    }> = [];
+
+    while (!isDone && items.length < maxItems) {
+      const page = await r2.listMetadata(ctx, pageSize, cursor);
+      items.push(...page.page);
+      cursor = page.continueCursor ?? null;
+      isDone = page.isDone || !cursor;
+    }
+
+    items.sort((a, b) => a.key.localeCompare(b.key));
+
+    return {
+      items: items.slice(0, maxItems),
+      isTruncated: !isDone,
+      nextCursor: cursor,
+    };
   },
 });
