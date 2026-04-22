@@ -64,6 +64,163 @@ function getPrimaryMediaUrl(mediaItems) {
   return productMedia?.url;
 }
 
+function asNonEmptyString(value) {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function asStringArray(value) {
+  if (!Array.isArray(value)) return undefined;
+  const normalized = value
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean);
+  return normalized.length > 0 ? normalized : [];
+}
+
+function splitParagraphs(value) {
+  if (typeof value !== "string") return [];
+  return value
+    .split(/\n\s*\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function splitLines(value) {
+  if (typeof value !== "string") return [];
+  return value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function asPlainObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
+}
+
+function compactObject(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  const result = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (entry === null || entry === undefined) continue;
+    if (Array.isArray(entry)) {
+      result[key] = entry;
+      continue;
+    }
+    if (typeof entry === "object") {
+      const nested = compactObject(entry);
+      if (nested && Object.keys(nested).length > 0) {
+        result[key] = nested;
+      }
+      continue;
+    }
+    result[key] = entry;
+  }
+
+  return result;
+}
+
+function normalizeFamilyPageConfigInput(pageConfig) {
+  const normalized = asPlainObject(pageConfig);
+  if (!normalized) return undefined;
+
+  const content = asPlainObject(normalized.content) ?? {};
+  const overview = asPlainObject(content.overview) ?? {};
+  const features = asPlainObject(content.features) ?? {};
+  const applications = asPlainObject(content.applications) ?? {};
+  const selectionGuideValue = content.selectionGuide;
+  const selectionGuide =
+    selectionGuideValue && typeof selectionGuideValue === "object" && !Array.isArray(selectionGuideValue)
+      ? selectionGuideValue
+      : undefined;
+
+  return compactObject({
+    seo: {
+      metaTitle: asNonEmptyString(normalized.seo?.metaTitle),
+      metaDescription: asNonEmptyString(normalized.seo?.metaDescription),
+      canonicalUrl: asNonEmptyString(normalized.seo?.canonicalUrl),
+      noindex: normalized.seo?.noindex === true ? true : undefined,
+      ogImage: asNonEmptyString(normalized.seo?.ogImage),
+    },
+    content: {
+      heroIntro: asNonEmptyString(content.heroIntro),
+      overview: {
+        intro: asNonEmptyString(overview.intro),
+        details: asStringArray(overview.details) ?? splitParagraphs(content.overviewText),
+      },
+      features: {
+        intro: asNonEmptyString(features.intro) ?? asNonEmptyString(content.featuresIntro),
+        items: asStringArray(features.items) ?? asStringArray(content.featuresList) ?? [],
+      },
+      applications: {
+        intro:
+          asNonEmptyString(applications.intro) ?? asNonEmptyString(content.applicationsIntro),
+        items:
+          asStringArray(applications.items) ?? asStringArray(content.applicationsList) ?? [],
+      },
+      selectionGuide: {
+        intro:
+          selectionGuide
+            ? asNonEmptyString(selectionGuide.intro)
+            : asNonEmptyString(selectionGuideValue),
+        steps:
+          selectionGuide
+            ? asStringArray(selectionGuide.steps) ?? []
+            : splitLines(selectionGuideValue),
+      },
+      technicalNotes:
+        asStringArray(content.technicalNotes) ?? splitLines(content.technicalNote),
+    },
+    longform: {
+      markdown: asNonEmptyString(normalized.longform?.markdown),
+    },
+    conversion: {
+      ctaPrimaryLabel: asNonEmptyString(normalized.conversion?.ctaPrimaryLabel),
+      ctaPrimaryHref: asNonEmptyString(normalized.conversion?.ctaPrimaryHref),
+      ctaSecondaryLabel: asNonEmptyString(normalized.conversion?.ctaSecondaryLabel),
+      ctaSecondaryHref: asNonEmptyString(normalized.conversion?.ctaSecondaryHref),
+      downloadsMode: normalized.conversion?.downloadsMode === "manual" ? "manual" : "auto",
+      pinnedDownloadIds: Array.isArray(normalized.conversion?.pinnedDownloadIds)
+        ? normalized.conversion.pinnedDownloadIds
+        : [],
+    },
+    seoBoost: {
+      faqMode:
+        normalized.seoBoost?.faqMode === "embedded" || normalized.seoBoost?.faqMode === "mixed"
+          ? normalized.seoBoost.faqMode
+          : "relation",
+      embeddedFaqItems: Array.isArray(normalized.seoBoost?.embeddedFaqItems)
+        ? normalized.seoBoost.embeddedFaqItems
+            .map((item) => {
+              const question = asNonEmptyString(item?.question);
+              const answer = asNonEmptyString(item?.answer);
+              if (!question || !answer) return null;
+              return { question, answer };
+            })
+            .filter(Boolean)
+        : [],
+    },
+    display: {
+      showOverview: normalized.display?.showOverview !== false,
+      showFeatures: normalized.display?.showFeatures !== false,
+      showApplications: normalized.display?.showApplications !== false,
+      showSelectionGuide: normalized.display?.showSelectionGuide !== false,
+      showTechnicalNote: normalized.display?.showTechnicalNote !== false,
+      showLongform: normalized.display?.showLongform !== false,
+      showDownloads: normalized.display?.showDownloads !== false,
+      showFaq: normalized.display?.showFaq !== false,
+      showRelatedLinks: normalized.display?.showRelatedLinks !== false,
+      showBottomCta: normalized.display?.showBottomCta !== false,
+    },
+  });
+}
+
 loadEnvFile(ENV_FILE);
 
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -212,6 +369,7 @@ async function main() {
     if (!categoryId) {
       throw new Error(`Missing category for family: ${family.slug}`);
     }
+    const pageConfig = normalizeFamilyPageConfigInput(family.pageConfig);
     const id = await callMutation("mutations/admin/productFamilies:createProductFamily", {
       name: family.name,
       slug: family.slug,
@@ -229,6 +387,7 @@ async function main() {
       seoTitle: family.seoTitle,
       seoDescription: family.seoDescription,
       canonical: family.canonical,
+      ...(pageConfig ? { pageConfig } : {}),
     });
     familyIdBySlug.set(family.slug, id);
   }

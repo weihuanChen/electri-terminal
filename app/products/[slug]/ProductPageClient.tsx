@@ -379,9 +379,6 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                 Please include the item numbers and project requirements when contacting our team.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn btn-primary">
-                  Request Certificate Documents
-                </Link>
                 <Link href="/rfq" className="btn btn-secondary">
                   Submit RFQ with Item Numbers
                 </Link>

@@ -214,7 +214,7 @@ export default function SelectionGuidePage() {
 
       <section className="section border-y border-border bg-[#F6F8FB] dark:bg-slate-950">
         <div className="container with-sidebar">
-          <div className="sticky top-16 z-20 -mx-6 border-y border-border bg-white/95 px-6 py-3 backdrop-blur lg:hidden dark:bg-slate-950/95">
+          <div className="sticky top-16 z-20 min-w-0 -mx-6 border-y border-border bg-white/95 px-6 py-3 backdrop-blur lg:hidden dark:bg-slate-950/95">
             <div className="overflow-x-auto">
               <div className="flex min-w-max snap-x snap-mandatory gap-2 pr-6">
                 {sectionLinks.map((item) => (
@@ -230,8 +230,8 @@ export default function SelectionGuidePage() {
             </div>
           </div>
 
-          <article className="space-y-10 md:space-y-12">
-            <section id="section-a" className="scroll-mt-28 space-y-4 md:space-y-5">
+          <article className="min-w-0 space-y-10 md:space-y-12">
+            <section id="section-a" className="min-w-0 scroll-mt-28 space-y-4 md:space-y-5">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section A
@@ -263,15 +263,15 @@ export default function SelectionGuidePage() {
                           {row.code}
                         </span>
                       </div>
-                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
-                        <dt className="text-secondary">Insulation Code Ref</dt>
-                        <dd className="font-medium text-foreground">{row.insulationCode || "-"}</dd>
-                        <dt className="text-secondary">Wire Size Ref</dt>
-                        <dd className="font-medium text-foreground">{row.wireSizeRef || "-"}</dd>
-                        <dt className="text-secondary">Size Ref</dt>
-                        <dd className="font-medium text-foreground">{row.sizeRef || "-"}</dd>
-                        <dt className="text-secondary">Tongue Width Ref</dt>
-                        <dd className="font-medium text-foreground">{row.tongueWidthRef || "-"}</dd>
+                      <dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,120px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="break-words text-secondary">Insulation Code Ref</dt>
+                        <dd className="break-words font-medium text-foreground">{row.insulationCode || "-"}</dd>
+                        <dt className="break-words text-secondary">Wire Size Ref</dt>
+                        <dd className="break-words font-medium text-foreground">{row.wireSizeRef || "-"}</dd>
+                        <dt className="break-words text-secondary">Size Ref</dt>
+                        <dd className="break-words font-medium text-foreground">{row.sizeRef || "-"}</dd>
+                        <dt className="break-words text-secondary">Tongue Width Ref</dt>
+                        <dd className="break-words font-medium text-foreground">{row.tongueWidthRef || "-"}</dd>
                       </dl>
                     </article>
                   ))}
@@ -307,7 +307,7 @@ export default function SelectionGuidePage() {
               </div>
             </section>
 
-            <section id="section-b" className="scroll-mt-28 space-y-5 md:space-y-6">
+            <section id="section-b" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section B
@@ -337,11 +337,11 @@ export default function SelectionGuidePage() {
                           {row.code}
                         </span>
                       </div>
-                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
-                        <dt className="text-secondary">Insulation Material</dt>
-                        <dd className="font-medium text-foreground">{row.material}</dd>
-                        <dt className="text-secondary">Temperature Rating</dt>
-                        <dd className="font-medium text-foreground">{row.temperatureRating}</dd>
+                      <dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,120px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="break-words text-secondary">Insulation Material</dt>
+                        <dd className="break-words font-medium text-foreground">{row.material}</dd>
+                        <dt className="break-words text-secondary">Temperature Rating</dt>
+                        <dd className="break-words font-medium text-foreground">{row.temperatureRating}</dd>
                       </dl>
                     </article>
                   ))}
@@ -431,13 +431,13 @@ export default function SelectionGuidePage() {
                           AWG {row.awg}
                         </span>
                       </div>
-                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
-                        <dt className="text-secondary">Wire Size (mm2)</dt>
-                        <dd className="font-medium text-foreground">{row.wireSizeRangeMm2}</dd>
-                        <dt className="text-secondary">Max Current (A)</dt>
-                        <dd className="font-medium text-foreground">{row.maxCurrentA}</dd>
-                        <dt className="text-secondary">Notes</dt>
-                        <dd className="font-medium text-foreground">{row.notes || "-"}</dd>
+                      <dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,120px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="break-words text-secondary">Wire Size (mm2)</dt>
+                        <dd className="break-words font-medium text-foreground">{row.wireSizeRangeMm2}</dd>
+                        <dt className="break-words text-secondary">Max Current (A)</dt>
+                        <dd className="break-words font-medium text-foreground">{row.maxCurrentA}</dd>
+                        <dt className="break-words text-secondary">Notes</dt>
+                        <dd className="break-words font-medium text-foreground">{row.notes || "-"}</dd>
                       </dl>
                     </article>
                   ))}
@@ -471,7 +471,7 @@ export default function SelectionGuidePage() {
               </div>
             </section>
 
-            <section id="section-c" className="scroll-mt-28 space-y-5 md:space-y-6">
+            <section id="section-c" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section C
@@ -527,11 +527,11 @@ export default function SelectionGuidePage() {
                           {row.studSizeMm} mm
                         </span>
                       </div>
-                      <dl className="mt-3 grid grid-cols-[minmax(0,110px)_1fr] gap-x-3 gap-y-2 text-sm">
-                        <dt className="text-secondary">Hole Size (mm)</dt>
-                        <dd className="font-medium text-foreground">{row.holeSizeMm}</dd>
-                        <dt className="text-secondary">Hole Size (inch)</dt>
-                        <dd className="font-medium text-foreground">{row.holeSizeInch}</dd>
+                      <dl className="mt-3 grid min-w-0 grid-cols-[minmax(0,110px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="break-words text-secondary">Hole Size (mm)</dt>
+                        <dd className="break-words font-medium text-foreground">{row.holeSizeMm}</dd>
+                        <dt className="break-words text-secondary">Hole Size (inch)</dt>
+                        <dd className="break-words font-medium text-foreground">{row.holeSizeInch}</dd>
                       </dl>
                     </article>
                   ))}
