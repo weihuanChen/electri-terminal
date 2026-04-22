@@ -70,7 +70,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <JsonLd data={structuredData} />
-      <ArticlePageClient article={article} />
+      <ArticlePageClient article={article} slug={slug} />
     </>
   );
 }

@@ -190,6 +190,73 @@ function normalizePageConfig(pageConfig) {
   };
 }
 
+function normalizeCategoryPageConfig(pageConfig) {
+  const seo = pageConfig?.seo ?? {};
+  const content = pageConfig?.content ?? {};
+  const overview = content?.overview ?? {};
+  const applications = content?.applications ?? {};
+  const selectionGuide = content?.selectionGuide ?? {};
+  const seoBoost = pageConfig?.seoBoost ?? {};
+  const display = pageConfig?.display ?? {};
+
+  return {
+    seo: {
+      metaTitle: seo.metaTitle ?? null,
+      metaDescription: seo.metaDescription ?? null,
+      canonicalUrl: seo.canonicalUrl ?? null,
+      noindex: seo.noindex ?? false,
+      ogImage: seo.ogImage ?? null,
+    },
+    content: {
+      summary: content.summary ?? null,
+      heroIntro: content.heroIntro ?? null,
+      overview: {
+        intro: overview.intro ?? null,
+        keyPoints: stringArray(overview.keyPoints),
+      },
+      typesOverview: safeArray(content.typesOverview)
+        .map((item) => ({
+          name: item?.name ?? null,
+          description: item?.description ?? null,
+          link: item?.link ?? null,
+        }))
+        .filter((item) => item.name),
+      applications: {
+        intro: applications.intro ?? null,
+        items: stringArray(applications.items),
+      },
+      selectionGuide: {
+        intro: selectionGuide.intro ?? null,
+        steps: stringArray(selectionGuide.steps),
+      },
+      featuredFamilies: safeArray(content.featuredFamilies)
+        .map((item) => ({
+          familyId: item?.familyId ?? null,
+          name: item?.name ?? null,
+          description: item?.description ?? null,
+          image: item?.image ?? null,
+          link: item?.link ?? null,
+        }))
+        .filter((item) => item.name && item.link),
+    },
+    seoBoost: {
+      faqMode: seoBoost.faqMode ?? "relation",
+      embeddedFaqItems: safeArray(seoBoost.embeddedFaqItems),
+    },
+    display: {
+      showOverview: display.showOverview ?? true,
+      showTypesOverview: display.showTypesOverview ?? true,
+      showApplications: display.showApplications ?? true,
+      showSelectionGuide: display.showSelectionGuide ?? true,
+      showFeaturedFamilies: display.showFeaturedFamilies ?? true,
+      showFaq: display.showFaq ?? true,
+      showDownloads: display.showDownloads ?? true,
+      showBottomCta: display.showBottomCta ?? true,
+      collapsedFilterGroupKeys: stringArray(display.collapsedFilterGroupKeys),
+    },
+  };
+}
+
 function getFamilyWritableFields(pageConfig) {
   return {
     summary: null,
@@ -331,6 +398,8 @@ async function main() {
       summary: family.summary ?? null,
     }));
 
+    const normalizedCategoryPageConfig = normalizeCategoryPageConfig(category.pageConfig);
+
     return {
       _id: category._id,
       slug: category.slug,
@@ -352,6 +421,7 @@ async function main() {
       seoTitle: category.seoTitle ?? null,
       seoDescription: category.seoDescription ?? null,
       canonical: category.canonical ?? null,
+      pageConfig: normalizedCategoryPageConfig,
       templateKey: category.templateKey ?? null,
       familyCount: categoryFamilies.length,
       familySlugs: categoryFamilies.map((family) => family.slug),
@@ -425,12 +495,22 @@ async function main() {
         seoTitle: category.seoTitle,
         seoDescription: category.seoDescription,
         canonical: category.canonical,
+        pageConfig: category.pageConfig,
       },
       preferredOutputs: [
         "description",
         "shortDescription",
         "seoTitle",
         "seoDescription",
+        "pageConfig.content.summary",
+        "pageConfig.content.heroIntro",
+        "pageConfig.content.overview.intro",
+        "pageConfig.content.overview.keyPoints",
+        "pageConfig.content.typesOverview",
+        "pageConfig.content.applications.intro",
+        "pageConfig.content.applications.items",
+        "pageConfig.content.selectionGuide.intro",
+        "pageConfig.content.selectionGuide.steps",
       ],
     },
     notes: [
@@ -444,6 +524,7 @@ async function main() {
       seoTitle: category.seoTitle,
       seoDescription: category.seoDescription,
       canonical: category.canonical,
+      pageConfig: category.pageConfig,
     },
   }));
 

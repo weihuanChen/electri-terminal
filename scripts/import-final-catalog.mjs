@@ -221,6 +221,97 @@ function normalizeFamilyPageConfigInput(pageConfig) {
   });
 }
 
+function normalizeCategoryPageConfigInput(pageConfig) {
+  const normalized = asPlainObject(pageConfig);
+  if (!normalized) return undefined;
+
+  const content = asPlainObject(normalized.content) ?? {};
+  const overview = asPlainObject(content.overview) ?? {};
+  const applications = asPlainObject(content.applications) ?? {};
+  const selectionGuide = asPlainObject(content.selectionGuide) ?? {};
+
+  return compactObject({
+    seo: {
+      metaTitle: asNonEmptyString(normalized.seo?.metaTitle),
+      metaDescription: asNonEmptyString(normalized.seo?.metaDescription),
+      canonicalUrl: asNonEmptyString(normalized.seo?.canonicalUrl),
+      noindex: normalized.seo?.noindex === true ? true : undefined,
+      ogImage: asNonEmptyString(normalized.seo?.ogImage),
+    },
+    content: {
+      summary: asNonEmptyString(content.summary),
+      heroIntro: asNonEmptyString(content.heroIntro),
+      overview: {
+        intro: asNonEmptyString(overview.intro),
+        keyPoints: asStringArray(overview.keyPoints) ?? [],
+      },
+      typesOverview: Array.isArray(content.typesOverview)
+        ? content.typesOverview
+            .map((item) => {
+              const name = asNonEmptyString(item?.name);
+              if (!name) return null;
+              return compactObject({
+                name,
+                description: asNonEmptyString(item?.description),
+                link: asNonEmptyString(item?.link),
+              });
+            })
+            .filter(Boolean)
+        : [],
+      applications: {
+        intro: asNonEmptyString(applications.intro),
+        items: asStringArray(applications.items) ?? [],
+      },
+      selectionGuide: {
+        intro: asNonEmptyString(selectionGuide.intro),
+        steps: asStringArray(selectionGuide.steps) ?? [],
+      },
+      featuredFamilies: Array.isArray(content.featuredFamilies)
+        ? content.featuredFamilies
+            .map((item) => {
+              const name = asNonEmptyString(item?.name);
+              const link = asNonEmptyString(item?.link);
+              if (!name || !link) return null;
+              return compactObject({
+                name,
+                description: asNonEmptyString(item?.description),
+                image: asNonEmptyString(item?.image),
+                link,
+              });
+            })
+            .filter(Boolean)
+        : [],
+    },
+    seoBoost: {
+      faqMode:
+        normalized.seoBoost?.faqMode === "embedded" || normalized.seoBoost?.faqMode === "mixed"
+          ? normalized.seoBoost.faqMode
+          : "relation",
+      embeddedFaqItems: Array.isArray(normalized.seoBoost?.embeddedFaqItems)
+        ? normalized.seoBoost.embeddedFaqItems
+            .map((item) => {
+              const question = asNonEmptyString(item?.question);
+              const answer = asNonEmptyString(item?.answer);
+              if (!question || !answer) return null;
+              return { question, answer };
+            })
+            .filter(Boolean)
+        : [],
+    },
+    display: {
+      showOverview: normalized.display?.showOverview !== false,
+      showTypesOverview: normalized.display?.showTypesOverview !== false,
+      showApplications: normalized.display?.showApplications !== false,
+      showSelectionGuide: normalized.display?.showSelectionGuide !== false,
+      showFeaturedFamilies: normalized.display?.showFeaturedFamilies !== false,
+      showFaq: normalized.display?.showFaq !== false,
+      showDownloads: normalized.display?.showDownloads !== false,
+      showBottomCta: normalized.display?.showBottomCta !== false,
+      collapsedFilterGroupKeys: asStringArray(normalized.display?.collapsedFilterGroupKeys) ?? [],
+    },
+  });
+}
+
 loadEnvFile(ENV_FILE);
 
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -306,6 +397,7 @@ async function main() {
   const childCategories = categories.filter((category) => category.parentSlug);
 
   for (const category of topLevelCategories) {
+    const pageConfig = normalizeCategoryPageConfigInput(category.pageConfig);
     const id = await callMutation("mutations/admin/categories:createCategory", {
       name: category.name,
       slug: category.slug,
@@ -320,6 +412,7 @@ async function main() {
       seoDescription: category.seoDescription,
       canonical: category.canonical,
       isVisibleInNav: category.isVisibleInNav,
+      ...(pageConfig ? { pageConfig } : {}),
     });
     categoryIdBySlug.set(category.slug, id);
   }
@@ -329,6 +422,7 @@ async function main() {
     if (!parentId) {
       throw new Error(`Missing parent category: ${category.parentSlug}`);
     }
+    const pageConfig = normalizeCategoryPageConfigInput(category.pageConfig);
     const id = await callMutation("mutations/admin/categories:createCategory", {
       name: category.name,
       slug: category.slug,
@@ -344,6 +438,7 @@ async function main() {
       seoDescription: category.seoDescription,
       canonical: category.canonical,
       isVisibleInNav: category.isVisibleInNav,
+      ...(pageConfig ? { pageConfig } : {}),
     });
     categoryIdBySlug.set(category.slug, id);
   }

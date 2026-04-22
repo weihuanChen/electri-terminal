@@ -1,8 +1,9 @@
 import { Breadcrumb, ProductCard, CTABanner, MarkdownRenderer } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, User, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import { productUrl } from "@/lib/routes";
 import GithubSlugger from "github-slugger";
 
 interface RelatedProduct {
@@ -29,12 +30,35 @@ export interface ArticlePageData {
 
 interface ArticlePageClientProps {
   article: ArticlePageData;
+  slug: string;
 }
 
 interface TocItem {
   id: string;
   title: string;
   level: 2 | 3;
+}
+
+interface MarkdownSection {
+  headingTitle?: string;
+  headingId?: string;
+  content: string;
+}
+
+type SectionProductKey = "ring" | "spade" | "disconnect" | "insulation" | "wire-size";
+
+interface FallbackLink {
+  slug: string;
+  label: string;
+  mainImage: string;
+}
+
+interface SectionProductConfig {
+  headingTerms: string[];
+  productTerms: string[];
+  viewAllHref: string;
+  viewAllLabel: string;
+  fallbackProducts: FallbackLink[];
 }
 
 const FALLBACK_TOC_ITEMS: TocItem[] = [
@@ -44,12 +68,206 @@ const FALLBACK_TOC_ITEMS: TocItem[] = [
   { id: "conclusion", title: "Conclusion", level: 2 },
 ];
 
+const QUICK_JUMP_RULES: Array<{ label: string; terms: string[] }> = [
+  { label: "Ring", terms: ["ring terminal"] },
+  { label: "Spade", terms: ["spade", "fork terminal"] },
+  { label: "Disconnect", terms: ["disconnect", "slip-on"] },
+  { label: "Insulation", terms: ["insulation", "heat shrink", "nylon", "pvc"] },
+  { label: "Wire Size", terms: ["wire gauge", "wire size", "awg"] },
+];
+
+const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = {
+  ring: {
+    headingTerms: ["ring terminal"],
+    productTerms: ["ring terminal", "ring terminals", "rnb", "rv", "rny", "rve", "rhb"],
+    viewAllHref: "/categories/ring-terminals",
+    viewAllLabel: "View All Ring Terminals",
+    fallbackProducts: [
+      {
+        slug: "non-insulated-ring-terminals-g01",
+        label: "RNB Series Ring Terminals (RNB0.5-2 to RNB3.5-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+      },
+      {
+        slug: "non-insulated-ring-terminals-g02",
+        label: "RNB Series Ring Terminals (RNB5.5-10 to RNB8-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g02.webp",
+      },
+      {
+        slug: "90-degree-non-insulated-ring-terminals-g01",
+        label: "90D-RNB Ring Terminals (90D-RNB1.25-10 to 90D-RNB8-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-90-degree-non-insulated-ring-terminal-page-018-g01.webp",
+      },
+    ],
+  },
+  spade: {
+    headingTerms: ["spade", "fork terminal"],
+    productTerms: ["spade", "fork terminal", "sv", "snb"],
+    viewAllHref: "/categories/spade-terminals",
+    viewAllLabel: "View All Spade & Fork Terminals",
+    fallbackProducts: [
+      {
+        slug: "non-insulated-spade-terminals-g01",
+        label: "Non-Insulated Spade Terminals (RNB125-10 to RNB180-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-spade-terminal-rnb-g01.webp",
+      },
+      {
+        slug: "vinyl-insulated-spade-terminals-g01",
+        label: "Vinyl-Insulated Spade Terminals (SV0.5-2 to SV8-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+      },
+      {
+        slug: "nylon-insulated-spade-terminals-g01",
+        label: "Nylon-Insulated Spade Terminals (SNY1.25-3.2 to SNY8-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-nylon-insulated-ring-terminal-sny-g03-sny1-25-3-2.webp",
+      },
+    ],
+  },
+  disconnect: {
+    headingTerms: ["disconnect", "slip-on"],
+    productTerms: ["disconnect", "slip-on", "blade terminal", "quick disconnect"],
+    viewAllHref: "/categories/quick-disconnect-terminals",
+    viewAllLabel: "View All Quick Disconnect Terminals",
+    fallbackProducts: [
+      {
+        slug: "vinyl-insulated-female-quick-disconnects-g01",
+        label: "Vinyl-Insulated Female Quick Disconnects (FDV1.25-1105 to FDV5.5-375)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-vinyl-insulated-female-quick-disconnects-fdv-g01.webp",
+      },
+      {
+        slug: "nylon-insulated-female-quick-disconnects-g01",
+        label: "Nylon-Insulated Female Quick Disconnects (FDNY1.25-1105 to FDNY5.5-375)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+      },
+      {
+        slug: "fdh-heat-shrink-female-terminals-g01",
+        label: "FDH Heat Shrink Female Terminals (FDH1.25-1105 to FDH5.5-375)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+      },
+    ],
+  },
+  insulation: {
+    headingTerms: ["insulation", "heat shrink", "nylon", "pvc"],
+    productTerms: ["heat shrink", "nylon", "pvc", "insulated"],
+    viewAllHref: "/selection-guide",
+    viewAllLabel: "View Insulation Selection Guide",
+    fallbackProducts: [
+      {
+        slug: "vinyl-insulated-spade-terminals-g01",
+        label: "PVC Insulated Spade Terminals (SV0.5-2 to SV8-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-vinyl-insulated-ring-terminal-sv-g03-sv0-5-2.webp",
+      },
+      {
+        slug: "nylon-insulated-female-quick-disconnects-g01",
+        label: "Nylon Insulated Female Disconnects (FDNY1.25-1105 to FDNY5.5-375)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-nylon-insulated-female-quick-disconnects-fdny-g01.webp",
+      },
+      {
+        slug: "fdh-heat-shrink-female-terminals-g01",
+        label: "Heat Shrink Female Terminals (FDH1.25-1105 to FDH5.5-375)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-brass-fdh-heat-shrink-female-terminal-fdh-g01.webp",
+      },
+    ],
+  },
+  "wire-size": {
+    headingTerms: ["wire gauge", "wire size", "awg"],
+    productTerms: ["awg", "gauge", "wire size", "stud"],
+    viewAllHref: "/selection-guide",
+    viewAllLabel: "View Wire Size Matching Guide",
+    fallbackProducts: [
+      {
+        slug: "non-insulated-ring-terminals-g01",
+        label: "Small Gauge Range (RNB0.5-2 to RNB3.5-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g01-rnb0-5-2.webp",
+      },
+      {
+        slug: "non-insulated-ring-terminals-g03",
+        label: "Large Gauge Range (RNB14-10 to RNB60-8S)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-non-insulated-ring-terminal-rnb-g03-rnb14-10.webp",
+      },
+      {
+        slug: "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g01",
+        label: "Double Crimp Insulated Disconnects (RVD1.25-10 to RVD5.5-8)",
+        mainImage:
+          "https://assets.electriterminal.com/products/v3/webp/tinned-copper-double-crimp-vinyl-fully-insulated-female-quick-disconnects-rvd-g01.webp",
+      },
+    ],
+  },
+};
+
 function normalizeHeadingText(rawHeading: string) {
   return rawHeading
     .replace(/`([^`]+)`/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
     .replace(/[*_~]/g, "")
     .trim();
+}
+
+function hasAnyTerm(text: string, terms: string[]) {
+  const normalized = text.toLowerCase();
+  return terms.some((term) => normalized.includes(term));
+}
+
+function compactMarkdownParagraphs(content: string) {
+  const blocks = content.split(/\n{2,}/);
+  const compacted: string[] = [];
+
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) {
+      continue;
+    }
+
+    if (
+      /^(```|#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\|)/m.test(trimmed) ||
+      trimmed.includes("\n")
+    ) {
+      compacted.push(trimmed);
+      continue;
+    }
+
+    if (trimmed.length < 240) {
+      compacted.push(trimmed);
+      continue;
+    }
+
+    const sentences = trimmed.split(/(?<=[.!?])\s+/).filter(Boolean);
+    if (sentences.length < 3) {
+      compacted.push(trimmed);
+      continue;
+    }
+
+    let chunk = "";
+    for (const sentence of sentences) {
+      const candidate = chunk ? `${chunk} ${sentence}` : sentence;
+      if (candidate.length > 180) {
+        compacted.push(chunk || sentence);
+        chunk = chunk ? sentence : "";
+      } else {
+        chunk = candidate;
+      }
+    }
+
+    if (chunk) {
+      compacted.push(chunk);
+    }
+  }
+
+  return compacted.join("\n\n");
 }
 
 function extractMarkdownToc(content: string): TocItem[] {
@@ -89,7 +307,188 @@ function extractMarkdownToc(content: string): TocItem[] {
   return tocItems;
 }
 
-export default function ArticlePageClient({ article }: ArticlePageClientProps) {
+function splitMarkdownIntoSections(content: string): MarkdownSection[] {
+  const lines = content.split(/\r?\n/);
+  const slugger = new GithubSlugger();
+  const sections: MarkdownSection[] = [];
+  let currentLines: string[] = [];
+  let currentHeadingTitle: string | undefined;
+  let currentHeadingId: string | undefined;
+  let insideCodeFence = false;
+
+  const pushCurrentSection = () => {
+    const sectionContent = currentLines.join("\n").trim();
+    if (!sectionContent) {
+      return;
+    }
+
+    sections.push({
+      headingTitle: currentHeadingTitle,
+      headingId: currentHeadingId,
+      content: sectionContent,
+    });
+  };
+
+  for (const line of lines) {
+    if (/^\s*```/.test(line)) {
+      insideCodeFence = !insideCodeFence;
+      currentLines.push(line);
+      continue;
+    }
+
+    const headingMatch = !insideCodeFence ? /^(#{2,3})\s+(.+)$/.exec(line.trim()) : null;
+    if (headingMatch) {
+      pushCurrentSection();
+      currentLines = [line];
+      currentHeadingTitle = normalizeHeadingText(headingMatch[2]);
+      currentHeadingId = currentHeadingTitle ? slugger.slug(currentHeadingTitle) : undefined;
+      continue;
+    }
+
+    currentLines.push(line);
+  }
+
+  pushCurrentSection();
+  return sections;
+}
+
+function resolveQuickJumpItems(tocItems: TocItem[]) {
+  const quickItems = QUICK_JUMP_RULES.flatMap((rule) => {
+    const matched = tocItems.find((item) => hasAnyTerm(item.title, rule.terms));
+
+    if (!matched) {
+      return [];
+    }
+
+    return [{ label: rule.label, id: matched.id }];
+  });
+
+  if (quickItems.length > 0) {
+    return quickItems;
+  }
+
+  return tocItems
+    .slice(0, 5)
+    .map((item) => ({ label: item.title, id: item.id }));
+}
+
+function resolveSectionProductKey(headingTitle?: string): SectionProductKey | null {
+  if (!headingTitle) {
+    return null;
+  }
+
+  if (hasAnyTerm(headingTitle, SECTION_PRODUCT_CONFIG.ring.headingTerms)) {
+    return "ring";
+  }
+
+  if (hasAnyTerm(headingTitle, SECTION_PRODUCT_CONFIG.spade.headingTerms)) {
+    return "spade";
+  }
+
+  if (hasAnyTerm(headingTitle, SECTION_PRODUCT_CONFIG.disconnect.headingTerms)) {
+    return "disconnect";
+  }
+
+  if (hasAnyTerm(headingTitle, SECTION_PRODUCT_CONFIG.insulation.headingTerms)) {
+    return "insulation";
+  }
+
+  if (hasAnyTerm(headingTitle, SECTION_PRODUCT_CONFIG["wire-size"].headingTerms)) {
+    return "wire-size";
+  }
+
+  return null;
+}
+
+function matchProductsBySection(
+  products: RelatedProduct[],
+  sectionKey: SectionProductKey
+): RelatedProduct[] {
+  const terms = SECTION_PRODUCT_CONFIG[sectionKey].productTerms;
+  return products.filter((product) => {
+    const source = [product.title, product.shortTitle, product.summary].filter(Boolean).join(" ");
+    return hasAnyTerm(source, terms);
+  });
+}
+
+function InlineRelatedProducts({
+  sectionKey,
+  products,
+}: {
+  sectionKey: SectionProductKey;
+  products: RelatedProduct[];
+}) {
+  const config = SECTION_PRODUCT_CONFIG[sectionKey];
+  const topProducts = products.slice(0, 3);
+  const fallbackProducts = config.fallbackProducts
+    .filter((item) => !topProducts.some((product) => product.slug === item.slug))
+    .map((item, index) => ({
+      _id: `fallback-${sectionKey}-${index}`,
+      slug: item.slug,
+      title: item.label,
+      mainImage: item.mainImage,
+    }));
+  const displayProducts = [...topProducts, ...fallbackProducts].slice(0, 3);
+
+  return (
+    <div className="mt-5 rounded-sm border border-border bg-muted/40 p-4 sm:p-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
+        Related Products
+      </p>
+
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {displayProducts.map((product) => (
+          <Link
+            key={`${sectionKey}-${product.slug}`}
+            href={productUrl(product.slug)}
+            className="group overflow-hidden rounded-sm border border-border bg-white transition-colors hover:border-primary"
+          >
+            <div className="relative h-24 bg-muted">
+              {product.mainImage ? (
+                <Image
+                  src={product.mainImage}
+                  alt={product.shortTitle || product.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 260px"
+                  unoptimized={shouldBypassNextImageOptimization(product.mainImage)}
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-secondary">
+                    Product
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="px-3 py-3">
+              <p className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-primary line-clamp-2">
+                {product.shortTitle || product.title}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <Link
+        href={config.viewAllHref}
+        className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
+      >
+        {config.viewAllLabel}
+        <ArrowRight className="ml-1.5 h-4 w-4" />
+      </Link>
+    </div>
+  );
+}
+
+export default function ArticlePageClient({ article, slug }: ArticlePageClientProps) {
+  const isWireTerminalGuide = slug === "wire-terminal-types-guide";
+  const normalizedContent = article.content
+    ? isWireTerminalGuide
+      ? compactMarkdownParagraphs(article.content)
+      : article.content
+    : undefined;
+
   const breadcrumbItems = [
     { label: "Blog", href: "/blog" },
     { label: article.type, href: `/blog?type=${article.type}` },
@@ -104,9 +503,55 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
     });
   };
 
-  const tocItems = article.content
-    ? extractMarkdownToc(article.content)
-    : FALLBACK_TOC_ITEMS;
+  const tocItems = normalizedContent ? extractMarkdownToc(normalizedContent) : FALLBACK_TOC_ITEMS;
+  const quickJumpItems = isWireTerminalGuide ? resolveQuickJumpItems(tocItems) : [];
+  const ringJumpTarget = quickJumpItems.find((item) => item.label === "Ring");
+  const markdownSections = normalizedContent ? splitMarkdownIntoSections(normalizedContent) : [];
+  const summaryInsertIndex =
+    markdownSections.length > 3 ? Math.floor(markdownSections.length / 2) : 1;
+
+  const relatedProducts = article.relatedProducts ?? [];
+  const usedSectionKeys = new Set<SectionProductKey>();
+  const sectionRenderData = markdownSections.map((section) => {
+    if (!isWireTerminalGuide) {
+      return {
+        section,
+        sectionKey: null as SectionProductKey | null,
+        matchedProducts: [] as RelatedProduct[],
+      };
+    }
+
+    const sectionKey = resolveSectionProductKey(section.headingTitle);
+    if (!sectionKey || usedSectionKeys.has(sectionKey)) {
+      return {
+        section,
+        sectionKey: null as SectionProductKey | null,
+        matchedProducts: [] as RelatedProduct[],
+      };
+    }
+
+    usedSectionKeys.add(sectionKey);
+    return {
+      section,
+      sectionKey,
+      matchedProducts: matchProductsBySection(relatedProducts, sectionKey),
+    };
+  });
+  const eligibleProductSectionIndexes = sectionRenderData
+    .map((item, index) => (item.sectionKey ? index : -1))
+    .filter((index) => index >= 0);
+  const inlineProductInsertIndexes = (() => {
+    if (eligibleProductSectionIndexes.length <= 2) {
+      return new Set(eligibleProductSectionIndexes);
+    }
+
+    return new Set([
+      eligibleProductSectionIndexes[0],
+      eligibleProductSectionIndexes[eligibleProductSectionIndexes.length - 1],
+    ]);
+  })();
+
+  const showLegacyRelatedProducts = !isWireTerminalGuide && relatedProducts.length > 0;
 
   return (
     <>
@@ -116,10 +561,10 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
         </div>
       </div>
 
-      <section className="section">
+      <section className="section-compact border-y border-border bg-muted">
         <div className="container">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-5 flex flex-wrap items-center gap-3">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <Link
                 href="/blog"
                 className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary"
@@ -135,17 +580,48 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
               )}
             </div>
 
-            <h1 className="mb-5 text-3xl font-semibold leading-tight md:mb-6 md:text-5xl">
+            <h1 className="mb-4 text-3xl font-semibold leading-tight md:mb-5 md:text-5xl">
               {article.title}
             </h1>
 
-            {article.excerpt && (
-              <p className="mb-7 text-lg leading-8 text-secondary md:mb-8 md:text-xl">
-                {article.excerpt}
-              </p>
+            <p className="max-w-4xl text-base leading-7 text-secondary md:text-lg md:leading-8">
+              {isWireTerminalGuide
+                ? "Compare terminal types quickly, avoid selection mistakes, and match wire size and insulation with confidence."
+                : article.excerpt}
+            </p>
+
+            {isWireTerminalGuide && (
+              <>
+                <ul className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                    <span>Compare terminal types quickly</span>
+                  </li>
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                    <span>Avoid common selection mistakes</span>
+                  </li>
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                    <span>Match wire size and insulation correctly</span>
+                  </li>
+                </ul>
+
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href={ringJumpTarget ? `#${ringJumpTarget.id}` : "#article-content"}
+                    className="btn btn-primary btn-sm"
+                  >
+                    View Matching Products
+                  </Link>
+                  <Link href="/selection-guide" className="btn btn-secondary btn-sm">
+                    Selection Guide
+                  </Link>
+                </div>
+              </>
             )}
 
-            <div className="mb-8 grid gap-3 border-b border-border pb-7 text-sm text-secondary sm:grid-cols-3">
+            <div className="mt-6 grid gap-3 text-sm text-secondary sm:grid-cols-3">
               <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(article.publishedAt || article.createdAt)}</span>
@@ -161,7 +637,7 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
             </div>
 
             {article.coverImage && (
-              <div className="relative mb-10 h-56 overflow-hidden rounded-lg sm:h-72 md:mb-12 md:h-96">
+              <div className="relative mt-6 h-52 overflow-hidden rounded-sm border border-border sm:h-72 md:h-[21rem]">
                 <Image
                   src={article.coverImage}
                   alt={article.title}
@@ -176,32 +652,31 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
         </div>
       </section>
 
-      <section className="section pt-0">
-        <div className="container">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
-            {tocItems.length > 0 && (
-              <aside className="hidden lg:block lg:col-span-1">
-                <div className="sticky top-24">
-                  <h3 className="text-sm font-semibold mb-4">Table of Contents</h3>
-                  <nav className="space-y-2">
-                    {tocItems.map((item) => (
-                      <a
-                        key={item.id}
-                        href={`#${item.id}`}
-                        className={[
-                          "block text-sm text-secondary hover:text-primary transition-colors",
-                          item.level === 3 ? "pl-4" : "",
-                        ].join(" ")}
-                      >
-                        {item.title}
-                      </a>
-                    ))}
-                  </nav>
-                </div>
-              </aside>
-            )}
+      {isWireTerminalGuide && quickJumpItems.length > 0 && (
+        <section className="border-b border-border bg-white">
+          <div className="container py-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.1em] text-secondary">
+                Jump to:
+              </span>
+              {quickJumpItems.map((item) => (
+                <a
+                  key={`quick-${item.id}`}
+                  href={`#${item.id}`}
+                  className="rounded-full border border-border bg-muted px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-            <div className={tocItems.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
+      <section className="section pt-8">
+        <div className="container">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_18rem] xl:gap-10">
+            <div className="order-2 xl:order-1" id="article-content">
               {tocItems.length > 0 && (
                 <details className="card mb-6 overflow-hidden lg:hidden">
                   <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold">
@@ -225,8 +700,39 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
               )}
 
               <div className="max-w-none">
-                {article.content ? (
-                  <MarkdownRenderer content={article.content} className="article-markdown" />
+                {normalizedContent && sectionRenderData.length > 0 ? (
+                  <div className="space-y-8">
+                    {sectionRenderData.map(({ section, sectionKey, matchedProducts }, index) => (
+                      <div key={`${section.headingId || "section"}-${index}`}>
+                        <MarkdownRenderer content={section.content} className="article-markdown" />
+
+                        {isWireTerminalGuide && index === summaryInsertIndex && (
+                          <div className="mt-6 rounded-sm border border-primary/30 bg-primary/5 p-4 sm:p-5">
+                            <h3 className="text-lg font-semibold text-slate-900">
+                              How to Choose (Quick Guide)
+                            </h3>
+                            <ol className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
+                              <li>1. Match wire size</li>
+                              <li>2. Select terminal type</li>
+                              <li>3. Choose insulation</li>
+                              <li>4. Confirm stud size</li>
+                            </ol>
+                            <Link
+                              href="/selection-guide"
+                              className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
+                            >
+                              Go to Selection Tool (Selection Guide)
+                              <ArrowRight className="ml-1.5 h-4 w-4" />
+                            </Link>
+                          </div>
+                        )}
+
+                        {isWireTerminalGuide && sectionKey && inlineProductInsertIndexes.has(index) && (
+                          <InlineRelatedProducts sectionKey={sectionKey} products={matchedProducts} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="space-y-6 text-foreground leading-relaxed">
                     <p id="introduction">
@@ -262,16 +768,40 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
                 )}
               </div>
             </div>
+
+            {tocItems.length > 0 && (
+              <aside className="order-1 xl:order-2">
+                <div className="sticky top-24 rounded-sm border border-border bg-white p-4">
+                  <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.08em] text-secondary">
+                    On This Page
+                  </h3>
+                  <nav className="space-y-2 border-l border-border pl-3">
+                    {tocItems.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        className={[
+                          "block text-sm text-secondary transition-colors hover:text-primary",
+                          item.level === 3 ? "pl-3 text-[13px]" : "",
+                        ].join(" ")}
+                      >
+                        {item.title}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              </aside>
+            )}
           </div>
         </div>
       </section>
 
-      {article.relatedProducts && article.relatedProducts.length > 0 && (
+      {showLegacyRelatedProducts && (
         <section className="section bg-muted">
           <div className="container">
             <h2 className="text-3xl font-semibold mb-8">Related Products</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {article.relatedProducts.map((product) => (
+              {relatedProducts.map((product) => (
                 <ProductCard
                   key={product._id}
                   slug={product.slug}
@@ -286,41 +816,55 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
         </section>
       )}
 
-      <section className="section">
+      <section className="section pt-6">
         <div className="container">
-          <h2 className="text-3xl font-semibold mb-8">Related Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link href="/blog?type=guide" className="card group block">
-              <div className="p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold md:text-3xl">Related Articles</h2>
+            <Link href="/blog" className="text-sm font-semibold text-primary hover:text-primary-dark">
+              View all
+            </Link>
+          </div>
+          <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-2">
+            <Link
+              href="/blog?type=guide"
+              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+            >
+              <div>
                 <span className="text-xs font-semibold text-primary uppercase">Guide</span>
-                <h3 className="text-xl font-semibold mt-2 mb-3 group-hover:text-primary">
+                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
                   Technical Selection Guides
                 </h3>
-                <p className="text-sm text-secondary line-clamp-2">
+                <p className="mt-2 text-sm text-secondary line-clamp-2">
                   Browse published guide articles for model selection and sourcing workflows.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog?type=blog" className="card group block">
-              <div className="p-6">
+            <Link
+              href="/blog?type=blog"
+              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+            >
+              <div>
                 <span className="text-xs font-semibold text-primary uppercase">Blog</span>
-                <h3 className="text-xl font-semibold mt-2 mb-3 group-hover:text-primary">
+                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
                   Industry and Product Updates
                 </h3>
-                <p className="text-sm text-secondary line-clamp-2">
+                <p className="mt-2 text-sm text-secondary line-clamp-2">
                   Read recent updates and practical notes from production and application scenarios.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog?type=faq" className="card group block">
-              <div className="p-6">
+            <Link
+              href="/blog?type=faq"
+              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+            >
+              <div>
                 <span className="text-xs font-semibold text-primary uppercase">FAQ</span>
-                <h3 className="text-xl font-semibold mt-2 mb-3 group-hover:text-primary">
+                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
                   Common Technical Questions
                 </h3>
-                <p className="text-sm text-secondary line-clamp-2">
+                <p className="mt-2 text-sm text-secondary line-clamp-2">
                   Check FAQ posts for documentation, parameters, and inquiry preparation details.
                 </p>
               </div>
@@ -330,18 +874,17 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
       </section>
 
       <CTABanner
-        title="Have Questions?"
-        description="Our team is here to help you find the perfect solution for your needs."
+        title="Need Help Selecting the Right Terminal?"
+        description="Our team can recommend the exact model based on your application."
         primaryCTA={{
-          label: "Contact Us",
-          href: "/contact",
+          label: "Request Quote",
+          href: "/rfq",
         }}
         secondaryCTA={{
-          label: "Browse Products",
-          href: "/categories",
+          label: "Talk to Engineer",
+          href: "/contact",
         }}
       />
-
     </>
   );
 }

@@ -315,20 +315,37 @@ html {
 }
 
 .article-markdown {
-  font-size: clamp(1rem, 2.2vw, 1.08rem);
-  line-height: 1.85;
+  font-size: clamp(0.98rem, 2vw, 1.04rem);
+  line-height: 1.68;
+}
+
+.article-markdown > * + * {
+  margin-top: 0.9em;
 }
 
 .article-markdown p + p {
-  margin-top: 1.2em;
+  margin-top: 0.75em;
 }
 
 .article-markdown h2 {
-  font-size: clamp(1.45rem, 2.8vw, 1.95rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  margin-top: 1.35em;
+  margin-bottom: 0.45em;
 }
 
 .article-markdown h3 {
-  font-size: clamp(1.22rem, 2.3vw, 1.5rem);
+  font-size: clamp(1.15rem, 2vw, 1.35rem);
+  margin-top: 1.15em;
+  margin-bottom: 0.35em;
+}
+
+.article-markdown ul,
+.article-markdown ol {
+  padding-left: 1.3rem;
+}
+
+.article-markdown li + li {
+  margin-top: 0.3em;
 }
 
 .article-markdown img {
@@ -345,12 +362,12 @@ html {
 
 @media (max-width: 767px) {
   .article-markdown {
-    font-size: 1.03rem;
-    line-height: 1.9;
+    font-size: 1rem;
+    line-height: 1.72;
   }
 
   .article-markdown > * + * {
-    margin-top: 1.15em;
+    margin-top: 0.92em;
   }
 
   .article-markdown h2,

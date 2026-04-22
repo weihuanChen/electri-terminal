@@ -269,6 +269,158 @@ function LongformMarkdown({ markdown }: { markdown: string }) {
   );
 }
 
+function normalizeText(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function compactSentence(value: string | undefined, maxWords = 28) {
+  if (!value) return "";
+  const normalized = normalizeText(value);
+  if (!normalized) return "";
+
+  const firstSentence = normalized.split(/(?<=[.!?])\s+/)[0] || normalized;
+  const words = firstSentence.split(" ").filter(Boolean);
+  if (words.length <= maxWords) {
+    return firstSentence;
+  }
+  return `${words.slice(0, maxWords).join(" ")}...`;
+}
+
+function compactBullet(value: string) {
+  return normalizeText(value).replace(/^[•\-]\s*/, "").replace(/[.;]\s*$/, "");
+}
+
+function deriveQuickFacts(sourceLines: string[]) {
+  const sourceText = sourceLines.join(" ").toLowerCase();
+  const quickFacts: string[] = [];
+
+  if (sourceText.includes("wire-to-stud")) {
+    quickFacts.push("Wire-to-stud connection");
+  }
+  if (sourceText.includes("angled")) {
+    quickFacts.push("Angled routing support");
+  }
+  if (sourceText.includes("brazed") || sourceText.includes("seam")) {
+    quickFacts.push("Brazed seam structure");
+  }
+  if (sourceText.includes("copper")) {
+    quickFacts.push("Copper material");
+  }
+
+  for (const fallbackFact of [
+    "Wire-to-stud connection",
+    "Angled routing support",
+    "Brazed seam structure",
+    "Copper material",
+  ]) {
+    if (!quickFacts.includes(fallbackFact)) {
+      quickFacts.push(fallbackFact);
+    }
+  }
+
+  return quickFacts.slice(0, 4);
+}
+
+function deriveApplicationTags(items: string[]) {
+  const tags: string[] = [];
+
+  for (const item of items) {
+    const normalized = compactBullet(item);
+    const lower = normalized.toLowerCase();
+    let matched = false;
+
+    if (lower.includes("control panel")) {
+      tags.push("Control Panels");
+      matched = true;
+    }
+    if (lower.includes("industrial")) {
+      tags.push("Industrial Equipment");
+      matched = true;
+    }
+    if (lower.includes("electrical equipment") || lower.includes("electrical installation")) {
+      tags.push("Electrical Installations");
+      matched = true;
+    }
+    if (lower.includes("maintenance")) {
+      tags.push("Maintenance Access");
+      matched = true;
+    }
+
+    if (!matched && normalized) {
+      const compact = normalized
+        .split(/\b(where|requiring|for)\b/i)[0]
+        .trim()
+        .replace(/[;,]\s*$/, "");
+      if (compact) {
+        tags.push(compact);
+      }
+    }
+  }
+
+  return tags.filter((tag, index, array) => array.indexOf(tag) === index);
+}
+
+function getAttributeValue(
+  attributes: Record<string, unknown> | undefined,
+  keyTokens: string[]
+) {
+  if (!attributes) return undefined;
+
+  const entries = Object.entries(attributes);
+  for (const [key, rawValue] of entries) {
+    const lowerKey = key.toLowerCase();
+    const matched = keyTokens.some((token) => lowerKey === token || lowerKey.includes(token));
+    if (!matched) continue;
+
+    if (rawValue === undefined || rawValue === null) continue;
+    if (Array.isArray(rawValue)) {
+      const values = rawValue.map((item) => String(item).trim()).filter(Boolean);
+      if (values.length > 0) return values.join(", ");
+      continue;
+    }
+    if (typeof rawValue === "object") continue;
+
+    const text = String(rawValue).trim();
+    if (text) return text;
+  }
+
+  return undefined;
+}
+
+function resolveQuickSpecs({
+  sourceLines,
+  applicationTags,
+  attributes,
+}: {
+  sourceLines: string[];
+  applicationTags: string[];
+  attributes?: Record<string, unknown>;
+}) {
+  const sourceText = sourceLines.join(" ").toLowerCase();
+
+  const material =
+    getAttributeValue(attributes, ["material", "conductor"]) ||
+    (sourceText.includes("copper") ? "Copper" : "Copper");
+  const surface =
+    getAttributeValue(attributes, ["surface", "plating", "finish"]) ||
+    (sourceText.includes("tin") ? "Tin-plated" : "Refined matte finish");
+  const connection =
+    getAttributeValue(attributes, ["connection", "termination"]) ||
+    (sourceText.includes("crimp") ? "Crimp" : "Crimp");
+  const structure =
+    getAttributeValue(attributes, ["structure", "barrel", "seam", "angle"]) ||
+    (sourceText.includes("angled") ? "Angled barrel" : "Brazed seam barrel");
+  const application = sourceText.includes("wire-to-stud") ? "Wire-to-stud" : applicationTags[0] || "Wire-to-stud";
+
+  return [
+    { label: "Material", value: material },
+    { label: "Surface", value: surface },
+    { label: "Connection", value: connection },
+    { label: "Structure", value: structure },
+    { label: "Application", value: application },
+  ];
+}
+
 export default function FamilyPageClient({ family }: FamilyPageClientProps) {
   const breadcrumbItems = [
     { label: "Categories", href: "/categories" },
@@ -333,6 +485,57 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
       },
     },
   });
+  const overviewParagraphs = [overviewIntro, ...overviewDetails]
+    .map((paragraph) => normalizeText(paragraph || ""))
+    .filter(Boolean)
+    .slice(0, 2);
+  const compactFeatures = (showFeatures ? featuresList || [] : [])
+    .map((feature) => compactBullet(feature))
+    .filter(Boolean)
+    .slice(0, 6);
+  const applicationTags = deriveApplicationTags(showApplications ? applicationsList : []);
+  const compactSelectionSteps = (showSelectionGuide ? selectionGuideSteps : [])
+    .map((step) => compactBullet(step))
+    .filter(Boolean);
+  const compactTechnicalNotes = (showTechnicalNote ? technicalNotes : [])
+    .map((note) => compactBullet(note))
+    .filter(Boolean)
+    .slice(0, 5);
+  const fallbackSelectionSteps = [
+    "Match wire size (AWG/mm²)",
+    "Confirm stud size",
+    "Choose angle orientation",
+    "Verify material and dimensions",
+  ];
+  const selectionStepsForRender =
+    compactSelectionSteps.length > 0
+      ? compactSelectionSteps
+      : showSelectionGuide
+        ? fallbackSelectionSteps
+        : [];
+  const compactHeroIntro = compactSentence(
+    heroIntro || overviewParagraphs[0] || family.summary || "",
+    26
+  );
+  const quickFacts = deriveQuickFacts([
+    heroIntro || "",
+    ...overviewParagraphs,
+    ...compactFeatures,
+    ...compactTechnicalNotes,
+  ]);
+  const specSourceAttributes = family.products?.find(
+    (product) => product.attributes && Object.keys(product.attributes).length > 0
+  )?.attributes;
+  const quickSpecs = resolveQuickSpecs({
+    sourceLines: [heroIntro || "", ...overviewParagraphs, ...compactFeatures, ...compactTechnicalNotes],
+    applicationTags,
+    attributes: specSourceAttributes,
+  });
+  const hasOverviewAndFeatures =
+    (showOverview && overviewParagraphs.length > 0) || (showFeatures && compactFeatures.length > 0);
+  const hasSelectionAndTechnical =
+    (showSelectionGuide && (selectionGuideIntro || selectionStepsForRender.length > 0)) ||
+    (showTechnicalNote && compactTechnicalNotes.length > 0);
 
   return (
     <>
@@ -342,18 +545,18 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </div>
       </div>
 
-      <section className="section bg-muted border-y border-border">
+      <section className="section-compact bg-muted border-y border-border">
         <div className="container">
-          <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2 items-center">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-8">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
+            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Product Family
               </p>
-              <h1 className="mb-6 text-3xl font-semibold md:text-5xl">{family.name}</h1>
-              {heroIntro && (
-                <p className="text-lg text-secondary mb-6">{heroIntro}</p>
+              <h1 className="mb-4 text-3xl font-semibold md:text-4xl">{family.name}</h1>
+              {compactHeroIntro && (
+                <p className="mb-5 text-base text-secondary">{compactHeroIntro}</p>
               )}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3">
                 <Link href={primaryCTA.href} className="btn btn-primary">
                   {primaryCTA.label}
                 </Link>
@@ -364,7 +567,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
             </div>
 
             {heroImageUrl && (
-              <div className="relative h-72 overflow-hidden rounded-sm border border-border bg-white p-4 sm:h-96">
+              <div className="relative min-h-[260px] overflow-hidden rounded-sm border border-border bg-white p-4 sm:min-h-[320px]">
                 <Image
                   src={heroImageUrl}
                   alt={heroImageAlt}
@@ -375,77 +578,84 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
               </div>
             )}
           </div>
+
+          {quickFacts.length > 0 && (
+            <div className="mt-4 rounded-sm border border-border bg-white p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Quick Facts
+              </p>
+              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {quickFacts.map((fact) => (
+                  <li key={fact} className="flex items-center gap-2 text-sm text-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                    <span>{fact}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 
-      {showOverview && (overviewIntro || overviewDetails.length > 0) && (
-        <section className="section">
+      {hasOverviewAndFeatures && (
+        <section className="section-compact border-y border-border">
           <div className="container">
-            <div className="max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Overview
-              </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Series Overview</h2>
-              <div className="space-y-4">
-                {overviewIntro && (
-                  <p className="text-lg text-secondary whitespace-pre-line">{overviewIntro}</p>
+            <div className="grid gap-8 lg:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                  Overview
+                </p>
+                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Overview</h2>
+                <div className="space-y-4">
+                  {overviewParagraphs.map((paragraph, index) => (
+                    <p key={`${paragraph}-${index}`} className="text-secondary leading-7">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                  Key Features
+                </p>
+                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Key Features</h2>
+                {featuresIntro && (
+                  <p className="mb-4 text-sm text-secondary">{compactSentence(featuresIntro, 18)}</p>
                 )}
-                {overviewDetails.map((paragraph, index) => (
-                  <p key={`${paragraph}-${index}`} className="text-secondary whitespace-pre-line">
-                    {paragraph}
-                  </p>
-                ))}
+                <ul className="space-y-3">
+                  {compactFeatures.map((feature, index) => (
+                    <li key={`${feature}-${index}`} className="flex items-start gap-2 text-secondary">
+                      <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {showFeatures && featuresList && featuresList.length > 0 && (
-        <section className="section border-y border-border">
+      {showApplications && applicationTags.length > 0 && (
+        <section className="section-compact">
           <div className="container">
-            <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Feature Highlights
-            </p>
-            <h2 className="mb-8 text-center text-2xl font-semibold md:text-3xl">Key Features</h2>
-            {featuresIntro && (
-              <p className="mx-auto mb-6 max-w-3xl text-center text-secondary whitespace-pre-line">
-                {featuresIntro}
-              </p>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {featuresList.map((highlight, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    <CheckCircle2 className="h-6 w-6 text-primary mt-0.5" />
-                  </div>
-                  <p className="text-foreground">{highlight}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {showApplications && applicationsList.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="mx-auto max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Applications
               </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Applications</h2>
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Typical Applications</h2>
               {applicationsIntro && (
-                <p className="mb-6 text-secondary whitespace-pre-line">{applicationsIntro}</p>
+                <p className="mb-4 text-sm text-secondary">{compactSentence(applicationsIntro, 24)}</p>
               )}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {applicationsList.map((application, index) => (
-                  <div
+              <div className="flex flex-wrap gap-3">
+                {applicationTags.map((application, index) => (
+                  <span
                     key={`${application}-${index}`}
-                    className="rounded-sm border border-border bg-white px-4 py-3"
+                    className="inline-flex rounded-full border border-border bg-muted px-4 py-2 text-sm text-foreground"
                   >
                     {application}
-                  </div>
+                  </span>
                 ))}
               </div>
             </div>
@@ -453,48 +663,64 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </section>
       )}
 
-      {showSelectionGuide && (selectionGuideIntro || selectionGuideSteps.length > 0) && (
-        <section className="section bg-muted">
+      {quickSpecs.length > 0 && (
+        <section className="section-compact border-y border-border bg-muted">
           <div className="container">
-            <div className="max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Selection Guide
+            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Quick Specs
               </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Selection Guide</h2>
-              <div className="space-y-4">
-                {selectionGuideIntro && (
-                  <p className="text-secondary whitespace-pre-line">{selectionGuideIntro}</p>
-                )}
-                {selectionGuideSteps.length > 0 && (
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Quick Spec Summary</h2>
+              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {quickSpecs.map((spec) => (
+                  <div key={spec.label} className="rounded-sm border border-border bg-muted/60 p-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                      {spec.label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-medium text-foreground">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {hasSelectionAndTechnical && (
+        <section className="section-compact bg-muted">
+          <div className="container">
+            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Selection & Technical Guidance
+              </p>
+              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Selection & Technical Guidance</h2>
+              <div className="grid gap-8 lg:grid-cols-2">
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold">Selection Steps</h3>
+                  {selectionGuideIntro && (
+                    <p className="mb-4 text-sm text-secondary">{compactSentence(selectionGuideIntro, 24)}</p>
+                  )}
                   <ol className="space-y-3">
-                    {selectionGuideSteps.map((step, index) => (
+                    {selectionStepsForRender.map((step, index) => (
                       <li key={`${step}-${index}`} className="flex gap-3 text-secondary">
                         <span className="font-semibold text-foreground">{index + 1}.</span>
                         <span>{step}</span>
                       </li>
                     ))}
                   </ol>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+                </div>
 
-      {showTechnicalNote && technicalNotes.length > 0 && (
-        <section className="section border-y border-border">
-          <div className="container">
-            <div className="max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Technical Notes
-              </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Technical Notes</h2>
-              <div className="space-y-3">
-                {technicalNotes.map((note, index) => (
-                  <p key={`${note}-${index}`} className="text-secondary whitespace-pre-line">
-                    {note}
-                  </p>
-                ))}
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold">Technical Notes</h3>
+                  <ul className="space-y-3">
+                    {compactTechnicalNotes.map((note, index) => (
+                      <li key={`${note}-${index}`} className="flex gap-2 text-secondary">
+                        <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span>{note}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
