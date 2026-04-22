@@ -281,8 +281,12 @@ export function ArticleForm({
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={10}
               className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm font-mono text-xs"
-              placeholder="文章内容（支持 Markdown）"
+              placeholder="文章内容（支持 Markdown / 表格 / Mermaid 图表 / LaTeX 公式）"
             />
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              示例: 表格使用 GFM; 图表使用 <code className="mx-1">```mermaid</code>; 行内公式用
+              <code className="mx-1">$E=mc^2$</code>，块公式用 <code className="mx-1">$$...$$</code>。
+            </p>
           </div>
         </div>
       </div>

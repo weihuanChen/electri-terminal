@@ -14,3 +14,4 @@ export { default as ImagePreview } from "./ImagePreview";
 export { default as SKUTable } from "./SKUTable";
 export { default as ArticleCard } from "./ArticleCard";
 export { default as ResourceNav } from "./ResourceNav";
+export { default as MarkdownRenderer } from "./MarkdownRenderer";

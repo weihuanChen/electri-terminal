@@ -1,8 +1,9 @@
-import { Breadcrumb, ProductCard, CTABanner } from "@/components/shared";
+import { Breadcrumb, ProductCard, CTABanner, MarkdownRenderer } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, User, ArrowLeft } from "lucide-react";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import GithubSlugger from "github-slugger";
 
 interface RelatedProduct {
   _id: string;
@@ -30,6 +31,64 @@ interface ArticlePageClientProps {
   article: ArticlePageData;
 }
 
+interface TocItem {
+  id: string;
+  title: string;
+  level: 2 | 3;
+}
+
+const FALLBACK_TOC_ITEMS: TocItem[] = [
+  { id: "introduction", title: "Introduction", level: 2 },
+  { id: "key-features", title: "Key Features", level: 2 },
+  { id: "benefits", title: "Benefits", level: 2 },
+  { id: "conclusion", title: "Conclusion", level: 2 },
+];
+
+function normalizeHeadingText(rawHeading: string) {
+  return rawHeading
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_~]/g, "")
+    .trim();
+}
+
+function extractMarkdownToc(content: string): TocItem[] {
+  const lines = content.split(/\r?\n/);
+  const slugger = new GithubSlugger();
+  const tocItems: TocItem[] = [];
+  let insideCodeFence = false;
+
+  for (const line of lines) {
+    if (/^\s*```/.test(line)) {
+      insideCodeFence = !insideCodeFence;
+      continue;
+    }
+
+    if (insideCodeFence) {
+      continue;
+    }
+
+    const match = /^(#{2,3})\s+(.+)$/.exec(line.trim());
+    if (!match) {
+      continue;
+    }
+
+    const level = match[1].length as 2 | 3;
+    const title = normalizeHeadingText(match[2]);
+    if (!title) {
+      continue;
+    }
+
+    tocItems.push({
+      id: slugger.slug(title),
+      title,
+      level,
+    });
+  }
+
+  return tocItems;
+}
+
 export default function ArticlePageClient({ article }: ArticlePageClientProps) {
   const breadcrumbItems = [
     { label: "Blog", href: "/blog" },
@@ -45,12 +104,9 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
     });
   };
 
-  const tocItems = [
-    { id: "introduction", title: "Introduction", level: 2 },
-    { id: "key-features", title: "Key Features", level: 2 },
-    { id: "benefits", title: "Benefits", level: 2 },
-    { id: "conclusion", title: "Conclusion", level: 2 },
-  ];
+  const tocItems = article.content
+    ? extractMarkdownToc(article.content)
+    : FALLBACK_TOC_ITEMS;
 
   return (
     <>
@@ -116,29 +172,32 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
       <section className="section">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-            <aside className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-24">
-                <h3 className="text-sm font-semibold mb-4">Table of Contents</h3>
-                <nav className="space-y-2">
-                  {tocItems.map((item) => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      className="block text-sm text-secondary hover:text-primary transition-colors"
-                    >
-                      {item.title}
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </aside>
+            {tocItems.length > 0 && (
+              <aside className="hidden lg:block lg:col-span-1">
+                <div className="sticky top-24">
+                  <h3 className="text-sm font-semibold mb-4">Table of Contents</h3>
+                  <nav className="space-y-2">
+                    {tocItems.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        className={[
+                          "block text-sm text-secondary hover:text-primary transition-colors",
+                          item.level === 3 ? "pl-4" : "",
+                        ].join(" ")}
+                      >
+                        {item.title}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              </aside>
+            )}
 
-            <div className="lg:col-span-3">
-              <div className="prose prose-lg max-w-none">
+            <div className={tocItems.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
+              <div className="max-w-none">
                 {article.content ? (
-                  <div className="whitespace-pre-line text-foreground leading-relaxed">
-                    {article.content}
-                  </div>
+                  <MarkdownRenderer content={article.content} />
                 ) : (
                   <div className="space-y-6 text-foreground leading-relaxed">
                     <p id="introduction">
