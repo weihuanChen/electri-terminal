@@ -110,7 +110,7 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
 
   return (
     <>
-      <div className="bg-muted border-b border-border">
+      <div className="hidden border-b border-border bg-muted md:block">
         <div className="container">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -119,47 +119,54 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
       <section className="section">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Blog
-            </Link>
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Blog
+              </Link>
 
-            {article.type && (
-              <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4 uppercase">
-                {article.type}
-              </span>
-            )}
+              {article.type && (
+                <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase text-primary">
+                  {article.type}
+                </span>
+              )}
+            </div>
 
-            <h1 className="text-4xl md:text-5xl font-semibold mb-6">{article.title}</h1>
+            <h1 className="mb-5 text-3xl font-semibold leading-tight md:mb-6 md:text-5xl">
+              {article.title}
+            </h1>
 
             {article.excerpt && (
-              <p className="text-xl text-secondary mb-8">{article.excerpt}</p>
+              <p className="mb-7 text-lg leading-8 text-secondary md:mb-8 md:text-xl">
+                {article.excerpt}
+              </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-secondary mb-8 pb-8 border-b border-border">
-              <div className="flex items-center gap-2">
+            <div className="mb-8 grid gap-3 border-b border-border pb-7 text-sm text-secondary sm:grid-cols-3">
+              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(article.publishedAt || article.createdAt)}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
                 <Clock className="h-4 w-4" />
                 <span>5 min read</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
                 <User className="h-4 w-4" />
                 <span>Electri Terminal Team</span>
               </div>
             </div>
 
             {article.coverImage && (
-              <div className="relative h-96 rounded-lg overflow-hidden mb-12">
+              <div className="relative mb-10 h-56 overflow-hidden rounded-lg sm:h-72 md:mb-12 md:h-96">
                 <Image
                   src={article.coverImage}
                   alt={article.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 64rem"
                   unoptimized={shouldBypassNextImageOptimization(article.coverImage)}
                   className="object-cover"
                 />
@@ -169,9 +176,9 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section pt-0">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
             {tocItems.length > 0 && (
               <aside className="hidden lg:block lg:col-span-1">
                 <div className="sticky top-24">
@@ -195,9 +202,31 @@ export default function ArticlePageClient({ article }: ArticlePageClientProps) {
             )}
 
             <div className={tocItems.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
+              {tocItems.length > 0 && (
+                <details className="card mb-6 overflow-hidden lg:hidden">
+                  <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold">
+                    On This Page
+                  </summary>
+                  <nav className="space-y-1 border-t border-border px-4 py-3">
+                    {tocItems.map((item) => (
+                      <a
+                        key={`mobile-${item.id}`}
+                        href={`#${item.id}`}
+                        className={[
+                          "block text-sm text-secondary hover:text-primary",
+                          item.level === 3 ? "pl-3" : "",
+                        ].join(" ")}
+                      >
+                        {item.title}
+                      </a>
+                    ))}
+                  </nav>
+                </details>
+              )}
+
               <div className="max-w-none">
                 {article.content ? (
-                  <MarkdownRenderer content={article.content} />
+                  <MarkdownRenderer content={article.content} className="article-markdown" />
                 ) : (
                   <div className="space-y-6 text-foreground leading-relaxed">
                     <p id="introduction">

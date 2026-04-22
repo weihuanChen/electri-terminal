@@ -33,10 +33,33 @@ export default function VariantTable({
 
   return (
     <div className="card overflow-hidden">
-      <div className="overflow-x-auto">
-        <div className="border-b border-border bg-muted/70 px-6 py-3 text-xs text-secondary md:hidden">
-          Swipe left and right to view all columns.
+      <div className="divide-y divide-border md:hidden">
+        <div className="bg-muted/70 px-4 py-3 text-xs text-secondary">
+          Mobile view: expand each item to read full specification.
         </div>
+        {variants.map((variant, index) => (
+          <details key={variant._id} className="bg-white dark:bg-slate-900" open={index === 0}>
+            <summary className="cursor-pointer list-none px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-mono text-[13px] font-semibold text-foreground">{variant.itemNo}</span>
+                <span className="text-xs text-secondary">Tap to expand</span>
+              </div>
+            </summary>
+            <dl className="grid gap-2 border-t border-border px-4 py-3">
+              {fields.map((field) => (
+                <div key={`${variant._id}-${field.fieldKey}`} className="grid grid-cols-[120px_1fr] gap-2 text-sm">
+                  <dt className="text-secondary">{field.label}</dt>
+                  <dd className="font-medium text-foreground break-words">
+                    {formatAttributeValue(variant.attributes?.[field.fieldKey], field)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[860px]">
           <thead className="bg-muted border-b border-border">
             <tr>
@@ -73,7 +96,7 @@ export default function VariantTable({
         </table>
       </div>
 
-      <div className="px-6 py-4 border-t border-border bg-muted text-sm text-secondary">
+      <div className="border-t border-border bg-muted px-4 py-3 text-sm text-secondary md:px-6 md:py-4">
         Showing {variants.length} specification rows
       </div>
     </div>

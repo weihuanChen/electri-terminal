@@ -103,25 +103,25 @@ export default function SelectionGuidePage() {
         </div>
       </div>
 
-      <section className="border-b border-slate-800 bg-[#10151C] py-14 md:py-20">
+      <section className="border-b border-slate-800 bg-[#10151C] py-12 md:py-20">
         <div className="container">
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr]">
-            <div className="space-y-6">
+            <div className="space-y-5 md:space-y-6">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
                 Engineering Reference Guide
               </p>
-              <h1 className="text-4xl font-semibold leading-tight !text-white md:text-5xl">
+              <h1 className="text-3xl font-semibold leading-tight !text-white md:text-5xl">
                 Terminal Type, Insulation & Stud Size Guide
               </h1>
               <p className="max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
                 Match terminal type, insulation code, wire-size interval, and stud dimensions with
                 structured tables designed for engineering selection.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="#section-a" className="btn btn-primary">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link href="#section-a" className="btn btn-primary w-full justify-center sm:w-auto">
                   Start with Terminal Type
                 </Link>
-                <Link href="/contact" className="btn btn-hero-secondary">
+                <Link href="/contact" className="btn btn-hero-secondary w-full justify-center sm:w-auto">
                   Request Quote
                 </Link>
               </div>
@@ -214,14 +214,14 @@ export default function SelectionGuidePage() {
 
       <section className="section border-y border-border bg-[#F6F8FB] dark:bg-slate-950">
         <div className="container with-sidebar">
-          <div className="lg:hidden">
-            <div className="overflow-x-auto pb-2">
-              <div className="flex min-w-max gap-2">
+          <div className="sticky top-16 z-20 -mx-6 border-y border-border bg-white/95 px-6 py-3 backdrop-blur lg:hidden dark:bg-slate-950/95">
+            <div className="overflow-x-auto">
+              <div className="flex min-w-max snap-x snap-mandatory gap-2 pr-6">
                 {sectionLinks.map((item) => (
                   <a
                     key={`mobile-${item.href}`}
                     href={item.href}
-                    className="rounded-sm border border-border bg-white px-3 py-2 text-sm font-medium text-primary dark:border-slate-700 dark:bg-slate-900"
+                    className="snap-start whitespace-nowrap rounded-sm border border-border bg-white px-3 py-2 text-sm font-medium text-primary shadow-sm dark:border-slate-700 dark:bg-slate-900"
                   >
                     {item.title}
                   </a>
@@ -230,8 +230,8 @@ export default function SelectionGuidePage() {
             </div>
           </div>
 
-          <article className="space-y-12">
-            <section id="section-a" className="scroll-mt-28 space-y-5">
+          <article className="space-y-10 md:space-y-12">
+            <section id="section-a" className="scroll-mt-28 space-y-4 md:space-y-5">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section A
@@ -245,7 +245,40 @@ export default function SelectionGuidePage() {
                 </p>
               </header>
 
-              <div className="overflow-x-auto rounded-sm border border-border bg-white dark:bg-slate-900">
+              <div className="space-y-3 md:hidden">
+                <p className="rounded-sm border border-border bg-muted px-4 py-2 text-xs text-secondary">
+                  Mobile view: card layout for faster scanning.
+                </p>
+                <div className="space-y-3">
+                  {terminalTypeRows.map((row) => (
+                    <article
+                      key={`mobile-${row.terminalType}-${row.code}`}
+                      className="rounded-sm border border-border bg-white p-4 dark:bg-slate-900"
+                    >
+                      <div className="flex items-start justify-between gap-3 border-b border-border pb-3">
+                        <h3 className="text-sm font-semibold leading-5 text-foreground">
+                          {row.terminalType}
+                        </h3>
+                        <span className="shrink-0 rounded-sm bg-primary/10 px-2 py-1 text-xs font-semibold tracking-[0.08em] text-primary">
+                          {row.code}
+                        </span>
+                      </div>
+                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="text-secondary">Insulation Code Ref</dt>
+                        <dd className="font-medium text-foreground">{row.insulationCode || "-"}</dd>
+                        <dt className="text-secondary">Wire Size Ref</dt>
+                        <dd className="font-medium text-foreground">{row.wireSizeRef || "-"}</dd>
+                        <dt className="text-secondary">Size Ref</dt>
+                        <dd className="font-medium text-foreground">{row.sizeRef || "-"}</dd>
+                        <dt className="text-secondary">Tongue Width Ref</dt>
+                        <dd className="font-medium text-foreground">{row.tongueWidthRef || "-"}</dd>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hidden overflow-x-auto rounded-sm border border-border bg-white md:block dark:bg-slate-900">
                 <table className="technical-table min-w-[860px]">
                   <caption className="sr-only">Terminal type and code reference table</caption>
                   <thead>
@@ -274,7 +307,7 @@ export default function SelectionGuidePage() {
               </div>
             </section>
 
-            <section id="section-b" className="scroll-mt-28 space-y-6">
+            <section id="section-b" className="scroll-mt-28 space-y-5 md:space-y-6">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section B
@@ -288,7 +321,34 @@ export default function SelectionGuidePage() {
                 </p>
               </header>
 
-              <div className="overflow-x-auto rounded-sm border border-border bg-white dark:bg-slate-900">
+              <div className="space-y-3 md:hidden">
+                <p className="rounded-sm border border-border bg-muted px-4 py-2 text-xs text-secondary">
+                  Mobile view: card layout for faster scanning.
+                </p>
+                <div className="space-y-3">
+                  {insulationRows.map((row) => (
+                    <article
+                      key={`mobile-insulation-${row.code}`}
+                      className="rounded-sm border border-border bg-white p-4 dark:bg-slate-900"
+                    >
+                      <div className="flex items-start justify-between gap-3 border-b border-border pb-3">
+                        <h3 className="text-sm font-semibold leading-5 text-foreground">{row.crimpType}</h3>
+                        <span className="shrink-0 rounded-sm bg-primary/10 px-2 py-1 text-xs font-semibold tracking-[0.08em] text-primary">
+                          {row.code}
+                        </span>
+                      </div>
+                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="text-secondary">Insulation Material</dt>
+                        <dd className="font-medium text-foreground">{row.material}</dd>
+                        <dt className="text-secondary">Temperature Rating</dt>
+                        <dd className="font-medium text-foreground">{row.temperatureRating}</dd>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hidden overflow-x-auto rounded-sm border border-border bg-white md:block dark:bg-slate-900">
                 <table className="technical-table min-w-[760px]">
                   <caption className="sr-only">Insulation type reference table</caption>
                   <thead>
@@ -355,7 +415,36 @@ export default function SelectionGuidePage() {
                 table pending data review.
               </div>
 
-              <div className="overflow-x-auto rounded-sm border border-border bg-white dark:bg-slate-900">
+              <div className="space-y-3 md:hidden">
+                <p className="rounded-sm border border-border bg-muted px-4 py-2 text-xs text-secondary">
+                  Mobile view: card layout for faster scanning.
+                </p>
+                <div className="space-y-3">
+                  {colorWireRows.map((row, index) => (
+                    <article
+                      key={`mobile-${row.colorCode}-${row.wireSizeRangeMm2}-${row.awg}-${index}`}
+                      className="rounded-sm border border-border bg-white p-4 dark:bg-slate-900"
+                    >
+                      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+                        <h3 className="text-sm font-semibold text-foreground">{row.colorCode}</h3>
+                        <span className="shrink-0 rounded-sm bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                          AWG {row.awg}
+                        </span>
+                      </div>
+                      <dl className="mt-3 grid grid-cols-[minmax(0,130px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="text-secondary">Wire Size (mm2)</dt>
+                        <dd className="font-medium text-foreground">{row.wireSizeRangeMm2}</dd>
+                        <dt className="text-secondary">Max Current (A)</dt>
+                        <dd className="font-medium text-foreground">{row.maxCurrentA}</dd>
+                        <dt className="text-secondary">Notes</dt>
+                        <dd className="font-medium text-foreground">{row.notes || "-"}</dd>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hidden overflow-x-auto rounded-sm border border-border bg-white md:block dark:bg-slate-900">
                 <table className="technical-table min-w-[860px]">
                   <caption className="sr-only">Color code and wire range reference table</caption>
                   <thead>
@@ -382,7 +471,7 @@ export default function SelectionGuidePage() {
               </div>
             </section>
 
-            <section id="section-c" className="scroll-mt-28 space-y-6">
+            <section id="section-c" className="scroll-mt-28 space-y-5 md:space-y-6">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
                   Section C
@@ -396,8 +485,8 @@ export default function SelectionGuidePage() {
                 </p>
               </header>
 
-              <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-                <div className="rounded-sm border border-border bg-white p-5 dark:bg-slate-900">
+              <div className="grid gap-4 md:gap-6 lg:grid-cols-[1fr_1.1fr]">
+                <div className="rounded-sm border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
                   <h3 className="text-lg font-semibold">Stud and Hole Interpretation</h3>
                   <p className="mt-3 text-sm leading-6 text-secondary">
                     Stud size indicates the bolt or screw diameter. Hole size indicates the opening
@@ -422,7 +511,34 @@ export default function SelectionGuidePage() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-sm border border-border bg-white dark:bg-slate-900">
+              <div className="space-y-3 md:hidden">
+                <p className="rounded-sm border border-border bg-muted px-4 py-2 text-xs text-secondary">
+                  Mobile view: card layout for faster scanning.
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {studSizeRows.map((row) => (
+                    <article
+                      key={`mobile-stud-${row.studSizeInch}-${row.holeSizeInch}`}
+                      className="rounded-sm border border-border bg-white p-4 dark:bg-slate-900"
+                    >
+                      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+                        <h3 className="text-sm font-semibold text-foreground">{row.studSizeInch}</h3>
+                        <span className="shrink-0 rounded-sm bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                          {row.studSizeMm} mm
+                        </span>
+                      </div>
+                      <dl className="mt-3 grid grid-cols-[minmax(0,110px)_1fr] gap-x-3 gap-y-2 text-sm">
+                        <dt className="text-secondary">Hole Size (mm)</dt>
+                        <dd className="font-medium text-foreground">{row.holeSizeMm}</dd>
+                        <dt className="text-secondary">Hole Size (inch)</dt>
+                        <dd className="font-medium text-foreground">{row.holeSizeInch}</dd>
+                      </dl>
+                    </article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hidden overflow-x-auto rounded-sm border border-border bg-white md:block dark:bg-slate-900">
                 <table className="technical-table min-w-[760px]">
                   <caption className="sr-only">Stud size and hole size chart</caption>
                   <thead>

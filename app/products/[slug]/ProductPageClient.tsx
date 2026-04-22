@@ -180,12 +180,14 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
           variant.attributes?.[field.fieldKey] !== ""
       )
   );
+  const hasVariants = (product.variants || []).length > 0 && variantFields.length > 0;
+  const hasResources = showDownloads && (product.resources || []).length > 0;
 
   const mockRelatedProducts: RelatedProduct[] = [];
 
   return (
     <>
-      <div className="bg-muted border-b border-border">
+      <div className="hidden border-b border-border bg-muted md:block">
         <div className="container">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -194,7 +196,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       <section className="section bg-muted border-y border-border">
         <div className="container">
           <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
-            <div className="rounded-sm border border-border bg-white p-3 sm:p-4 md:p-5">
+            <div className="rounded-sm border border-border bg-white p-2 sm:p-4 md:p-5">
               <ImageGallery
                 images={visualMediaItems.map((item) => ({
                   url: item.url,
@@ -204,19 +206,19 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               />
             </div>
 
-            <div className="rounded-sm border border-border bg-white p-5 md:p-8">
+            <div className="rounded-sm border border-border bg-white p-4 md:p-8">
               {(product.skuCode || product.model) && (
-                <p className="mb-2 text-sm text-secondary">
+                <p className="mb-2 break-all text-xs text-secondary md:text-sm">
                   {product.skuCode || product.model}
                 </p>
               )}
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Product Detail
               </p>
-              <h1 className="mb-4 text-3xl font-semibold md:text-4xl">{heroTitle}</h1>
+              <h1 className="mb-4 text-2xl font-semibold leading-tight md:text-4xl">{heroTitle}</h1>
 
               {heroSummary && (
-                <p className="text-lg text-secondary mb-6">{heroSummary}</p>
+                <p className="mb-6 text-base leading-7 text-secondary md:text-lg">{heroSummary}</p>
               )}
 
               {product.attributes && Object.keys(product.attributes).length > 0 && (
@@ -226,7 +228,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     {Object.entries(product.attributes)
                       .slice(0, 4)
                       .map(([key, value]) => (
-                        <div key={key} className="text-sm">
+                        <div key={key} className="text-sm break-words">
                           <span className="text-secondary">
                             {key.replace(/_/g, " ")}:
                           </span>{" "}
@@ -247,7 +249,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                   <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-secondary">Features</h3>
                   <ul className="space-y-2">
                     {product.featureBullets.map((bullet, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm">
+                      <li key={index} className="flex items-start gap-2 text-sm leading-6">
                         <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                         <span>{bullet}</span>
                       </li>
@@ -256,28 +258,61 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-4">
-                <a href={primaryCTA.href} className="btn btn-primary">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a href={primaryCTA.href} className="btn btn-primary w-full justify-center sm:w-auto">
                   {primaryCTA.label}
                 </a>
                 {secondaryCTA && (
-                  <Link href={secondaryCTA.href} className="btn btn-secondary">
+                  <Link href={secondaryCTA.href} className="btn btn-secondary w-full justify-center sm:w-auto">
                     {secondaryCTA.label}
                   </Link>
                 )}
               </div>
 
               {product.packageInfo && (
-                <div className="mt-6 text-sm text-secondary">
+                <div className="mt-6 rounded-sm border border-border bg-muted px-3 py-2 text-sm text-secondary">
                   <strong>Packaging:</strong> {product.packageInfo}
                 </div>
               )}
             </div>
           </div>
+
+          <div className="mt-5 md:hidden">
+            <div className="overflow-x-auto pb-1">
+              <div className="flex min-w-max gap-2">
+                <a href="#technical-data" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  Specs
+                </a>
+                {hasVariants && (
+                  <a href="#variant-matrix" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    Variants
+                  </a>
+                )}
+                {hasResources && (
+                  <a href="#documentation" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    Docs
+                  </a>
+                )}
+                <a href="#compliance" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  Compliance
+                </a>
+                {showFaq && (
+                  <a href="#technical-faq" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    FAQ
+                  </a>
+                )}
+                {showInquiry && (
+                  <a href="#inquiry-form" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    Quote
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="section bg-muted">
+      <section id="technical-data" className="section scroll-mt-24 bg-muted">
         <div className="container">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
             Technical Data
@@ -287,8 +322,8 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </div>
       </section>
 
-      {(product.variants || []).length > 0 && (
-        <section className="section border-y border-border">
+      {hasVariants && (
+        <section id="variant-matrix" className="section scroll-mt-24 border-y border-border">
           <div className="container">
             <div className="max-w-7xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
@@ -304,8 +339,8 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </section>
       )}
 
-      {showDownloads && (
-        <section className="section bg-muted border-y border-border">
+      {hasResources && (
+        <section id="documentation" className="section scroll-mt-24 bg-muted border-y border-border">
           <div className="container">
             <div className="max-w-3xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
@@ -331,7 +366,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </section>
       )}
 
-      <section className="section">
+      <section id="compliance" className="section scroll-mt-24">
         <div className="container">
           <div className="max-w-4xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
@@ -357,7 +392,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       </section>
 
       {showFaq && (
-        <section className="section bg-muted border-y border-border">
+        <section id="technical-faq" className="section scroll-mt-24 bg-muted border-y border-border">
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">

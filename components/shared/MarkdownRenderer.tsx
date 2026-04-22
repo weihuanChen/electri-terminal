@@ -57,6 +57,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           table({ children }) {
             return (
               <div className="markdown-table-wrap">
+                <p className="markdown-table-hint">Swipe left and right to view full table.</p>
                 <table>{children}</table>
               </div>
             );
