@@ -431,7 +431,7 @@ function InlineRelatedProducts({
   const displayProducts = [...topProducts, ...fallbackProducts].slice(0, 3);
 
   return (
-    <div className="mt-5 rounded-sm border border-border bg-muted/40 p-4 sm:p-5">
+    <div className="mt-5 rounded-sm border border-border bg-muted p-4 sm:p-5">
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
         Related Products
       </p>
@@ -441,7 +441,7 @@ function InlineRelatedProducts({
           <Link
             key={`${sectionKey}-${product.slug}`}
             href={productUrl(product.slug)}
-            className="group overflow-hidden rounded-sm border border-border bg-white transition-colors hover:border-primary"
+            className="group overflow-hidden rounded-sm border border-border bg-background transition-colors hover:border-primary"
           >
             <div className="relative h-24 bg-muted">
               {product.mainImage ? (
@@ -462,7 +462,7 @@ function InlineRelatedProducts({
               )}
             </div>
             <div className="px-3 py-3">
-              <p className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-primary line-clamp-2">
+              <p className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
                 {product.shortTitle || product.title}
               </p>
             </div>
@@ -593,15 +593,15 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
             {isWireTerminalGuide && (
               <>
                 <ul className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Compare terminal types quickly</span>
                   </li>
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Avoid common selection mistakes</span>
                   </li>
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-white px-3 py-2 text-sm text-slate-800">
+                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Match wire size and insulation correctly</span>
                   </li>
@@ -707,11 +707,11 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                         <MarkdownRenderer content={section.content} className="article-markdown" />
 
                         {isWireTerminalGuide && index === summaryInsertIndex && (
-                          <div className="mt-6 rounded-sm border border-primary/30 bg-primary/5 p-4 sm:p-5">
-                            <h3 className="text-lg font-semibold text-slate-900">
+                          <div className="mt-6 rounded-sm border border-primary/40 bg-muted p-4 sm:p-5">
+                            <h3 className="text-lg font-semibold text-foreground">
                               How to Choose (Quick Guide)
                             </h3>
-                            <ol className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
+                            <ol className="mt-3 grid gap-2 text-sm text-secondary sm:grid-cols-2">
                               <li>1. Match wire size</li>
                               <li>2. Select terminal type</li>
                               <li>3. Choose insulation</li>

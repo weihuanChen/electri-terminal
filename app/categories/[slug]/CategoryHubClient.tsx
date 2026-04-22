@@ -380,9 +380,9 @@ export default function CategoryHubClient({
                   name={child.name}
                   slug={child.slug}
                   description={
-                    child.shortDescription ||
                     child.pageConfig?.content?.summary ||
                     child.pageConfig?.content?.heroIntro ||
+                    child.shortDescription ||
                     child.description ||
                     "View category details and available series."
                   }
