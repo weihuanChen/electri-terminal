@@ -1,4 +1,4 @@
-import { Breadcrumb, ProductCard, CTABanner, MarkdownRenderer } from "@/components/shared";
+import { Breadcrumb, CTABanner, MarkdownRenderer } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -481,6 +481,58 @@ function InlineRelatedProducts({
   );
 }
 
+function rankSectionKeysByArticle(article: ArticlePageData): SectionProductKey[] {
+  const sourceText = [article.title, article.excerpt, article.content, article.type]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const ranked = (Object.entries(SECTION_PRODUCT_CONFIG) as Array<
+    [SectionProductKey, SectionProductConfig]
+  >)
+    .map(([sectionKey, config]) => {
+      const keywordMatches = [...config.headingTerms, ...config.productTerms].reduce(
+        (count, term) => (sourceText.includes(term) ? count + 1 : count),
+        0
+      );
+      return { sectionKey, score: keywordMatches };
+    })
+    .sort((left, right) => right.score - left.score)
+    .map((item) => item.sectionKey);
+
+  if (ranked.length === 0) {
+    return ["ring", "spade"];
+  }
+
+  return ranked;
+}
+
+function buildFallbackRelatedProducts(article: ArticlePageData): RelatedProduct[] {
+  const resolvedSectionKeys = rankSectionKeysByArticle(article).slice(0, 2);
+
+  const dedupedProducts = new Map<string, RelatedProduct>();
+  for (const sectionKey of resolvedSectionKeys) {
+    for (const fallbackProduct of SECTION_PRODUCT_CONFIG[sectionKey].fallbackProducts) {
+      if (dedupedProducts.has(fallbackProduct.slug)) {
+        continue;
+      }
+
+      dedupedProducts.set(fallbackProduct.slug, {
+        _id: `fallback-${fallbackProduct.slug}`,
+        slug: fallbackProduct.slug,
+        title: fallbackProduct.label,
+        mainImage: fallbackProduct.mainImage,
+      });
+
+      if (dedupedProducts.size >= 4) {
+        return Array.from(dedupedProducts.values());
+      }
+    }
+  }
+
+  return Array.from(dedupedProducts.values());
+}
+
 export default function ArticlePageClient({ article, slug }: ArticlePageClientProps) {
   const isWireTerminalGuide = slug === "wire-terminal-types-guide";
   const normalizedContent = article.content
@@ -508,9 +560,37 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
   const ringJumpTarget = quickJumpItems.find((item) => item.label === "Ring");
   const markdownSections = normalizedContent ? splitMarkdownIntoSections(normalizedContent) : [];
   const summaryInsertIndex =
-    markdownSections.length > 3 ? Math.floor(markdownSections.length / 2) : 1;
+    markdownSections.length > 0 ? Math.floor((markdownSections.length - 1) / 2) : 0;
+  const firstRelatedInsertIndex =
+    markdownSections.length > 0 ? Math.floor((markdownSections.length - 1) * 0.25) : 0;
+  const secondRelatedInsertIndex =
+    markdownSections.length > 1
+      ? Math.min(
+          markdownSections.length - 1,
+          Math.max(
+            firstRelatedInsertIndex + 1,
+            Math.ceil((markdownSections.length - 1) * 0.75)
+          )
+        )
+      : firstRelatedInsertIndex;
 
   const relatedProducts = article.relatedProducts ?? [];
+  const fallbackRelatedProducts = buildFallbackRelatedProducts(article);
+  const resolvedLegacyRelatedProducts =
+    relatedProducts.length > 0 ? relatedProducts : fallbackRelatedProducts;
+  const rankedSectionKeys = rankSectionKeysByArticle(article);
+  const firstRelatedSectionKey: SectionProductKey = rankedSectionKeys[0] ?? "ring";
+  const secondRelatedSectionKey: SectionProductKey =
+    rankedSectionKeys.find((key) => key !== firstRelatedSectionKey) ??
+    (firstRelatedSectionKey === "ring" ? "spade" : "ring");
+  const firstRelatedProducts = matchProductsBySection(
+    resolvedLegacyRelatedProducts,
+    firstRelatedSectionKey
+  );
+  const secondRelatedProducts = matchProductsBySection(
+    resolvedLegacyRelatedProducts,
+    secondRelatedSectionKey
+  );
   const usedSectionKeys = new Set<SectionProductKey>();
   const sectionRenderData = markdownSections.map((section) => {
     if (!isWireTerminalGuide) {
@@ -534,7 +614,7 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
     return {
       section,
       sectionKey,
-      matchedProducts: matchProductsBySection(relatedProducts, sectionKey),
+      matchedProducts: matchProductsBySection(resolvedLegacyRelatedProducts, sectionKey),
     };
   });
   const eligibleProductSectionIndexes = sectionRenderData
@@ -550,8 +630,6 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
       eligibleProductSectionIndexes[eligibleProductSectionIndexes.length - 1],
     ]);
   })();
-
-  const showLegacyRelatedProducts = !isWireTerminalGuide && relatedProducts.length > 0;
 
   return (
     <>
@@ -706,7 +784,7 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                       <div key={`${section.headingId || "section"}-${index}`}>
                         <MarkdownRenderer content={section.content} className="article-markdown" />
 
-                        {isWireTerminalGuide && index === summaryInsertIndex && (
+                        {index === summaryInsertIndex && (
                           <div className="mt-6 rounded-sm border border-primary/40 bg-muted p-4 sm:p-5">
                             <h3 className="text-lg font-semibold text-foreground">
                               How to Choose (Quick Guide)
@@ -730,6 +808,20 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                         {isWireTerminalGuide && sectionKey && inlineProductInsertIndexes.has(index) && (
                           <InlineRelatedProducts sectionKey={sectionKey} products={matchedProducts} />
                         )}
+
+                        {!isWireTerminalGuide && index === firstRelatedInsertIndex && (
+                          <InlineRelatedProducts
+                            sectionKey={firstRelatedSectionKey}
+                            products={firstRelatedProducts}
+                          />
+                        )}
+
+                        {!isWireTerminalGuide && index === secondRelatedInsertIndex && (
+                          <InlineRelatedProducts
+                            sectionKey={secondRelatedSectionKey}
+                            products={secondRelatedProducts}
+                          />
+                        )}
                       </div>
                     ))}
                   </div>
@@ -740,6 +832,13 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                       we&apos;ll explore the key aspects, features, and benefits that you need to know.
                     </p>
 
+                    {!isWireTerminalGuide && (
+                      <InlineRelatedProducts
+                        sectionKey={firstRelatedSectionKey}
+                        products={firstRelatedProducts}
+                      />
+                    )}
+
                     <h2 id="key-features" className="text-2xl font-semibold mt-8 mb-4">
                       Key Features
                     </h2>
@@ -748,6 +847,25 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                       Here are the main characteristics that set this solution apart.
                     </p>
 
+                    <div className="mt-6 rounded-sm border border-primary/40 bg-muted p-4 sm:p-5">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        How to Choose (Quick Guide)
+                      </h3>
+                      <ol className="mt-3 grid gap-2 text-sm text-secondary sm:grid-cols-2">
+                        <li>1. Match wire size</li>
+                        <li>2. Select terminal type</li>
+                        <li>3. Choose insulation</li>
+                        <li>4. Confirm stud size</li>
+                      </ol>
+                      <Link
+                        href="/selection-guide"
+                        className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
+                      >
+                        Go to Selection Tool (Selection Guide)
+                        <ArrowRight className="ml-1.5 h-4 w-4" />
+                      </Link>
+                    </div>
+
                     <h2 id="benefits" className="text-2xl font-semibold mt-8 mb-4">
                       Benefits
                     </h2>
@@ -755,6 +873,13 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
                       Implementing this solution offers numerous advantages for your operations.
                       From improved efficiency to cost savings, the benefits are substantial.
                     </p>
+
+                    {!isWireTerminalGuide && (
+                      <InlineRelatedProducts
+                        sectionKey={secondRelatedSectionKey}
+                        products={secondRelatedProducts}
+                      />
+                    )}
 
                     <h2 id="conclusion" className="text-2xl font-semibold mt-8 mb-4">
                       Conclusion
@@ -795,26 +920,6 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
           </div>
         </div>
       </section>
-
-      {showLegacyRelatedProducts && (
-        <section className="section bg-muted">
-          <div className="container">
-            <h2 className="text-3xl font-semibold mb-8">Related Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  slug={product.slug}
-                  title={product.title}
-                  shortTitle={product.shortTitle}
-                  mainImage={product.mainImage}
-                  summary={product.summary}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <section className="section pt-6">
         <div className="container">
