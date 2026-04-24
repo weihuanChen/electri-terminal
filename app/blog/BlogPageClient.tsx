@@ -19,6 +19,7 @@ type BlogArticle = {
   coverImage?: string;
   content?: string;
   tagNames?: string[];
+  featured?: boolean;
   type: ArticleType;
   publishedAt?: number;
   updatedAt?: number;
@@ -54,12 +55,16 @@ export type BlogPageClientProps = {
 };
 
 function formatUpdatedDate(article: BlogArticle) {
-  const date = article.updatedAt ?? article.publishedAt ?? article.createdAt;
+  const date = getArticleTimestamp(article);
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   }).format(new Date(date));
+}
+
+function getArticleTimestamp(article: BlogArticle) {
+  return article.updatedAt ?? article.publishedAt ?? article.createdAt;
 }
 
 function getReadTime(article: BlogArticle) {
@@ -230,6 +235,7 @@ export default function BlogPageClient({
   const liveArticles = useQuery(api.frontend.listLatestArticles, { limit: 24 });
   const articles = liveArticles ?? initialArticles;
   const isArticlesLoading = articles === undefined;
+  const articleList = (articles ?? []) as BlogArticle[];
 
   const syncUrlParams = (nextType: ArticleType | null, nextQuery: string) => {
     const params = new URLSearchParams(window.location.search);
@@ -262,7 +268,7 @@ export default function BlogPageClient({
   };
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredArticles = (articles ?? []).filter((article) => {
+  const filteredArticles = articleList.filter((article) => {
     if (selectedType && article.type !== selectedType) return false;
     if (!normalizedQuery) return true;
 
@@ -279,7 +285,15 @@ export default function BlogPageClient({
     return haystack.includes(normalizedQuery);
   });
 
-  const featuredArticles = filteredArticles.slice(0, 3);
+  const sortedFilteredArticles = [...filteredArticles].sort(
+    (left, right) => getArticleTimestamp(right) - getArticleTimestamp(left)
+  );
+  const featuredFirstArticles = sortedFilteredArticles.filter((article) => article.featured);
+  const nonFeaturedArticles = sortedFilteredArticles.filter((article) => !article.featured);
+  const featuredArticles =
+    featuredFirstArticles.length > 0
+      ? [...featuredFirstArticles, ...nonFeaturedArticles].slice(0, 3)
+      : sortedFilteredArticles.slice(0, 3);
   const featuredSideArticles = featuredArticles.slice(1);
   const breadcrumbItems = [{ label: "Blog", href: "/blog" }];
 
@@ -391,7 +405,7 @@ export default function BlogPageClient({
         <div className="container">
           {isArticlesLoading ? (
             <div className="py-14 text-center text-slate-500 dark:text-slate-400">Loading articles...</div>
-          ) : filteredArticles.length === 0 ? (
+          ) : sortedFilteredArticles.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 py-14 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400">
               No articles found. Try another keyword or filter.
             </div>
@@ -425,12 +439,12 @@ export default function BlogPageClient({
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">All Articles</h3>
                 <span className="text-xs font-medium uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
-                  {filteredArticles.length} results
+                  {sortedFilteredArticles.length} results
                 </span>
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredArticles.map((article) => (
+                {sortedFilteredArticles.map((article) => (
                   <DenseArticleCard key={article._id} article={article} />
                 ))}
               </div>

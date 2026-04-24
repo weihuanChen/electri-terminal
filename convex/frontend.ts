@@ -703,13 +703,15 @@ export const listLatestArticles = query({
       .withIndex("by_status_publishedAt", (q) =>
         q.eq("status", "published")
       )
-      .take(limit);
+      .collect();
 
-    return articles.sort((a, b) => {
-      const aTime = a.publishedAt ?? a.createdAt;
-      const bTime = b.publishedAt ?? b.createdAt;
-      return bTime - aTime;
-    }).slice(0, limit);
+    return articles
+      .sort((a, b) => {
+        const aTime = a.publishedAt ?? a.createdAt;
+        const bTime = b.publishedAt ?? b.createdAt;
+        return bTime - aTime;
+      })
+      .slice(0, limit);
   },
 });
 

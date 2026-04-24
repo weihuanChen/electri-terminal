@@ -20,6 +20,7 @@ export const createArticle = mutation({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    featured: v.optional(v.boolean()),
     status: v.optional(statusCommon),
     publishedAt: v.optional(v.number()),
     seoTitle: v.optional(v.string()),
@@ -53,6 +54,7 @@ export const updateArticle = mutation({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    featured: v.optional(v.boolean()),
     status: v.optional(statusCommon),
     publishedAt: v.optional(v.number()),
     seoTitle: v.optional(v.string()),
@@ -87,6 +89,7 @@ export const updateArticle = mutation({
         ...(args.relatedProductIds !== undefined
           ? { relatedProductIds: args.relatedProductIds }
           : {}),
+        ...(args.featured !== undefined ? { featured: args.featured } : {}),
         ...(args.status !== undefined ? { status: args.status } : {}),
         ...(args.publishedAt !== undefined ? { publishedAt: args.publishedAt } : {}),
         ...(args.seoTitle !== undefined ? { seoTitle: args.seoTitle } : {}),

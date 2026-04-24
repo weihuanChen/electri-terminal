@@ -24,6 +24,7 @@ interface Article {
   relatedCategoryIds?: string[];
   relatedFamilyIds?: string[];
   relatedProductIds?: string[];
+  featured?: boolean;
   status: "draft" | "published" | "archived";
   publishedAt?: number;
   seoTitle?: string;
@@ -109,6 +110,7 @@ export function ArticleForm({
     relatedCategoryIds: article?.relatedCategoryIds || [],
     relatedFamilyIds: article?.relatedFamilyIds || [],
     relatedProductIds: article?.relatedProductIds || [],
+    featured: article?.featured || false,
     status: article?.status || "draft",
     publishedAt: article?.publishedAt || 0,
     seoTitle: article?.seoTitle || "",
@@ -209,6 +211,7 @@ export function ArticleForm({
 
       // Status
       formDataToSend.append("status", formData.status);
+      formDataToSend.append("featured", formData.featured ? "true" : "false");
 
       // Published at
       if (formData.publishedAt > 0) {
@@ -337,6 +340,18 @@ export function ArticleForm({
               <option value="published">已发布</option>
               <option value="archived">已归档</option>
             </select>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <input
+                type="checkbox"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                className="rounded border-zinc-300 dark:border-zinc-700"
+              />
+              <span>是否推荐文章（Featured）</span>
+            </label>
           </div>
         </div>
       </div>

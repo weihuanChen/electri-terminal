@@ -349,6 +349,7 @@ export default defineSchema({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    featured: v.optional(v.boolean()),
     status: statusCommon,
     publishedAt: v.optional(v.number()),
     seoTitle: v.optional(v.string()),
