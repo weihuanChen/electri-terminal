@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "electri-terminal.vercel.app",
+          },
+        ],
+        destination: "https://electriterminal.com/:path*",
+        permanent: true,
+      },
+      {
         source: "/series/:slug",
         destination: "/families/:slug",
         permanent: true,
