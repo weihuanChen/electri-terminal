@@ -1,3 +1,4 @@
+import { Children, isValidElement } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -29,30 +30,30 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           [rehypeAutolinkHeadings, { behavior: "wrap" }],
         ]}
         components={{
-          code({ className: codeClassName, children, inline, ...props }) {
-            const rawCode = String(children).replace(/\n$/, "");
-            const languageMatch = /language-([a-z0-9-]+)/i.exec(codeClassName || "");
-            const language = languageMatch?.[1]?.toLowerCase();
-
-            if (inline) {
-              return (
-                <code className={codeClassName} {...props}>
-                  {children}
-                </code>
-              );
-            }
-
-            if (language === "mermaid") {
-              return <MermaidChart chart={rawCode} />;
-            }
-
+          code({ className: codeClassName, children, ...props }) {
             return (
-              <pre>
-                <code className={codeClassName} {...props}>
-                  {rawCode}
-                </code>
-              </pre>
+              <code className={codeClassName} {...props}>
+                {children}
+              </code>
             );
+          },
+          pre({ children }) {
+            const firstChild = Children.toArray(children)[0];
+            if (isValidElement(firstChild) && firstChild.type === "code") {
+              const codeProps = firstChild.props as {
+                className?: string;
+                children?: unknown;
+              };
+              const rawCode = String(codeProps.children ?? "").replace(/\n$/, "");
+              const languageMatch = /language-([a-z0-9-]+)/i.exec(codeProps.className || "");
+              const language = languageMatch?.[1]?.toLowerCase();
+
+              if (language === "mermaid") {
+                return <MermaidChart chart={rawCode} />;
+              }
+            }
+
+            return <pre>{children}</pre>;
           },
           table({ children }) {
             return (

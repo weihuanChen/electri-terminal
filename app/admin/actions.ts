@@ -61,6 +61,38 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "unknown_error";
 }
 
+async function mutationWithExtraFieldFallback(
+  client: ReturnType<typeof getAdminConvexClient>,
+  name: string,
+  args: Record<string, unknown>
+) {
+  let currentArgs: Record<string, unknown> = { ...args };
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      await client.mutation(name, currentArgs);
+      return;
+    } catch (error: unknown) {
+      const message = errorMessage(error);
+      const extraFieldMatch = message.match(/extra field [`'"]([^`'"]+)[`'"]/i);
+      if (!extraFieldMatch) {
+        throw error;
+      }
+
+      const extraField = extraFieldMatch[1];
+      if (!(extraField in currentArgs)) {
+        throw error;
+      }
+
+      const rest = { ...currentArgs };
+      delete rest[extraField];
+      currentArgs = rest;
+    }
+  }
+
+  throw new Error("mutation_extra_field_retry_exhausted");
+}
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -243,12 +275,12 @@ export async function createArticleAction(formData: FormData) {
   const slug = str(formData, "slug");
 
   if (!type || !title || !slug) {
-    redirect("/admin?error=article_required_fields_missing");
+    throw new Error("required_fields_missing");
   }
 
   try {
     const client = getAdminConvexClient();
-    await client.mutation("mutations/admin/articles:createArticle", {
+    await mutationWithExtraFieldFallback(client, "mutations/admin/articles:createArticle", {
       type,
       title,
       slug,
@@ -260,7 +292,6 @@ export async function createArticleAction(formData: FormData) {
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
-      featured: boolFromForm(formData, "featured"),
       status: (str(formData, "status") as "draft" | "published" | "archived") || "draft",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
       seoTitle: optionalStr(formData, "seoTitle"),
@@ -269,9 +300,9 @@ export async function createArticleAction(formData: FormData) {
     });
 
     revalidatePath("/admin");
-    redirect("/admin?success=article_created");
-  } catch {
-    redirect("/admin?error=article_create_failed");
+    revalidatePath("/admin/articles");
+  } catch (error: unknown) {
+    throw new Error(errorMessage(error));
   }
 }
 
@@ -616,12 +647,12 @@ export async function updateArticleAction(formData: FormData) {
   const slug = str(formData, "slug");
 
   if (!id || !type || !title || !slug) {
-    redirect("/admin/articles?error=required_fields_missing");
+    throw new Error("required_fields_missing");
   }
 
   try {
     const client = getAdminConvexClient();
-    await client.mutation("mutations/admin/articles:updateArticle", {
+    await mutationWithExtraFieldFallback(client, "mutations/admin/articles:updateArticle", {
       id,
       type,
       title,
@@ -634,7 +665,6 @@ export async function updateArticleAction(formData: FormData) {
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
-      featured: boolFromForm(formData, "featured"),
       status: str(formData, "status") as "draft" | "published" | "archived",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
       seoTitle: optionalStr(formData, "seoTitle"),
@@ -643,9 +673,9 @@ export async function updateArticleAction(formData: FormData) {
     });
 
     revalidatePath("/admin/articles");
-    redirect("/admin/articles?success=article_updated");
+    revalidatePath("/admin");
   } catch (error: unknown) {
-    redirect(`/admin/articles?error=${encodeURIComponent(errorMessage(error))}`);
+    throw new Error(errorMessage(error));
   }
 }
 
