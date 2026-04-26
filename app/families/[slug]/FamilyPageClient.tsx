@@ -442,6 +442,11 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     { key: "packaging", title: "Packaging" },
     { key: "application", title: "Application Images" },
   ] as const;
+  const certificationSupportItems = [
+    "UL / cULus certified models available",
+    "Test reports and certificates can be provided",
+    "Custom certification support for bulk orders",
+  ];
   const {
     heroIntro,
     overviewIntro,
@@ -685,6 +690,25 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
           </div>
         </section>
       )}
+
+      <section className="section-compact">
+        <div className="container">
+          <div className="max-w-3xl rounded-sm border border-border bg-white p-5 md:p-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+              Certification
+            </p>
+            <h2 className="mb-4 text-xl font-semibold md:text-2xl">Certification Support</h2>
+            <ul className="space-y-3">
+              {certificationSupportItems.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-secondary">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {hasSelectionAndTechnical && (
         <section className="section-compact bg-muted">

@@ -39,7 +39,7 @@ export default function HomeFAQSection({
     {
       question: "Do you provide certifications like UL?",
       answer:
-        "Certifications such as UL or CE can be provided for selected models based on project requirements.",
+        "We offer products manufactured by partner factories with certifications such as UL, cULus, and CE. Certified models are available for specific product series. Please contact us to confirm certification details for your application.",
     },
   ],
 }: HomeFAQSectionProps) {
