@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, isValidElement } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -35,6 +35,28 @@ function parseNumericDimension(value: string | number | undefined): number | nul
   return null;
 }
 
+function isWhitespaceTextNode(node: ReactNode) {
+  return typeof node === "string" && node.trim().length === 0;
+}
+
+function isMarkdownImageElement(node: ReactNode): boolean {
+  if (!isValidElement(node)) {
+    return false;
+  }
+
+  const props = node.props as { children?: ReactNode; "data-markdown-image"?: boolean };
+  if (props["data-markdown-image"] === true) {
+    return true;
+  }
+
+  if (node.type === "a") {
+    const childNodes = Children.toArray(props.children).filter((child) => !isWhitespaceTextNode(child));
+    return childNodes.length > 0 && childNodes.every((child) => isMarkdownImageElement(child));
+  }
+
+  return false;
+}
+
 export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
   const normalizedContent = stripEditorMarkers(content);
 
@@ -48,6 +70,17 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           [rehypeAutolinkHeadings, { behavior: "wrap" }],
         ]}
         components={{
+          p({ children }) {
+            const childNodes = Children.toArray(children).filter((child) => !isWhitespaceTextNode(child));
+            const onlyImageNodes =
+              childNodes.length > 0 && childNodes.every((child) => isMarkdownImageElement(child));
+
+            if (onlyImageNodes) {
+              return <>{children}</>;
+            }
+
+            return <p>{children}</p>;
+          },
           code({ className: codeClassName, children, ...props }) {
             return (
               <code className={codeClassName} {...props}>
@@ -108,7 +141,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
                 : "16 / 10";
 
             return (
-              <figure className="my-5">
+              <figure className="my-5" data-markdown-image>
                 <div
                   className="relative w-full overflow-hidden rounded-sm border border-border bg-background-muted/70"
                   style={{ aspectRatio }}
