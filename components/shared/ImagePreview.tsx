@@ -112,7 +112,7 @@ export default function ImagePreview({
                 className="object-contain"
               />
 
-              <div className="pointer-events-none absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 rounded-sm border border-white/25 bg-black/55 px-2.5 py-1.5 text-center text-[11px] font-medium text-white/90 md:hidden">
+              <div className="pointer-events-none absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 rounded-sm border border-white/25 bg-black/55 px-2.5 py-1.5 text-center text-[11px] font-medium text-white/90 md:hidden [@media(orientation:landscape)]:hidden">
                 <Smartphone className="h-3.5 w-3.5" />
                 Rotate to landscape for detailed diagrams
               </div>

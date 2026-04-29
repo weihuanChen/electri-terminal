@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import JsonLd from "@/components/seo/JsonLd";
-import { Breadcrumb, FAQAccordion } from "@/components/shared";
+import { Breadcrumb, FAQAccordion, ImagePreview } from "@/components/shared";
 import { makeBreadcrumbSchema, makeCollectionPageSchema, makeFAQPageSchema } from "@/lib/schema";
 import {
   colorWireRows,
@@ -28,6 +28,11 @@ const sectionLinks = [
     description: "Confirm insulation style and stable wire ranges.",
   },
   { href: "#section-c", title: "Stud Size", description: "Match stud and hole dimensions." },
+  {
+    href: "#section-d",
+    title: "AWG + mm2 Guide",
+    description: "Compare cable diameters and convert AWG to mm2.",
+  },
 ] as const;
 
 const quickLogic = [
@@ -305,6 +310,18 @@ export default function SelectionGuidePage() {
                   </tbody>
                 </table>
               </div>
+
+              <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
+                  <ImagePreview
+                    src="https://assets.electriterminal.com/system/wire-terminal-types-overview-main.webp"
+                    alt="Wire terminal types, uses & identification guide"
+                    sizes="(min-width: 768px) 860px, 100vw"
+                    className="object-contain bg-white dark:bg-slate-900"
+                    previewLabel="View Large"
+                  />
+                </div>
+              </figure>
             </section>
 
             <section id="section-b" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
@@ -469,6 +486,18 @@ export default function SelectionGuidePage() {
                   </tbody>
                 </table>
               </div>
+
+              <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
+                  <ImagePreview
+                    src="https://assets.electriterminal.com/system/wire-terminal-color-code-awg-chart-main.webp"
+                    alt="Wire terminal color code and size selection guide"
+                    sizes="(min-width: 768px) 860px, 100vw"
+                    className="object-contain bg-white dark:bg-slate-900"
+                    previewLabel="View Large"
+                  />
+                </div>
+              </figure>
             </section>
 
             <section id="section-c" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
@@ -560,6 +589,77 @@ export default function SelectionGuidePage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
+                  <ImagePreview
+                    src="https://assets.electriterminal.com/system/ring-terminal-stud-size-chart-main.webp"
+                    alt="Ring terminal stud size matching chart for different terminal types and screw sizes"
+                    sizes="(min-width: 768px) 860px, 100vw"
+                    className="object-contain bg-white dark:bg-slate-900"
+                    previewLabel="View Large"
+                  />
+                </div>
+              </figure>
+            </section>
+
+            <section id="section-d" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
+              <header className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                  Section D
+                </p>
+                <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl dark:text-slate-100">
+                  AWG and mm2 Conversion Guide
+                </h2>
+                <p className="text-sm leading-6 text-secondary md:text-base">
+                  Use these two reference charts to compare conductor cross-sections and convert
+                  between AWG and mm2 sizes during cable and terminal selection.
+                </p>
+              </header>
+
+              <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+                <article className="space-y-3 rounded-sm border border-border bg-white p-4 dark:bg-slate-900">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Cable Cross-Section Comparison
+                  </h3>
+                  <p className="text-sm leading-6 text-secondary">
+                    Visual overview of common cable diameters and cross-sectional differences for
+                    practical size comparison before final wire selection.
+                  </p>
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm border border-border bg-white dark:bg-slate-900">
+                    <ImagePreview
+                      src="https://assets.electriterminal.com/system/awg-wire-gauge-size-comparison-main.webp"
+                      alt="Cable wire diameter and cross-section comparison with size reference table"
+                      sizes="(max-width: 1024px) 100vw, 48vw"
+                      className="object-contain bg-white dark:bg-slate-900"
+                      previewLabel="View Large"
+                    />
+                  </div>
+                </article>
+
+                <article className="space-y-3 rounded-sm border border-border bg-white p-4 dark:bg-slate-900">
+                  <h3 className="text-lg font-semibold text-foreground">AWG to mm2 Conversion</h3>
+                  <p className="text-sm leading-6 text-secondary">
+                    Quick conversion chart for AWG and mm2 sizing, used to align US gauge notation
+                    with metric wire specifications.
+                  </p>
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm border border-border bg-white dark:bg-slate-900">
+                    <ImagePreview
+                      src="https://assets.electriterminal.com/system/awg-to-mm2-conversion-chart-main.webp"
+                      alt="AWG to mm2 wire size conversion chart"
+                      sizes="(max-width: 1024px) 100vw, 48vw"
+                      className="object-contain bg-white dark:bg-slate-900"
+                      previewLabel="View Large"
+                    />
+                  </div>
+                </article>
+              </div>
+
+              <div className="rounded-sm border border-border bg-muted p-4 text-sm text-secondary">
+                Use guide logic: first compare physical cable cross-section, then map to AWG/mm2
+                equivalent values, and finally validate current rating and application standards in
+                your project specification.
               </div>
             </section>
 
