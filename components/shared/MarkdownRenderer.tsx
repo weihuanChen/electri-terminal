@@ -1,3 +1,5 @@
+"use client";
+
 import { Children, isValidElement } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,6 +9,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 import MermaidChart from "./MermaidChart";
+import ImagePreview from "./ImagePreview";
 
 interface MarkdownRendererProps {
   content: string;
@@ -15,6 +18,21 @@ interface MarkdownRendererProps {
 
 function stripEditorMarkers(markdown: string) {
   return markdown.replace(/<!--\s*\/?(?:PARA|FAQ):[\s\S]*?-->/gi, "");
+}
+
+function parseNumericDimension(value: string | number | undefined): number | null {
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return null;
 }
 
 export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
@@ -74,6 +92,37 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
               >
                 {children}
               </a>
+            );
+          },
+          img({ src, alt, width, height }) {
+            if (!src) {
+              return null;
+            }
+
+            const resolvedAlt = alt?.trim() || "Article image";
+            const imageWidth = parseNumericDimension(width);
+            const imageHeight = parseNumericDimension(height);
+            const aspectRatio =
+              imageWidth && imageHeight
+                ? `${imageWidth} / ${imageHeight}`
+                : "16 / 10";
+
+            return (
+              <figure className="my-5">
+                <div
+                  className="relative w-full overflow-hidden rounded-sm border border-border bg-background-muted/70"
+                  style={{ aspectRatio }}
+                >
+                  <ImagePreview
+                    src={src}
+                    alt={resolvedAlt}
+                    sizes="(max-width: 768px) 100vw, 840px"
+                    loading="lazy"
+                    className="object-contain"
+                    previewLabel="View Large"
+                  />
+                </div>
+              </figure>
             );
           },
         }}

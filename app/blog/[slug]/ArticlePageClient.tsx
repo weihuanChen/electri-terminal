@@ -1,4 +1,4 @@
-import { Breadcrumb, CTABanner, MarkdownRenderer } from "@/components/shared";
+import { Breadcrumb, CTABanner, ImagePreview, MarkdownRenderer } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -735,12 +735,10 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
 
             {article.coverImage && (
               <div className="relative mt-6 h-52 overflow-hidden rounded-sm border border-border sm:h-72 md:h-[21rem]">
-                <Image
+                <ImagePreview
                   src={article.coverImage}
                   alt={article.title}
-                  fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 64rem"
-                  unoptimized={shouldBypassNextImageOptimization(article.coverImage)}
                   className="object-cover"
                 />
               </div>

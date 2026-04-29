@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Search, X } from "lucide-react";
+import { Search, Smartphone, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
 
@@ -83,7 +83,7 @@ export default function ImagePreview({
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 p-4 md:p-8"
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 p-2 sm:p-4 md:p-8"
             role="dialog"
             aria-modal="true"
             aria-label={`Image preview: ${alt}`}
@@ -93,13 +93,13 @@ export default function ImagePreview({
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close preview"
-              className="tap-target absolute right-4 top-4 rounded-sm border border-white/30 bg-black/50 p-2 text-white hover:bg-black/70"
+              className="tap-target absolute right-3 top-3 z-10 rounded-sm border border-white/30 bg-black/50 p-2 text-white hover:bg-black/70 sm:right-4 sm:top-4"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div
-              className="relative h-full max-h-[88vh] w-full max-w-6xl overflow-hidden rounded-sm border border-white/20 bg-black"
+              className="relative h-full w-full overflow-hidden rounded-sm border border-white/20 bg-black md:max-h-[88vh] md:max-w-6xl"
               onClick={(event) => event.stopPropagation()}
             >
               <Image
@@ -111,6 +111,11 @@ export default function ImagePreview({
                 unoptimized={shouldUnoptimize}
                 className="object-contain"
               />
+
+              <div className="pointer-events-none absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 rounded-sm border border-white/25 bg-black/55 px-2.5 py-1.5 text-center text-[11px] font-medium text-white/90 md:hidden">
+                <Smartphone className="h-3.5 w-3.5" />
+                Rotate to landscape for detailed diagrams
+              </div>
             </div>
           </div>,
           document.body
