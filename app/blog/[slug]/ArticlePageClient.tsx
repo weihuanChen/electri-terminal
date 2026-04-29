@@ -16,6 +16,16 @@ interface RelatedProduct {
   summary?: string;
 }
 
+interface RelatedArticle {
+  _id: string;
+  slug: string;
+  title: string;
+  type: "blog" | "guide" | "faq" | "application";
+  excerpt?: string;
+  createdAt: number;
+  publishedAt?: number;
+}
+
 export interface ArticlePageData {
   _id: string;
   title: string;
@@ -31,6 +41,7 @@ export interface ArticlePageData {
 interface ArticlePageClientProps {
   article: ArticlePageData;
   slug: string;
+  relatedArticles?: RelatedArticle[];
 }
 
 interface TocItem {
@@ -75,6 +86,13 @@ const QUICK_JUMP_RULES: Array<{ label: string; terms: string[] }> = [
   { label: "Insulation", terms: ["insulation", "heat shrink", "nylon", "pvc"] },
   { label: "Wire Size", terms: ["wire gauge", "wire size", "awg"] },
 ];
+
+const ARTICLE_TYPE_LABEL: Record<RelatedArticle["type"], string> = {
+  blog: "Blog",
+  guide: "Guide",
+  faq: "FAQ",
+  application: "Application",
+};
 
 const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = {
   ring: {
@@ -533,7 +551,7 @@ function buildFallbackRelatedProducts(article: ArticlePageData): RelatedProduct[
   return Array.from(dedupedProducts.values());
 }
 
-export default function ArticlePageClient({ article, slug }: ArticlePageClientProps) {
+export default function ArticlePageClient({ article, slug, relatedArticles }: ArticlePageClientProps) {
   const isWireTerminalGuide = slug === "wire-terminal-types-guide";
   const normalizedContent = article.content
     ? isWireTerminalGuide
@@ -591,6 +609,7 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
     resolvedLegacyRelatedProducts,
     secondRelatedSectionKey
   );
+  const resolvedRelatedArticles = (relatedArticles ?? []).filter((item) => item.slug !== slug).slice(0, 3);
   const usedSectionKeys = new Set<SectionProductKey>();
   const sectionRenderData = markdownSections.map((section) => {
     if (!isWireTerminalGuide) {
@@ -930,50 +949,46 @@ export default function ArticlePageClient({ article, slug }: ArticlePageClientPr
             </Link>
           </div>
           <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-2">
-            <Link
-              href="/blog?type=guide"
-              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
-            >
-              <div>
-                <span className="text-xs font-semibold text-primary uppercase">Guide</span>
-                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
-                  Technical Selection Guides
-                </h3>
-                <p className="mt-2 text-sm text-secondary line-clamp-2">
-                  Browse published guide articles for model selection and sourcing workflows.
-                </p>
-              </div>
-            </Link>
-
-            <Link
-              href="/blog?type=blog"
-              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
-            >
-              <div>
-                <span className="text-xs font-semibold text-primary uppercase">Blog</span>
-                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
-                  Industry and Product Updates
-                </h3>
-                <p className="mt-2 text-sm text-secondary line-clamp-2">
-                  Read recent updates and practical notes from production and application scenarios.
-                </p>
-              </div>
-            </Link>
-
-            <Link
-              href="/blog?type=faq"
-              className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
-            >
-              <div>
-                <span className="text-xs font-semibold text-primary uppercase">FAQ</span>
-                <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
-                  Common Technical Questions
-                </h3>
-                <p className="mt-2 text-sm text-secondary line-clamp-2">
-                  Check FAQ posts for documentation, parameters, and inquiry preparation details.
-                </p>
-              </div>
-            </Link>
+            {resolvedRelatedArticles.length > 0 ? (
+              resolvedRelatedArticles.map((relatedArticle) => (
+                <Link
+                  key={relatedArticle._id}
+                  href={`/blog/${relatedArticle.slug}`}
+                  className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+                >
+                  <div>
+                    <span className="text-xs font-semibold uppercase text-primary">
+                      {ARTICLE_TYPE_LABEL[relatedArticle.type] ?? "Article"}
+                    </span>
+                    <h3 className="mt-2 line-clamp-2 text-base font-semibold group-hover:text-primary">
+                      {relatedArticle.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-secondary">
+                      {relatedArticle.excerpt ||
+                        `Read the full ${ARTICLE_TYPE_LABEL[relatedArticle.type]?.toLowerCase() ?? "article"} for detailed technical guidance.`}
+                    </p>
+                    <p className="mt-3 text-xs text-secondary">
+                      {formatDate(relatedArticle.publishedAt || relatedArticle.createdAt)}
+                    </p>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <Link
+                href="/blog"
+                className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+              >
+                <div>
+                  <span className="text-xs font-semibold uppercase text-primary">Article</span>
+                  <h3 className="mt-2 text-base font-semibold group-hover:text-primary">
+                    Browse More Technical Posts
+                  </h3>
+                  <p className="mt-2 text-sm text-secondary line-clamp-2">
+                    Explore the latest guides, FAQs, and application notes in our knowledge base.
+                  </p>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </section>

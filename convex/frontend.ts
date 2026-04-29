@@ -1371,6 +1371,103 @@ export const getArticleBySlug = query({
   },
 });
 
+function buildArticleRelationIdSet(article: {
+  categoryIds?: unknown[];
+  relatedCategoryIds?: unknown[];
+  relatedFamilyIds?: unknown[];
+  relatedProductIds?: unknown[];
+}) {
+  return {
+    categoryIds: new Set([...(article.categoryIds ?? []), ...(article.relatedCategoryIds ?? [])].map(String)),
+    familyIds: new Set((article.relatedFamilyIds ?? []).map(String)),
+    productIds: new Set((article.relatedProductIds ?? []).map(String)),
+  };
+}
+
+function buildArticleTagSet(article: { tagNames?: string[] }) {
+  return new Set(
+    (article.tagNames ?? [])
+      .filter((tag): tag is string => typeof tag === "string")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
+function countSetIntersection(left: Set<string>, right: Set<string>) {
+  let count = 0;
+  for (const value of left) {
+    if (right.has(value)) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+// Related articles for blog detail page
+export const listRelatedArticlesBySlug = query({
+  args: {
+    slug: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const targetArticle = await ctx.db
+      .query("articles")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+
+    if (!targetArticle) {
+      return [];
+    }
+
+    const limit = Math.min(Math.max(args.limit ?? 3, 1), 8);
+    const allPublishedArticles = await ctx.db
+      .query("articles")
+      .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+      .collect();
+
+    const targetRelations = buildArticleRelationIdSet(targetArticle);
+    const targetTags = buildArticleTagSet(targetArticle);
+
+    const scoredArticles = allPublishedArticles
+      .filter((article) => article._id !== targetArticle._id && article.slug !== targetArticle.slug)
+      .map((candidate) => {
+        const candidateRelations = buildArticleRelationIdSet(candidate);
+        const candidateTags = buildArticleTagSet(candidate);
+
+        let score = 0;
+        if (candidate.type === targetArticle.type) {
+          score += 6;
+        }
+
+        score += countSetIntersection(targetTags, candidateTags) * 3;
+        score += countSetIntersection(targetRelations.categoryIds, candidateRelations.categoryIds) * 4;
+        score += countSetIntersection(targetRelations.familyIds, candidateRelations.familyIds) * 3;
+        score += countSetIntersection(targetRelations.productIds, candidateRelations.productIds) * 3;
+
+        if (candidate.featured) {
+          score += 1;
+        }
+
+        return {
+          candidate,
+          score,
+          timestamp: candidate.updatedAt ?? candidate.publishedAt ?? candidate.createdAt,
+        };
+      })
+      .sort((left, right) => {
+        if (right.score !== left.score) {
+          return right.score - left.score;
+        }
+        return right.timestamp - left.timestamp;
+      });
+
+    const rankedArticles = scoredArticles.filter((item) => item.score > 0).map((item) => item.candidate);
+    const fallbackArticles = scoredArticles.filter((item) => item.score <= 0).map((item) => item.candidate);
+
+    return [...rankedArticles, ...fallbackArticles].slice(0, limit);
+  },
+});
+
 // Navigation for frontend
 export const getPublicNavigation = query({
   args: { location: v.string() },

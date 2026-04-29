@@ -105,7 +105,7 @@ function getConvexClient() {
   if (!url) {
     throw new Error("Missing NEXT_PUBLIC_CONVEX_URL in environment");
   }
-  return new ConvexHttpClient(url);
+  return new ConvexHttpClient(url.replace(/\/+$/, ""));
 }
 
 type UntypedConvexClient = {

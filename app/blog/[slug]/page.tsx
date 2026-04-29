@@ -24,6 +24,17 @@ async function getArticleRecord(slug: string) {
   return await queryPublicPage<ArticleMetadataRecord | null>("frontend:getArticleBySlug", { slug });
 }
 
+async function getRelatedArticles(slug: string) {
+  try {
+    return await queryPublicPage<ArticlePageData[]>("frontend:listRelatedArticlesBySlug", {
+      slug,
+      limit: 3,
+    });
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticleRecord(slug);
@@ -51,6 +62,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (!article || article.status !== "published") {
     notFound();
   }
+  const relatedArticles = await getRelatedArticles(slug);
 
   const structuredData = [
     makeBreadcrumbSchema([
@@ -70,7 +82,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <JsonLd data={structuredData} />
-      <ArticlePageClient article={article} slug={slug} />
+      <ArticlePageClient article={article} slug={slug} relatedArticles={relatedArticles} />
     </>
   );
 }
