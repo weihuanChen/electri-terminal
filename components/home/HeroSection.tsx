@@ -45,8 +45,9 @@ export default function HeroSection({
             transform: "translateX(clamp(72px, 12vw, 220px)) scale(1.18)",
             transformOrigin: "center center",
           }}
-          unoptimized
           sizes="100vw"
+          fetchPriority="high"
+          loading="eager"
           priority
         />
         <div className="hero-overlay absolute inset-0"></div>

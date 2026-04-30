@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
-import "katex/dist/katex.min.css";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
-import { Toaster } from "sonner";
+import LazyToaster from "@/components/providers/LazyToaster";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import JsonLd from "@/components/seo/JsonLd";
@@ -42,9 +41,9 @@ export default async function RootLayout({
       <body className="antialiased">
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -60,7 +59,7 @@ export default async function RootLayout({
             <Footer />
           </div>
         </ConvexClientProvider>
-        <Toaster position="top-center" richColors />
+        <LazyToaster />
         <Analytics />
       </body>
     </html>

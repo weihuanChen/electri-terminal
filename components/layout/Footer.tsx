@@ -1,10 +1,6 @@
-"use client";
-
 import Link from "next/link";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { categoryUrl } from "@/lib/routes";
-import { normalizePublicContactSettings } from "@/lib/contactConfig";
+import { getPublicContactSettings } from "@/lib/publicData";
 
 interface FooterLink {
   name: string;
@@ -50,11 +46,9 @@ function isInternalLink(href: string) {
   return href.startsWith("/");
 }
 
-export default function Footer() {
+export default async function Footer() {
   const currentYear = new Date().getFullYear();
-  const contactSettings = normalizePublicContactSettings(
-    useQuery(api.frontend.getPublicContactSettings)
-  );
+  const contactSettings = await getPublicContactSettings();
 
   const contactLinks: FooterLink[] = [
     { name: "Contact Form", href: "/contact" },

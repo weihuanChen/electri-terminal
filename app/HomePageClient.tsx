@@ -1,7 +1,3 @@
-"use client";
-
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { FileText, HeadphonesIcon, ShieldCheck, Users } from "lucide-react";
 import HeroSection from "@/components/home/HeroSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
@@ -12,18 +8,12 @@ import ApplicationGrid from "@/components/home/ApplicationGrid";
 import SecondaryCapabilitySection from "@/components/home/SecondaryCapabilitySection";
 import HomeFAQSection from "@/components/home/HomeFAQSection";
 import BottomRFQSection from "@/components/home/BottomRFQSection";
-import {
-  normalizePublicContactSettings,
-  toSingleLineAddress,
-} from "@/lib/contactConfig";
+import { toSingleLineAddress } from "@/lib/contactConfig";
+import { getHomePageData } from "@/lib/publicData";
 
-export default function HomePageClient() {
-  const categories = useQuery(api.frontend.listCategoriesForPublic, { limit: 20 }) ?? [];
-  const featuredProducts = useQuery(api.frontend.listFeaturedProducts, { limit: 24 }) ?? [];
-  const applications = useQuery(api.frontend.listApplicationArticles, { limit: 8 }) ?? [];
-  const contactSettings = normalizePublicContactSettings(
-    useQuery(api.frontend.getPublicContactSettings)
-  );
+export default async function HomePageClient() {
+  const { categories, featuredProducts, applications, contactSettings } =
+    await getHomePageData();
 
   const primaryRingCategorySlugs = [
     "ring-terminals",

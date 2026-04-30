@@ -77,7 +77,6 @@ export default function HeaderClient({ productCategories }: HeaderClientProps) {
               width={128}
               height={71}
               className="h-8 w-auto"
-              priority
             />
             <span className="hidden text-base font-semibold text-slate-100 sm:block">
               Electri Terminal
