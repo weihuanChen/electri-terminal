@@ -40,6 +40,7 @@ export default function SeriesCard({
             alt={series.name}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

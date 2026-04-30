@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { categoryUrl } from "@/lib/routes";
-import { shouldBypassNextImageOptimization } from "@/lib/images";
+import { shouldUseUnoptimizedImage } from "@/lib/images";
 
 interface CategoryCardProps {
   name: string;
@@ -46,16 +46,18 @@ export default function CategoryCard({
             src={image}
             alt={name}
             fill
-            unoptimized={shouldBypassNextImageOptimization(image)}
+            unoptimized={shouldUseUnoptimizedImage(image)}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           />
         ) : iconImageSource ? (
           <Image
             src={iconImageSource}
             alt={`${name} icon`}
             fill
-            unoptimized={shouldBypassNextImageOptimization(iconImageSource)}
+            unoptimized={shouldUseUnoptimizedImage(iconImageSource)}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           />
         ) : icon ? (
           <div className="flex h-full w-full items-center justify-center">

@@ -86,7 +86,6 @@ export default function FactoryOverview() {
                                         src={img.src}
                                         alt={img.alt}
                                         fill
-                                        unoptimized
                                         className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
                                         sizes="(max-width: 1024px) 50vw, 25vw"
                                     />
