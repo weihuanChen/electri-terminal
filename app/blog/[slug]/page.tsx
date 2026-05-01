@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import JsonLd from "@/components/seo/JsonLd";
 import ArticlePageClient, { type ArticlePageData } from "./ArticlePageClient";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
-import { makeArticleSchema, makeBreadcrumbSchema } from "@/lib/schema";
+import { makeArticleSchema, makeBreadcrumbSchema, makeFAQPageSchema } from "@/lib/schema";
 
 type ArticlePageProps = {
   params: Promise<{
@@ -63,6 +63,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
   const relatedArticles = await getRelatedArticles(slug);
+  const articleFaqAnswer = (article.content || article.excerpt || "").trim();
 
   const structuredData = [
     makeBreadcrumbSchema([
@@ -77,6 +78,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       publishedAt: article.publishedAt || article.createdAt,
       updatedAt: article.updatedAt,
     }),
+    ...(article.type === "faq" && articleFaqAnswer
+      ? [
+          makeFAQPageSchema({
+            path: `/blog/${slug}`,
+            items: [
+              {
+                question: article.title,
+                answer: articleFaqAnswer,
+              },
+            ],
+          }),
+        ]
+      : []),
   ];
 
   return (
