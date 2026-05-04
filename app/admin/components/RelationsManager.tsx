@@ -227,84 +227,90 @@ export function RelationsManager({
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq) => (
-            <div key={faq._id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{faq.title}</h3>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        faq.status === "published"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : faq.status === "draft"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300"
-                      }`}
-                    >
-                      {faq.status}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">slug: {faq.slug}</p>
-                </div>
-                <Link
-                  href={`/admin/articles/${faq._id}/edit`}
-                  className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                >
-                  <Link2 className="h-4 w-4" />
-                  打开文章编辑
-                </Link>
-              </div>
-
-              <div className="grid gap-4 xl:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">所属分类</p>
-                  <CheckboxGroup
-                    items={categories}
-                    selectedIds={faqState[faq._id].categoryIds}
-                    onToggle={(id) => toggleFaqRelation(faq._id, "categoryIds", id)}
-                  />
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联分类</p>
-                  <CheckboxGroup
-                    items={categories}
-                    selectedIds={faqState[faq._id].relatedCategoryIds}
-                    onToggle={(id) => toggleFaqRelation(faq._id, "relatedCategoryIds", id)}
-                  />
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联系列</p>
-                  <CheckboxGroup
-                    items={families}
-                    selectedIds={faqState[faq._id].relatedFamilyIds}
-                    onToggle={(id) => toggleFaqRelation(faq._id, "relatedFamilyIds", id)}
-                  />
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联产品</p>
-                  <CheckboxGroup
-                    items={products}
-                    selectedIds={faqState[faq._id].relatedProductIds}
-                    onToggle={(id) => toggleFaqRelation(faq._id, "relatedProductIds", id)}
-                    labelKey="title"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => handleSaveFaq(faq._id)}
-                  disabled={savingKey === `faq:${faq._id}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-                >
-                  <Save className="h-4 w-4" />
-                  {savingKey === `faq:${faq._id}` ? "保存中..." : "保存 FAQ 关联"}
-                </button>
-              </div>
+          {faqs.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-6 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
+              当前没有 FAQ 文章，因此这里不会出现可关联项。
             </div>
-          ))}
+          ) : (
+            faqs.map((faq) => (
+              <div key={faq._id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{faq.title}</h3>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-medium ${
+                          faq.status === "published"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : faq.status === "draft"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300"
+                        }`}
+                      >
+                        {faq.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">slug: {faq.slug}</p>
+                  </div>
+                  <Link
+                    href={`/admin/articles/${faq._id}/edit`}
+                    className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                  >
+                    <Link2 className="h-4 w-4" />
+                    打开文章编辑
+                  </Link>
+                </div>
+
+                <div className="grid gap-4 xl:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">所属分类</p>
+                    <CheckboxGroup
+                      items={categories}
+                      selectedIds={faqState[faq._id].categoryIds}
+                      onToggle={(id) => toggleFaqRelation(faq._id, "categoryIds", id)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联分类</p>
+                    <CheckboxGroup
+                      items={categories}
+                      selectedIds={faqState[faq._id].relatedCategoryIds}
+                      onToggle={(id) => toggleFaqRelation(faq._id, "relatedCategoryIds", id)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联系列</p>
+                    <CheckboxGroup
+                      items={families}
+                      selectedIds={faqState[faq._id].relatedFamilyIds}
+                      onToggle={(id) => toggleFaqRelation(faq._id, "relatedFamilyIds", id)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">关联产品</p>
+                    <CheckboxGroup
+                      items={products}
+                      selectedIds={faqState[faq._id].relatedProductIds}
+                      onToggle={(id) => toggleFaqRelation(faq._id, "relatedProductIds", id)}
+                      labelKey="title"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveFaq(faq._id)}
+                    disabled={savingKey === `faq:${faq._id}`}
+                    className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    <Save className="h-4 w-4" />
+                    {savingKey === `faq:${faq._id}` ? "保存中..." : "保存 FAQ 关联"}
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
@@ -317,69 +323,91 @@ export function RelationsManager({
         </div>
 
         <div className="space-y-4">
-          {assets.map((asset) => (
-            <div key={asset._id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{asset.title}</h3>
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                      {asset.type}
-                    </span>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        asset.isPublic
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
-                      {asset.isPublic ? "public" : "private"}
-                    </span>
+          {assets.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-6 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
+              <p>当前没有可关联的资源主数据。</p>
+              <p className="mt-2">
+                仅上传到 R2 或仅在 Assets 页看到对象路径，还不算创建 `asset` 记录。
+                需要先到
+                {" "}
+                <Link href="/admin/assets/create" className="text-slate-700 underline underline-offset-4 dark:text-zinc-200">
+                  /admin/assets/create
+                </Link>
+                {" "}
+                新建资源，或在
+                {" "}
+                <Link href="/admin/assets" className="text-slate-700 underline underline-offset-4 dark:text-zinc-200">
+                  /admin/assets
+                </Link>
+                {" "}
+                确认对象已经显示为“已登记”。
+              </p>
+            </div>
+          ) : (
+            assets.map((asset) => (
+              <div key={asset._id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{asset.title}</h3>
+                      <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+                        {asset.type}
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-medium ${
+                          asset.isPublic
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
+                        {asset.isPublic ? "public" : "private"}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="grid gap-4 xl:grid-cols-3">
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载分类</p>
-                  <CheckboxGroup
-                    items={categories}
-                    selectedIds={selectedIdsForAsset(asset._id, "category")}
-                    onToggle={(id) => toggleAssetRelation(asset._id, "category", id)}
-                  />
+                <div className="grid gap-4 xl:grid-cols-3">
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载分类</p>
+                    <CheckboxGroup
+                      items={categories}
+                      selectedIds={selectedIdsForAsset(asset._id, "category")}
+                      onToggle={(id) => toggleAssetRelation(asset._id, "category", id)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载系列</p>
+                    <CheckboxGroup
+                      items={families}
+                      selectedIds={selectedIdsForAsset(asset._id, "family")}
+                      onToggle={(id) => toggleAssetRelation(asset._id, "family", id)}
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载产品</p>
+                    <CheckboxGroup
+                      items={products}
+                      selectedIds={selectedIdsForAsset(asset._id, "product")}
+                      onToggle={(id) => toggleAssetRelation(asset._id, "product", id)}
+                      labelKey="title"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载系列</p>
-                  <CheckboxGroup
-                    items={families}
-                    selectedIds={selectedIdsForAsset(asset._id, "family")}
-                    onToggle={(id) => toggleAssetRelation(asset._id, "family", id)}
-                  />
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">挂载产品</p>
-                  <CheckboxGroup
-                    items={products}
-                    selectedIds={selectedIdsForAsset(asset._id, "product")}
-                    onToggle={(id) => toggleAssetRelation(asset._id, "product", id)}
-                    labelKey="title"
-                  />
-                </div>
-              </div>
 
-              <div className="mt-4 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => handleSaveAsset(asset._id)}
-                  disabled={savingKey === `asset:${asset._id}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-                >
-                  <Save className="h-4 w-4" />
-                  {savingKey === `asset:${asset._id}` ? "保存中..." : "保存资源关联"}
-                </button>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSaveAsset(asset._id)}
+                    disabled={savingKey === `asset:${asset._id}`}
+                    className="inline-flex items-center gap-2 rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    <Save className="h-4 w-4" />
+                    {savingKey === `asset:${asset._id}` ? "保存中..." : "保存资源关联"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
     </div>

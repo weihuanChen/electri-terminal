@@ -27,7 +27,12 @@ export const updateAssetRelations = mutation({
     }
 
     for (const relation of args.relations) {
-      await ctx.db.insert("assetRelations", relation);
+      await ctx.db.insert("assetRelations", {
+        assetId: args.assetId,
+        entityType: relation.entityType,
+        entityId: relation.entityId,
+        sortOrder: relation.sortOrder,
+      });
     }
 
     await ctx.db.patch(args.assetId, withUpdatedAt({}));
