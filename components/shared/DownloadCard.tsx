@@ -93,9 +93,10 @@ export default function DownloadCard({
               {/* Download Button */}
               <a
                 href={fileUrl}
-                download
+                target="_blank"
+                rel="noreferrer"
                 className="flex-shrink-0 btn btn-secondary btn-sm tap-target px-3"
-                aria-label={`Download ${title}`}
+                aria-label={`Open ${title} in a new tab`}
               >
                 <Download className="h-4 w-4" />
               </a>
