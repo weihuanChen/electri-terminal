@@ -34,6 +34,10 @@ const STATIC_NAV_ITEMS: NavItem[] = [
     href: "/manufacturing",
   },
   {
+    name: "Quality",
+    href: "/quality-certifications",
+  },
+  {
     name: "Blog",
     href: "/blog",
   },
