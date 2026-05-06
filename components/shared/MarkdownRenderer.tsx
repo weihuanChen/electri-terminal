@@ -16,8 +16,65 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
+interface MarkdownAstNode {
+  tagName?: string;
+  children?: MarkdownAstNode[];
+}
+
+const MERMAID_BLOCK_START = new RegExp(
+  [
+    "^graph\\s+(?:TB|TD|BT|RL|LR)$",
+    "^flowchart\\s+(?:TB|TD|BT|RL|LR)$",
+    "^sequenceDiagram$",
+    "^classDiagram$",
+    "^stateDiagram(?:-v2)?$",
+    "^erDiagram$",
+    "^journey$",
+    "^gantt$",
+    "^pie(?:\\s+title\\b.*)?$",
+    "^mindmap$",
+    "^timeline$",
+    "^gitGraph$",
+    "^sankey-beta$",
+    "^quadrantChart$",
+    "^requirementDiagram$",
+    "^C4(?:Context|Container|Component|Dynamic|Deployment)$",
+    "^xychart-beta$",
+    "^packet-beta$",
+    "^block-beta$",
+  ].join("|"),
+  "i"
+);
+
 function stripEditorMarkers(markdown: string) {
   return markdown.replace(/<!--\s*\/?(?:PARA|FAQ):[\s\S]*?-->/gi, "");
+}
+
+function looksLikeMermaidBlock(block: string) {
+  const trimmed = block.trim();
+  if (!trimmed || /^```/.test(trimmed)) {
+    return false;
+  }
+
+  const lines = trimmed.split(/\r?\n/).map((line) => line.trimEnd());
+  if (lines.length < 2 || !MERMAID_BLOCK_START.test(lines[0].trim())) {
+    return false;
+  }
+
+  return lines.slice(1).some((line) => /-->|---|==>|:::|subgraph|\[.*\]|\{.*\}|\(.*\)/.test(line));
+}
+
+function normalizeMermaidBlocks(markdown: string) {
+  return markdown
+    .split(/\n{2,}/)
+    .map((block) => {
+      if (!looksLikeMermaidBlock(block)) {
+        return block;
+      }
+
+      return `\`\`\`mermaid\n${block.trim()}\n\`\`\``;
+    })
+    .join("\n\n");
 }
 
 function parseNumericDimension(value: string | number | undefined): number | null {
@@ -45,6 +102,10 @@ function isMarkdownImageElement(node: ReactNode): boolean {
   }
 
   const props = node.props as { children?: ReactNode; "data-markdown-image"?: boolean };
+  if (node.type === "img") {
+    return true;
+  }
+
   if (props["data-markdown-image"] === true) {
     return true;
   }
@@ -57,8 +118,24 @@ function isMarkdownImageElement(node: ReactNode): boolean {
   return false;
 }
 
+function isImageOnlyAstNode(node: MarkdownAstNode | undefined): boolean {
+  if (!node?.tagName) {
+    return false;
+  }
+
+  if (node.tagName === "img") {
+    return true;
+  }
+
+  if (node.tagName !== "a" || !node.children?.length) {
+    return false;
+  }
+
+  return node.children.every((child) => isImageOnlyAstNode(child));
+}
+
 export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
-  const normalizedContent = stripEditorMarkers(content);
+  const normalizedContent = normalizeMermaidBlocks(stripEditorMarkers(content));
 
   return (
     <div className={["markdown-body", className].filter(Boolean).join(" ")}>
@@ -70,10 +147,13 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           [rehypeAutolinkHeadings, { behavior: "wrap" }],
         ]}
         components={{
-          p({ children }) {
+          p({ node, children }) {
             const childNodes = Children.toArray(children).filter((child) => !isWhitespaceTextNode(child));
             const onlyImageNodes =
-              childNodes.length > 0 && childNodes.every((child) => isMarkdownImageElement(child));
+              childNodes.length > 0 &&
+              (childNodes.every((child) => isMarkdownImageElement(child)) ||
+                ((node as MarkdownAstNode | undefined)?.children?.length ?? 0) > 0 &&
+                  (node as MarkdownAstNode).children!.every((child) => isImageOnlyAstNode(child)));
 
             if (onlyImageNodes) {
               return <>{children}</>;
@@ -90,7 +170,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
           },
           pre({ children }) {
             const firstChild = Children.toArray(children)[0];
-            if (isValidElement(firstChild) && firstChild.type === "code") {
+            if (isValidElement(firstChild)) {
               const codeProps = firstChild.props as {
                 className?: string;
                 children?: unknown;
