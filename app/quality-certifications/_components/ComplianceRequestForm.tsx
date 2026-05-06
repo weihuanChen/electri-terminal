@@ -87,13 +87,15 @@ export default function ComplianceRequestForm() {
   };
 
   return (
-    <div className="card overflow-hidden border-slate-700 bg-slate-950 text-white shadow-2xl">
-      <div className="border-b border-slate-800 px-6 py-5 md:px-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+    <div className="overflow-hidden rounded-[3px] border border-slate-200 bg-white text-[#0F172A] shadow-2xl">
+      <div className="border-b border-slate-200 bg-[#F8FAFC] px-6 py-5 md:px-8">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
           Project Request
         </p>
-        <h3 className="mt-2 text-2xl font-semibold text-white">Request Compliance Documents</h3>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+        <h3 className="mt-2 text-2xl font-semibold text-[#0F172A]">
+          Request Compliance Documents
+        </h3>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#475569]">
           Share the product model and the certificate type you need. Our team will confirm the
           latest available file for your project or customs workflow.
         </p>
@@ -102,7 +104,7 @@ export default function ComplianceRequestForm() {
       <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6 md:px-8 md:py-8">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#1E293B]">
               Name <span className="text-orange-400">*</span>
             </label>
             <input
@@ -113,12 +115,12 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Your name"
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
-            <label htmlFor="company" className="mb-2 block text-sm font-medium text-slate-200">
+            <label htmlFor="company" className="mb-2 block text-sm font-medium text-[#1E293B]">
               Company <span className="text-orange-400">*</span>
             </label>
             <input
@@ -129,12 +131,12 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Company name"
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-200">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#1E293B]">
               Email <span className="text-orange-400">*</span>
             </label>
             <input
@@ -145,12 +147,12 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="your.email@example.com"
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
-            <label htmlFor="country" className="mb-2 block text-sm font-medium text-slate-200">
+            <label htmlFor="country" className="mb-2 block text-sm font-medium text-[#1E293B]">
               Country <span className="text-orange-400">*</span>
             </label>
             <input
@@ -161,14 +163,14 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Country / region"
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
             <label
               htmlFor="requiredProduct"
-              className="mb-2 block text-sm font-medium text-slate-200"
+              className="mb-2 block text-sm font-medium text-[#1E293B]"
             >
               Required Product <span className="text-orange-400">*</span>
             </label>
@@ -180,14 +182,14 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Model, family, or material"
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
             <label
               htmlFor="requiredCertificate"
-              className="mb-2 block text-sm font-medium text-slate-200"
+              className="mb-2 block text-sm font-medium text-[#1E293B]"
             >
               Required Certificate <span className="text-orange-400">*</span>
             </label>
@@ -196,7 +198,7 @@ export default function ComplianceRequestForm() {
               name="requiredCertificate"
               value={formData.requiredCertificate}
               onChange={handleChange}
-              className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             >
               {certificateOptions.map((option) => (
                 <option key={option} value={option}>
@@ -208,7 +210,7 @@ export default function ComplianceRequestForm() {
         </div>
 
         <div>
-          <label htmlFor="message" className="mb-2 block text-sm font-medium text-slate-200">
+          <label htmlFor="message" className="mb-2 block text-sm font-medium text-[#1E293B]">
             Message
           </label>
           <textarea
@@ -218,14 +220,14 @@ export default function ComplianceRequestForm() {
             value={formData.message}
             onChange={handleChange}
             placeholder="Project scope, target market, customs needs, or specific batch requests"
-            className="w-full rounded-sm border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-slate-800 pt-5 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs leading-6 text-slate-400">
+        <div className="flex flex-col gap-4 border-t border-slate-200 pt-5 md:flex-row md:items-center md:justify-between">
+          <p className="text-xs leading-6 text-[#64748B]">
             By submitting this form, you agree to our{" "}
-            <Link href="/resources" className="text-blue-300 hover:text-blue-200 hover:underline">
+            <Link href="/resources" className="text-blue-700 hover:text-blue-800 hover:underline">
               documentation support policy
             </Link>
             .

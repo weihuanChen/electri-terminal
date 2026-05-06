@@ -9,6 +9,7 @@ import {
   FlaskConical,
   Leaf,
   Shield,
+  ShieldCheck,
   SquareArrowOutUpRight,
 } from "lucide-react";
 
@@ -23,6 +24,7 @@ const certificateIconMap = {
   ce: BadgeCheck,
   rohs: Leaf,
   reach: FlaskConical,
+  ul: ShieldCheck,
 } satisfies Record<CertificateCardData["icon"], typeof FileCheck2>;
 
 export default function CertificateCard({ certificate }: CertificateCardProps) {
@@ -63,17 +65,30 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
               <CertificateIcon className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h3 style={{ color: "#0F172A" }} className="text-2xl font-semibold">
+              <h3
+                style={{ color: "#0F172A" }}
+                className="text-2xl font-bold tracking-[-0.01em]"
+              >
                 {certificate.title}
               </h3>
               <div className="mt-2 flex items-center gap-2 text-sm font-medium text-emerald-700">
                 <CheckCircle2 className="h-4 w-4" />
-                Verified preview document
+                {certificate.verifiedLabel ?? "Verified preview document"}
               </div>
             </div>
           </div>
 
           <p className="mt-4 text-sm leading-6 text-[#475569]">{certificate.subtitle}</p>
+
+          {certificate.body?.length ? (
+            <div className="mt-4 space-y-4">
+              {certificate.body.map((paragraph) => (
+                <p key={paragraph} className="text-sm leading-6 text-[#475569]">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : null}
 
           <ul className="mt-6 space-y-3">
             {certificate.details.map((detail) => (
@@ -83,8 +98,10 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
               >
                 <Check className="mt-1 h-4 w-4 flex-none text-emerald-600" />
                 <span>
-                  <span className="font-medium text-[#475569]">{detail.label}:</span>{" "}
-                  <span className="font-semibold text-[#1E293B]">{detail.value}</span>
+                  <span className="font-medium uppercase tracking-[0.08em] text-[#94A3B8]">
+                    {detail.label}:
+                  </span>{" "}
+                  <span className="font-semibold text-[#0F172A]">{detail.value}</span>
                 </span>
               </li>
             ))}
@@ -94,8 +111,8 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
             <div className="flex items-start gap-3">
               <Shield className="mt-0.5 h-4 w-4 flex-none text-emerald-600" />
               <p className="text-sm leading-6 text-[#475569]">
-                Displayed files are preview copies for qualification reference. Contact our team to
-                confirm model and batch coverage before project use.
+                {certificate.note ??
+                  "Displayed files are preview copies for qualification reference. Contact our team to confirm model and batch coverage before project use."}
               </p>
             </div>
           </div>

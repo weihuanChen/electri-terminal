@@ -18,6 +18,7 @@ import { toAbsoluteSiteUrl } from "@/lib/site";
 
 import CertificateCard from "./_components/CertificateCard";
 import ComplianceRequestForm from "./_components/ComplianceRequestForm";
+import ULListedCard from "./_components/ULListedCard";
 import {
   buyerBenefits,
   certificateCards,
@@ -25,6 +26,7 @@ import {
   heroTags,
   qualitySteps,
   trustSummary,
+  ulListedCard,
 } from "./data";
 
 const pageTitle = "Quality Certifications for Electrical Terminals & Components";
@@ -84,11 +86,13 @@ export default function QualityCertificationsPage() {
       "@type": "ItemList",
       name: "Certificate Gallery",
       url: toAbsoluteSiteUrl("/quality-certifications"),
-      itemListElement: certificateCards.map((card, index) => ({
+      itemListElement: [ulListedCard.title, ...certificateCards.map((card) => card.title)].map(
+        (name, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        name: card.title,
-      })),
+        name,
+      })
+      ),
     },
   ];
 
@@ -208,7 +212,7 @@ export default function QualityCertificationsPage() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-5 text-xl font-semibold text-[#0F172A]">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-[#475569]">{item.description}</p>
+                  <p className="mt-3 text-sm leading-6 text-[#64748B]">{item.description}</p>
                 </article>
               );
             })}
@@ -233,6 +237,7 @@ export default function QualityCertificationsPage() {
           </div>
 
           <div className="mt-10 space-y-8">
+            <ULListedCard listing={ulListedCard} />
             {certificateCards.map((certificate) => (
               <CertificateCard key={certificate.title} certificate={certificate} />
             ))}
@@ -320,7 +325,7 @@ export default function QualityCertificationsPage() {
                     )}
                   </div>
                   <h3 className="mt-4 text-lg font-semibold text-[#1E293B]">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-[#475569]">{step.description}</p>
+                  <p className="mt-3 text-sm leading-6 text-[#64748B]">{step.description}</p>
                 </article>
               </div>
             ))}
@@ -362,7 +367,7 @@ export default function QualityCertificationsPage() {
                     <h3 className="mt-5 text-xl font-semibold text-[#1E293B]">
                       {item.title}
                     </h3>
-                    <p className="mt-3 text-sm leading-6 text-[#475569]">{item.description}</p>
+                    <p className="mt-3 text-sm leading-6 text-[#64748B]">{item.description}</p>
                   </article>
                 );
               })}
@@ -377,14 +382,14 @@ export default function QualityCertificationsPage() {
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
               Request Documents
             </p>
-            <h2 className="text-3xl font-semibold text-white md:text-4xl">
+            <h2 className="text-3xl font-semibold !text-white md:text-4xl">
               Need Full Certificates for Your Project?
             </h2>
-            <p className="mt-5 text-base leading-7 text-slate-300">
+            <p className="mt-5 text-base leading-7 text-slate-200">
               To protect supplier information and document traceability, some sensitive details may
               be masked on the website.
             </p>
-            <p className="mt-4 text-base leading-7 text-slate-300">
+            <p className="mt-4 text-base leading-7 text-slate-200">
               Full certificates and test reports can be provided to qualified buyers upon request.
             </p>
           </div>
@@ -394,8 +399,10 @@ export default function QualityCertificationsPage() {
               <div className="flex items-start gap-3">
                 <CircleHelp className="mt-1 h-5 w-5 text-blue-400" />
                 <div>
-                  <h3 className="text-lg font-semibold text-white">What helps us respond faster</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                  <h3 className="text-lg font-semibold !text-white">
+                    What helps us respond faster
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">
                     Include exact model numbers, target country, and the certificate type required
                     by your customer, customs broker, or project specification.
                   </p>

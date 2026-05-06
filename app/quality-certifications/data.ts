@@ -11,7 +11,7 @@ export type CertificateImage = {
 };
 
 export type CertificateCardData = {
-  icon: "ce" | "rohs" | "reach";
+  icon: "ce" | "rohs" | "reach" | "ul";
   title: string;
   subtitle: string;
   images: CertificateImage[];
@@ -19,6 +19,19 @@ export type CertificateCardData = {
     label: string;
     value: string;
   }>;
+  body?: string[];
+  note?: string;
+  verifiedLabel?: string;
+  actions: CertificateAction[];
+};
+
+export type ULListedCardData = {
+  title: string;
+  fileNo: string;
+  productCategory: string;
+  markets: string;
+  highlights: string[];
+  supportText: string;
   actions: CertificateAction[];
 };
 
@@ -145,7 +158,73 @@ export const certificateCards: CertificateCardData[] = [
       },
     ],
   },
+  {
+    icon: "ul",
+    title: "UL Certificate of Compliance",
+    subtitle: "Evaluation record for wire connectors and terminals under UL standards.",
+    images: [
+      {
+        src: "https://assets.electriterminal.com/certifications/ul-coc-ring-terminal-selected-model.webp",
+        alt: "UL certificate of compliance for selected ring terminal models",
+      },
+    ],
+    details: [
+      { label: "Product", value: "Wire Connectors & Terminals" },
+      { label: "Standard", value: "CSA C22.2 No. 65-18" },
+      { label: "Issued by", value: "UL LLC" },
+      { label: "Type", value: "Compliance Certificate" },
+      { label: "Market", value: "Canada / North America" },
+      { label: "Date", value: "Dec 7, 2022" },
+      { label: "Status", value: "Evaluated to applicable UL standards" },
+    ],
+    body: [
+      "This certificate confirms that representative samples of selected terminal products have been evaluated by UL in accordance with applicable safety standards.",
+      "It serves as a supporting compliance document for product evaluation, supplier qualification, and project documentation in North American markets.",
+    ],
+    note:
+      "Note: This document indicates compliance evaluation of representative samples and does not constitute authorization to apply the UL mark. For specific certification requirements, please confirm with our sales team.",
+    verifiedLabel: "Evaluated document",
+    actions: [
+      {
+        label: "View Certificate",
+        href: "https://assets.electriterminal.com/certifications/ul-coc-ring-terminal-selected-model.webp",
+        external: true,
+        variant: "primary",
+      },
+      {
+        label: "Request Full UL Documentation",
+        href: "#request-documents",
+        variant: "secondary",
+      },
+    ],
+  },
 ] as const;
+
+export const ulListedCard: ULListedCardData = {
+  title: "UL Listed Components (cULus)",
+  fileNo: "E530024",
+  productCategory: "Wire Connectors and Soldering Lugs",
+  markets: "USA & Canada",
+  highlights: [
+    "Verified in UL Product iQ database",
+    "Available for selected models",
+  ],
+  supportText:
+    "UL coverage applies to selected models only. Please contact us to confirm whether the required model is included in the latest listing or evaluation documents.",
+  actions: [
+    {
+      label: "Verify on UL Website",
+      href: "https://productiq.ulprospector.com/",
+      external: true,
+      variant: "primary",
+    },
+    {
+      label: "Request UL Documentation",
+      href: "#request-documents",
+      variant: "secondary",
+    },
+  ],
+};
 
 export const coverageRows = [
   {
