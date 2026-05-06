@@ -308,6 +308,25 @@ html {
   height: auto;
 }
 
+.markdown-mermaid svg text,
+.markdown-mermaid svg tspan {
+  fill: #12161B;
+}
+
+.markdown-mermaid svg foreignObject,
+.markdown-mermaid svg foreignObject div,
+.markdown-mermaid svg foreignObject span,
+.markdown-mermaid svg foreignObject p {
+  color: #12161B !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-mermaid {
+    border-color: #CBD5E1;
+    background-color: #EEF1F4;
+  }
+}
+
 .markdown-body .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
