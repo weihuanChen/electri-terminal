@@ -59,7 +59,7 @@ export interface AdminAssetWithRelations {
   createdAt?: number;
   updatedAt?: number;
   relations?: Array<{
-    entityType: "category" | "family" | "product";
+    entityType: "category" | "family" | "product" | "article";
     entityId: string;
     sortOrder: number;
   }>;

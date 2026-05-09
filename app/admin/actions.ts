@@ -1069,14 +1069,37 @@ export async function updateAssetRelationsAction(formData: FormData) {
 
   try {
     const client = getAdminConvexClient();
-    await client.mutation("mutations/admin/relations:updateAssetRelations", {
-      assetId,
-      relations: jsonArray<{
-        entityType: "category" | "family" | "product";
-        entityId: string;
-        sortOrder: number;
-      }>(formData, "relations"),
-    });
+    const relations = jsonArray<{
+      entityType: "category" | "family" | "product" | "article";
+      entityId: string;
+      sortOrder: number;
+    }>(formData, "relations");
+
+    try {
+      await client.mutation("mutations/admin/relations:updateAssetRelations", {
+        assetId,
+        relations,
+      });
+    } catch (error: unknown) {
+      const message = errorMessage(error);
+      const missingNestedAssetId =
+        message.includes('table "assetRelations"') &&
+        message.includes("required field `assetId`");
+
+      if (!missingNestedAssetId) {
+        throw error;
+      }
+
+      await client.mutation("mutations/admin/relations:updateAssetRelations", {
+        assetId,
+        relations: relations.map((relation, index) => ({
+          assetId,
+          entityType: relation.entityType,
+          entityId: relation.entityId,
+          sortOrder: Number.isFinite(relation.sortOrder) ? relation.sortOrder : index,
+        })),
+      });
+    }
 
     revalidatePath("/admin/relations");
     return { ok: true };

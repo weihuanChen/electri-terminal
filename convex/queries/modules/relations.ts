@@ -16,6 +16,9 @@ async function resolveRelationTarget(
   if (entityType === "product") {
     return await ctx.db.get(entityId);
   }
+  if (entityType === "article") {
+    return await ctx.db.get(entityId);
+  }
   return null;
 }
 

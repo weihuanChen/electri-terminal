@@ -13,7 +13,7 @@ interface NamedEntity {
 }
 
 interface AssetRelation {
-  entityType: "category" | "family" | "product";
+  entityType: "category" | "family" | "product" | "article";
   entityId: string;
   sortOrder: number;
 }

@@ -1,9 +1,11 @@
 import { v } from "convex/values";
 import { mutation } from "../../_generated/server";
 import { withUpdatedAt } from "../../lib/validators";
+import { relationEntityType } from "./shared";
 
 const relationValidator = v.object({
-  entityType: v.union(v.literal("category"), v.literal("family"), v.literal("product")),
+  assetId: v.optional(v.id("assets")),
+  entityType: relationEntityType,
   entityId: v.string(),
   sortOrder: v.number(),
 });
@@ -28,7 +30,7 @@ export const updateAssetRelations = mutation({
 
     for (const relation of args.relations) {
       await ctx.db.insert("assetRelations", {
-        assetId: args.assetId,
+        assetId: relation.assetId ?? args.assetId,
         entityType: relation.entityType,
         entityId: relation.entityId,
         sortOrder: relation.sortOrder,
