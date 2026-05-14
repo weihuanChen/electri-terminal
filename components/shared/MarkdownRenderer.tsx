@@ -21,6 +21,37 @@ interface MarkdownAstNode {
   children?: MarkdownAstNode[];
 }
 
+const BLOCK_LEVEL_TAGS = new Set([
+  "address",
+  "article",
+  "aside",
+  "blockquote",
+  "details",
+  "div",
+  "dl",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hr",
+  "main",
+  "nav",
+  "ol",
+  "p",
+  "pre",
+  "section",
+  "table",
+  "ul",
+]);
+
 const MERMAID_BLOCK_START = new RegExp(
   [
     "^graph\\s+(?:TB|TD|BT|RL|LR)$",
@@ -118,6 +149,29 @@ function isMarkdownImageElement(node: ReactNode): boolean {
   return false;
 }
 
+function containsRenderedBlockElement(node: ReactNode): boolean {
+  if (!isValidElement(node)) {
+    return false;
+  }
+
+  const props = node.props as {
+    children?: ReactNode;
+    "data-markdown-block"?: boolean;
+    "data-markdown-image"?: boolean;
+  };
+
+  if (props["data-markdown-block"] === true || props["data-markdown-image"] === true) {
+    return true;
+  }
+
+  if (typeof node.type === "string" && BLOCK_LEVEL_TAGS.has(node.type)) {
+    return true;
+  }
+
+  const childNodes = Children.toArray(props.children).filter((child) => !isWhitespaceTextNode(child));
+  return childNodes.some((child) => containsRenderedBlockElement(child));
+}
+
 function isImageOnlyAstNode(node: MarkdownAstNode | undefined): boolean {
   if (!node?.tagName) {
     return false;
@@ -154,9 +208,14 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
               (childNodes.every((child) => isMarkdownImageElement(child)) ||
                 ((node as MarkdownAstNode | undefined)?.children?.length ?? 0) > 0 &&
                   (node as MarkdownAstNode).children!.every((child) => isImageOnlyAstNode(child)));
+            const hasBlockChildren = childNodes.some((child) => containsRenderedBlockElement(child));
 
             if (onlyImageNodes) {
               return <>{children}</>;
+            }
+
+            if (hasBlockChildren) {
+              return <div className="markdown-paragraph">{children}</div>;
             }
 
             return <p>{children}</p>;
@@ -180,15 +239,19 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
               const language = languageMatch?.[1]?.toLowerCase();
 
               if (language === "mermaid") {
-                return <MermaidChart chart={rawCode} />;
+                return (
+                  <div data-markdown-block>
+                    <MermaidChart chart={rawCode} />
+                  </div>
+                );
               }
             }
 
-            return <pre>{children}</pre>;
+            return <pre data-markdown-block>{children}</pre>;
           },
           table({ children }) {
             return (
-              <div className="markdown-table-wrap">
+              <div className="markdown-table-wrap" data-markdown-block>
                 <p className="markdown-table-hint">Swipe left and right to view full table.</p>
                 <table>{children}</table>
               </div>
@@ -221,7 +284,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
                 : "16 / 10";
 
             return (
-              <figure className="my-5" data-markdown-image>
+              <figure className="my-5" data-markdown-block data-markdown-image>
                 <div
                   className="relative w-full overflow-hidden rounded-sm border border-border bg-background-muted/70"
                   style={{ aspectRatio }}

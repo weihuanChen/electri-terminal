@@ -61,6 +61,10 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "unknown_error";
 }
 
+type ActionResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
 async function mutationWithExtraFieldFallback(
   client: ReturnType<typeof getAdminConvexClient>,
   name: string,
@@ -267,7 +271,7 @@ export async function createProductAction(formData: FormData) {
   }
 }
 
-export async function createArticleAction(formData: FormData) {
+export async function createArticleAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 
   const type = str(formData, "type") as "blog" | "guide" | "faq" | "application";
@@ -275,7 +279,7 @@ export async function createArticleAction(formData: FormData) {
   const slug = str(formData, "slug");
 
   if (!type || !title || !slug) {
-    throw new Error("required_fields_missing");
+    return { ok: false, error: "required_fields_missing" };
   }
 
   try {
@@ -292,6 +296,7 @@ export async function createArticleAction(formData: FormData) {
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
+      featured: boolFromForm(formData, "featured"),
       status: (str(formData, "status") as "draft" | "published" | "archived") || "draft",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
       seoTitle: optionalStr(formData, "seoTitle"),
@@ -301,8 +306,11 @@ export async function createArticleAction(formData: FormData) {
 
     revalidatePath("/admin");
     revalidatePath("/admin/articles");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${slug}`);
+    return { ok: true };
   } catch (error: unknown) {
-    throw new Error(errorMessage(error));
+    return { ok: false, error: errorMessage(error) };
   }
 }
 
@@ -638,7 +646,7 @@ export async function deleteProductVariantAction(formData: FormData) {
 }
 
 // Article management actions
-export async function updateArticleAction(formData: FormData) {
+export async function updateArticleAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
 
   const id = str(formData, "id") as Id<"articles">;
@@ -647,11 +655,12 @@ export async function updateArticleAction(formData: FormData) {
   const slug = str(formData, "slug");
 
   if (!id || !type || !title || !slug) {
-    throw new Error("required_fields_missing");
+    return { ok: false, error: "required_fields_missing" };
   }
 
   try {
     const client = getAdminConvexClient();
+    const currentArticle = await client.query("queries/modules/articles:getArticleById", { id });
     await mutationWithExtraFieldFallback(client, "mutations/admin/articles:updateArticle", {
       id,
       type,
@@ -665,6 +674,7 @@ export async function updateArticleAction(formData: FormData) {
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
+      featured: boolFromForm(formData, "featured"),
       status: str(formData, "status") as "draft" | "published" | "archived",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
       seoTitle: optionalStr(formData, "seoTitle"),
@@ -674,8 +684,14 @@ export async function updateArticleAction(formData: FormData) {
 
     revalidatePath("/admin/articles");
     revalidatePath("/admin");
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${slug}`);
+    if (typeof currentArticle?.slug === "string" && currentArticle.slug !== slug) {
+      revalidatePath(`/blog/${currentArticle.slug}`);
+    }
+    return { ok: true };
   } catch (error: unknown) {
-    throw new Error(errorMessage(error));
+    return { ok: false, error: errorMessage(error) };
   }
 }
 

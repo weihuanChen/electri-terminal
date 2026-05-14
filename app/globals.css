@@ -192,6 +192,7 @@ html {
 }
 
 .markdown-body p,
+.markdown-body .markdown-paragraph,
 .markdown-body ul,
 .markdown-body ol,
 .markdown-body blockquote {
@@ -343,6 +344,12 @@ html {
 }
 
 .article-markdown p + p {
+  margin-top: 0.75em;
+}
+
+.article-markdown .markdown-paragraph + .markdown-paragraph,
+.article-markdown p + .markdown-paragraph,
+.article-markdown .markdown-paragraph + p {
   margin-top: 0.75em;
 }
 

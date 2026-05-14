@@ -225,9 +225,17 @@ export function ArticleForm({
 
       if (isEdit && article) {
         formDataToSend.append("id", article._id);
-        await updateArticleAction(formDataToSend);
+        const result = await updateArticleAction(formDataToSend);
+        if (!result.ok) {
+          setError(result.error);
+          return;
+        }
       } else {
-        await createArticleAction(formDataToSend);
+        const result = await createArticleAction(formDataToSend);
+        if (!result.ok) {
+          setError(result.error);
+          return;
+        }
       }
 
       router.push("/admin/articles");
