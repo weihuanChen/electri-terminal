@@ -84,6 +84,42 @@ type RelatedArrayField =
   | "relatedFamilyIds"
   | "relatedProductIds";
 
+const SERVER_ACTION_BODY_LIMIT_BYTES = 4 * 1024 * 1024;
+const CLIENT_BODY_HEADROOM_BYTES = 64 * 1024;
+const MULTIPART_FIELD_OVERHEAD_BYTES = 200;
+
+function estimateFormDataPayloadSize(formData: FormData) {
+  const encoder = new TextEncoder();
+  let total = 0;
+
+  for (const [key, value] of formData.entries()) {
+    total += encoder.encode(key).length + MULTIPART_FIELD_OVERHEAD_BYTES;
+    if (typeof value === "string") {
+      total += encoder.encode(value).length;
+    }
+  }
+
+  return total;
+}
+
+function normalizeArticleSaveError(message: string) {
+  const normalized = message.trim();
+  const duplicateSlugMatch = normalized.match(/^Article slug already exists:\s*(.+)$/i);
+  if (duplicateSlugMatch) {
+    return `Slug 已存在：${duplicateSlugMatch[1]}，请修改后再保存。`;
+  }
+
+  if (normalized === "required_fields_missing") {
+    return "必填字段缺失，请检查标题、Slug 和文章类型。";
+  }
+
+  if (/fetch failed/i.test(normalized)) {
+    return "保存失败：后台连接异常，请稍后重试。";
+  }
+
+  return normalized || "操作失败，请重试";
+}
+
 export function ArticleForm({
   article,
   categories = [],
@@ -223,24 +259,35 @@ export function ArticleForm({
       if (formData.seoDescription) formDataToSend.append("seoDescription", formData.seoDescription);
       if (formData.canonical) formDataToSend.append("canonical", formData.canonical);
 
+      const estimatedPayloadBytes = estimateFormDataPayloadSize(formDataToSend);
+      if (estimatedPayloadBytes > SERVER_ACTION_BODY_LIMIT_BYTES - CLIENT_BODY_HEADROOM_BYTES) {
+        const estimatedPayloadMb = (estimatedPayloadBytes / (1024 * 1024)).toFixed(2);
+        setError(
+          `当前提交内容约 ${estimatedPayloadMb} MB，接近或超过 4 MB 保存限制。请拆分正文、减少表格/Markdown 内容后再保存。`
+        );
+        return;
+      }
+
       if (isEdit && article) {
         formDataToSend.append("id", article._id);
         const result = await updateArticleAction(formDataToSend);
         if (!result.ok) {
-          setError(result.error);
+          setError(normalizeArticleSaveError(result.error));
           return;
         }
       } else {
         const result = await createArticleAction(formDataToSend);
         if (!result.ok) {
-          setError(result.error);
+          setError(normalizeArticleSaveError(result.error));
           return;
         }
       }
 
       router.push("/admin/articles");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "操作失败，请重试");
+      setError(
+        normalizeArticleSaveError(error instanceof Error ? error.message : "操作失败，请重试")
+      );
     } finally {
       setIsLoading(false);
     }
