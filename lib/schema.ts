@@ -1,4 +1,4 @@
-import { categoryUrl, productUrl } from "@/lib/routes";
+import { categoryUrl, familyUrl, productUrl } from "@/lib/routes";
 import { toAbsoluteSiteUrl } from "@/lib/site";
 
 type BreadcrumbItem = {
