@@ -379,12 +379,19 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
       description: structuredDescription,
       image: resolveFamilyPrimaryImage(family),
       categoryName: family.category?.name,
-      products: (family.products || []).map((product) => ({
-        slug: product.slug,
-        name: product.shortTitle || product.title,
-        sku: product.skuCode,
-      })),
     }),
+    ...((family.products || []).length > 0
+      ? [
+          makeItemListSchema({
+            name: `${family.name} Available Products`,
+            path: `/families/${slug}`,
+            items: (family.products || []).map((product) => ({
+              name: product.shortTitle || product.title,
+              url: `/products/${product.slug}`,
+            })),
+          }),
+        ]
+      : []),
     ...(resolved.faqItems.length > 0
       ? [
           makeFAQPageSchema({

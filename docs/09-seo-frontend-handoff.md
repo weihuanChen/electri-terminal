@@ -179,7 +179,8 @@
 后续重构时必须保留以下 schema 语义，不要求 DOM 结构不变，但要求语义仍然成立：
 
 - 全局保留 `Organization` + `WebSite` + `SearchAction`
-- 产品详情页保留 `BreadcrumbList` + `Product`
+- 产品详情页保留 `BreadcrumbList`
+- 只有在具备合法的 `offers` / `review` / `aggregateRating` 数据时才输出 `Product`
 - 系列页保留 `BreadcrumbList` + `ProductGroup`
 - 分类页保留 `BreadcrumbList` + `CollectionPage` + `ItemList`
 - `/products` 保留 `CollectionPage` + `ItemList`

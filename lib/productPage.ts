@@ -1,4 +1,4 @@
-import { makeBreadcrumbSchema, makeFAQPageSchema, makeProductSchema } from "@/lib/schema";
+import { makeBreadcrumbSchema, makeFAQPageSchema } from "@/lib/schema";
 import {
   resolveFaqItems,
   resolveMetadataDescription,
@@ -93,17 +93,8 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
         : []),
       { name: product.shortTitle || product.title, path: `/products/${slug}` },
     ]),
-    makeProductSchema({
-      slug,
-      name: product.shortTitle || product.title,
-      description: product.summary,
-      image: product.mainImage,
-      model: product.skuCode || product.model,
-      sku: product.skuCode,
-      mpn: product.variants?.[0]?.itemNo || product.skuCode || product.model,
-      categoryName: product.category?.name,
-      attributes: product.attributes as Record<string, string | number | boolean | string[]> | undefined,
-    }),
+    // Keep product detail markup out of Google's Product rich-result pipeline until
+    // we have real offers, reviews, or aggregate ratings to publish.
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({

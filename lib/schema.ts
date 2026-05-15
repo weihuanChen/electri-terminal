@@ -188,19 +188,13 @@ export function makeProductGroupSchema({
   image,
   brand,
   categoryName,
-  products,
 }: {
   slug: string;
   name: string;
   description?: string;
   image?: string;
-    brand?: string;
-    categoryName?: string;
-    products: Array<{
-      slug: string;
-      name: string;
-      sku?: string;
-    }>;
+  brand?: string;
+  categoryName?: string;
 }) {
   const normalizedImage = normalizeSchemaImage(image);
 
@@ -218,13 +212,6 @@ export function makeProductGroupSchema({
         }
       : undefined,
     category: categoryName,
-    variesBy: "sku",
-    hasVariant: products.map((product) => ({
-      "@type": "Product",
-      name: product.name,
-      sku: product.sku,
-      url: toAbsoluteSiteUrl(productUrl(product.slug)),
-    })),
   };
 }
 
