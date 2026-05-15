@@ -1,4 +1,4 @@
-import { categoryUrl, familyUrl, productUrl } from "@/lib/routes";
+import { categoryUrl, productUrl } from "@/lib/routes";
 import { toAbsoluteSiteUrl } from "@/lib/site";
 
 type BreadcrumbItem = {
@@ -178,40 +178,6 @@ export function makeProductSchema({
         name: key,
         value: Array.isArray(value) ? value.join(", ") : String(value),
       })),
-  };
-}
-
-export function makeProductGroupSchema({
-  slug,
-  name,
-  description,
-  image,
-  brand,
-  categoryName,
-}: {
-  slug: string;
-  name: string;
-  description?: string;
-  image?: string;
-  brand?: string;
-  categoryName?: string;
-}) {
-  const normalizedImage = normalizeSchemaImage(image);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "ProductGroup",
-    name,
-    description,
-    url: toAbsoluteSiteUrl(familyUrl(slug)),
-    image: normalizedImage ? [normalizedImage] : undefined,
-    brand: brand
-      ? {
-          "@type": "Brand",
-          name: brand,
-        }
-      : undefined,
-    category: categoryName,
   };
 }
 

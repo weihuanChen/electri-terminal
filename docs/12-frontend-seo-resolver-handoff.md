@@ -178,8 +178,8 @@
 当前必须继续保留：
 
 - category: `BreadcrumbList` + `CollectionPage` + `ItemList` + `FAQPage` 条件输出
-- family: `BreadcrumbList` + `ProductGroup` + `FAQPage` + downloads/related item lists 条件输出
-- product: `BreadcrumbList` + `Product` + `FAQPage` 条件输出
+- family: `BreadcrumbList` + `CollectionPage` + `ItemList` + `FAQPage` + downloads/related item lists 条件输出
+- product: `BreadcrumbList` + `FAQPage` 条件输出
 
 不要求 DOM 不变，但 `JsonLd` 输出必须继续存在。
 

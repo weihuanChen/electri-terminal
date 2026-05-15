@@ -1,8 +1,8 @@
 import {
   makeBreadcrumbSchema,
+  makeCollectionPageSchema,
   makeFAQPageSchema,
   makeItemListSchema,
-  makeProductGroupSchema,
 } from "@/lib/schema";
 import {
   resolveFaqItems,
@@ -373,12 +373,10 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
         : []),
       { name: family.name, path: `/families/${slug}` },
     ]),
-    makeProductGroupSchema({
-      slug,
+    makeCollectionPageSchema({
       name: family.name,
       description: structuredDescription,
-      image: resolveFamilyPrimaryImage(family),
-      categoryName: family.category?.name,
+      path: `/families/${slug}`,
     }),
     ...((family.products || []).length > 0
       ? [

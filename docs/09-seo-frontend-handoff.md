@@ -108,7 +108,6 @@
 - `CollectionPage`
 - `ItemList`
 - `Product`
-- `ProductGroup`
 - `Article`
 - `SearchResultsPage`
 
@@ -181,7 +180,7 @@
 - 全局保留 `Organization` + `WebSite` + `SearchAction`
 - 产品详情页保留 `BreadcrumbList`
 - 只有在具备合法的 `offers` / `review` / `aggregateRating` 数据时才输出 `Product`
-- 系列页保留 `BreadcrumbList` + `ProductGroup`
+- 系列页保留 `BreadcrumbList` + `CollectionPage` + `ItemList`
 - 分类页保留 `BreadcrumbList` + `CollectionPage` + `ItemList`
 - `/products` 保留 `CollectionPage` + `ItemList`
 - 文章页保留 `BreadcrumbList` + `Article`
