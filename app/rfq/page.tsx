@@ -1,10 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "convex/react";
 import { toast } from "sonner";
 import { Breadcrumb } from "@/components/shared";
-import { Plus, Trash2, Upload } from "lucide-react";
+import {
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import Link from "next/link";
+import { api } from "@/convex/_generated/api";
+import {
+  getEnabledSocialMediaLinks,
+  getSocialMediaDisplayLabel,
+  normalizePublicContactSettings,
+} from "@/lib/contactConfig";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
 
 interface RFQItem {
@@ -15,6 +32,10 @@ interface RFQItem {
 }
 
 export default function RFQPage() {
+  const contactSettings = normalizePublicContactSettings(
+    useQuery(api.frontend.getPublicContactSettings)
+  );
+  const socialLinks = getEnabledSocialMediaLinks(contactSettings);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<RFQItem[]>([
     { id: "1", productId: "", quantity: 1, notes: "" },
@@ -116,6 +137,44 @@ export default function RFQPage() {
   };
 
   const breadcrumbItems = [{ label: "RFQ" }];
+  const contactInfoItems = [
+    contactSettings.email.enabled && contactSettings.email.value
+      ? {
+          key: "email",
+          icon: Mail,
+          title: "Email",
+          lines: [contactSettings.email.value],
+          href: `mailto:${contactSettings.email.value}`,
+        }
+      : null,
+    contactSettings.whatsapp.enabled && contactSettings.whatsapp.value
+      ? {
+          key: "whatsapp",
+          icon: MessageCircle,
+          title: "WhatsApp",
+          lines: [contactSettings.whatsapp.value],
+          href: contactSettings.whatsapp.href,
+          external: true,
+        }
+      : null,
+    contactSettings.phone.enabled && contactSettings.phone.value
+      ? {
+          key: "phone",
+          icon: Phone,
+          title: "Phone",
+          lines: [contactSettings.phone.value],
+          href: `tel:${contactSettings.phone.value.replace(/\s+/g, "")}`,
+        }
+      : null,
+    contactSettings.address.enabled && contactSettings.address.lines.length > 0
+      ? {
+          key: "address",
+          icon: MapPin,
+          title: "Address",
+          lines: contactSettings.address.lines,
+        }
+      : null,
+  ].filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (
     <>
@@ -142,7 +201,7 @@ export default function RFQPage() {
       {/* RFQ Form */}
       <section className="section">
         <div className="container">
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
             <form onSubmit={handleSubmit} className="card">
               {/* Contact Information */}
               <div className="p-6 border-b border-border">
@@ -365,6 +424,98 @@ export default function RFQPage() {
                 </p>
               </div>
             </form>
+
+            <aside className="space-y-6">
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4">Direct Contact</h2>
+                <p className="mb-6 text-sm text-secondary">
+                  If you already have a part number list or need a faster coordination path, use
+                  the channels below while submitting your RFQ.
+                </p>
+                <div className="space-y-5">
+                  {contactInfoItems.length === 0 && (
+                    <p className="text-sm text-secondary">
+                      Contact channels are currently unavailable. Please use the RFQ form.
+                    </p>
+                  )}
+                  {contactInfoItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={item.key} className="flex items-start gap-3">
+                        <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                        <div>
+                          <p className="text-sm font-semibold">{item.title}</p>
+                          {item.href ? (
+                            <Link
+                              href={item.href}
+                              className="text-sm text-secondary transition-colors hover:text-primary"
+                              target={item.external ? "_blank" : undefined}
+                              rel={item.external ? "noopener noreferrer" : undefined}
+                            >
+                              {item.lines.map((line, index) => (
+                                <span key={`${item.key}-${index}`} className="block">
+                                  {line}
+                                </span>
+                              ))}
+                            </Link>
+                          ) : (
+                            <p className="text-sm text-secondary">
+                              {item.lines.map((line, index) => (
+                                <span key={`${item.key}-${index}`} className="block">
+                                  {line}
+                                </span>
+                              ))}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {socialLinks.length > 0 && (
+                <div className="card p-6">
+                  <h3 className="font-semibold mb-4">Social</h3>
+                  <div className="space-y-3">
+                    {socialLinks.map((item) => {
+                      const isLinkedIn = item.platform.trim().toLowerCase() === "linkedin";
+                      const Icon = isLinkedIn ? Linkedin : Globe;
+
+                      return (
+                        <a
+                          key={`${item.platform}-${item.url}`}
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3 transition-colors hover:border-primary hover:bg-muted/40"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-primary" />
+                            <div>
+                              <p className="text-sm font-medium">
+                                {getSocialMediaDisplayLabel(item)}
+                              </p>
+                              <p className="text-xs text-secondary">Open company profile</p>
+                            </div>
+                          </div>
+                          <span className="text-xs text-secondary">Visit</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="card p-6">
+                <h3 className="font-semibold mb-4">Before You Submit</h3>
+                <div className="space-y-3 text-sm text-secondary">
+                  <p>Include item numbers if available so MOQ and lead time can be checked faster.</p>
+                  <p>Add target quantity and any insulation, material, or certification requirements.</p>
+                  <p>Attach drawings or spreadsheets when the RFQ contains multiple SKUs.</p>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </section>

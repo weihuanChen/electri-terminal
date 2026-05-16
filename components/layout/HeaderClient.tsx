@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Globe, Menu, Search, X } from "lucide-react";
+import { Globe, Linkedin, Menu, Search, X } from "lucide-react";
+import { getSocialMediaDisplayLabel } from "@/lib/contactConfig";
 
 interface HeaderCategory {
   name: string;
@@ -12,6 +13,11 @@ interface HeaderCategory {
 
 interface HeaderClientProps {
   productCategories: HeaderCategory[];
+  socialLink?: {
+    platform: string;
+    label?: string;
+    url: string;
+  } | null;
 }
 
 interface NavItem {
@@ -47,7 +53,7 @@ const STATIC_NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export default function HeaderClient({ productCategories }: HeaderClientProps) {
+export default function HeaderClient({ productCategories, socialLink = null }: HeaderClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -164,6 +170,19 @@ export default function HeaderClient({ productCategories }: HeaderClientProps) {
               <span className="text-xs font-medium">EN</span>
             </button>
 
+            {socialLink && (
+              <a
+                href={socialLink.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center justify-center rounded-md border border-slate-700 p-2 text-slate-300 transition-colors hover:border-blue-400 hover:text-blue-300"
+                aria-label={getSocialMediaDisplayLabel(socialLink)}
+                title={getSocialMediaDisplayLabel(socialLink)}
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+            )}
+
             <Link href="/rfq" className="hidden sm:inline-flex btn btn-primary btn-sm">
               Request Quote
             </Link>
@@ -187,6 +206,17 @@ export default function HeaderClient({ productCategories }: HeaderClientProps) {
             }}
           >
             <nav className="flex flex-col space-y-1">
+              {socialLink && (
+                <a
+                  href={socialLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-blue-300"
+                >
+                  <Linkedin className="h-4 w-4" />
+                  {getSocialMediaDisplayLabel(socialLink)}
+                </a>
+              )}
               {navItems.map((item) => (
                 <div key={item.name}>
                   {item.children?.length ? (

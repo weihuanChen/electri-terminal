@@ -5,15 +5,20 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Breadcrumb } from "@/components/shared";
-import { Mail, Phone, MapPin, Building, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Building, MessageCircle, Globe, Linkedin } from "lucide-react";
 import Link from "next/link";
-import { normalizePublicContactSettings } from "@/lib/contactConfig";
+import {
+  getEnabledSocialMediaLinks,
+  getSocialMediaDisplayLabel,
+  normalizePublicContactSettings,
+} from "@/lib/contactConfig";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
 
 export default function ContactPage() {
   const contactSettings = normalizePublicContactSettings(
     useQuery(api.frontend.getPublicContactSettings)
   );
+  const socialLinks = getEnabledSocialMediaLinks(contactSettings);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -309,6 +314,39 @@ export default function ContactPage() {
                   })}
                 </div>
               </div>
+
+              {socialLinks.length > 0 && (
+                <div className="card p-6">
+                  <h3 className="font-semibold mb-4">Social</h3>
+                  <div className="space-y-3">
+                    {socialLinks.map((item) => {
+                      const isLinkedIn = item.platform.trim().toLowerCase() === "linkedin";
+                      const Icon = isLinkedIn ? Linkedin : Globe;
+
+                      return (
+                        <a
+                          key={`${item.platform}-${item.url}`}
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3 transition-colors hover:border-primary hover:bg-muted/40"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-primary" />
+                            <div>
+                              <p className="text-sm font-medium">
+                                {getSocialMediaDisplayLabel(item)}
+                              </p>
+                              <p className="text-xs text-secondary">Open social profile</p>
+                            </div>
+                          </div>
+                          <span className="text-xs text-secondary">Visit</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Business Hours */}
               <div className="card p-6">

@@ -1,4 +1,9 @@
 import Link from "next/link";
+import { Linkedin } from "lucide-react";
+import {
+  getEnabledSocialMediaLinks,
+  getSocialMediaDisplayLabel,
+} from "@/lib/contactConfig";
 import { categoryUrl } from "@/lib/routes";
 import { getPublicContactSettings } from "@/lib/publicData";
 
@@ -49,6 +54,7 @@ function isInternalLink(href: string) {
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
   const contactSettings = await getPublicContactSettings();
+  const socialLinks = getEnabledSocialMediaLinks(contactSettings);
 
   const contactLinks: FooterLink[] = [
     { name: "Contact Form", href: "/contact" },
@@ -153,6 +159,26 @@ export default async function Footer() {
                 Professional electrical components for industrial applications.
                 Custom product documentation and certificates are available upon request.
               </p>
+              {socialLinks.length > 0 && (
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {socialLinks.map((item) => {
+                    const isLinkedIn = item.platform.trim().toLowerCase() === "linkedin";
+
+                    return (
+                      <a
+                        key={`${item.platform}-${item.url}`}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:border-blue-400 hover:text-blue-300"
+                      >
+                        {isLinkedIn && <Linkedin className="h-4 w-4" />}
+                        <span>{getSocialMediaDisplayLabel(item)}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {addressLines.length > 0 && (

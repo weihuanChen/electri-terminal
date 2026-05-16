@@ -15,6 +15,15 @@ function readFirstParam(value: string | string[] | undefined) {
   return value ?? "";
 }
 
+function getSocialMediaLink(
+  settings: PublicContactSettings,
+  platform: string
+) {
+  return settings.socialMedia.items.find(
+    (item) => item.platform.trim().toLowerCase() === platform
+  );
+}
+
 export default async function GeneralSettingsPage({
   searchParams,
 }: {
@@ -36,6 +45,7 @@ export default async function GeneralSettingsPage({
   const resolvedSearchParams = (await searchParams) ?? {};
   const success = readFirstParam(resolvedSearchParams.success);
   const error = readFirstParam(resolvedSearchParams.error);
+  const linkedInLink = getSocialMediaLink(settings, "linkedin");
 
   return (
     <DashboardLayout>
@@ -173,11 +183,46 @@ export default async function GeneralSettingsPage({
                   defaultChecked={settings.socialMedia.enabled}
                   className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
                 />
-                启用社媒入口（后续可补充平台链接）
+                启用社媒入口
               </label>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                当前版本仅提供开关，具体平台账号将在后续版本补充。
-              </p>
+              <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                      LinkedIn
+                    </h3>
+                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                      预留领英企业主页链接，当前先用于后台配置存储，前台展示可后续接入。
+                    </p>
+                  </div>
+
+                  <label className="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    <input
+                      type="checkbox"
+                      name="linkedinEnabled"
+                      defaultChecked={linkedInLink?.enabled ?? false}
+                      className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    启用 LinkedIn 链接
+                  </label>
+
+                  <input
+                    type="text"
+                    name="linkedinLabel"
+                    defaultValue={linkedInLink?.label ?? "LinkedIn"}
+                    placeholder="LinkedIn"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
+                  />
+
+                  <input
+                    type="url"
+                    name="linkedinUrl"
+                    defaultValue={linkedInLink?.url ?? ""}
+                    placeholder="https://www.linkedin.com/company/your-company"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

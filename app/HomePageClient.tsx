@@ -8,7 +8,11 @@ import ApplicationGrid from "@/components/home/ApplicationGrid";
 import SecondaryCapabilitySection from "@/components/home/SecondaryCapabilitySection";
 import HomeFAQSection from "@/components/home/HomeFAQSection";
 import BottomRFQSection from "@/components/home/BottomRFQSection";
-import { toSingleLineAddress } from "@/lib/contactConfig";
+import {
+  getEnabledSocialMediaLinks,
+  getSocialMediaDisplayLabel,
+  toSingleLineAddress,
+} from "@/lib/contactConfig";
 import { getHomePageData } from "@/lib/publicData";
 
 export default async function HomePageClient() {
@@ -135,6 +139,12 @@ export default async function HomePageClient() {
           href: "/contact",
         }
       : null,
+    ...getEnabledSocialMediaLinks(contactSettings).map((item) => ({
+      label: getSocialMediaDisplayLabel(item),
+      value: "Company Profile",
+      href: item.url,
+      external: true,
+    })),
   ].filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (

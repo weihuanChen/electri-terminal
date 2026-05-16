@@ -131,3 +131,29 @@ function normalizeAddressLines(lines: string[] | undefined, fallback: string[]) 
 export function toSingleLineAddress(lines: string[]) {
   return lines.map((line) => line.trim()).filter(Boolean).join(", ");
 }
+
+export function getEnabledSocialMediaLinks(
+  settings: Pick<PublicContactSettings, "socialMedia">
+) {
+  if (!settings.socialMedia.enabled) {
+    return [];
+  }
+
+  return settings.socialMedia.items.filter(
+    (item) => item.enabled && Boolean(item.platform.trim()) && Boolean(item.url.trim())
+  );
+}
+
+export function getSocialMediaDisplayLabel(
+  item: Pick<PublicSocialMediaLink, "platform" | "label">
+) {
+  if (item.label?.trim()) {
+    return item.label.trim();
+  }
+
+  if (item.platform.trim().toLowerCase() === "linkedin") {
+    return "LinkedIn";
+  }
+
+  return item.platform.trim();
+}

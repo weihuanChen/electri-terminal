@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 
 import { Id } from "@/convex/_generated/dataModel";
 import { clearAdminSession, requireAdmin } from "@/lib/admin-auth";
+import {
+  normalizePublicContactSettings,
+  type PublicContactSettings,
+} from "@/lib/contactConfig";
 import { getAdminConvexClient } from "@/lib/convex-admin";
 
 function str(formData: FormData, key: string) {
@@ -1152,6 +1156,37 @@ export async function updateFaqRelationsAction(formData: FormData) {
 export async function updateContactSettingsAction(formData: FormData) {
   await requireAdmin();
 
+  const client = getAdminConvexClient();
+  let existingSocialMediaItems: PublicContactSettings["socialMedia"]["items"] = [];
+
+  try {
+    const existingSettings = (await client.query("frontend:getPublicContactSettings", {})) as
+      | Partial<PublicContactSettings>
+      | null;
+    existingSocialMediaItems = normalizePublicContactSettings(existingSettings).socialMedia.items;
+  } catch {
+    existingSocialMediaItems = [];
+  }
+
+  const linkedInUrl = optionalStr(formData, "linkedinUrl");
+  const linkedInLabel = optionalStr(formData, "linkedinLabel");
+  const linkedInEnabled = boolFromForm(formData, "linkedinEnabled");
+  const socialMediaItems = [
+    ...existingSocialMediaItems.filter(
+      (item) => item.platform.trim().toLowerCase() !== "linkedin"
+    ),
+    ...(linkedInUrl
+      ? [
+          {
+            platform: "linkedin",
+            label: linkedInLabel ?? "LinkedIn",
+            url: linkedInUrl,
+            enabled: linkedInEnabled,
+          },
+        ]
+      : []),
+  ];
+
   const contact = {
     email: {
       enabled: boolFromForm(formData, "emailEnabled"),
@@ -1172,13 +1207,12 @@ export async function updateContactSettingsAction(formData: FormData) {
     },
     socialMedia: {
       enabled: boolFromForm(formData, "socialMediaEnabled"),
-      items: [],
+      items: socialMediaItems,
     },
   };
 
   let saveError: unknown;
   try {
-    const client = getAdminConvexClient();
     await client.mutation("mutations/admin/siteSettings:upsertGlobalContactSettings", {
       contact,
     });
