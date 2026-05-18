@@ -100,12 +100,20 @@ export interface AdminProductDetail {
   variants: AdminProductVariantSummary[];
 }
 
+let convexClient: ConvexHttpClient | undefined;
+let convexClientUrl: string | undefined;
+
 function getConvexClient() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
   if (!url) {
     throw new Error("Missing NEXT_PUBLIC_CONVEX_URL in environment");
   }
-  return new ConvexHttpClient(url.replace(/\/+$/, ""));
+  const normalizedUrl = url.replace(/\/+$/, "");
+  if (!convexClient || convexClientUrl !== normalizedUrl) {
+    convexClientUrl = normalizedUrl;
+    convexClient = new ConvexHttpClient(normalizedUrl);
+  }
+  return convexClient;
 }
 
 type UntypedConvexClient = {
