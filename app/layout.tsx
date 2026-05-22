@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: "Electri Terminal - Professional Electrical Solutions",
   description: "Electri Terminal provides professional electrical solutions for industrial and commercial applications.",
+  verification: {
+    yandex: "a16d516d193917a4",
+  },
   robots: {
     index: true,
     follow: true,
