@@ -41,7 +41,7 @@ const BASE_FOOTER_SECTIONS: FooterSection[] = [
     title: "Support",
     links: [
       { name: "Contact Support", href: "/contact" },
-      { name: "Submit RFQ", href: "/rfq" },
+      { name: "Submit RFQ", href: "/contact#request-quote" },
       { name: "Search Products", href: "/search" },
     ],
   },
@@ -212,7 +212,7 @@ export default async function Footer() {
                 Contact
               </Link>
               <Link
-                href="/rfq"
+                href="/contact#request-quote"
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 RFQ

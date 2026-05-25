@@ -996,7 +996,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
         description="Our team can recommend the exact model based on your application."
         primaryCTA={{
           label: "Request Quote",
-          href: "/rfq",
+          href: "/contact#request-quote",
         }}
         secondaryCTA={{
           label: "Talk to Engineer",

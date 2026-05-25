@@ -26,7 +26,7 @@ export default function BottomRFQSection({
   subtitle = "Share your item numbers and quantity plan. MOQ and lead time are confirmed per item number and order quantity.",
   primaryCta = {
     text: "Contact Sales",
-    href: "/contact",
+    href: "/contact#request-quote",
   },
   secondaryCta = {
     text: "Request Documentation",

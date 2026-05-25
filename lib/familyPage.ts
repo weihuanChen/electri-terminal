@@ -309,7 +309,7 @@ export function resolveFamilyPageViewModel(family: FamilyPageLike) {
     longformMarkdown: asNonEmptyString(family.pageConfig?.longform?.markdown),
     primaryCTA: {
       label: pageConversion?.ctaPrimaryLabel || "Request Quote",
-      href: pageConversion?.ctaPrimaryHref || "/rfq",
+      href: pageConversion?.ctaPrimaryHref || "/contact#request-quote",
     } satisfies CTAConfig,
     secondaryCTA: {
       label: pageConversion?.ctaSecondaryLabel || "Contact Sales",

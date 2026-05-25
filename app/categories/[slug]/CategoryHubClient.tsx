@@ -322,7 +322,7 @@ export default function CategoryHubClient({
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
-                  href="/rfq"
+                  href="/contact#request-quote"
                   className="inline-flex items-center rounded-sm border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
                 >
                   Request Quote
@@ -507,7 +507,7 @@ export default function CategoryHubClient({
         variant="primary"
         primaryCTA={{
           label: "Request Quote",
-          href: "/rfq",
+          href: "/contact#request-quote",
         }}
         secondaryCTA={{
           label: "Contact Team",

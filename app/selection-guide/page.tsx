@@ -126,7 +126,7 @@ export default function SelectionGuidePage() {
                 <Link href="#section-a" className="btn btn-primary w-full justify-center sm:w-auto">
                   Start with Terminal Type
                 </Link>
-                <Link href="/contact" className="btn btn-hero-secondary w-full justify-center sm:w-auto">
+                <Link href="/contact#request-quote" className="btn btn-hero-secondary w-full justify-center sm:w-auto">
                   Request Quote
                 </Link>
               </div>

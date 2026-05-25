@@ -201,7 +201,7 @@ export default function ResourcesPageClient({
               <Link href="/contact" className="btn btn-primary">
                 Request Documentation
               </Link>
-              <Link href="/rfq" className="btn btn-secondary">
+              <Link href="/contact#request-quote" className="btn btn-secondary">
                 Submit RFQ
               </Link>
             </div>
@@ -237,7 +237,7 @@ export default function ResourcesPageClient({
               <p className="text-sm text-secondary mb-4">
                 Certificates and custom product documentation are available upon request for selected models.
               </p>
-              <Link href="/rfq" className="text-sm text-primary hover:underline">
+              <Link href="/contact#request-quote" className="text-sm text-primary hover:underline">
                 Start Request →
               </Link>
             </div>

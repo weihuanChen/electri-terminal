@@ -515,7 +515,7 @@ export default function CategoriesPage() {
               based on your application requirements.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/rfq" className="btn btn-inverse-solid btn-arrow">
+              <Link href="/contact#request-quote" className="btn btn-inverse-solid btn-arrow">
                 Request a Quote
               </Link>
               <Link href="/contact" className="btn btn-inverse-outline">

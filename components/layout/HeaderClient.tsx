@@ -183,7 +183,7 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
               </a>
             )}
 
-            <Link href="/rfq" className="hidden sm:inline-flex btn btn-primary btn-sm">
+            <Link href="/contact#request-quote" className="hidden sm:inline-flex btn btn-primary btn-sm">
               Request Quote
             </Link>
 

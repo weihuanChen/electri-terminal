@@ -29,9 +29,12 @@ import {
   ulListedCard,
 } from "./data";
 
-const pageTitle = "Quality Certifications for Electrical Terminals & Components";
-const pageDescription =
+const pageHeading = "Electrical Terminal Certifications & Compliance";
+const pageIntroDescription =
   "Our products are tested and verified according to international electrical safety and environmental compliance standards, helping distributors, OEMs and project buyers source with confidence.";
+const metadataTitle = "Electrical Terminal Certifications & Compliance | Electri Terminal";
+const metadataDescription =
+  "Documentation and compliance information for insulated terminals, copper lugs, and electrical connection components, including cULus, CE, RoHS, and REACH qualification standards.";
 
 const trustIcons = [BadgeCheck, FlaskConical, ShieldCheck, FileCheck2];
 const benefitIcons = [ShieldCheck, FileCheck2, CheckCircle2];
@@ -42,15 +45,15 @@ const benefitIconStyles = [
 ];
 
 export const metadata: Metadata = {
-  title: `${pageTitle} | Electri Terminal`,
-  description: pageDescription,
+  title: metadataTitle,
+  description: metadataDescription,
   alternates: {
     canonical: "/quality-certifications",
   },
   openGraph: {
     type: "website",
-    title: pageTitle,
-    description: pageDescription,
+    title: metadataTitle,
+    description: metadataDescription,
     url: "/quality-certifications",
     images: [
       {
@@ -61,8 +64,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: pageTitle,
-    description: pageDescription,
+    title: metadataTitle,
+    description: metadataDescription,
     images: [
       "https://assets.electriterminal.com/certifications/ce-ring-terminals-certificate.webp",
     ],
@@ -78,7 +81,7 @@ export default function QualityCertificationsPage() {
     ]),
     makeCollectionPageSchema({
       name: "Quality & Certifications",
-      description: pageDescription,
+      description: metadataDescription,
       path: "/quality-certifications",
     }),
     {
@@ -114,10 +117,10 @@ export default function QualityCertificationsPage() {
                 Quality & Certifications
               </p>
               <h1 className="max-w-4xl text-4xl font-semibold leading-tight !text-white md:text-5xl">
-                {pageTitle}
+                {pageHeading}
               </h1>
               <p className="max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
-                {pageDescription}
+                {pageIntroDescription}
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">

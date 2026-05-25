@@ -88,9 +88,9 @@ export async function generateMetadata({
   return buildPageMetadata({
     entity: { status: "published" },
     fallbackPath: "/resources",
-    fallbackTitle: "Documentation Support",
+    fallbackTitle: "Technical Documentation & Product Resources | Electri Terminal",
     fallbackDescription:
-      "Browse publicly available catalogs, datasheets, certificates, CAD drawings, and manuals for Electri Terminal product lines.",
+      "Access product catalogs, technical specifications, compliance documents, and engineering resources for electrical terminals, copper connectors, and industrial wiring components.",
     robots: buildResourcesRobots(hasActiveFilters),
   });
 }

@@ -1,8 +1,33 @@
+import type { Metadata } from "next";
+
 import BlogPageClient, { type BlogPageClientProps } from "./BlogPageClient";
 import { queryPublicPage } from "@/lib/metadata";
 
 type BlogPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const metadataTitle = "Electrical Terminal Industry Blog & Technical Resources | Electri Terminal";
+const metadataDescription =
+  "Technical articles and industry insights covering electrical terminals, crimping systems, copper connectors, wiring standards, OEM manufacturing, and industrial electrical applications.";
+
+export const metadata: Metadata = {
+  title: metadataTitle,
+  description: metadataDescription,
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    type: "website",
+    title: metadataTitle,
+    description: metadataDescription,
+    url: "/blog",
+  },
+  twitter: {
+    card: "summary",
+    title: metadataTitle,
+    description: metadataDescription,
+  },
 };
 
 const VALID_ARTICLE_TYPES = new Set(["blog", "guide", "faq", "application"]);

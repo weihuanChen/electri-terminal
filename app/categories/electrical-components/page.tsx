@@ -201,7 +201,7 @@ export default function ElectricalComponentsCategory() {
                             <Link href="#products" className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg shadow-blue-600/20 flex items-center gap-2">
                                 Browse Products
                             </Link>
-                            <Link href="/rfq" className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium rounded-lg transition-all backdrop-blur-sm flex items-center gap-2">
+                            <Link href="/contact#request-quote" className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium rounded-lg transition-all backdrop-blur-sm flex items-center gap-2">
                                 Request Quote
                             </Link>
                         </div>
@@ -297,7 +297,7 @@ export default function ElectricalComponentsCategory() {
                                             </div>
                                         </div>
                                         <Link
-                                            href="/rfq"
+                                            href="/contact#request-quote"
                                             className="w-full text-center block py-2.5 px-4 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors"
                                         >
                                             Request Quote
@@ -402,7 +402,7 @@ export default function ElectricalComponentsCategory() {
                 description="Our technical experts are ready to assist you in selecting the perfect electrical components for your specific industrial application."
                 primaryCTA={{
                     label: "Request Quote",
-                    href: "/rfq",
+                    href: "/contact#request-quote",
                 }}
                 secondaryCTA={{
                     label: "Contact Sales",

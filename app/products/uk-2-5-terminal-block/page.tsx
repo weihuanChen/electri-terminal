@@ -91,7 +91,7 @@ export default function UK25TerminalBlockPage() {
                                     </div>
 
                                     <Link
-                                        href="/rfq"
+                                        href="/contact#request-quote"
                                         className="inline-block px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-700 transition-colors"
                                     >
                                         Request Quote

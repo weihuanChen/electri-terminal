@@ -279,7 +279,7 @@ export function resolveCategoryPageViewModel(
     } satisfies CTAConfig,
     secondaryCTA: {
       label: "Request Quote",
-      href: "/rfq",
+      href: "/contact#request-quote",
     } satisfies CTAConfig,
   };
 }

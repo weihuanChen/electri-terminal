@@ -26,7 +26,7 @@ export default function HeroSection({
     "DIN Rail Accessories",
   ],
   primaryCta = { text: "Browse Products", href: "/categories" },
-  secondaryCta = { text: "Request Quote", href: "/rfq" },
+  secondaryCta = { text: "Request Quote", href: "/contact#request-quote" },
   imageUrl = "https://assets.electriterminal.com/factory/copper-tube-cutting-manufacturing-process.webp",
   imageAlt = "engineer cutting copper tubes in terminal manufacturing workshop, industrial electrical connector production process",
 }: HeroSectionProps) {

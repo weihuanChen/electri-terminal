@@ -160,7 +160,7 @@ export default async function HomePageClient() {
           "Copper Ring Terminals",
           "Heavy-Duty Cable Lugs",
         ]}
-        primaryCta={{ text: "Request a Quote", href: "/contact" }}
+        primaryCta={{ text: "Request a Quote", href: "/contact#request-quote" }}
         secondaryCta={{ text: "View Products", href: "/products" }}
       />
 
@@ -209,7 +209,7 @@ export default async function HomePageClient() {
         subtitle="Tell us your requirements. We will respond quickly with suitable options and pricing. MOQ and lead time are confirmed per item number and order quantity."
         primaryCta={{
           text: "Request a Quote",
-          href: "/contact",
+          href: "/contact#request-quote",
         }}
         secondaryCta={{
           text: "View Products",

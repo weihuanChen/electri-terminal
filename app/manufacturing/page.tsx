@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, FAQAccordion, ImagePreview } from "@/components/shared";
 import {
@@ -9,6 +10,36 @@ import {
 import { CheckCircle2, ClipboardCheck, Gauge, PackageCheck, ShieldCheck } from "lucide-react";
 
 const heroImage = "https://assets.electriterminal.com/factory/cnc-machining-copper-tube.webp";
+const metadataTitle =
+  "Electrical Terminal Manufacturing & CNC Copper Processing | Electri Terminal";
+const metadataDescription =
+  "Manufacturing processes for insulated terminals, copper lugs, and custom electrical connection components, including CNC machining, inspection workflows, and OEM production capabilities.";
+
+export const metadata: Metadata = {
+  title: metadataTitle,
+  description: metadataDescription,
+  alternates: {
+    canonical: "/manufacturing",
+  },
+  openGraph: {
+    type: "website",
+    title: metadataTitle,
+    description: metadataDescription,
+    url: "/manufacturing",
+    images: [
+      {
+        url: heroImage,
+        alt: "Electrical terminal manufacturing and CNC copper processing",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: metadataTitle,
+    description: metadataDescription,
+    images: [heroImage],
+  },
+};
 
 const processSteps = [
   {
@@ -177,7 +208,7 @@ export default function ManufacturingPage() {
                 <Link href="/contact" className="btn btn-primary">
                   View Manufacturing Process →
                 </Link>
-                <Link href="/rfq" className="btn btn-hero-secondary">
+                <Link href="/contact#request-quote" className="btn btn-hero-secondary">
                   Request Quote
                 </Link>
               </div>
@@ -348,7 +379,7 @@ export default function ManufacturingPage() {
               <Link href="/contact" className="btn btn-primary">
                 Contact Engineering Team
               </Link>
-              <Link href="/rfq" className="btn btn-secondary">
+              <Link href="/contact#request-quote" className="btn btn-secondary">
                 Submit RFQ
               </Link>
             </div>
