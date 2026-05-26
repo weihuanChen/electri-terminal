@@ -23,10 +23,14 @@ export type KeySpecificationVariant = {
 };
 
 export type KeySpecificationProduct = {
+  title?: string;
+  shortTitle?: string;
   attributes?: Record<string, unknown>;
   specificationFields?: KeySpecificationField[];
   variants?: KeySpecificationVariant[];
 };
+
+type SchemaAttributeValue = string | string[];
 
 function uniqueValues(values: string[]) {
   const seen = new Set<string>();
@@ -223,6 +227,92 @@ function buildMaxCurrentValues(product: KeySpecificationProduct) {
   return Number.isFinite(maxCurrent) ? [formatMaxCurrentValue(maxCurrent)] : [];
 }
 
+function toTitleCase(value: string) {
+  return value.replace(/\b[a-z]/g, (character) => character.toUpperCase());
+}
+
+function normalizeTerminalTypeValue(value: string) {
+  const trimmed = value.trim().replace(/_/g, " ").replace(/\s+/g, " ");
+  const lowerValue = trimmed.toLowerCase();
+  const shorthandMap: Record<string, string> = {
+    ring: "Ring Terminal",
+    fork: "Fork Terminal",
+    spade: "Spade Terminal",
+    pin: "Pin Terminal",
+    blade: "Blade Terminal",
+    bullet: "Bullet Terminal",
+    butt: "Butt Connector",
+  };
+
+  if (shorthandMap[lowerValue]) {
+    return shorthandMap[lowerValue];
+  }
+
+  const singularValue = trimmed.replace(/\bterminals\b/i, "Terminal");
+  if (/\b(terminal|connector|lug)\b/i.test(singularValue)) {
+    return toTitleCase(singularValue);
+  }
+
+  return toTitleCase(`${singularValue} Terminal`);
+}
+
+function deriveTerminalTypeFromTitle(product: KeySpecificationProduct) {
+  const source = product.shortTitle || product.title || "";
+  const patterns = [
+    /90\s*degree\s+non-insulated\s+ring\s+terminals?/i,
+    /easy\s+entry\s+insulated\s+ring\s+terminals?/i,
+    /vinyl-insulated\s+ring\s+terminals?/i,
+    /nylon-insulated\s+ring\s+terminals?/i,
+    /heat\s+shrink\s+ring\s+terminals?/i,
+    /non-insulated\s+ring\s+terminals?/i,
+    /insulated\s+ring\s+terminals?/i,
+    /circular\s+cold\s+press\s+terminals?/i,
+    /ring\s+terminals?/i,
+  ];
+
+  const match = patterns
+    .map((pattern) => source.match(pattern)?.[0])
+    .find(Boolean);
+
+  return match ? normalizeTerminalTypeValue(match) : "";
+}
+
+function buildCertificationValues(product: KeySpecificationProduct) {
+  const productCertifications = uniqueValues(
+    splitSpecificationList(product.attributes?.certifications)
+  );
+
+  if (productCertifications.length > 0) {
+    return productCertifications;
+  }
+
+  return uniqueValues(
+    getVariantAttributeValues(product, "certifications").flatMap(splitSpecificationList)
+  );
+}
+
+function buildTerminalTypeValues(product: KeySpecificationProduct) {
+  const terminalTypeFieldKeys = [
+    "terminal_type",
+    "terminal_type_name",
+    "terminalType",
+    "product_type",
+  ];
+
+  for (const fieldKey of terminalTypeFieldKeys) {
+    const values = uniqueValues(
+      splitSpecificationList(product.attributes?.[fieldKey]).map(normalizeTerminalTypeValue)
+    );
+
+    if (values.length > 0) {
+      return values;
+    }
+  }
+
+  const derivedValue = deriveTerminalTypeFromTitle(product);
+  return derivedValue ? [derivedValue] : [];
+}
+
 export function buildProductKeySpecifications(
   product: KeySpecificationProduct
 ): KeySpecificationItem[] {
@@ -245,10 +335,28 @@ export function buildProductKeySpecifications(
 export function buildProductKeySpecificationAttributes(
   product: KeySpecificationProduct
 ) {
-  return Object.fromEntries(
+  const visibleAttributes = Object.fromEntries(
     buildProductKeySpecifications(product).map((item) => [
       item.label,
       item.values.length === 1 ? item.values[0] : item.values,
     ])
-  );
+  ) as Record<string, SchemaAttributeValue>;
+  const certifications = buildCertificationValues(product);
+  const terminalTypes = buildTerminalTypeValues(product);
+
+  return {
+    ...visibleAttributes,
+    ...(certifications.length > 0
+      ? {
+          Certifications:
+            certifications.length === 1 ? certifications[0] : certifications,
+        }
+      : {}),
+    ...(terminalTypes.length > 0
+      ? {
+          "Terminal Type":
+            terminalTypes.length === 1 ? terminalTypes[0] : terminalTypes,
+        }
+      : {}),
+  };
 }

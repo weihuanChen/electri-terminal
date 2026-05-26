@@ -33,7 +33,7 @@ export default function SKUTable({
   skus,
   displayColumns,
 }: SKUTableProps) {
-  const [sortColumn, setSortColumn] = useState<string>("title");
+  const [sortColumn, setSortColumn] = useState<string>("skuCode");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [filters, setFilters] = useState<Record<string, string>>({});
 
@@ -89,7 +89,10 @@ export default function SKUTable({
         return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
       }
 
-      const comparison = String(aVal).localeCompare(String(bVal));
+      const comparison = String(aVal).localeCompare(String(bVal), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
       return sortOrder === "asc" ? comparison : -comparison;
     });
 
