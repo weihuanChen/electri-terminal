@@ -1,4 +1,5 @@
-import { makeBreadcrumbSchema, makeFAQPageSchema } from "@/lib/schema";
+import { makeBreadcrumbSchema, makeFAQPageSchema, makeProductSchema } from "@/lib/schema";
+import { buildProductKeySpecificationAttributes } from "@/lib/productKeySpecifications";
 import {
   resolveFaqItems,
   resolveMetadataDescription,
@@ -8,6 +9,17 @@ import {
 
 type ProductVariantRecord = {
   itemNo?: string;
+  attributes?: Record<string, unknown>;
+};
+
+type ProductSpecificationFieldRecord = {
+  fieldKey: string;
+  label: string;
+  fieldType?: "string" | "number" | "boolean" | "enum" | "array" | "range";
+  displayPrecision?: number;
+  unitKey?: "mm" | "mm2" | "g" | "kg" | "v" | "a" | "c" | "awg" | "nm" | "pcs";
+  unit?: string;
+  groupName?: string;
 };
 
 type ProductCategoryRecord = {
@@ -33,6 +45,7 @@ type ProductLike = {
   seoDescription?: string;
   canonical?: string;
   attributes?: Record<string, unknown>;
+  specificationFields?: ProductSpecificationFieldRecord[];
   faqs?: BasicFaqRecord[];
   resources?: Array<{
     _id: string;
@@ -93,8 +106,17 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
         : []),
       { name: product.shortTitle || product.title, path: `/products/${slug}` },
     ]),
-    // Keep product detail markup out of Google's Product rich-result pipeline until
-    // we have real offers, reviews, or aggregate ratings to publish.
+    makeProductSchema({
+      slug,
+      name: product.shortTitle || product.title,
+      description: resolveProductMetadataDescription(product),
+      image: product.mainImage,
+      model: product.model,
+      sku: product.skuCode,
+      mpn: product.model,
+      categoryName: product.category?.name,
+      attributes: buildProductKeySpecificationAttributes(product),
+    }),
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({

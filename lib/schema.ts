@@ -176,7 +176,7 @@ export function makeProductSchema({
       .map(([key, value]) => ({
         "@type": "PropertyValue",
         name: key,
-        value: Array.isArray(value) ? value.join(", ") : String(value),
+        value,
       })),
   };
 }
