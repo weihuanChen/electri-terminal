@@ -12,7 +12,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
-import { familyUrl } from "@/lib/routes";
+import { familyUrl, productUrl } from "@/lib/routes";
 
 type EmbeddedFaqItem = {
   question: string;
@@ -388,7 +388,7 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
             path: `/families/${slug}`,
             items: (family.products || []).map((product) => ({
               name: product.shortTitle || product.title,
-              url: `/products/${product.slug}`,
+              url: productUrl(product.slug),
             })),
           }),
         ]

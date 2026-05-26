@@ -1,4 +1,5 @@
 import { resolveFamilySlug } from "@/lib/familyRedirects";
+import { resolveProductSlug } from "@/lib/productRedirects";
 
 export function categoryUrl(slug: string) {
   return `/categories/${slug}`;
@@ -9,5 +10,5 @@ export function familyUrl(slug: string) {
 }
 
 export function productUrl(slug: string) {
-  return `/products/${slug}`;
+  return `/products/${resolveProductSlug(slug)}`;
 }

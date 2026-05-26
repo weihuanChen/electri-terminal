@@ -2,6 +2,7 @@ import "server-only";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
 import { isRedirectedFamilySlug } from "@/lib/familyRedirects";
+import { isRedirectedProductSlug } from "@/lib/productRedirects";
 import { getSiteUrl, toAbsoluteSiteUrl } from "@/lib/site";
 
 type SitemapImage = {
@@ -136,6 +137,7 @@ async function fetchSitemapContent() {
 export async function buildSitemapEntries() {
   const content = await fetchSitemapContent();
   const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
+  const sitemapProducts = content.products.filter((product) => !isRedirectedProductSlug(product.slug));
 
   return [
     ...STATIC_PAGE_ENTRIES,
@@ -151,7 +153,7 @@ export async function buildSitemapEntries() {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
-    ...content.products.map((product) => ({
+    ...sitemapProducts.map((product) => ({
       url: normalizeCanonicalUrl(product.canonical, `/products/${product.slug}`),
       lastModified: toDate(product.updatedAt),
       changeFrequency: "weekly" as const,
@@ -169,6 +171,7 @@ export async function buildSitemapEntries() {
 export async function buildImageSitemapEntries() {
   const content = await fetchSitemapContent();
   const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
+  const sitemapProducts = content.products.filter((product) => !isRedirectedProductSlug(product.slug));
 
   const entries: SitemapImageEntry[] = [];
 
@@ -197,7 +200,7 @@ export async function buildImageSitemapEntries() {
     });
   }
 
-  for (const product of content.products) {
+  for (const product of sitemapProducts) {
     const images = dedupeImages(
       (product.mediaItems ?? []).map((item) => ({
         url: item.url,

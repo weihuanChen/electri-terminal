@@ -20,7 +20,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
-import { familyUrl } from "@/lib/routes";
+import { familyUrl, productUrl } from "@/lib/routes";
 
 type CategoryFilterOption = {
   value: string;
@@ -339,7 +339,7 @@ export function buildCategoryStructuredData(
             path: `/categories/${slug}`,
             items: content.products.map((product) => ({
               name: product.shortTitle || product.title,
-              url: `/products/${product.slug}`,
+              url: productUrl(product.slug),
             })),
           }),
         ]

@@ -6,7 +6,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
-import { familyUrl } from "@/lib/routes";
+import { familyUrl, productUrl } from "@/lib/routes";
 
 type ProductVariantRecord = {
   itemNo?: string;
@@ -105,7 +105,7 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
       ...(product.family?.slug
         ? [{ name: product.family.name, path: familyUrl(product.family.slug) }]
         : []),
-      { name: product.shortTitle || product.title, path: `/products/${slug}` },
+      { name: product.shortTitle || product.title, path: productUrl(slug) },
     ]),
     makeProductSchema({
       slug,

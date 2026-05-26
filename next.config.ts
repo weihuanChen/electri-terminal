@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 import { FAMILY_REDIRECTS } from "./lib/familyRedirects";
+import { PRODUCT_REDIRECTS } from "./lib/productRedirects";
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -27,6 +28,11 @@ const nextConfig: NextConfig = {
       ...FAMILY_REDIRECTS.map((redirect) => ({
         source: `/families/${redirect.sourceSlug}`,
         destination: `/families/${redirect.destinationSlug}`,
+        permanent: true,
+      })),
+      ...PRODUCT_REDIRECTS.map((redirect) => ({
+        source: `/products/${redirect.sourceSlug}`,
+        destination: `/products/${redirect.destinationSlug}`,
         permanent: true,
       })),
       {
