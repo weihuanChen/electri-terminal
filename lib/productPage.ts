@@ -6,6 +6,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
+import { familyUrl } from "@/lib/routes";
 
 type ProductVariantRecord = {
   itemNo?: string;
@@ -81,7 +82,7 @@ export function resolveProductPageViewModel(product: ProductLike) {
     secondaryCTA: product.family
       ? {
           label: "View Series",
-          href: `/families/${product.family.slug}`,
+          href: familyUrl(product.family.slug),
         }
       : undefined,
     faqItems: resolveProductFaqItems(product),
@@ -102,7 +103,7 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
         ? [{ name: product.category.name || "Category", path: `/categories/${product.category.slug}` }]
         : []),
       ...(product.family?.slug
-        ? [{ name: product.family.name, path: `/families/${product.family.slug}` }]
+        ? [{ name: product.family.name, path: familyUrl(product.family.slug) }]
         : []),
       { name: product.shortTitle || product.title, path: `/products/${slug}` },
     ]),

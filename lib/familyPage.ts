@@ -12,6 +12,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
+import { familyUrl } from "@/lib/routes";
 
 type EmbeddedFaqItem = {
   question: string;
@@ -364,6 +365,8 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
     resolved.overviewDetails[0] ||
     family.summary ||
     family.content;
+  const relatedArticles = family.relatedArticles || [];
+  const relatedFamilies = family.relatedFamilies || [];
 
   return [
     makeBreadcrumbSchema([
@@ -410,26 +413,26 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
           }),
         ]
       : []),
-    ...((family.relatedArticles || []).length > 0
+    ...(relatedArticles.length > 0
       ? [
           makeItemListSchema({
             name: `${family.name} Related Articles`,
             path: `/families/${slug}`,
-            items: family.relatedArticles.map((article) => ({
+            items: relatedArticles.map((article) => ({
               name: article.title,
               url: `/blog/${article.slug}`,
             })),
           }),
         ]
       : []),
-    ...((family.relatedFamilies || []).length > 0
+    ...(relatedFamilies.length > 0
       ? [
           makeItemListSchema({
             name: `${family.name} Related Families`,
             path: `/families/${slug}`,
-            items: family.relatedFamilies.map((item) => ({
+            items: relatedFamilies.map((item) => ({
               name: item.name,
-              url: `/families/${item.slug}`,
+              url: familyUrl(item.slug),
             })),
           }),
         ]

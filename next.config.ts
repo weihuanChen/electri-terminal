@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { FAMILY_REDIRECTS } from "./lib/familyRedirects";
+
 const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -22,6 +24,11 @@ const nextConfig: NextConfig = {
         destination: "https://electriterminal.com/:path*",
         permanent: true,
       },
+      ...FAMILY_REDIRECTS.map((redirect) => ({
+        source: `/families/${redirect.sourceSlug}`,
+        destination: `/families/${redirect.destinationSlug}`,
+        permanent: true,
+      })),
       {
         source: "/series/:slug",
         destination: "/families/:slug",

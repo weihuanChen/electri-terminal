@@ -20,6 +20,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
+import { familyUrl } from "@/lib/routes";
 
 type CategoryFilterOption = {
   value: string;
@@ -326,7 +327,7 @@ export function buildCategoryStructuredData(
             path: `/categories/${slug}`,
             items: content.families.map((family) => ({
               name: family.name,
-              url: `/families/${family.slug}`,
+              url: familyUrl(family.slug),
             })),
           }),
         ]

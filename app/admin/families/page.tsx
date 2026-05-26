@@ -3,7 +3,22 @@ import { loadAdminData } from "@/lib/convex-admin";
 import { DashboardLayout } from "../components/DashboardLayout";
 import { Plus, Edit2, Layers } from "lucide-react";
 import Link from "next/link";
-import { Doc } from "@/convex/_generated/dataModel";
+
+const FAMILY_STATUS_LABELS = {
+  published: "已发布",
+  draft: "草稿",
+  archived: "已归档",
+} as const;
+
+function getFamilyStatusClass(status: keyof typeof FAMILY_STATUS_LABELS) {
+  if (status === "published") {
+    return "bg-emerald-100 text-emerald-700";
+  }
+  if (status === "draft") {
+    return "bg-amber-100 text-amber-700";
+  }
+  return "bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300";
+}
 
 export default async function FamiliesPage() {
   await requireAdmin();
@@ -30,7 +45,7 @@ export default async function FamiliesPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">总系列数</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{families.length}</p>
@@ -45,6 +60,12 @@ export default async function FamiliesPage() {
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">草稿</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
               {families.filter((f) => f.status === "draft").length}
+            </p>
+          </div>
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">已归档</p>
+            <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+              {families.filter((f) => f.status === "archived").length}
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
@@ -66,7 +87,7 @@ export default async function FamiliesPage() {
               <Layers className="mx-auto h-12 w-12 text-zinc-300" />
               <p className="mt-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">暂无系列</p>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                点击"新建系列"创建第一个系列
+                点击“新建系列”创建第一个系列
               </p>
             </div>
           ) : (
@@ -115,14 +136,10 @@ export default async function FamiliesPage() {
                         {categoryMap.get(family.categoryId) || "Unknown"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                          family.status === "published"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : family.status === "draft"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-zinc-100 dark:bg-zinc-950 text-zinc-700 dark:text-zinc-300"
-                        }`}>
-                          {family.status}
+                        <span
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getFamilyStatusClass(family.status)}`}
+                        >
+                          {FAMILY_STATUS_LABELS[family.status]}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">

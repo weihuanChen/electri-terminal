@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
+import { isRedirectedFamilySlug } from "@/lib/familyRedirects";
 import { getSiteUrl, toAbsoluteSiteUrl } from "@/lib/site";
 
 type SitemapImage = {
@@ -101,20 +102,22 @@ function normalizeImageUrl(url?: string) {
 
 function dedupeImages(images: Array<{ url?: string; title?: string }>) {
   const seen = new Set<string>();
+  const dedupedImages: Array<{ url: string; title?: string }> = [];
 
-  return images
-    .map((image) => {
-      const normalizedUrl = normalizeImageUrl(image.url);
-      if (!normalizedUrl || seen.has(normalizedUrl)) {
-        return null;
-      }
-      seen.add(normalizedUrl);
-      return {
-        url: normalizedUrl,
-        title: image.title?.trim() || undefined,
-      };
-    })
-    .filter((image): image is { url: string; title?: string } => Boolean(image));
+  for (const image of images) {
+    const normalizedUrl = normalizeImageUrl(image.url);
+    if (!normalizedUrl || seen.has(normalizedUrl)) {
+      continue;
+    }
+    seen.add(normalizedUrl);
+    const title = image.title?.trim();
+    dedupedImages.push({
+      url: normalizedUrl,
+      ...(title ? { title } : {}),
+    });
+  }
+
+  return dedupedImages;
 }
 
 function escapeXml(value: string) {
@@ -132,6 +135,7 @@ async function fetchSitemapContent() {
 
 export async function buildSitemapEntries() {
   const content = await fetchSitemapContent();
+  const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
 
   return [
     ...STATIC_PAGE_ENTRIES,
@@ -141,7 +145,7 @@ export async function buildSitemapEntries() {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
-    ...content.families.map((family) => ({
+    ...sitemapFamilies.map((family) => ({
       url: normalizeCanonicalUrl(family.canonical, `/families/${family.slug}`),
       lastModified: toDate(family.updatedAt),
       changeFrequency: "weekly" as const,
@@ -164,6 +168,7 @@ export async function buildSitemapEntries() {
 
 export async function buildImageSitemapEntries() {
   const content = await fetchSitemapContent();
+  const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
 
   const entries: SitemapImageEntry[] = [];
 
@@ -177,7 +182,7 @@ export async function buildImageSitemapEntries() {
     });
   }
 
-  for (const family of content.families) {
+  for (const family of sitemapFamilies) {
     const images = dedupeImages(
       (family.mediaItems ?? []).map((item) => ({
         url: item.url,

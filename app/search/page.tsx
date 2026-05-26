@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { ArticleCard, Breadcrumb, FamilyCard, ProductCard } from "@/components/shared";
-import { categoryUrl } from "@/lib/routes";
+import { categoryUrl, familyUrl } from "@/lib/routes";
 import { queryPublicPage } from "@/lib/metadata";
 import { makeSearchResultsSchema } from "@/lib/schema";
 
@@ -131,7 +131,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             })),
             ...results.families.map((family) => ({
               name: family.name,
-              url: `/families/${family.slug}`,
+              url: familyUrl(family.slug),
             })),
             ...results.categories.map((category) => ({
               name: category.name,
