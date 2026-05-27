@@ -3,6 +3,10 @@ export const FAMILY_REDIRECTS = [
     sourceSlug: "cold-press-ring-terminals",
     destinationSlug: "standard-ring-terminals",
   },
+  {
+    sourceSlug: "fully-insulated-quick-disconnects",
+    destinationSlug: "fully-insulated-terminals",
+  },
 ] as const;
 
 const redirectedFamilySlugs = new Set<string>(

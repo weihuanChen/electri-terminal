@@ -22,6 +22,17 @@ function normalizeSchemaImage(url?: string) {
   return url ? toAbsoluteSiteUrl(url) : undefined;
 }
 
+function normalizeProductPropertyValue(value: ProductAttributeValue) {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  return String(value).trim();
+}
+
 export function makeOrganizationSchema() {
   return {
     "@context": "https://schema.org",
@@ -152,12 +163,13 @@ export function makeProductSchema({
   attributes?: Record<string, ProductAttributeValue>;
 }) {
   const normalizedImage = normalizeSchemaImage(image);
+  const productPageUrl = toAbsoluteSiteUrl(productUrl(slug));
 
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name,
-    url: toAbsoluteSiteUrl(productUrl(slug)),
+    url: productPageUrl,
     description,
     image: normalizedImage ? [normalizedImage] : undefined,
     brand: brand
@@ -170,7 +182,20 @@ export function makeProductSchema({
     sku,
     mpn,
     category: categoryName,
+    offers: {
+      "@type": "Offer",
+      url: productPageUrl,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        priceCurrency: "USD",
+        description: "Price available upon request based on quantity and specification.",
+      },
+    },
     additionalProperty: Object.entries(attributes ?? {})
+      .map(([key, value]) => [key, normalizeProductPropertyValue(value)] as const)
       .filter(([, value]) => value !== undefined && value !== null && value !== "")
       .slice(0, 12)
       .map(([key, value]) => ({

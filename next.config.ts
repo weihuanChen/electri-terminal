@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 import { FAMILY_REDIRECTS } from "./lib/familyRedirects";
 import { PRODUCT_REDIRECTS } from "./lib/productRedirects";
 
+const URL_MIGRATION_STATUS_CODE = 301 as const;
+
 const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -28,22 +30,22 @@ const nextConfig: NextConfig = {
       ...FAMILY_REDIRECTS.map((redirect) => ({
         source: `/families/${redirect.sourceSlug}`,
         destination: `/families/${redirect.destinationSlug}`,
-        permanent: true,
+        statusCode: URL_MIGRATION_STATUS_CODE,
       })),
       ...PRODUCT_REDIRECTS.map((redirect) => ({
         source: `/products/${redirect.sourceSlug}`,
         destination: `/products/${redirect.destinationSlug}`,
-        permanent: true,
+        statusCode: URL_MIGRATION_STATUS_CODE,
       })),
       {
         source: "/series/:slug",
         destination: "/families/:slug",
-        permanent: true,
+        statusCode: URL_MIGRATION_STATUS_CODE,
       },
       {
         source: "/product/:slug",
         destination: "/products/:slug",
-        permanent: true,
+        statusCode: URL_MIGRATION_STATUS_CODE,
       },
       {
         source: "/products/categories/:slug",
