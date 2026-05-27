@@ -31,9 +31,15 @@ const PRODUCT_TYPE_COPY = [
   },
   {
     name: "Fork Terminals",
-    slugHints: ["fork-terminals", "spade-terminals"],
+    slugHints: ["fork-terminals"],
     description:
       "Designed for quick installation and easy removal in screw-based electrical connections.",
+  },
+  {
+    name: "Spade Terminals",
+    slugHints: ["spade-terminals"],
+    description:
+      "Fork-shaped terminals for fast screw connections where service access and removal speed matter.",
   },
   {
     name: "Blade Terminals",

@@ -88,20 +88,6 @@ type FeaturedCard = {
   href: string;
 };
 
-const TERMINALS_SUBCATEGORY_PRIORITY = [
-  "ring-terminals",
-  "copper-lugs",
-  "quick-disconnect-terminals",
-  "fork-terminals",
-  "spade-terminals",
-  "cord-end-terminals",
-  "blade-terminals",
-  "pin-terminals",
-  "flag-terminals",
-  "terminal-sleeves-accessories",
-  "splice-connectors",
-] as const;
-
 const FEATURED_KEYWORD_PRIORITY = [
   "ring",
   "heat shrink",
@@ -116,13 +102,6 @@ const FEATURED_KEYWORD_PRIORITY = [
   "pin",
   "flag",
 ] as const;
-
-function getSubcategoryPriority(slug: string) {
-  const index = TERMINALS_SUBCATEGORY_PRIORITY.indexOf(
-    slug as (typeof TERMINALS_SUBCATEGORY_PRIORITY)[number]
-  );
-  return index === -1 ? 999 : index;
-}
 
 function getFeaturedKeywordPriority(name: string, href: string) {
   const normalized = `${name} ${href}`.toLowerCase();
@@ -140,11 +119,6 @@ export default function CategoryHubClient({
   ];
 
   const subCategories = [...(category.children ?? [])].sort((left, right) => {
-    const priorityDelta = getSubcategoryPriority(left.slug) - getSubcategoryPriority(right.slug);
-    if (priorityDelta !== 0) {
-      return priorityDelta;
-    }
-
     const sortOrderDelta = (left.sortOrder ?? 0) - (right.sortOrder ?? 0);
     if (sortOrderDelta !== 0) {
       return sortOrderDelta;

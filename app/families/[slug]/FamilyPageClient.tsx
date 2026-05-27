@@ -541,6 +541,8 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
   const hasSelectionAndTechnical =
     (showSelectionGuide && (selectionGuideIntro || selectionStepsForRender.length > 0)) ||
     (showTechnicalNote && compactTechnicalNotes.length > 0);
+  const availableProducts = family.products ?? [];
+  const hasAvailableProducts = availableProducts.length > 0;
 
   return (
     <>
@@ -568,6 +570,11 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                 <Link href={secondaryCTA.href} className="btn btn-secondary">
                   {secondaryCTA.label}
                 </Link>
+                {hasAvailableProducts && (
+                  <Link href="#available-products" className="btn btn-accent">
+                    Quick Select
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -797,8 +804,8 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </section>
       )}
 
-      {family.products && family.products.length > 0 && (
-        <section className="section">
+      {hasAvailableProducts && (
+        <section id="available-products" className="section scroll-mt-24">
           <div className="container">
             <div className="mb-8">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
@@ -809,7 +816,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                 Select a product to view detailed specifications
               </p>
             </div>
-            <SKUTable skus={family.products} />
+            <SKUTable skus={availableProducts} />
           </div>
         </section>
       )}

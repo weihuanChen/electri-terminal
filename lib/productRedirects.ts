@@ -19,6 +19,10 @@ export const PRODUCT_REDIRECTS = [
     sourceSlug: "double-crimp-vinyl-fully-insulated-female-quick-disconnects-g02",
     destinationSlug: "double-crimp-vinyl-insulated-spade-terminals-g01",
   },
+  {
+    sourceSlug: "pin-cold-press-terminals-g02",
+    destinationSlug: "pin-cold-press-terminals-g01",
+  },
 ] as const;
 
 const redirectedProductSlugs = new Set<string>(
