@@ -26,11 +26,17 @@ type ProductSpecificationFieldRecord = {
 type ProductCategoryRecord = {
   name?: string;
   slug?: string;
+  description?: string;
+  shortDescription?: string;
+  seoDescription?: string;
 };
 
 type ProductFamilyRecord = {
   name: string;
   slug: string;
+  summary?: string;
+  content?: string;
+  seoDescription?: string;
 };
 
 type ProductLike = {
@@ -41,6 +47,7 @@ type ProductLike = {
   skuCode: string;
   model: string;
   summary?: string;
+  content?: string;
   mainImage?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -56,13 +63,39 @@ type ProductLike = {
   family?: ProductFamilyRecord | null;
 };
 
+function hasText(value?: string) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+export function resolveProductOverviewContent(product: ProductLike | null) {
+  const candidates = [
+    product?.content,
+    product?.summary,
+    product?.family?.content,
+    product?.family?.summary,
+    product?.category?.shortDescription,
+    product?.category?.description,
+  ];
+
+  return candidates.find(hasText)?.trim();
+}
+
 export function resolveProductMetadataEntity(product: ProductLike | null) {
   return product;
 }
 
 export function resolveProductMetadataDescription(product: ProductLike | null) {
   return resolveMetadataDescription(
-    [product?.seoDescription, product?.summary],
+    [
+      product?.seoDescription,
+      product?.summary,
+      product?.content,
+      product?.family?.seoDescription,
+      product?.family?.summary,
+      product?.category?.seoDescription,
+      product?.category?.shortDescription,
+      product?.category?.description,
+    ],
     "Explore product specifications, images, and technical details."
   );
 }
@@ -75,6 +108,7 @@ export function resolveProductPageViewModel(product: ProductLike) {
   return {
     heroTitle: product.shortTitle || product.title,
     heroSummary: product.summary,
+    overviewContent: resolveProductOverviewContent(product),
     primaryCTA: {
       label: "Request Quote",
       href: "#inquiry-form",

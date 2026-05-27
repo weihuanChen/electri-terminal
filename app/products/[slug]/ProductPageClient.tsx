@@ -8,6 +8,7 @@ import {
   InquiryForm,
   ProductCard,
   CTABanner,
+  MarkdownRenderer,
 } from "@/components/shared";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
@@ -22,11 +23,17 @@ import { buildProductKeySpecifications } from "@/lib/productKeySpecifications";
 interface CategorySummary {
   slug?: string;
   name?: string;
+  description?: string;
+  shortDescription?: string;
+  seoDescription?: string;
 }
 
 interface FamilySummary {
   slug: string;
   name: string;
+  summary?: string;
+  content?: string;
+  seoDescription?: string;
 }
 
 interface DownloadResource {
@@ -80,6 +87,7 @@ export interface ProductPageData {
   skuCode: string;
   model: string;
   summary?: string;
+  content?: string;
   packageInfo?: string;
   moq?: number;
   leadTime?: string;
@@ -105,6 +113,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
   const {
     heroTitle,
     heroSummary,
+    overviewContent,
     primaryCTA,
     secondaryCTA,
     faqItems,
@@ -183,6 +192,8 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
   const hasVariants = (product.variants || []).length > 0 && variantFields.length > 0;
   const hasResources = showDownloads && (product.resources || []).length > 0;
   const keySpecifications = buildProductKeySpecifications(product);
+  const trimmedOverviewContent = overviewContent?.trim();
+  const showProductOverview = Boolean(trimmedOverviewContent);
 
   const mockRelatedProducts: RelatedProduct[] = [];
 
@@ -283,6 +294,11 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
           <div className="mt-5 md:hidden">
             <div className="overflow-x-auto pb-1">
               <div className="flex min-w-max gap-2">
+                {showProductOverview && (
+                  <a href="#product-overview" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    Overview
+                  </a>
+                )}
                 <a href="#technical-data" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                   Specs
                 </a>
@@ -314,6 +330,20 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
           </div>
         </div>
       </section>
+
+      {showProductOverview && (
+        <section id="product-overview" className="section scroll-mt-24 border-b border-border">
+          <div className="container">
+            <div className="max-w-4xl">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Product Overview
+              </p>
+              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Description</h2>
+              <MarkdownRenderer content={trimmedOverviewContent || ""} />
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="technical-data" className="section scroll-mt-24 bg-muted">
         <div className="container">
