@@ -182,18 +182,6 @@ export function makeProductSchema({
     sku,
     mpn,
     category: categoryName,
-    offers: {
-      "@type": "Offer",
-      url: productPageUrl,
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      itemCondition: "https://schema.org/NewCondition",
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        priceCurrency: "USD",
-        description: "Price available upon request based on quantity and specification.",
-      },
-    },
     additionalProperty: Object.entries(attributes ?? {})
       .map(([key, value]) => [key, normalizeProductPropertyValue(value)] as const)
       .filter(([, value]) => value !== undefined && value !== null && value !== "")
