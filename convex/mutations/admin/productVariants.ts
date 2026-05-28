@@ -29,6 +29,19 @@ type ProductVariantImportItem = {
   sortOrder?: number;
 };
 
+type ProductVariantUpdateInput = {
+  productId?: Id<"products">;
+  skuCode?: string;
+  itemNo?: string;
+  attributes?: Record<string, unknown>;
+  status?: "draft" | "published" | "archived";
+  moq?: number;
+  packageInfo?: string;
+  leadTime?: string;
+  origin?: string;
+  sortOrder?: number;
+};
+
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -248,6 +261,52 @@ function validateImportItem(item: unknown): ProductVariantImportItem {
   };
 }
 
+async function patchProductVariant(
+  ctx: MutationCtx,
+  id: Id<"productVariants">,
+  args: ProductVariantUpdateInput
+) {
+  const current = await ctx.db.get(id);
+  if (!current) throw new Error("Product variant not found");
+
+  const nextProductId = args.productId ?? current.productId;
+  const nextSkuCode = args.skuCode ?? current.skuCode;
+  const nextItemNo = args.itemNo ?? current.itemNo;
+  const product = await getProductOrThrow(ctx, nextProductId);
+
+  if (nextSkuCode !== current.skuCode) {
+    await assertUniqueProductVariantSku(ctx, nextSkuCode, id);
+  }
+
+  if (nextProductId !== current.productId || nextItemNo !== current.itemNo) {
+    await assertUniqueProductVariantItemNo(ctx, nextProductId, nextItemNo, id);
+  }
+
+  await validateAttributesAgainstCategory(
+    ctx,
+    product.categoryId,
+    args.attributes
+  );
+
+  await ctx.db.patch(
+    id,
+    withUpdatedAt({
+      ...(args.productId !== undefined ? { productId: args.productId } : {}),
+      ...(args.skuCode !== undefined ? { skuCode: args.skuCode } : {}),
+      ...(args.itemNo !== undefined ? { itemNo: args.itemNo } : {}),
+      ...(args.attributes !== undefined ? { attributes: args.attributes } : {}),
+      ...(args.status !== undefined ? { status: args.status } : {}),
+      ...(args.moq !== undefined ? { moq: args.moq } : {}),
+      ...(args.packageInfo !== undefined ? { packageInfo: args.packageInfo } : {}),
+      ...(args.leadTime !== undefined ? { leadTime: args.leadTime } : {}),
+      ...(args.origin !== undefined ? { origin: args.origin } : {}),
+      ...(args.sortOrder !== undefined ? { sortOrder: args.sortOrder } : {}),
+    })
+  );
+
+  return id;
+}
+
 export const createProductVariant = mutation({
   args: {
     productId: v.id("products"),
@@ -294,50 +353,86 @@ export const updateProductVariant = mutation({
     sortOrder: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const current = await ctx.db.get(args.id);
-    if (!current) throw new Error("Product variant not found");
+    return await patchProductVariant(ctx, args.id, args);
+  },
+});
 
-    const nextProductId = args.productId ?? current.productId;
-    const nextSkuCode = args.skuCode ?? current.skuCode;
-    const nextItemNo = args.itemNo ?? current.itemNo;
-    const product = await getProductOrThrow(ctx, nextProductId);
-
-    if (nextSkuCode !== current.skuCode) {
-      await assertUniqueProductVariantSku(ctx, nextSkuCode, args.id);
-    }
-
-    if (nextProductId !== current.productId || nextItemNo !== current.itemNo) {
-      await assertUniqueProductVariantItemNo(
-        ctx,
-        nextProductId,
-        nextItemNo,
-        args.id
-      );
-    }
-
-    await validateAttributesAgainstCategory(
-      ctx,
-      product.categoryId,
-      args.attributes
-    );
-
-    await ctx.db.patch(
-      args.id,
-      withUpdatedAt({
-        ...(args.productId !== undefined ? { productId: args.productId } : {}),
-        ...(args.skuCode !== undefined ? { skuCode: args.skuCode } : {}),
-        ...(args.itemNo !== undefined ? { itemNo: args.itemNo } : {}),
-        ...(args.attributes !== undefined ? { attributes: args.attributes } : {}),
-        ...(args.status !== undefined ? { status: args.status } : {}),
-        ...(args.moq !== undefined ? { moq: args.moq } : {}),
-        ...(args.packageInfo !== undefined ? { packageInfo: args.packageInfo } : {}),
-        ...(args.leadTime !== undefined ? { leadTime: args.leadTime } : {}),
-        ...(args.origin !== undefined ? { origin: args.origin } : {}),
-        ...(args.sortOrder !== undefined ? { sortOrder: args.sortOrder } : {}),
+export const updateProductVariantsBatch = mutation({
+  args: {
+    productId: v.id("products"),
+    items: v.array(
+      v.object({
+        id: v.id("productVariants"),
+        skuCode: v.string(),
+        itemNo: v.string(),
+        attributes: v.optional(v.record(v.string(), v.any())),
+        status: statusCommon,
+        moq: v.optional(v.number()),
+        packageInfo: v.optional(v.string()),
+        leadTime: v.optional(v.string()),
+        origin: v.optional(v.string()),
+        sortOrder: v.optional(v.number()),
       })
-    );
+    ),
+  },
+  handler: async (ctx, args) => {
+    if (args.items.length === 0) {
+      throw new Error("No product variants selected");
+    }
 
-    return args.id;
+    const seenIds = new Set<string>();
+    const seenSkuCodes = new Set<string>();
+    const seenItemNos = new Set<string>();
+
+    for (const item of args.items) {
+      if (seenIds.has(item.id)) {
+        throw new Error(`Duplicate variant selected: ${item.id}`);
+      }
+      seenIds.add(item.id);
+
+      const skuCode = item.skuCode.trim();
+      const itemNo = item.itemNo.trim();
+      if (!skuCode) throw new Error("skuCode is required");
+      if (!itemNo) throw new Error("itemNo is required");
+
+      if (seenSkuCodes.has(skuCode)) {
+        throw new Error(`Duplicate skuCode in selected variants: ${skuCode}`);
+      }
+      seenSkuCodes.add(skuCode);
+
+      if (seenItemNos.has(itemNo)) {
+        throw new Error(`Duplicate itemNo in selected variants: ${itemNo}`);
+      }
+      seenItemNos.add(itemNo);
+    }
+
+    const variants = await Promise.all(args.items.map((item) => ctx.db.get(item.id)));
+    const missingIndex = variants.findIndex((variant) => !variant);
+    if (missingIndex !== -1) {
+      throw new Error(`Product variant not found: ${args.items[missingIndex].id}`);
+    }
+
+    for (const variant of variants) {
+      if (variant!.productId !== args.productId) {
+        throw new Error("Selected variants must belong to the current product");
+      }
+    }
+
+    for (const item of args.items) {
+      await patchProductVariant(ctx, item.id, {
+        skuCode: item.skuCode.trim(),
+        itemNo: item.itemNo.trim(),
+        attributes: item.attributes,
+        status: item.status,
+        moq: item.moq,
+        packageInfo: item.packageInfo,
+        leadTime: item.leadTime,
+        origin: item.origin,
+        sortOrder: item.sortOrder,
+      });
+    }
+
+    return { updatedCount: args.items.length };
   },
 });
 

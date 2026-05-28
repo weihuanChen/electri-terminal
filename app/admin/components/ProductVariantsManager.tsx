@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import {
   createProductVariantAction,
   deleteProductVariantAction,
   deleteProductVariantsBatchAction,
+  updateProductVariantsBatchAction,
   updateProductVariantAction,
 } from "../actions";
 import {
@@ -17,6 +18,29 @@ import { UNIT_PRESETS, type AttributeUnitKey } from "@/lib/productPresentation";
 type AttributeField = NonNullable<AdminAttributeTemplateSummary["fields"]>[number];
 type RangeValue = [number | "", number | ""];
 type AttributeValue = string | number | boolean | string[] | RangeValue;
+type VariantStatus = "draft" | "published" | "archived";
+type VariantMeta = {
+  skuCode: string;
+  itemNo: string;
+  status: VariantStatus;
+  sortOrder: number;
+  moq: number;
+  packageInfo: string;
+  leadTime: string;
+  origin: string;
+};
+type VariantBatchSaveItem = {
+  id: string;
+  skuCode: string;
+  itemNo: string;
+  attributes: Record<string, unknown>;
+  status: VariantStatus;
+  moq?: number;
+  packageInfo?: string;
+  leadTime?: string;
+  origin?: string;
+  sortOrder?: number;
+};
 
 function normalizeAttributeValue(value: unknown): AttributeValue {
   if (Array.isArray(value)) {
@@ -59,69 +83,130 @@ function normalizeAttributesForSubmit(
   fields: AttributeField[],
   inheritedAttributes: Record<string, unknown>
 ) {
-  const normalizedEntries = fields.flatMap((field) => {
-    const rawValue = values[field.fieldKey];
-    const inheritedValue = inheritedAttributes[field.fieldKey] as
-      | AttributeValue
-      | undefined;
+  const normalizedEntries: Array<readonly [string, unknown]> = fields.flatMap(
+    (field): Array<readonly [string, unknown]> => {
+      const rawValue = values[field.fieldKey];
+      const inheritedValue = inheritedAttributes[field.fieldKey] as
+        | AttributeValue
+        | undefined;
 
-    if (field.fieldType === "array") {
-      const arrayValue = Array.isArray(rawValue)
-        ? rawValue.map((item) => String(item).trim()).filter(Boolean)
-        : [];
-      if (arrayValue.length === 0 || isSameAttributeValue(arrayValue, inheritedValue)) {
+      if (field.fieldType === "array") {
+        const arrayValue = Array.isArray(rawValue)
+          ? rawValue.map((item) => String(item).trim()).filter(Boolean)
+          : [];
+        if (arrayValue.length === 0 || isSameAttributeValue(arrayValue, inheritedValue)) {
+          return [];
+        }
+        return [[field.fieldKey, arrayValue] as const];
+      }
+
+      if (field.fieldType === "boolean") {
+        if (rawValue !== true && rawValue !== false) {
+          return [];
+        }
+        if (isSameAttributeValue(rawValue, inheritedValue)) {
+          return [];
+        }
+        return [[field.fieldKey, rawValue] as const];
+      }
+
+      if (field.fieldType === "range") {
+        if (!Array.isArray(rawValue) || rawValue.length !== 2) {
+          return [];
+        }
+
+        const parsedRange = rawValue.map((item) =>
+          typeof item === "number" ? item : Number(String(item).trim())
+        );
+        if (parsedRange.some((item) => !Number.isFinite(item))) {
+          return [];
+        }
+        if (isSameAttributeValue(parsedRange as RangeValue, inheritedValue)) {
+          return [];
+        }
+        return [[field.fieldKey, parsedRange] as const];
+      }
+
+      if (field.fieldType === "number") {
+        const parsed =
+          typeof rawValue === "number" ? rawValue : Number(String(rawValue).trim());
+        if (!Number.isFinite(parsed)) {
+          return [];
+        }
+        if (isSameAttributeValue(parsed, inheritedValue)) {
+          return [];
+        }
+        return [[field.fieldKey, parsed] as const];
+      }
+
+      const textValue = String(rawValue ?? "").trim();
+      if (!textValue || isSameAttributeValue(textValue, inheritedValue)) {
         return [];
       }
-      return [[field.fieldKey, arrayValue] as const];
+      return [[field.fieldKey, textValue] as const];
     }
-
-    if (field.fieldType === "boolean") {
-      if (rawValue !== true && rawValue !== false) {
-        return [];
-      }
-      if (isSameAttributeValue(rawValue, inheritedValue)) {
-        return [];
-      }
-      return [[field.fieldKey, rawValue] as const];
-    }
-
-    if (field.fieldType === "range") {
-      if (!Array.isArray(rawValue) || rawValue.length !== 2) {
-        return [];
-      }
-
-      const parsedRange = rawValue.map((item) =>
-        typeof item === "number" ? item : Number(String(item).trim())
-      );
-      if (parsedRange.some((item) => !Number.isFinite(item))) {
-        return [];
-      }
-      if (isSameAttributeValue(parsedRange as RangeValue, inheritedValue)) {
-        return [];
-      }
-      return [[field.fieldKey, parsedRange] as const];
-    }
-
-    if (field.fieldType === "number") {
-      const parsed =
-        typeof rawValue === "number" ? rawValue : Number(String(rawValue).trim());
-      if (!Number.isFinite(parsed)) {
-        return [];
-      }
-      if (isSameAttributeValue(parsed, inheritedValue)) {
-        return [];
-      }
-      return [[field.fieldKey, parsed] as const];
-    }
-
-    const textValue = String(rawValue ?? "").trim();
-    if (!textValue || isSameAttributeValue(textValue, inheritedValue)) {
-      return [];
-    }
-    return [[field.fieldKey, textValue] as const];
-  });
+  );
 
   return Object.fromEntries(normalizedEntries);
+}
+
+function getInitialVariantMeta(variant: AdminProductVariantSummary): VariantMeta {
+  return {
+    skuCode: variant.skuCode || "",
+    itemNo: variant.itemNo || "",
+    status: variant.status || "draft",
+    sortOrder: variant.sortOrder || 0,
+    moq: variant.moq || 0,
+    packageInfo: variant.packageInfo || "",
+    leadTime: variant.leadTime || "",
+    origin: variant.origin || "",
+  };
+}
+
+function getRangeValue(value: AttributeValue | undefined): RangeValue {
+  if (!Array.isArray(value) || value.length !== 2) {
+    return ["", ""];
+  }
+
+  return [
+    typeof value[0] === "number" ? value[0] : "",
+    typeof value[1] === "number" ? value[1] : "",
+  ];
+}
+
+function buildVariantBatchSaveItem(
+  id: string,
+  meta: VariantMeta,
+  attributes: Record<string, unknown>
+): VariantBatchSaveItem {
+  return {
+    id,
+    skuCode: meta.skuCode.trim(),
+    itemNo: meta.itemNo.trim(),
+    attributes,
+    status: meta.status,
+    moq: Number.isFinite(meta.moq) ? meta.moq : undefined,
+    packageInfo: meta.packageInfo.trim() || undefined,
+    leadTime: meta.leadTime.trim() || undefined,
+    origin: meta.origin.trim() || undefined,
+    sortOrder: Number.isFinite(meta.sortOrder) ? meta.sortOrder : undefined,
+  };
+}
+
+function getVariantBatchSaveItemFromVariant(
+  variant: AdminProductVariantSummary,
+  fields: AttributeField[],
+  inheritedAttributes: Record<string, unknown>
+) {
+  return buildVariantBatchSaveItem(
+    variant._id,
+    getInitialVariantMeta(variant),
+    normalizeAttributesForSubmit(
+      getInitialAttributes(variant, fields),
+      fields,
+      inheritedAttributes
+    )
+  );
 }
 
 function formatInheritedValue(value: unknown) {
@@ -143,11 +228,13 @@ function VariantEditorCard({
   fields,
   inheritedAttributes,
   variant,
+  onVariantDraftChange,
 }: {
   productId: string;
   fields: AttributeField[];
   inheritedAttributes: Record<string, unknown>;
   variant?: AdminProductVariantSummary;
+  onVariantDraftChange?: (draft: VariantBatchSaveItem) => void;
 }) {
   const isCreate = !variant;
   const [attributes, setAttributes] = useState<Record<string, AttributeValue>>(
@@ -158,19 +245,50 @@ function VariantEditorCard({
     [attributes, fields, inheritedAttributes]
   );
 
-  const initial = {
-    skuCode: variant?.skuCode || "",
-    itemNo: variant?.itemNo || "",
-    status: variant?.status || ("draft" as const),
-    sortOrder: variant?.sortOrder || 0,
-    moq: variant?.moq || 0,
-    packageInfo: variant?.packageInfo || "",
-    leadTime: variant?.leadTime || "",
-    origin: variant?.origin || "",
-  };
+  const initial: VariantMeta = variant
+    ? getInitialVariantMeta(variant)
+    : {
+        skuCode: "",
+        itemNo: "",
+        status: "draft",
+        sortOrder: 0,
+        moq: 0,
+        packageInfo: "",
+        leadTime: "",
+        origin: "",
+      };
   const [meta, setMeta] = useState(initial);
 
   const action = isCreate ? createProductVariantAction : updateProductVariantAction;
+
+  function publishDraft(
+    nextMeta: VariantMeta,
+    nextAttributes: Record<string, AttributeValue>
+  ) {
+    if (!variant || !onVariantDraftChange) return;
+    onVariantDraftChange(
+      buildVariantBatchSaveItem(
+        variant._id,
+        nextMeta,
+        normalizeAttributesForSubmit(nextAttributes, fields, inheritedAttributes)
+      )
+    );
+  }
+
+  function updateMeta<Key extends keyof VariantMeta>(
+    key: Key,
+    value: VariantMeta[Key]
+  ) {
+    const nextMeta = { ...meta, [key]: value };
+    setMeta(nextMeta);
+    publishDraft(nextMeta, attributes);
+  }
+
+  function updateAttributeValue(fieldKey: string, value: AttributeValue) {
+    const nextAttributes = { ...attributes, [fieldKey]: value };
+    setAttributes(nextAttributes);
+    publishDraft(meta, nextAttributes);
+  }
 
   return (
     <details
@@ -212,9 +330,7 @@ function VariantEditorCard({
                 name="skuCode"
                 required
                 value={meta.skuCode}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, skuCode: event.target.value }))
-                }
+                onChange={(event) => updateMeta("skuCode", event.target.value)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -226,9 +342,7 @@ function VariantEditorCard({
                 name="itemNo"
                 required
                 value={meta.itemNo}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, itemNo: event.target.value }))
-                }
+                onChange={(event) => updateMeta("itemNo", event.target.value)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -238,10 +352,7 @@ function VariantEditorCard({
                 name="status"
                 value={meta.status}
                 onChange={(event) =>
-                  setMeta((current) => ({
-                    ...current,
-                    status: event.target.value as "draft" | "published" | "archived",
-                  }))
+                  updateMeta("status", event.target.value as VariantStatus)
                 }
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               >
@@ -257,10 +368,7 @@ function VariantEditorCard({
                 name="sortOrder"
                 value={meta.sortOrder}
                 onChange={(event) =>
-                  setMeta((current) => ({
-                    ...current,
-                    sortOrder: Number(event.target.value) || 0,
-                  }))
+                  updateMeta("sortOrder", Number(event.target.value) || 0)
                 }
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
@@ -271,9 +379,7 @@ function VariantEditorCard({
                 type="number"
                 name="moq"
                 value={meta.moq}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, moq: Number(event.target.value) || 0 }))
-                }
+                onChange={(event) => updateMeta("moq", Number(event.target.value) || 0)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -282,9 +388,7 @@ function VariantEditorCard({
               <input
                 name="packageInfo"
                 value={meta.packageInfo}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, packageInfo: event.target.value }))
-                }
+                onChange={(event) => updateMeta("packageInfo", event.target.value)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -293,9 +397,7 @@ function VariantEditorCard({
               <input
                 name="leadTime"
                 value={meta.leadTime}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, leadTime: event.target.value }))
-                }
+                onChange={(event) => updateMeta("leadTime", event.target.value)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -304,9 +406,7 @@ function VariantEditorCard({
               <input
                 name="origin"
                 value={meta.origin}
-                onChange={(event) =>
-                  setMeta((current) => ({ ...current, origin: event.target.value }))
-                }
+                onChange={(event) => updateMeta("origin", event.target.value)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               />
             </div>
@@ -340,10 +440,7 @@ function VariantEditorCard({
                         type="checkbox"
                         checked={Boolean(value)}
                         onChange={(event) =>
-                          setAttributes((current) => ({
-                            ...current,
-                            [field.fieldKey]: event.target.checked,
-                          }))
+                          updateAttributeValue(field.fieldKey, event.target.checked)
                         }
                       />
                       <span>启用 / 是</span>
@@ -375,10 +472,7 @@ function VariantEditorCard({
                               const next = event.target.checked
                                 ? [...selectedValues, option]
                                 : selectedValues.filter((item) => item !== option);
-                              setAttributes((current) => ({
-                                ...current,
-                                [field.fieldKey]: next,
-                              }));
+                              updateAttributeValue(field.fieldKey, next);
                             }}
                           />
                           <span>{option}</span>
@@ -401,10 +495,7 @@ function VariantEditorCard({
                     <select
                       value={String(value ?? "")}
                       onChange={(event) =>
-                        setAttributes((current) => ({
-                          ...current,
-                          [field.fieldKey]: event.target.value,
-                        }))
+                        updateAttributeValue(field.fieldKey, event.target.value)
                       }
                       className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
                     >
@@ -423,7 +514,7 @@ function VariantEditorCard({
               }
 
               if (field.fieldType === "range") {
-                const rangeValue = Array.isArray(value) ? value : ["", ""];
+                const rangeValue = getRangeValue(value);
                 return (
                   <div key={field.fieldKey}>
                     <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -434,13 +525,10 @@ function VariantEditorCard({
                         type="number"
                         value={String(rangeValue[0] ?? "")}
                         onChange={(event) =>
-                          setAttributes((current) => ({
-                            ...current,
-                            [field.fieldKey]: [
-                              event.target.value === "" ? "" : Number(event.target.value),
-                              rangeValue[1] ?? "",
-                            ],
-                          }))
+                          updateAttributeValue(field.fieldKey, [
+                            event.target.value === "" ? "" : Number(event.target.value),
+                            rangeValue[1] ?? "",
+                          ])
                         }
                         className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
                         placeholder={displayUnit ? `Min (${displayUnit})` : "Min"}
@@ -449,13 +537,10 @@ function VariantEditorCard({
                         type="number"
                         value={String(rangeValue[1] ?? "")}
                         onChange={(event) =>
-                          setAttributes((current) => ({
-                            ...current,
-                            [field.fieldKey]: [
-                              rangeValue[0] ?? "",
-                              event.target.value === "" ? "" : Number(event.target.value),
-                            ],
-                          }))
+                          updateAttributeValue(field.fieldKey, [
+                            rangeValue[0] ?? "",
+                            event.target.value === "" ? "" : Number(event.target.value),
+                          ])
                         }
                         className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
                         placeholder={displayUnit ? `Max (${displayUnit})` : "Max"}
@@ -477,15 +562,14 @@ function VariantEditorCard({
                     type={field.fieldType === "number" ? "number" : "text"}
                     value={String(value ?? "")}
                     onChange={(event) =>
-                      setAttributes((current) => ({
-                        ...current,
-                        [field.fieldKey]:
-                          field.fieldType === "number"
-                            ? event.target.value === ""
-                              ? ""
-                              : Number(event.target.value)
-                            : event.target.value,
-                      }))
+                      updateAttributeValue(
+                        field.fieldKey,
+                        field.fieldType === "number"
+                          ? event.target.value === ""
+                            ? ""
+                            : Number(event.target.value)
+                          : event.target.value
+                      )
                     }
                     className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
                     placeholder={
@@ -543,6 +627,7 @@ export function ProductVariantsManager({
   variants: AdminProductVariantSummary[];
 }) {
   const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
+  const [variantDrafts, setVariantDrafts] = useState<Record<string, VariantBatchSaveItem>>({});
   const fields = useMemo(
     () =>
       [...(templateFields || [])].sort(
@@ -558,6 +643,32 @@ export function ProductVariantsManager({
   const selectedIdSet = useMemo(
     () => new Set(currentSelectedVariantIds),
     [currentSelectedVariantIds]
+  );
+  const variantById = useMemo(
+    () => new Map(variants.map((variant) => [variant._id, variant])),
+    [variants]
+  );
+  const selectedBatchSaveItems = useMemo(
+    () =>
+      currentSelectedVariantIds.flatMap((id) => {
+        const variant = variantById.get(id);
+        if (!variant) return [];
+        return [
+          variantDrafts[id] ??
+            getVariantBatchSaveItemFromVariant(
+              variant,
+              fields,
+              inheritedAttributes
+            ),
+        ];
+      }),
+    [
+      currentSelectedVariantIds,
+      fields,
+      inheritedAttributes,
+      variantById,
+      variantDrafts,
+    ]
   );
   const selectedCount = currentSelectedVariantIds.length;
   const allSelected = variants.length > 0 && selectedCount === variants.length;
@@ -576,6 +687,10 @@ export function ProductVariantsManager({
     setSelectedVariantIds(checked ? variantIds : []);
   }
 
+  function handleVariantDraftChange(draft: VariantBatchSaveItem) {
+    setVariantDrafts((current) => ({ ...current, [draft.id]: draft }));
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:flex-row lg:items-center lg:justify-between">
@@ -587,21 +702,7 @@ export function ProductVariantsManager({
         </div>
 
         {variants.length > 0 ? (
-          <form
-            action={deleteProductVariantsBatchAction}
-            onSubmit={(event) => {
-              if (selectedCount === 0) {
-                event.preventDefault();
-                return;
-              }
-              if (!window.confirm(`删除已选择的 ${selectedCount} 个 Variant？`)) {
-                event.preventDefault();
-              }
-            }}
-            className="flex flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            <input type="hidden" name="productId" value={productId} />
-            <input type="hidden" name="ids" value={JSON.stringify(currentSelectedVariantIds)} />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <label className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-zinc-200 px-3 text-sm text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
               <input
                 type="checkbox"
@@ -613,15 +714,63 @@ export function ProductVariantsManager({
                 {selectedCount}/{variants.length}
               </span>
             </label>
-            <button
-              type="submit"
-              disabled={selectedCount === 0}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-200 px-4 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-900/60 dark:text-rose-300 dark:hover:bg-rose-950/30"
+
+            <form
+              action={updateProductVariantsBatchAction}
+              onSubmit={(event) => {
+                if (selectedCount === 0) {
+                  event.preventDefault();
+                  return;
+                }
+                if (!window.confirm(`保存已选择的 ${selectedCount} 个 Variant？`)) {
+                  event.preventDefault();
+                }
+              }}
             >
-              <Trash2 className="h-4 w-4" />
-              删除所选
-            </button>
-          </form>
+              <input type="hidden" name="productId" value={productId} />
+              <input
+                type="hidden"
+                name="items"
+                value={JSON.stringify(selectedBatchSaveItems)}
+              />
+              <button
+                type="submit"
+                disabled={selectedCount === 0}
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white sm:w-auto"
+              >
+                <Save className="h-4 w-4" />
+                保存所选
+              </button>
+            </form>
+
+            <form
+              action={deleteProductVariantsBatchAction}
+              onSubmit={(event) => {
+                if (selectedCount === 0) {
+                  event.preventDefault();
+                  return;
+                }
+                if (!window.confirm(`删除已选择的 ${selectedCount} 个 Variant？`)) {
+                  event.preventDefault();
+                }
+              }}
+            >
+              <input type="hidden" name="productId" value={productId} />
+              <input
+                type="hidden"
+                name="ids"
+                value={JSON.stringify(currentSelectedVariantIds)}
+              />
+              <button
+                type="submit"
+                disabled={selectedCount === 0}
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-rose-200 px-4 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-900/60 dark:text-rose-300 dark:hover:bg-rose-950/30 sm:w-auto"
+              >
+                <Trash2 className="h-4 w-4" />
+                删除所选
+              </button>
+            </form>
+          </div>
         ) : null}
       </div>
 
@@ -645,6 +794,7 @@ export function ProductVariantsManager({
             fields={fields}
             inheritedAttributes={inheritedAttributes}
             variant={variant}
+            onVariantDraftChange={handleVariantDraftChange}
           />
         </div>
       ))}

@@ -69,6 +69,27 @@ type ActionResult =
   | { ok: true }
   | { ok: false; error: string };
 
+type ProductVariantStatus = "draft" | "published" | "archived";
+
+type ProductVariantBatchUpdateItem = {
+  id: Id<"productVariants">;
+  skuCode: string;
+  itemNo: string;
+  attributes?: Record<string, unknown>;
+  status: ProductVariantStatus;
+  moq?: number;
+  packageInfo?: string;
+  leadTime?: string;
+  origin?: string;
+  sortOrder?: number;
+};
+
+const PRODUCT_VARIANT_STATUSES: ProductVariantStatus[] = [
+  "draft",
+  "published",
+  "archived",
+];
+
 async function mutationWithExtraFieldFallback(
   client: ReturnType<typeof getAdminConvexClient>,
   name: string,
@@ -109,6 +130,57 @@ function normalizeOptionalString(value: unknown) {
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeOptionalNumber(value: unknown) {
+  if (value === undefined || value === null || value === "") return undefined;
+  const parsed = typeof value === "number" ? value : Number(String(value).trim());
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function normalizeProductVariantStatus(value: unknown): ProductVariantStatus | undefined {
+  return PRODUCT_VARIANT_STATUSES.includes(value as ProductVariantStatus)
+    ? (value as ProductVariantStatus)
+    : undefined;
+}
+
+function parseProductVariantBatchItems(rawItems: string) {
+  const parsed = JSON.parse(rawItems) as unknown;
+  if (!Array.isArray(parsed)) {
+    throw new Error("variant_batch_items_must_be_array");
+  }
+
+  return parsed.map((item, index) => {
+    if (!isPlainObject(item)) {
+      throw new Error(`variant_batch_item_${index + 1}_must_be_object`);
+    }
+
+    const id = String(item.id ?? "").trim() as Id<"productVariants">;
+    const skuCode = String(item.skuCode ?? "").trim();
+    const itemNo = String(item.itemNo ?? "").trim();
+    const status = normalizeProductVariantStatus(item.status);
+
+    if (!id || !skuCode || !itemNo || !status) {
+      throw new Error(`variant_batch_item_${index + 1}_missing_required_fields`);
+    }
+
+    if (item.attributes !== undefined && !isPlainObject(item.attributes)) {
+      throw new Error(`variant_batch_item_${index + 1}_attributes_must_be_object`);
+    }
+
+    return {
+      id,
+      skuCode,
+      itemNo,
+      attributes: isPlainObject(item.attributes) ? item.attributes : undefined,
+      status,
+      moq: normalizeOptionalNumber(item.moq),
+      packageInfo: normalizeOptionalString(item.packageInfo),
+      leadTime: normalizeOptionalString(item.leadTime),
+      origin: normalizeOptionalString(item.origin),
+      sortOrder: normalizeOptionalNumber(item.sortOrder),
+    } satisfies ProductVariantBatchUpdateItem;
+  });
 }
 
 function extractSelectionReason(pageConfig: unknown) {
@@ -663,6 +735,41 @@ export async function updateProductVariantAction(formData: FormData) {
     revalidatePath(`/admin/products/${productId}`);
     revalidatePath(`/admin/products/${productId}/edit`);
     redirect(`/admin/products/${productId}/edit?success=variant_updated`);
+  } catch (error: unknown) {
+    redirect(
+      `/admin/products/${productId}/edit?error=${encodeURIComponent(errorMessage(error))}`
+    );
+  }
+}
+
+export async function updateProductVariantsBatchAction(formData: FormData) {
+  await requireAdmin();
+
+  const productId = str(formData, "productId") as Id<"products">;
+  const rawItems = str(formData, "items");
+  let items: ProductVariantBatchUpdateItem[] = [];
+
+  try {
+    items = parseProductVariantBatchItems(rawItems);
+  } catch {
+    redirect(`/admin/products/${productId}/edit?error=invalid_variant_batch_payload`);
+  }
+
+  if (!productId || items.length === 0) {
+    redirect("/admin/products?error=variant_id_required");
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    await client.mutation("mutations/admin/productVariants:updateProductVariantsBatch", {
+      productId,
+      items,
+    });
+
+    revalidatePath("/admin/products");
+    revalidatePath(`/admin/products/${productId}`);
+    revalidatePath(`/admin/products/${productId}/edit`);
+    redirect(`/admin/products/${productId}/edit?success=variants_updated`);
   } catch (error: unknown) {
     redirect(
       `/admin/products/${productId}/edit?error=${encodeURIComponent(errorMessage(error))}`
