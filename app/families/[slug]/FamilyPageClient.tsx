@@ -571,9 +571,9 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                   {secondaryCTA.label}
                 </Link>
                 {hasAvailableProducts && (
-                  <Link href="#available-products" className="btn btn-accent">
+                  <a href="#available-products" className="btn btn-accent">
                     Quick Select
-                  </Link>
+                  </a>
                 )}
               </div>
             </div>
