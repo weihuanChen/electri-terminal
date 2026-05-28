@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Trash2 } from "lucide-react";
 import {
   createProductVariantAction,
   deleteProductVariantAction,
+  deleteProductVariantsBatchAction,
   updateProductVariantAction,
 } from "../actions";
 import {
@@ -540,6 +542,7 @@ export function ProductVariantsManager({
   inheritedAttributes: Record<string, unknown>;
   variants: AdminProductVariantSummary[];
 }) {
+  const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
   const fields = useMemo(
     () =>
       [...(templateFields || [])].sort(
@@ -547,24 +550,103 @@ export function ProductVariantsManager({
       ),
     [templateFields]
   );
+  const variantIds = useMemo(() => variants.map((variant) => variant._id), [variants]);
+  const currentSelectedVariantIds = useMemo(
+    () => selectedVariantIds.filter((id) => variantIds.includes(id)),
+    [selectedVariantIds, variantIds]
+  );
+  const selectedIdSet = useMemo(
+    () => new Set(currentSelectedVariantIds),
+    [currentSelectedVariantIds]
+  );
+  const selectedCount = currentSelectedVariantIds.length;
+  const allSelected = variants.length > 0 && selectedCount === variants.length;
+
+  function toggleVariantSelection(id: string, checked: boolean) {
+    setSelectedVariantIds((current) =>
+      checked
+        ? current.includes(id)
+          ? current
+          : [...current, id]
+        : current.filter((item) => item !== id)
+    );
+  }
+
+  function toggleAllVariants(checked: boolean) {
+    setSelectedVariantIds(checked ? variantIds : []);
+  }
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Variant 管理</h2>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          在后台直接维护该 product 下的所有规格行，支持新增、编辑、删除。
-        </p>
+      <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Variant 管理</h2>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            在后台直接维护该 product 下的所有规格行，支持新增、编辑、删除。
+          </p>
+        </div>
+
+        {variants.length > 0 ? (
+          <form
+            action={deleteProductVariantsBatchAction}
+            onSubmit={(event) => {
+              if (selectedCount === 0) {
+                event.preventDefault();
+                return;
+              }
+              if (!window.confirm(`删除已选择的 ${selectedCount} 个 Variant？`)) {
+                event.preventDefault();
+              }
+            }}
+            className="flex flex-col gap-3 sm:flex-row sm:items-center"
+          >
+            <input type="hidden" name="productId" value={productId} />
+            <input type="hidden" name="ids" value={JSON.stringify(currentSelectedVariantIds)} />
+            <label className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-zinc-200 px-3 text-sm text-zinc-700 dark:border-zinc-800 dark:text-zinc-300">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={(event) => toggleAllVariants(event.target.checked)}
+              />
+              <span>全选</span>
+              <span className="text-zinc-400">
+                {selectedCount}/{variants.length}
+              </span>
+            </label>
+            <button
+              type="submit"
+              disabled={selectedCount === 0}
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-200 px-4 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-900/60 dark:text-rose-300 dark:hover:bg-rose-950/30"
+            >
+              <Trash2 className="h-4 w-4" />
+              删除所选
+            </button>
+          </form>
+        ) : null}
       </div>
 
       {variants.map((variant) => (
-        <VariantEditorCard
+        <div
           key={variant._id}
-          productId={productId}
-          fields={fields}
-          inheritedAttributes={inheritedAttributes}
-          variant={variant}
-        />
+          className="grid grid-cols-[44px_minmax(0,1fr)] gap-3"
+        >
+          <label className="flex min-h-[74px] items-start justify-center rounded-xl border border-zinc-200 bg-white pt-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <input
+              type="checkbox"
+              checked={selectedIdSet.has(variant._id)}
+              onChange={(event) =>
+                toggleVariantSelection(variant._id, event.target.checked)
+              }
+              aria-label={`选择 ${variant.itemNo}`}
+            />
+          </label>
+          <VariantEditorCard
+            productId={productId}
+            fields={fields}
+            inheritedAttributes={inheritedAttributes}
+            variant={variant}
+          />
+        </div>
       ))}
 
       <VariantEditorCard

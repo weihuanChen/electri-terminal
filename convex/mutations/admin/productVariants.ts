@@ -351,6 +351,37 @@ export const deleteProductVariant = mutation({
   },
 });
 
+export const deleteProductVariantsBatch = mutation({
+  args: {
+    productId: v.id("products"),
+    ids: v.array(v.id("productVariants")),
+  },
+  handler: async (ctx, args) => {
+    const ids = [...new Set(args.ids)];
+    if (ids.length === 0) {
+      throw new Error("No product variants selected");
+    }
+
+    const variants = await Promise.all(ids.map((id) => ctx.db.get(id)));
+    const missingIndex = variants.findIndex((variant) => !variant);
+    if (missingIndex !== -1) {
+      throw new Error(`Product variant not found: ${ids[missingIndex]}`);
+    }
+
+    for (const variant of variants) {
+      if (variant!.productId !== args.productId) {
+        throw new Error("Selected variants must belong to the current product");
+      }
+    }
+
+    for (const id of ids) {
+      await ctx.db.delete(id);
+    }
+
+    return { deletedCount: ids.length };
+  },
+});
+
 export const bulkUpdateProductVariants = mutation({
   args: {
     ids: v.array(v.id("productVariants")),

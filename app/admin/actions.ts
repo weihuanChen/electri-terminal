@@ -697,6 +697,50 @@ export async function deleteProductVariantAction(formData: FormData) {
   }
 }
 
+export async function deleteProductVariantsBatchAction(formData: FormData) {
+  await requireAdmin();
+
+  const productId = str(formData, "productId") as Id<"products">;
+  const rawIds = str(formData, "ids");
+  let ids: Id<"productVariants">[] = [];
+
+  try {
+    const parsedIds = JSON.parse(rawIds) as unknown;
+    if (Array.isArray(parsedIds)) {
+      ids = Array.from(
+        new Set(
+          parsedIds
+            .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+            .map((id) => id.trim())
+        )
+      ) as Id<"productVariants">[];
+    }
+  } catch {
+    redirect(`/admin/products/${productId}/edit?error=invalid_variant_selection`);
+  }
+
+  if (!productId || ids.length === 0) {
+    redirect("/admin/products?error=variant_id_required");
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    await client.mutation("mutations/admin/productVariants:deleteProductVariantsBatch", {
+      productId,
+      ids,
+    });
+
+    revalidatePath("/admin/products");
+    revalidatePath(`/admin/products/${productId}`);
+    revalidatePath(`/admin/products/${productId}/edit`);
+    redirect(`/admin/products/${productId}/edit?success=variants_deleted`);
+  } catch (error: unknown) {
+    redirect(
+      `/admin/products/${productId}/edit?error=${encodeURIComponent(errorMessage(error))}`
+    );
+  }
+}
+
 // Article management actions
 export async function updateArticleAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
