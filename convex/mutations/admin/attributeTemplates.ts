@@ -71,6 +71,31 @@ type AttributeTemplateFieldInput = {
   description?: string;
 };
 
+function normalizeField(field: AttributeTemplateFieldInput, index: number) {
+  return {
+    ...field,
+    fieldKey: field.fieldKey.trim(),
+    label: field.label.trim(),
+    displayPrecision:
+      field.displayPrecision !== undefined && Number.isFinite(field.displayPrecision)
+        ? field.displayPrecision
+        : undefined,
+    filterMode: field.filterMode,
+    unitKey: field.unitKey,
+    unit: field.unit?.trim() || undefined,
+    options: field.options?.map((option) => option.trim()).filter(Boolean),
+    importAlias: field.importAlias?.trim() || undefined,
+    sortOrder: Number.isFinite(field.sortOrder) ? field.sortOrder : index,
+    groupName: field.groupName?.trim() || undefined,
+    helpText: field.helpText?.trim() || undefined,
+    description: field.description?.trim() || undefined,
+  };
+}
+
+function normalizeFields(fields: AttributeTemplateFieldInput[]) {
+  return fields.map((field, index) => normalizeField(field, index));
+}
+
 async function assertUniqueTemplateName(
   ctx: MutationCtx,
   categoryId: Id<"categories">,
@@ -191,7 +216,8 @@ export const createAttributeTemplate = mutation({
   },
   handler: async (ctx, args) => {
     await assertUniqueTemplateName(ctx, args.categoryId, args.name);
-    validateFields(args.fields);
+    const fields = normalizeFields(args.fields);
+    validateFields(fields);
 
     const templateId = await ctx.db.insert(
       "attributeTemplates",
@@ -203,7 +229,7 @@ export const createAttributeTemplate = mutation({
       })
     );
 
-    await replaceTemplateFields(ctx, templateId, args.fields);
+    await replaceTemplateFields(ctx, templateId, fields);
     return templateId;
   },
 });
@@ -222,7 +248,8 @@ export const updateAttributeTemplate = mutation({
     if (!current) throw new Error("Attribute template not found");
 
     await assertUniqueTemplateName(ctx, args.categoryId, args.name, args.id);
-    validateFields(args.fields);
+    const fields = normalizeFields(args.fields);
+    validateFields(fields);
 
     await ctx.db.patch(
       args.id,
@@ -234,7 +261,7 @@ export const updateAttributeTemplate = mutation({
       })
     );
 
-    await replaceTemplateFields(ctx, args.id, args.fields);
+    await replaceTemplateFields(ctx, args.id, fields);
     return args.id;
   },
 });

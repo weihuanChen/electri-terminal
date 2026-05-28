@@ -953,7 +953,7 @@ export async function createAttributeTemplateAction(formData: FormData) {
   const categoryId = str(formData, "categoryId") as Id<"categories">;
 
   if (!name || !categoryId) {
-    redirect("/admin/attribute-templates?error=required_fields_missing");
+    return { ok: false, error: "required_fields_missing" } satisfies ActionResult;
   }
 
   try {
@@ -967,9 +967,9 @@ export async function createAttributeTemplateAction(formData: FormData) {
     });
 
     revalidatePath("/admin/attribute-templates");
-    redirect("/admin/attribute-templates?success=template_created");
+    return { ok: true } satisfies ActionResult;
   } catch (error: unknown) {
-    redirect(`/admin/attribute-templates?error=${encodeURIComponent(errorMessage(error))}`);
+    return { ok: false, error: errorMessage(error) } satisfies ActionResult;
   }
 }
 
@@ -981,7 +981,7 @@ export async function updateAttributeTemplateAction(formData: FormData) {
   const categoryId = str(formData, "categoryId") as Id<"categories">;
 
   if (!id || !name || !categoryId) {
-    redirect("/admin/attribute-templates?error=required_fields_missing");
+    return { ok: false, error: "required_fields_missing" } satisfies ActionResult;
   }
 
   try {
@@ -996,9 +996,10 @@ export async function updateAttributeTemplateAction(formData: FormData) {
     });
 
     revalidatePath("/admin/attribute-templates");
-    redirect("/admin/attribute-templates?success=template_updated");
+    revalidatePath(`/admin/attribute-templates/${id}/edit`);
+    return { ok: true } satisfies ActionResult;
   } catch (error: unknown) {
-    redirect(`/admin/attribute-templates?error=${encodeURIComponent(errorMessage(error))}`);
+    return { ok: false, error: errorMessage(error) } satisfies ActionResult;
   }
 }
 

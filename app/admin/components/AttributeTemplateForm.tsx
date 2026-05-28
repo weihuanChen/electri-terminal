@@ -51,6 +51,10 @@ interface AttributeTemplateFormProps {
   categories: Category[];
 }
 
+type AttributeTemplateActionResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
 function createEmptyField(sortOrder: number): AttributeField {
   return {
     fieldKey: "",
@@ -71,6 +75,40 @@ function createEmptyField(sortOrder: number): AttributeField {
     helpText: "",
     description: "",
   };
+}
+
+function normalizeFieldsForSubmit(fields: AttributeField[]) {
+  return fields.map((field, index) => ({
+    ...field,
+    fieldKey: field.fieldKey.trim(),
+    label: field.label.trim(),
+    unit: field.unit?.trim() || undefined,
+    importAlias: field.importAlias?.trim() || undefined,
+    groupName: field.groupName?.trim() || undefined,
+    helpText: field.helpText?.trim() || undefined,
+    description: field.description?.trim() || undefined,
+    sortOrder: index,
+    options: (field.options || [])
+      .map((option) => option.trim())
+      .filter((option) => option.length > 0),
+  }));
+}
+
+function getDuplicateFieldKeys(fields: Pick<AttributeField, "fieldKey">[]) {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const field of fields) {
+    const fieldKey = field.fieldKey.trim();
+    if (!fieldKey) continue;
+
+    if (seen.has(fieldKey)) {
+      duplicates.add(fieldKey);
+    }
+    seen.add(fieldKey);
+  }
+
+  return [...duplicates];
 }
 
 export function AttributeTemplateForm({
@@ -120,27 +158,32 @@ export function AttributeTemplateForm({
     setError("");
 
     try {
+      const normalizedFields = normalizeFieldsForSubmit(fields);
+      const duplicateFieldKeys = getDuplicateFieldKeys(normalizedFields);
+      if (duplicateFieldKeys.length) {
+        setError(`fieldKey 不能重复：${duplicateFieldKeys.join(", ")}`);
+        setIsLoading(false);
+        return;
+      }
+
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("categoryId", formData.categoryId);
       payload.append("status", formData.status);
       if (formData.description) payload.append("description", formData.description);
-      payload.append(
-        "fields",
-        JSON.stringify(
-          fields.map((field, index) => ({
-            ...field,
-            sortOrder: index,
-            options: (field.options || []).filter((option) => option.trim().length > 0),
-          }))
-        )
-      );
+      payload.append("fields", JSON.stringify(normalizedFields));
 
+      let result: AttributeTemplateActionResult;
       if (isEdit && template) {
         payload.append("id", template._id);
-        await updateAttributeTemplateAction(payload);
+        result = await updateAttributeTemplateAction(payload);
       } else {
-        await createAttributeTemplateAction(payload);
+        result = await createAttributeTemplateAction(payload);
+      }
+
+      if (!result.ok) {
+        setError(result.error);
+        return;
       }
 
       router.push("/admin/attribute-templates");
