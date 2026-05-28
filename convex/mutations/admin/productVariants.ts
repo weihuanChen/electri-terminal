@@ -464,22 +464,20 @@ export const importProductVariantsFromJson = mutation({
     sourceName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const jobId = await ctx.db.insert(
-      "importJobs",
-      withCreatedAt({
-        type: "product_variants_json",
-        fileUrl: args.sourceName?.trim() || "pasted-product-variants.json",
-        status: "running",
-        mappingConfig: {
-          entity: "productVariants",
-          key: "productSlug -> productId",
-          attributePolicy: "drop_unknown_or_invalid_fields",
-        },
-        totalRows: args.items.length,
-        successRows: 0,
-        failedRows: 0,
-      })
-    );
+    const jobId = await ctx.db.insert("importJobs", {
+      type: "product_variants_json",
+      fileUrl: args.sourceName?.trim() || "pasted-product-variants.json",
+      status: "running",
+      mappingConfig: {
+        entity: "productVariants",
+        key: "productSlug -> productId",
+        attributePolicy: "drop_unknown_or_invalid_fields",
+      },
+      totalRows: args.items.length,
+      successRows: 0,
+      failedRows: 0,
+      createdAt: nowTs(),
+    });
 
     const productBySlug = new Map<string, Awaited<ReturnType<typeof getProductOrThrow>>>();
     const fieldsByCategory = new Map<string, ExpandedAttributeField[]>();

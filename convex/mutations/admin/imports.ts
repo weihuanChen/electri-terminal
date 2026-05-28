@@ -3,8 +3,7 @@ import { mutation } from "../../_generated/server";
 import {
   assertImportCounters,
   assertUniqueImportJobRow,
-  withCreatedAt,
-  withUpdatedAt,
+  nowTs,
 } from "../../lib/validators";
 import { importJobType, importStatus } from "./shared";
 
@@ -16,19 +15,17 @@ export const createImportJob = mutation({
     createdBy: v.optional(v.id("users")),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert(
-      "importJobs",
-      withCreatedAt({
-        type: args.type,
-        fileUrl: args.fileUrl,
-        status: "pending",
-        mappingConfig: args.mappingConfig,
-        totalRows: 0,
-        successRows: 0,
-        failedRows: 0,
-        createdBy: args.createdBy,
-      })
-    );
+    return await ctx.db.insert("importJobs", {
+      type: args.type,
+      fileUrl: args.fileUrl,
+      status: "pending",
+      mappingConfig: args.mappingConfig,
+      totalRows: 0,
+      successRows: 0,
+      failedRows: 0,
+      createdBy: args.createdBy,
+      createdAt: nowTs(),
+    });
   },
 });
 
@@ -50,16 +47,13 @@ export const updateImportJob = mutation({
     const failedRows = args.failedRows ?? current.failedRows;
     assertImportCounters(totalRows, successRows, failedRows);
 
-    await ctx.db.patch(
-      args.id,
-      withUpdatedAt({
-        ...(args.status !== undefined ? { status: args.status } : {}),
-        ...(args.totalRows !== undefined ? { totalRows: args.totalRows } : {}),
-        ...(args.successRows !== undefined ? { successRows: args.successRows } : {}),
-        ...(args.failedRows !== undefined ? { failedRows: args.failedRows } : {}),
-        ...(args.finishedAt !== undefined ? { finishedAt: args.finishedAt } : {}),
-      })
-    );
+    await ctx.db.patch(args.id, {
+      ...(args.status !== undefined ? { status: args.status } : {}),
+      ...(args.totalRows !== undefined ? { totalRows: args.totalRows } : {}),
+      ...(args.successRows !== undefined ? { successRows: args.successRows } : {}),
+      ...(args.failedRows !== undefined ? { failedRows: args.failedRows } : {}),
+      ...(args.finishedAt !== undefined ? { finishedAt: args.finishedAt } : {}),
+    });
 
     return args.id;
   },
@@ -103,14 +97,11 @@ export const updateImportJobRow = mutation({
     const current = await ctx.db.get(args.id);
     if (!current) throw new Error("Import job row not found");
 
-    await ctx.db.patch(
-      args.id,
-      withUpdatedAt({
-        ...(args.status !== undefined ? { status: args.status } : {}),
-        ...(args.errorMessage !== undefined ? { errorMessage: args.errorMessage } : {}),
-        ...(args.entityId !== undefined ? { entityId: args.entityId } : {}),
-      })
-    );
+    await ctx.db.patch(args.id, {
+      ...(args.status !== undefined ? { status: args.status } : {}),
+      ...(args.errorMessage !== undefined ? { errorMessage: args.errorMessage } : {}),
+      ...(args.entityId !== undefined ? { entityId: args.entityId } : {}),
+    });
 
     return args.id;
   },
