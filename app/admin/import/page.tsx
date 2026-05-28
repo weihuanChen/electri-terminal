@@ -10,8 +10,9 @@ import {
   AlertCircle,
   Eye,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { Doc } from "@/convex/_generated/dataModel";
+import { ProductVariantJsonImportForm } from "../components/ProductVariantJsonImportForm";
 
 export default async function ImportPage() {
   await requireAdmin();
@@ -21,6 +22,7 @@ export default async function ImportPage() {
     product_csv: "产品 CSV",
     family_csv: "系列 CSV",
     category_csv: "分类 CSV",
+    product_variants_json: "Variant JSON",
   };
 
   const statusLabels: Record<string, string> = {
@@ -31,7 +33,7 @@ export default async function ImportPage() {
     partial_success: "部分成功",
   };
 
-  const statusIcons: Record<string, any> = {
+  const statusIcons: Record<string, LucideIcon> = {
     pending: Clock,
     running: Clock,
     completed: CheckCircle2,
@@ -56,8 +58,9 @@ export default async function ImportPage() {
             <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">批量导入</h1>
             <p className="text-zinc-600 dark:text-zinc-400">管理批量导入任务</p>
           </div>
-          {/* Note: Upload functionality would be implemented here */}
         </div>
+
+        <ProductVariantJsonImportForm />
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-5">
@@ -209,14 +212,13 @@ export default async function ImportPage() {
           )}
         </div>
 
-        {/* Upload Section (Placeholder) */}
         <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-8 text-center">
           <Upload className="mx-auto h-12 w-12 text-zinc-400 dark:text-zinc-500" />
           <h3 className="mt-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            上传 CSV 文件进行批量导入
+            CSV 文件上传
           </h3>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            支持产品、系列和分类的批量导入
+            产品、系列和分类的 CSV 上传仍未实现；当前可用的是上方 Variant JSON 导入。
           </p>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
             上传功能将在后续版本中实现

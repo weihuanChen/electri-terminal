@@ -96,7 +96,8 @@ const navItemType = v.union(
 const importJobType = v.union(
   v.literal("product_csv"),
   v.literal("family_csv"),
-  v.literal("category_csv")
+  v.literal("category_csv"),
+  v.literal("product_variants_json")
 );
 
 const importStatus = v.union(

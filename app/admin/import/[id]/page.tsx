@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData } from "@/lib/convex-admin";
+import { getImportJobRows, loadAdminData } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import {
   ArrowLeft,
@@ -9,6 +9,7 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -27,10 +28,13 @@ export default async function ImportJobDetailPage({
     notFound();
   }
 
+  const rows = await getImportJobRows(id);
+
   const typeLabels: Record<string, string> = {
     product_csv: "产品 CSV",
     family_csv: "系列 CSV",
     category_csv: "分类 CSV",
+    product_variants_json: "Variant JSON",
   };
 
   const statusLabels: Record<string, string> = {
@@ -41,7 +45,7 @@ export default async function ImportJobDetailPage({
     partial_success: "部分成功",
   };
 
-  const statusIcons: Record<string, any> = {
+  const statusIcons: Record<string, LucideIcon> = {
     pending: Clock,
     running: Clock,
     completed: CheckCircle2,
@@ -181,12 +185,72 @@ export default async function ImportJobDetailPage({
           </div>
         )}
 
-        {/* Note */}
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          <p className="font-medium mb-1">提示</p>
-          <p>
-            导入任务行详情和错误日志功能将在后续版本中实现。
-          </p>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden">
+          <div className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-6 py-3">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">行详情</h2>
+          </div>
+
+          {rows.length === 0 ? (
+            <div className="px-6 py-10 text-center">
+              <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">暂无行记录</p>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                旧任务可能只记录了任务概览。
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      行号
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      状态
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      Entity ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      错误 / 提示
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      原始数据
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  {rows.map((row) => {
+                    const RowStatusIcon = statusIcons[row.status] || FileText;
+                    return (
+                      <tr key={row._id} className="align-top hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                        <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                          {row.rowNumber}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${statusColors[row.status]}`}>
+                            <RowStatusIcon className="h-3 w-3" />
+                            {statusLabels[row.status] || row.status}
+                          </span>
+                        </td>
+                        <td className="max-w-[180px] px-6 py-4 text-xs text-zinc-600 dark:text-zinc-400 break-all">
+                          {row.entityId || "-"}
+                        </td>
+                        <td className="min-w-[220px] max-w-md px-6 py-4 text-sm text-zinc-700 dark:text-zinc-300">
+                          {row.errorMessage || "-"}
+                        </td>
+                        <td className="min-w-[360px] px-6 py-4">
+                          <pre className="max-h-48 overflow-auto rounded-lg bg-zinc-50 p-3 text-xs leading-5 text-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+                            {JSON.stringify(row.rawData, null, 2)}
+                          </pre>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

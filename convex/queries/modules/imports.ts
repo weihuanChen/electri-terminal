@@ -21,3 +21,23 @@ export const listImportJobs = query({
     return items.slice(0, limit);
   },
 });
+
+export const listImportJobRows = query({
+  args: {
+    jobId: v.id("importJobs"),
+    status: v.optional(importStatus),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(args.limit ?? 200, 500);
+    let items = await ctx.db
+      .query("importJobRows")
+      .withIndex("by_job_row", (q) => q.eq("jobId", args.jobId))
+      .collect();
+
+    if (args.status) items = items.filter((item) => item.status === args.status);
+
+    items.sort((a, b) => a.rowNumber - b.rowNumber);
+    return items.slice(0, limit);
+  },
+});

@@ -23,6 +23,14 @@ export const PRODUCT_REDIRECTS = [
     sourceSlug: "pin-cold-press-terminals-g02",
     destinationSlug: "pin-cold-press-terminals-g01",
   },
+  {
+    sourceSlug: "plug-in-needle-terminals-g03",
+    destinationSlug: "plug-in-needle-terminals-g02",
+  },
+  {
+    sourceSlug: "plug-in-needle-terminals-g04",
+    destinationSlug: "plug-in-needle-terminals-g02",
+  },
 ] as const;
 
 const redirectedProductSlugs = new Set<string>(

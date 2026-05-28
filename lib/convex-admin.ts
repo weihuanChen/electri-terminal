@@ -272,6 +272,13 @@ export async function getProductAdminDetail(id: string) {
   );
 }
 
+export async function getImportJobRows(id: string) {
+  return queryAdmin<Doc<"importJobRows">[]>(
+    "queries/modules/imports:listImportJobRows",
+    { jobId: id, limit: 500 }
+  );
+}
+
 export async function getArticle(id: string) {
   return queryAdmin<Doc<"articles">>("queries/modules/articles:getArticleById", { id });
 }

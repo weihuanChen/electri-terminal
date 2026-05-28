@@ -14,6 +14,8 @@ import {
   normalizeVisualMediaItems,
   type VisualMediaItem,
 } from "@/lib/productPresentation";
+import ExpandableHeroIntro from "./ExpandableHeroIntro";
+import QuickSelectButton from "./QuickSelectButton";
 
 interface CategorySummary {
   slug?: string;
@@ -522,6 +524,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     heroIntro || overviewParagraphs[0] || family.summary || "",
     26
   );
+  const fullHeroIntro = normalizeText(heroIntro || overviewParagraphs[0] || family.summary || "");
   const quickFacts = deriveQuickFacts([
     heroIntro || "",
     ...overviewParagraphs,
@@ -560,8 +563,8 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                 Product Family
               </p>
               <h1 className="mb-4 text-3xl font-semibold md:text-4xl">{family.name}</h1>
-              {compactHeroIntro && (
-                <p className="mb-5 text-base text-secondary">{compactHeroIntro}</p>
+              {fullHeroIntro && (
+                <ExpandableHeroIntro text={fullHeroIntro} preview={compactHeroIntro} />
               )}
               <div className="flex flex-wrap gap-3">
                 <Link href={primaryCTA.href} className="btn btn-primary">
@@ -571,9 +574,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                   {secondaryCTA.label}
                 </Link>
                 {hasAvailableProducts && (
-                  <a href="#available-products" className="btn btn-accent">
-                    Quick Select
-                  </a>
+                  <QuickSelectButton targetId="available-products" />
                 )}
               </div>
             </div>

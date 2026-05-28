@@ -582,6 +582,54 @@ export async function createProductVariantAction(formData: FormData) {
   }
 }
 
+export async function importProductVariantsJsonAction(
+  formData: FormData
+): Promise<ActionResult & { jobId?: string; totalRows?: number; successRows?: number; failedRows?: number }> {
+  await requireAdmin();
+
+  const rawPayload = str(formData, "payload");
+  const sourceName = optionalStr(formData, "sourceName");
+
+  if (!rawPayload) {
+    return { ok: false, error: "variant_json_payload_required" };
+  }
+
+  let parsedPayload: unknown;
+  try {
+    parsedPayload = JSON.parse(rawPayload);
+  } catch (error: unknown) {
+    return { ok: false, error: `invalid_json: ${errorMessage(error)}` };
+  }
+
+  const items = Array.isArray(parsedPayload) ? parsedPayload : [parsedPayload];
+
+  if (items.length === 0) {
+    return { ok: false, error: "payload_must_not_be_empty" };
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    const result = (await client.mutation(
+      "mutations/admin/productVariants:importProductVariantsFromJson",
+      {
+        items,
+        sourceName,
+      }
+    )) as {
+      jobId: string;
+      totalRows: number;
+      successRows: number;
+      failedRows: number;
+    };
+
+    revalidatePath("/admin/import");
+    revalidatePath("/admin/products");
+    return { ok: true, ...result };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
 export async function updateProductVariantAction(formData: FormData) {
   await requireAdmin();
 

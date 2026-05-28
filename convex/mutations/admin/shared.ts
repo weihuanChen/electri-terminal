@@ -30,7 +30,8 @@ export const inquiryStatus = v.union(
 export const importJobType = v.union(
   v.literal("product_csv"),
   v.literal("family_csv"),
-  v.literal("category_csv")
+  v.literal("category_csv"),
+  v.literal("product_variants_json")
 );
 
 export const importStatus = v.union(

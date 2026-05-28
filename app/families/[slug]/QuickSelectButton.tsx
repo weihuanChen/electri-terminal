@@ -1,0 +1,29 @@
+"use client";
+
+type QuickSelectButtonProps = {
+  targetId: string;
+};
+
+export default function QuickSelectButton({ targetId }: QuickSelectButtonProps) {
+  const handleClick = () => {
+    const target = document.getElementById(targetId);
+
+    if (!target) {
+      return;
+    }
+
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", `#${targetId}`);
+  };
+
+  return (
+    <button
+      type="button"
+      className="btn btn-accent"
+      aria-controls={targetId}
+      onClick={handleClick}
+    >
+      Quick Select
+    </button>
+  );
+}
