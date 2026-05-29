@@ -38,6 +38,36 @@ export type ExpandedAttributeField = Doc<"attributeFields"> & {
   groupName?: string;
 };
 
+const SYSTEM_ATTRIBUTE_FIELDS: ExpandedAttributeField[] = [
+  {
+    _id: "system_certifications" as Id<"attributeFields">,
+    _creationTime: 0,
+    templateId: "system_template" as Id<"attributeTemplates">,
+    fieldKey: "certifications",
+    label: "Certifications",
+    fieldType: "array",
+    filterMode: "exact",
+    groupName: "compliance",
+    isRequired: false,
+    isFilterable: true,
+    isSearchable: false,
+    isVisibleOnFrontend: true,
+    importAlias: "Certification",
+    sortOrder: 9990,
+    createdAt: 0,
+    updatedAt: 0,
+  },
+];
+
+export function withSystemAttributeFields(fields: ExpandedAttributeField[]) {
+  const fieldKeys = new Set(fields.map((field) => field.fieldKey));
+  const missingSystemFields = SYSTEM_ATTRIBUTE_FIELDS.filter(
+    (field) => !fieldKeys.has(field.fieldKey)
+  );
+
+  return [...fields, ...missingSystemFields];
+}
+
 async function getTemplateForCategory(ctx: ConvexCtx, categoryId: Id<"categories">) {
   const templates = await ctx.db
     .query("attributeTemplates")
@@ -194,7 +224,9 @@ export async function validateAttributesAgainstCategory(
   }
 
   const fields = await getExpandedTemplateFieldsByCategoryId(ctx, categoryId);
-  const fieldMap = new Map(fields.map((field) => [field.fieldKey, field]));
+  const fieldMap = new Map(
+    withSystemAttributeFields(fields).map((field) => [field.fieldKey, field])
+  );
 
   for (const [fieldKey, value] of Object.entries(attributes)) {
     const field = fieldMap.get(fieldKey);

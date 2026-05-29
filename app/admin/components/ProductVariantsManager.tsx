@@ -42,6 +42,20 @@ type VariantBatchSaveItem = {
   sortOrder?: number;
 };
 
+const CERTIFICATIONS_FIELD: AttributeField = {
+  fieldKey: "certifications",
+  label: "Certifications / 认证信息",
+  fieldType: "array",
+  isRequired: false,
+  isFilterable: true,
+  isSearchable: false,
+  isVisibleOnFrontend: true,
+  importAlias: "Certification",
+  sortOrder: 9990,
+  groupName: "compliance",
+  helpText: "Use commas, semicolons, or new lines for multiple certifications.",
+};
+
 function normalizeAttributeValue(value: unknown): AttributeValue {
   if (Array.isArray(value)) {
     if (value.length === 2 && value.every((item) => typeof item === "number")) {
@@ -55,6 +69,32 @@ function normalizeAttributeValue(value: unknown): AttributeValue {
   }
 
   return value == null ? "" : String(value);
+}
+
+function splitArrayInput(value: string) {
+  return Array.from(
+    new Set(
+      value
+        .split(/[\n,;]+/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    )
+  );
+}
+
+function formatArrayInputValue(value: AttributeValue | undefined) {
+  if (Array.isArray(value)) {
+    return value.map(String).join(", ");
+  }
+  return value == null ? "" : String(value);
+}
+
+function ensureVariantSystemFields(fields: AttributeField[]) {
+  const hasCertifications = fields.some(
+    (field) => field.fieldKey === CERTIFICATIONS_FIELD.fieldKey
+  );
+
+  return hasCertifications ? fields : [...fields, CERTIFICATIONS_FIELD];
 }
 
 function getInitialAttributes(
@@ -454,13 +494,36 @@ function VariantEditorCard({
 
               if (field.fieldType === "array") {
                 const selectedValues = Array.isArray(value) ? value.map(String) : [];
+                const options = field.options?.filter(Boolean) || [];
+                if (options.length === 0) {
+                  return (
+                    <div key={field.fieldKey} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+                      <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        {field.label}
+                      </label>
+                      <textarea
+                        value={formatArrayInputValue(value)}
+                        onChange={(event) =>
+                          updateAttributeValue(field.fieldKey, splitArrayInput(event.target.value))
+                        }
+                        rows={3}
+                        className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
+                        placeholder="CE, RoHS, cULus"
+                      />
+                      {inheritedText ? (
+                        <p className="mt-2 text-xs text-sky-700">继承值：{inheritedText}</p>
+                      ) : null}
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field.fieldKey} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
                     <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                       {field.label}
                     </label>
                     <div className="space-y-2">
-                      {(field.options || []).map((option) => (
+                      {options.map((option) => (
                         <label
                           key={option}
                           className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300"
@@ -629,10 +692,12 @@ export function ProductVariantsManager({
   const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
   const [variantDrafts, setVariantDrafts] = useState<Record<string, VariantBatchSaveItem>>({});
   const fields = useMemo(
-    () =>
-      [...(templateFields || [])].sort(
+    () => {
+      const sortedFields = [...(templateFields || [])].sort(
         (a, b) => a.sortOrder - b.sortOrder || a.label.localeCompare(b.label)
-      ),
+      );
+      return ensureVariantSystemFields(sortedFields);
+    },
     [templateFields]
   );
   const variantIds = useMemo(() => variants.map((variant) => variant._id), [variants]);

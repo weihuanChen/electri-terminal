@@ -4,6 +4,7 @@ import type { Id } from "../../_generated/dataModel";
 import {
   getExpandedTemplateFieldsByCategoryId,
   validateAttributesAgainstCategory,
+  withSystemAttributeFields,
   type ExpandedAttributeField,
 } from "../../lib/attributes";
 import {
@@ -189,9 +190,10 @@ async function getSanitizableFields(
   ctx: MutationCtx,
   categoryId: Id<"categories">
 ) {
-  return (await getExpandedTemplateFieldsByCategoryId(ctx, categoryId)).filter(
+  const fields = (await getExpandedTemplateFieldsByCategoryId(ctx, categoryId)).filter(
     Boolean
   ) as ExpandedAttributeField[];
+  return withSystemAttributeFields(fields);
 }
 
 function validateImportItem(item: unknown): ProductVariantImportItem {
