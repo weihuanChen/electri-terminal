@@ -31,6 +31,18 @@ export const PRODUCT_REDIRECTS = [
     sourceSlug: "plug-in-needle-terminals-g04",
     destinationSlug: "plug-in-needle-terminals-g02",
   },
+  {
+    sourceSlug: "twin-vinyl-insulated-cord-end-terminals-g03",
+    destinationSlug: "sc-dtga-copper-lugs-g02",
+  },
+  {
+    sourceSlug: "twin-vinyl-insulated-cord-end-terminals-g02",
+    destinationSlug: "sc-dtga-copper-lugs-g02",
+  },
+  {
+    sourceSlug: "twin-vinyl-insulated-cord-end-terminals-g04",
+    destinationSlug: "sc-dtga-copper-lugs-g02",
+  },
 ] as const;
 
 const redirectedProductSlugs = new Set<string>(

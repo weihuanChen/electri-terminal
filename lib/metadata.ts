@@ -118,7 +118,7 @@ export function buildPageMetadata({
   };
 }
 
-const PUBLIC_QUERY_RETRY_DELAYS_MS = [150, 500];
+const PUBLIC_QUERY_RETRY_DELAYS_MS = [150, 500, 1_000, 2_000];
 
 function normalizeQueryValue(value: unknown): unknown {
   if (Array.isArray(value)) {
@@ -151,7 +151,21 @@ function getReadableErrorMessage(error: unknown) {
   }
 }
 
-function isTransientFetchError(error: unknown) {
+function getConvexErrorCode(error: unknown) {
+  if (error && typeof error === "object" && "code" in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === "string" ? code : undefined;
+  }
+
+  return undefined;
+}
+
+function isRetryablePublicQueryError(error: unknown) {
+  const code = getConvexErrorCode(error);
+  if (code === "WorkerOverloaded" || code === "TooManyRequests") {
+    return true;
+  }
+
   const message = getReadableErrorMessage(error).toLowerCase();
   return [
     "fetch failed",
@@ -164,11 +178,23 @@ function isTransientFetchError(error: unknown) {
     "eai_again",
     "und_err",
     "terminated",
+    "workeroverloaded",
+    "there are no available workers",
+    "too many requests",
+    "rate limit",
+    "temporarily unavailable",
+    "service unavailable",
   ].some((token) => message.includes(token));
 }
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getRetryDelay(attempt: number) {
+  const baseDelay = PUBLIC_QUERY_RETRY_DELAYS_MS[attempt] ?? 0;
+  const jitter = Math.floor(Math.random() * Math.min(baseDelay, 250));
+  return baseDelay + jitter;
 }
 
 async function queryPublicPageWithRetry(name: string, args: Record<string, unknown>) {
@@ -179,10 +205,10 @@ async function queryPublicPageWithRetry(name: string, args: Record<string, unkno
       return await getAdminConvexClient().query(name, args);
     } catch (error) {
       lastError = error;
-      if (!isTransientFetchError(error) || attempt === PUBLIC_QUERY_RETRY_DELAYS_MS.length) {
+      if (!isRetryablePublicQueryError(error) || attempt === PUBLIC_QUERY_RETRY_DELAYS_MS.length) {
         break;
       }
-      await wait(PUBLIC_QUERY_RETRY_DELAYS_MS[attempt]);
+      await wait(getRetryDelay(attempt));
     }
   }
 
