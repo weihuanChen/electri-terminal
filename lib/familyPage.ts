@@ -5,7 +5,6 @@ import {
   makeItemListSchema,
 } from "@/lib/schema";
 import {
-  resolveFaqItems,
   resolveMetadataDescription,
   resolveMetadataEntity,
   resolveMetadataRobots,
@@ -262,20 +261,14 @@ export function resolveFamilyPrimaryImageAlt(family: FamilyPageLike | null) {
 }
 
 export function resolveFamilyFaqItems(family: FamilyPageLike) {
-  const faqMode = family.pageConfig?.seoBoost?.faqMode || "relation";
-  const relationFaqs = resolveFaqItems(family.faqs);
-  const embeddedFaqs = (family.pageConfig?.seoBoost?.embeddedFaqItems || []).map((faq) => ({
-    question: faq.question,
-    answer: faq.answer,
-  }));
-
-  if (faqMode === "embedded") {
-    return embeddedFaqs.filter((faq) => faq.question && faq.answer);
-  }
-  if (faqMode === "mixed") {
-    return [...relationFaqs, ...embeddedFaqs].filter((faq) => faq.question && faq.answer);
-  }
-  return relationFaqs.filter((faq) => faq.question && faq.answer);
+  return (family.pageConfig?.seoBoost?.embeddedFaqItems || [])
+    .map((faq) => ({
+      question: asNonEmptyString(faq.question),
+      answer: asNonEmptyString(faq.answer),
+    }))
+    .filter((faq): faq is { question: string; answer: string } =>
+      Boolean(faq.question && faq.answer)
+    );
 }
 
 export function resolveFamilyPageViewModel(family: FamilyPageLike) {

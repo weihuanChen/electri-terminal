@@ -297,7 +297,7 @@ export function FamilyForm({
     ctaSecondaryHref: family?.pageConfig?.conversion?.ctaSecondaryHref || "",
     downloadsMode: family?.pageConfig?.conversion?.downloadsMode || "auto",
     pinnedDownloadIds: family?.pageConfig?.conversion?.pinnedDownloadIds || [],
-    faqMode: family?.pageConfig?.seoBoost?.faqMode || "relation",
+    faqMode: family?.pageConfig?.seoBoost?.faqMode || "embedded",
     embeddedFaqItems: faqItemsToEditorValue(family?.pageConfig?.seoBoost?.embeddedFaqItems),
     relatedCategoryIds: family?.pageConfig?.linking?.relatedCategoryIds || [],
     relatedFamilyIds: family?.pageConfig?.linking?.relatedFamilyIds || [],
@@ -512,7 +512,7 @@ export function FamilyForm({
             : {}),
         },
         seoBoost: {
-          faqMode: formData.faqMode,
+          faqMode: "embedded" as const,
           ...(embeddedFaqItems && embeddedFaqItems.length > 0 ? { embeddedFaqItems } : {}),
         },
         linking: {
@@ -1234,23 +1234,12 @@ export function FamilyForm({
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">FAQ 与内链</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              FAQ Mode
-            </label>
-            <select
-              value={formData.faqMode}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  faqMode: e.target.value as "relation" | "embedded" | "mixed",
-                })
-              }
-              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
-            >
-              <option value="relation">relation</option>
-              <option value="embedded">embedded</option>
-              <option value="mixed">mixed</option>
-            </select>
+            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              FAQ Source
+            </p>
+            <p className="mt-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400">
+              Family pages use Embedded FAQ Items only. Blog/guide relations are not rendered inside the FAQ accordion.
+            </p>
           </div>
 
           <div>
@@ -1265,7 +1254,7 @@ export function FamilyForm({
               placeholder={`[\n  {\n    "question": "How do I choose this series?",\n    "answer": "Start with current, wire range, and installation constraints."\n  }\n]`}
             />
             <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-              当 FAQ Mode 为 `embedded` 或 `mixed` 时生效。
+              前台 family FAQ 读取这里的短问答 JSON；关联文章用于 Related Resources，不再作为 FAQ 内容输出。
             </p>
           </div>
 

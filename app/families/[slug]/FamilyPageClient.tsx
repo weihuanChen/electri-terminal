@@ -171,6 +171,7 @@ interface FamilyPageClientProps {
 type MarkdownBlock =
   | { type: "heading"; text: string; level: 2 | 3 }
   | { type: "paragraph"; text: string }
+  | { type: "divider" }
   | { type: "list"; items: string[] };
 
 function parseMarkdownBlocks(markdown: string): MarkdownBlock[] {
@@ -203,6 +204,13 @@ function parseMarkdownBlocks(markdown: string): MarkdownBlock[] {
     if (!line) {
       flushParagraph();
       flushList();
+      continue;
+    }
+
+    if (/^([-*_])(?:\s*\1){2,}$/.test(line)) {
+      flushParagraph();
+      flushList();
+      blocks.push({ type: "divider" });
       continue;
     }
 
@@ -259,6 +267,10 @@ function LongformMarkdown({ markdown }: { markdown: string }) {
               ))}
             </ul>
           );
+        }
+
+        if (block.type === "divider") {
+          return <hr key={`${block.type}-${index}`} className="border-border" />;
         }
 
         return (
@@ -613,38 +625,95 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
       {hasOverviewAndFeatures && (
         <section className="section-compact border-y border-border">
           <div className="container">
+            <div className="mb-8 max-w-3xl">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Overview + Key Features
+              </p>
+              <h2 className="text-2xl font-semibold md:text-3xl">Overview + Key Features</h2>
+            </div>
             <div className="grid gap-8 lg:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                  Overview
-                </p>
-                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Overview</h2>
-                <div className="space-y-4">
-                  {overviewParagraphs.map((paragraph, index) => (
-                    <p key={`${paragraph}-${index}`} className="text-secondary leading-7">
-                      {paragraph}
-                    </p>
-                  ))}
+              {showOverview && overviewParagraphs.length > 0 && (
+                <div>
+                  <h3 className="mb-4 text-xl font-semibold">Overview</h3>
+                  <div className="space-y-4">
+                    {overviewParagraphs.map((paragraph, index) => (
+                      <p key={`${paragraph}-${index}`} className="text-secondary leading-7">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                  Key Features
-                </p>
-                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Key Features</h2>
-                {featuresIntro && (
-                  <p className="mb-4 text-sm text-secondary">{compactSentence(featuresIntro, 18)}</p>
-                )}
-                <ul className="space-y-3">
-                  {compactFeatures.map((feature, index) => (
-                    <li key={`${feature}-${index}`} className="flex items-start gap-2 text-secondary">
-                      <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {showFeatures && compactFeatures.length > 0 && (
+                <div>
+                  <h3 className="mb-4 text-xl font-semibold">Key Features</h3>
+                  {featuresIntro && (
+                    <p className="mb-4 text-sm text-secondary">{compactSentence(featuresIntro, 18)}</p>
+                  )}
+                  <ul className="space-y-3">
+                    {compactFeatures.map((feature, index) => (
+                      <li key={`${feature}-${index}`} className="flex items-start gap-2 text-secondary">
+                        <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {quickSpecs.length > 0 && (
+        <section className="section-compact border-y border-border bg-muted">
+          <div className="container">
+            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Quick Specs
+              </p>
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Quick Specs</h2>
+              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {quickSpecs.map((spec) => (
+                  <div key={spec.label} className="rounded-sm border border-border bg-muted/60 p-3">
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                      {spec.label}
+                    </dt>
+                    <dd className="mt-1 text-sm font-medium text-foreground">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {hasAvailableProducts && (
+        <section id="available-products" className="section scroll-mt-24">
+          <div className="container">
+            <div className="mb-8">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Available Models
+              </p>
+              <h2 className="mb-2 text-2xl font-semibold md:text-3xl">Available Products</h2>
+              <p className="text-secondary">
+                Select a product to view detailed specifications
+              </p>
+            </div>
+            <SKUTable skus={availableProducts} />
+          </div>
+        </section>
+      )}
+
+      {showLongform && longformMarkdown && (
+        <section className="section bg-muted">
+          <div className="container">
+            <div className="max-w-4xl">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Technical Article
+              </p>
+              <LongformMarkdown markdown={longformMarkdown} />
             </div>
           </div>
         </section>
@@ -675,48 +744,6 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
           </div>
         </section>
       )}
-
-      {quickSpecs.length > 0 && (
-        <section className="section-compact border-y border-border bg-muted">
-          <div className="container">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Quick Specs
-              </p>
-              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Quick Spec Summary</h2>
-              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                {quickSpecs.map((spec) => (
-                  <div key={spec.label} className="rounded-sm border border-border bg-muted/60 p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
-                      {spec.label}
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium text-foreground">{spec.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="section-compact">
-        <div className="container">
-          <div className="max-w-3xl rounded-sm border border-border bg-white p-5 md:p-6">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Certification
-            </p>
-            <h2 className="mb-4 text-xl font-semibold md:text-2xl">Certification Support</h2>
-            <ul className="space-y-3">
-              {certificationSupportItems.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-secondary">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
 
       {hasSelectionAndTechnical && (
         <section className="section-compact bg-muted">
@@ -759,18 +786,24 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </section>
       )}
 
-      {showLongform && longformMarkdown && (
-        <section className="section bg-muted">
-          <div className="container">
-            <div className="max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Technical Article
-              </p>
-              <LongformMarkdown markdown={longformMarkdown} />
-            </div>
+      <section className="section-compact">
+        <div className="container">
+          <div className="max-w-3xl rounded-sm border border-border bg-white p-5 md:p-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+              Certification
+            </p>
+            <h2 className="mb-4 text-xl font-semibold md:text-2xl">Certification Support</h2>
+            <ul className="space-y-3">
+              {certificationSupportItems.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-secondary">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {mediaItems.length > 0 && (
         <section className="section bg-muted">
@@ -805,21 +838,21 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </section>
       )}
 
-      {hasAvailableProducts && (
-        <section id="available-products" className="section scroll-mt-24">
-          <div className="container">
-            <div className="mb-8">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Available Models
-              </p>
-              <h2 className="mb-2 text-2xl font-semibold md:text-3xl">Available Products</h2>
-              <p className="text-secondary">
-                Select a product to view detailed specifications
-              </p>
-            </div>
-            <SKUTable skus={availableProducts} />
-          </div>
-        </section>
+      {showBottomCta && (
+        <CTABanner
+          title="Need More Information?"
+          titleAs="p"
+          description="Our team is ready to help you find the right product for your application."
+          variant="primary"
+          primaryCTA={{
+            label: secondaryCTA.label,
+            href: secondaryCTA.href,
+          }}
+          secondaryCTA={{
+            label: primaryCTA.label,
+            href: primaryCTA.href,
+          }}
+        />
       )}
 
       {showDownloads && (
@@ -844,20 +877,6 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                   />
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {showFaq && faqItems.length > 0 && (
-        <section className="section border-y border-border">
-          <div className="container">
-            <div className="max-w-3xl mx-auto">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Technical FAQ
-              </p>
-              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
-              <FAQAccordion items={faqItems} />
             </div>
           </div>
         </section>
@@ -928,20 +947,18 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
           </section>
         )}
 
-      {showBottomCta && (
-        <CTABanner
-          title="Need More Information?"
-          description="Our team is ready to help you find the right product for your application."
-          variant="primary"
-          primaryCTA={{
-            label: secondaryCTA.label,
-            href: secondaryCTA.href,
-          }}
-          secondaryCTA={{
-            label: primaryCTA.label,
-            href: primaryCTA.href,
-          }}
-        />
+      {showFaq && faqItems.length > 0 && (
+        <section className="section border-y border-border">
+          <div className="container">
+            <div className="max-w-3xl mx-auto">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Technical FAQ
+              </p>
+              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
+              <FAQAccordion items={faqItems} />
+            </div>
+          </div>
+        </section>
       )}
 
     </>

@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 interface CTABannerProps {
   title: string;
   description?: string;
+  titleAs?: "h2" | "p";
   primaryCTA?: {
     label: string;
     href: string;
@@ -18,6 +19,7 @@ interface CTABannerProps {
 export default function CTABanner({
   title,
   description,
+  titleAs = "h2",
   primaryCTA,
   secondaryCTA,
   variant = "default",
@@ -29,12 +31,13 @@ export default function CTABanner({
   };
   const descriptionClass = variant === "primary" ? "text-slate-300" : "text-secondary";
   const titleClass = variant === "primary" ? "!text-white dark:!text-white" : "";
+  const TitleTag = titleAs;
 
   return (
     <div className={`section ${backgroundStyles[variant]}`}>
       <div className="container">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className={`mb-4 text-3xl font-semibold md:text-4xl ${titleClass}`}>{title}</h2>
+          <TitleTag className={`mb-4 text-3xl font-semibold md:text-4xl ${titleClass}`}>{title}</TitleTag>
           {description && (
             <p className={`text-lg mb-8 ${descriptionClass}`}>
               {description}
