@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
+import { BLOG_PAGE_SIZE, getBlogPageCount, getBlogPagePath } from "@/lib/blogPagination";
 import { isRedirectedFamilySlug } from "@/lib/familyRedirects";
 import { isRedirectedProductSlug } from "@/lib/productRedirects";
 import { getSiteUrl, toAbsoluteSiteUrl } from "@/lib/site";
@@ -121,6 +122,23 @@ function dedupeImages(images: Array<{ url?: string; title?: string }>) {
   return dedupedImages;
 }
 
+function buildBlogPaginationSitemapEntries(articleCount: number): SitemapPageEntry[] {
+  const pageCount = getBlogPageCount(articleCount, BLOG_PAGE_SIZE);
+
+  if (pageCount <= 1) {
+    return [];
+  }
+
+  return Array.from({ length: pageCount - 1 }, (_, index) => {
+    const page = index + 2;
+    return {
+      url: toAbsoluteSiteUrl(getBlogPagePath(page)),
+      changeFrequency: "weekly" as const,
+      priority: Number(Math.max(0.3, 0.7 - index * 0.05).toFixed(2)),
+    };
+  });
+}
+
 function escapeXml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -141,6 +159,7 @@ export async function buildSitemapEntries() {
 
   return [
     ...STATIC_PAGE_ENTRIES,
+    ...buildBlogPaginationSitemapEntries(content.articles.length),
     ...content.categories.map((category) => ({
       url: normalizeCanonicalUrl(category.canonical, `/categories/${category.slug}`),
       lastModified: toDate(category.updatedAt),

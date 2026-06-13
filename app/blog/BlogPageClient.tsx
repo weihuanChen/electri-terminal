@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { useQuery } from "convex/react";
-import { ArrowRight, CalendarDays, Clock3, Search } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Clock3, Search } from "lucide-react";
 
 import { Breadcrumb } from "@/components/shared";
-import { api } from "@/convex/_generated/api";
+import { getBlogPagePath } from "@/lib/blogPagination";
 
 type ArticleType = "blog" | "guide" | "faq" | "application";
 
@@ -24,6 +23,7 @@ type BlogArticle = {
   publishedAt?: number;
   updatedAt?: number;
   createdAt: number;
+  readingMinutes?: number;
 };
 
 const ARTICLE_TYPES: ArticleType[] = ["guide", "blog", "faq", "application"];
@@ -52,6 +52,8 @@ export type BlogPageClientProps = {
   initialArticles?: BlogArticle[];
   initialType?: BlogArticle["type"] | null;
   initialQuery?: string;
+  currentPage?: number;
+  pageSize?: number;
 };
 
 function formatUpdatedDate(article: BlogArticle) {
@@ -68,6 +70,10 @@ function getArticleTimestamp(article: BlogArticle) {
 }
 
 function getReadTime(article: BlogArticle) {
+  if (typeof article.readingMinutes === "number" && Number.isFinite(article.readingMinutes)) {
+    return `${article.readingMinutes} min read`;
+  }
+
   const rawText = `${article.title} ${article.excerpt ?? ""} ${article.content ?? ""}`.trim();
   const wordCount = rawText ? rawText.split(/\s+/).filter(Boolean).length : 0;
   const minutes = wordCount > 0 ? Math.max(1, Math.ceil(wordCount / 220)) : 5;
@@ -86,7 +92,7 @@ function DenseArticleCard({ article }: { article: BlogArticle }) {
   return (
     <Link
       href={`/blog/${article.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-shadow hover:shadow-[0_14px_36px_-24px_rgba(15,23,42,0.55)] dark:border-slate-800 dark:bg-slate-900/95 dark:hover:shadow-[0_18px_36px_-22px_rgba(2,6,23,0.9)]"
+      className="group flex h-full min-h-[27rem] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-shadow hover:shadow-[0_14px_36px_-24px_rgba(15,23,42,0.55)] dark:border-slate-800 dark:bg-slate-900/95 dark:hover:shadow-[0_18px_36px_-22px_rgba(2,6,23,0.9)]"
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
         {article.coverImage ? (
@@ -104,16 +110,16 @@ function DenseArticleCard({ article }: { article: BlogArticle }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-5">
         <ArticleBadge type={article.type} />
         <h3 className="mt-3 line-clamp-2 text-base font-semibold leading-6 text-slate-900 transition-colors group-hover:text-primary dark:text-slate-100 dark:group-hover:text-blue-300">
           {article.title}
         </h3>
-        <p className="mt-2 line-clamp-1 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
           {article.excerpt || "Technical guidance, practical setup notes, and field-ready tips."}
         </p>
 
-        <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="mt-auto flex items-center gap-2 pt-4 text-[11px] text-slate-500 dark:text-slate-400">
           <span className="inline-flex items-center gap-1">
             <Clock3 className="h-3.5 w-3.5" />
             {getReadTime(article)}
@@ -125,7 +131,7 @@ function DenseArticleCard({ article }: { article: BlogArticle }) {
           </span>
         </div>
 
-        <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary dark:text-blue-300">
+        <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary dark:text-blue-300">
           Read More
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
         </span>
@@ -222,53 +228,223 @@ function FeaturedSideCard({ article }: { article: BlogArticle }) {
   );
 }
 
+function getPaginationItems(currentPage: number, totalPages: number) {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const items: Array<number | "ellipsis-start" | "ellipsis-end"> = [1];
+  const start = Math.max(2, currentPage - 1);
+  const end = Math.min(totalPages - 1, currentPage + 1);
+
+  if (start > 2) {
+    items.push("ellipsis-start");
+  }
+
+  for (let page = start; page <= end; page += 1) {
+    items.push(page);
+  }
+
+  if (end < totalPages - 1) {
+    items.push("ellipsis-end");
+  }
+
+  items.push(totalPages);
+  return items;
+}
+
+function buildBlogPaginationHref(
+  page: number,
+  selectedType: ArticleType | null,
+  searchQuery: string
+) {
+  const params = new URLSearchParams();
+  if (selectedType) {
+    params.set("type", selectedType);
+  }
+
+  const normalizedQuery = searchQuery.trim();
+  if (normalizedQuery) {
+    params.set("q", normalizedQuery);
+  }
+
+  const query = params.toString();
+  const path = getBlogPagePath(page);
+  return query ? `${path}?${query}` : path;
+}
+
+function PaginationLink({
+  children,
+  className,
+  href,
+  rel,
+}: {
+  children: ReactNode;
+  className: string;
+  href: string;
+  rel?: string;
+}) {
+  return (
+    <Link href={href} rel={rel} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+function BlogPagination({
+  currentPage,
+  pageSize,
+  searchQuery,
+  selectedType,
+  totalArticles,
+  totalPages,
+}: {
+  currentPage: number;
+  pageSize: number;
+  searchQuery: string;
+  selectedType: ArticleType | null;
+  totalArticles: number;
+  totalPages: number;
+}) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  const paginationItems = getPaginationItems(currentPage, totalPages);
+  const startItem = (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalArticles);
+  const baseButtonClass =
+    "inline-flex h-10 min-w-10 items-center justify-center rounded-full border px-3 text-sm font-semibold transition";
+  const inactiveClass =
+    "border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-blue-400 dark:hover:text-blue-300";
+  const disabledClass =
+    "border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-600";
+
+  return (
+    <nav
+      aria-label="Blog pagination"
+      className="mt-8 flex flex-col gap-4 border-t border-slate-200 pt-6 dark:border-slate-800 md:flex-row md:items-center md:justify-between"
+    >
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        Showing {startItem}-{endItem} of {totalArticles} articles
+      </p>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {currentPage > 1 ? (
+          <PaginationLink
+            href={buildBlogPaginationHref(currentPage - 1, selectedType, searchQuery)}
+            rel="prev"
+            className={`${baseButtonClass} ${inactiveClass} gap-1.5`}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Prev
+          </PaginationLink>
+        ) : (
+          <span className={`${baseButtonClass} ${disabledClass} gap-1.5`} aria-disabled="true">
+            <ChevronLeft className="h-4 w-4" />
+            Prev
+          </span>
+        )}
+
+        {paginationItems.map((item) =>
+          typeof item === "number" ? (
+            item === currentPage ? (
+              <span
+                key={item}
+                aria-current="page"
+                className={`${baseButtonClass} border-slate-900 bg-slate-900 text-white dark:border-blue-600 dark:bg-blue-600`}
+              >
+                {item}
+              </span>
+            ) : (
+              <PaginationLink
+                key={item}
+                href={buildBlogPaginationHref(item, selectedType, searchQuery)}
+                className={`${baseButtonClass} ${inactiveClass}`}
+              >
+                {item}
+              </PaginationLink>
+            )
+          ) : (
+            <span
+              key={item}
+              className="inline-flex h-10 min-w-8 items-center justify-center text-sm font-semibold text-slate-400 dark:text-slate-600"
+            >
+              ...
+            </span>
+          )
+        )}
+
+        {currentPage < totalPages ? (
+          <PaginationLink
+            href={buildBlogPaginationHref(currentPage + 1, selectedType, searchQuery)}
+            rel="next"
+            className={`${baseButtonClass} ${inactiveClass} gap-1.5`}
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </PaginationLink>
+        ) : (
+          <span className={`${baseButtonClass} ${disabledClass} gap-1.5`} aria-disabled="true">
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        )}
+      </div>
+    </nav>
+  );
+}
+
 export default function BlogPageClient({
+  currentPage = 1,
   initialArticles,
   initialType,
   initialQuery,
+  pageSize = 12,
 }: BlogPageClientProps) {
+  const [activePage, setActivePage] = useState(currentPage);
   const [selectedType, setSelectedType] = useState<BlogArticle["type"] | null>(
     initialType ?? null
   );
   const [searchQuery, setSearchQuery] = useState(initialQuery ?? "");
 
-  const liveArticles = useQuery(api.frontend.listLatestArticles, { limit: 24 });
-  const articles = liveArticles ?? initialArticles;
+  const articles = initialArticles;
   const isArticlesLoading = articles === undefined;
   const articleList = (articles ?? []) as BlogArticle[];
 
   const syncUrlParams = (nextType: ArticleType | null, nextQuery: string) => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
     if (nextType) {
       params.set("type", nextType);
-    } else {
-      params.delete("type");
     }
 
     const normalizedQuery = nextQuery.trim();
     if (normalizedQuery) {
       params.set("q", normalizedQuery);
-    } else {
-      params.delete("q");
     }
 
     const query = params.toString();
-    const nextUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    const nextUrl = query ? `/blog?${query}` : "/blog";
     window.history.replaceState(null, "", nextUrl);
   };
 
   const updateTypeFilter = (type: ArticleType | null) => {
     setSelectedType(type);
+    setActivePage(1);
     syncUrlParams(type, searchQuery);
   };
 
   const updateSearchQuery = (value: string) => {
     setSearchQuery(value);
+    setActivePage(1);
     syncUrlParams(selectedType, value);
   };
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredArticles = articleList.filter((article) => {
+  const sortedArticles = [...articleList].sort(
+    (left, right) => getArticleTimestamp(right) - getArticleTimestamp(left)
+  );
+  const filteredArticles = sortedArticles.filter((article) => {
     if (selectedType && article.type !== selectedType) return false;
     if (!normalizedQuery) return true;
 
@@ -285,15 +461,17 @@ export default function BlogPageClient({
     return haystack.includes(normalizedQuery);
   });
 
-  const sortedFilteredArticles = [...filteredArticles].sort(
-    (left, right) => getArticleTimestamp(right) - getArticleTimestamp(left)
+  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / pageSize));
+  const effectivePage = Math.min(activePage, totalPages);
+  const paginatedArticles = filteredArticles.slice(
+    (effectivePage - 1) * pageSize,
+    effectivePage * pageSize
   );
-  const featuredFirstArticles = sortedFilteredArticles.filter((article) => article.featured);
-  const nonFeaturedArticles = sortedFilteredArticles.filter((article) => !article.featured);
+  const backendFeaturedArticles = sortedArticles.filter((article) => article.featured);
   const featuredArticles =
-    featuredFirstArticles.length > 0
-      ? [...featuredFirstArticles, ...nonFeaturedArticles].slice(0, 3)
-      : sortedFilteredArticles.slice(0, 3);
+    backendFeaturedArticles.length > 0
+      ? backendFeaturedArticles.slice(0, 3)
+      : sortedArticles.slice(0, 3);
   const featuredSideArticles = featuredArticles.slice(1);
   const breadcrumbItems = [{ label: "Blog", href: "/blog" }];
 
@@ -405,10 +583,6 @@ export default function BlogPageClient({
         <div className="container">
           {isArticlesLoading ? (
             <div className="py-14 text-center text-slate-500 dark:text-slate-400">Loading articles...</div>
-          ) : sortedFilteredArticles.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 py-14 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400">
-              No articles found. Try another keyword or filter.
-            </div>
           ) : (
             <>
               {featuredArticles.length > 0 && (
@@ -439,15 +613,31 @@ export default function BlogPageClient({
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">All Articles</h3>
                 <span className="text-xs font-medium uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
-                  {sortedFilteredArticles.length} results
+                  {filteredArticles.length} results
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {sortedFilteredArticles.map((article) => (
-                  <DenseArticleCard key={article._id} article={article} />
-                ))}
-              </div>
+              {filteredArticles.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 py-14 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400">
+                  No articles found. Try another keyword or filter.
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {paginatedArticles.map((article) => (
+                      <DenseArticleCard key={article._id} article={article} />
+                    ))}
+                  </div>
+                  <BlogPagination
+                    currentPage={effectivePage}
+                    pageSize={pageSize}
+                    searchQuery={searchQuery}
+                    selectedType={selectedType}
+                    totalArticles={filteredArticles.length}
+                    totalPages={totalPages}
+                  />
+                </>
+              )}
             </>
           )}
         </div>
