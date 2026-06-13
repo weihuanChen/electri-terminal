@@ -78,7 +78,7 @@ const MERMAID_BLOCK_START = new RegExp(
 );
 
 function stripEditorMarkers(markdown: string) {
-  return markdown.replace(/<!--\s*\/?(?:PARA|FAQ):[\s\S]*?-->/gi, "");
+  return markdown.replace(/<!--\s*\/?(?:INTERNAL_LINK|PARA|FAQ):[\s\S]*?-->/gi, "");
 }
 
 function looksLikeMermaidBlock(block: string) {

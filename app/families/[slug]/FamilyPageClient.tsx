@@ -304,32 +304,117 @@ function compactBullet(value: string) {
   return normalizeText(value).replace(/^[•\-]\s*/, "").replace(/[.;]\s*$/, "");
 }
 
-function deriveQuickFacts(sourceLines: string[]) {
+function includesAny(sourceText: string, tokens: string[]) {
+  return tokens.some((token) => sourceText.includes(token));
+}
+
+function addUnique(items: string[], item: string | undefined) {
+  if (item && !items.includes(item)) {
+    items.push(item);
+  }
+}
+
+function getMaterialSearchText(
+  sourceText: string,
+  attributes?: Record<string, unknown>
+) {
+  return [
+    getAttributeValue(attributes, ["material", "conductor", "insulation"]),
+    sourceText,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function hasTinPlating(sourceText: string) {
+  return /\btin(?:ned)?\b|\btin[-\s]?plated\b/.test(sourceText);
+}
+
+function inferMaterialLabel(
+  sourceText: string,
+  attributes?: Record<string, unknown>,
+  options?: {
+    preferInsulation?: boolean;
+  }
+) {
+  const materialText = getMaterialSearchText(sourceText, attributes);
+
+  if (!options?.preferInsulation && materialText.includes("copper")) return "Copper";
+  if (!options?.preferInsulation && materialText.includes("brass")) return "Brass";
+  if (materialText.includes("pvc")) return "PVC";
+  if (materialText.includes("heat shrink") || materialText.includes("heat-shrink")) return "Heat shrink";
+  if (materialText.includes("nylon")) return "Nylon";
+  if (materialText.includes("copper")) return "Copper";
+  if (materialText.includes("brass")) return "Brass";
+  return undefined;
+}
+
+function deriveQuickFacts({
+  sourceLines,
+  attributes,
+}: {
+  sourceLines: string[];
+  attributes?: Record<string, unknown>;
+}) {
   const sourceText = sourceLines.join(" ").toLowerCase();
   const quickFacts: string[] = [];
+  const isSleeveFamily = includesAny(sourceText, ["terminal sleeve", "terminal sleeves", "sleeve"]);
+  const isRingFamily = includesAny(sourceText, ["ring terminal", "ring terminals", "wire-to-stud"]);
+  const isForkFamily = includesAny(sourceText, ["fork terminal", "fork terminals"]);
+  const materialText = getMaterialSearchText(sourceText, attributes);
 
-  if (sourceText.includes("wire-to-stud")) {
-    quickFacts.push("Wire-to-stud connection");
+  if (isSleeveFamily) {
+    addUnique(quickFacts, "Wire-end protection");
+  }
+  if (isRingFamily) {
+    addUnique(quickFacts, "Wire-to-stud connection");
+  }
+  if (isForkFamily) {
+    addUnique(quickFacts, "Open fork installation");
   }
   if (sourceText.includes("angled")) {
-    quickFacts.push("Angled routing support");
+    addUnique(quickFacts, "Angled routing support");
   }
   if (sourceText.includes("brazed") || sourceText.includes("seam")) {
-    quickFacts.push("Brazed seam structure");
+    addUnique(quickFacts, "Brazed seam structure");
   }
-  if (sourceText.includes("copper")) {
-    quickFacts.push("Copper material");
+  if (!isSleeveFamily && materialText.includes("copper")) {
+    addUnique(quickFacts, "Copper material");
+  }
+  if (!isSleeveFamily && materialText.includes("brass")) {
+    addUnique(quickFacts, "Brass material");
+  }
+  if (materialText.includes("pvc")) {
+    addUnique(quickFacts, "PVC insulation");
+  }
+  if (materialText.includes("heat shrink") || materialText.includes("heat-shrink")) {
+    addUnique(quickFacts, "Heat shrink insulation");
+  }
+  if (materialText.includes("nylon")) {
+    addUnique(quickFacts, "Nylon insulation");
+  }
+  if (sourceText.includes("insulation") || sourceText.includes("insulated")) {
+    addUnique(quickFacts, "Insulation coverage");
+  }
+  if (sourceText.includes("color-coded") || sourceText.includes("color coded")) {
+    addUnique(quickFacts, "Color-coded identification");
+  }
+  if (sourceText.includes("flexible")) {
+    addUnique(quickFacts, "Flexible sleeve fit");
+  }
+  if (sourceText.includes("industrial") || sourceText.includes("control panel")) {
+    addUnique(quickFacts, "Industrial wiring use");
   }
 
-  for (const fallbackFact of [
-    "Wire-to-stud connection",
-    "Angled routing support",
-    "Brazed seam structure",
-    "Copper material",
-  ]) {
-    if (!quickFacts.includes(fallbackFact)) {
-      quickFacts.push(fallbackFact);
-    }
+  const fallbackFacts = isSleeveFamily
+    ? ["Wire-end protection", "Insulation coverage", "Sleeve size matching", "Industrial wiring use"]
+    : isRingFamily
+      ? ["Wire-to-stud connection", "Closed-ring retention", "Stud size matching", "Crimp termination"]
+      : ["Product size matching", "Industrial wiring use", "Application-specific selection", "Specification review"];
+
+  for (const fallbackFact of fallbackFacts) {
+    addUnique(quickFacts, fallbackFact);
   }
 
   return quickFacts.slice(0, 4);
@@ -411,20 +496,61 @@ function resolveQuickSpecs({
   attributes?: Record<string, unknown>;
 }) {
   const sourceText = sourceLines.join(" ").toLowerCase();
+  const isSleeveFamily = includesAny(sourceText, ["terminal sleeve", "terminal sleeves", "sleeve"]);
+  const isRingFamily = includesAny(sourceText, ["ring terminal", "ring terminals", "wire-to-stud"]);
+  const isForkFamily = includesAny(sourceText, ["fork terminal", "fork terminals"]);
+  const materialLabel = inferMaterialLabel(sourceText, attributes, {
+    preferInsulation: isSleeveFamily,
+  });
+  const materialAttribute = getAttributeValue(
+    attributes,
+    isSleeveFamily ? ["material", "insulation"] : ["material", "conductor"]
+  );
+  const materialFromAttribute =
+    !isSleeveFamily &&
+    materialAttribute?.toLowerCase().includes("pvc") &&
+    sourceText.includes("copper")
+      ? "Copper"
+      : materialAttribute;
 
   const material =
-    getAttributeValue(attributes, ["material", "conductor"]) ||
-    (sourceText.includes("copper") ? "Copper" : "Copper");
+    materialFromAttribute ||
+    materialLabel ||
+    "See product table";
   const surface =
     getAttributeValue(attributes, ["surface", "plating", "finish"]) ||
-    (sourceText.includes("tin") ? "Tin-plated" : "Refined matte finish");
+    (hasTinPlating(sourceText)
+      ? "Tin-plated"
+      : isSleeveFamily || sourceText.includes("insulation") || sourceText.includes("insulated")
+        ? "Insulated finish"
+        : "See product table");
   const connection =
     getAttributeValue(attributes, ["connection", "termination"]) ||
-    (sourceText.includes("crimp") ? "Crimp" : "Crimp");
+    (isSleeveFamily
+      ? "Sleeve / wire protection"
+      : sourceText.includes("crimp")
+        ? "Crimp"
+        : sourceText.includes("wire-to-stud")
+          ? "Wire-to-stud"
+          : "See product table");
   const structure =
     getAttributeValue(attributes, ["structure", "barrel", "seam", "angle"]) ||
-    (sourceText.includes("angled") ? "Angled barrel" : "Brazed seam barrel");
-  const application = sourceText.includes("wire-to-stud") ? "Wire-to-stud" : applicationTags[0] || "Wire-to-stud";
+    (isSleeveFamily
+      ? "Flexible sleeve"
+      : sourceText.includes("angled")
+        ? "Angled barrel"
+        : sourceText.includes("brazed") || sourceText.includes("seam")
+          ? "Brazed barrel"
+          : isRingFamily
+            ? "Closed ring"
+            : isForkFamily
+              ? "Open fork"
+              : "See product table");
+  const application = sourceText.includes("wire-to-stud")
+    ? "Wire-to-stud"
+    : isSleeveFamily
+      ? "Wire insulation"
+      : applicationTags[0] || "Industrial wiring";
 
   return [
     { label: "Material", value: material },
@@ -537,17 +663,22 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     26
   );
   const fullHeroIntro = normalizeText(heroIntro || overviewParagraphs[0] || family.summary || "");
-  const quickFacts = deriveQuickFacts([
+  const specSourceAttributes = family.products?.find(
+    (product) => product.attributes && Object.keys(product.attributes).length > 0
+  )?.attributes;
+  const quickFactSourceLines = [
+    family.name,
     heroIntro || "",
     ...overviewParagraphs,
     ...compactFeatures,
     ...compactTechnicalNotes,
-  ]);
-  const specSourceAttributes = family.products?.find(
-    (product) => product.attributes && Object.keys(product.attributes).length > 0
-  )?.attributes;
+  ];
+  const quickFacts = deriveQuickFacts({
+    sourceLines: quickFactSourceLines,
+    attributes: specSourceAttributes,
+  });
   const quickSpecs = resolveQuickSpecs({
-    sourceLines: [heroIntro || "", ...overviewParagraphs, ...compactFeatures, ...compactTechnicalNotes],
+    sourceLines: quickFactSourceLines,
     applicationTags,
     attributes: specSourceAttributes,
   });
