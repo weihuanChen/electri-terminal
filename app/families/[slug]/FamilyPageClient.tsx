@@ -1,7 +1,7 @@
 import { Breadcrumb, SKUTable, FAQAccordion, DownloadCard, CTABanner } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 import {
   resolveFamilyPageViewModel,
   resolveFamilyPrimaryImage,
@@ -689,6 +689,12 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     (showTechnicalNote && compactTechnicalNotes.length > 0);
   const availableProducts = family.products ?? [];
   const hasAvailableProducts = availableProducts.length > 0;
+  const documentationSectionId = "documentation";
+  const downloadResources = family.resources || [];
+  const hasDownloadResources = showDownloads && downloadResources.length > 0;
+  const heroSecondaryCTA = hasDownloadResources
+    ? { label: "Download Documentation", href: `#${documentationSectionId}` }
+    : secondaryCTA;
 
   return (
     <>
@@ -713,8 +719,9 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                 <Link href={primaryCTA.href} className="btn btn-primary">
                   {primaryCTA.label}
                 </Link>
-                <Link href={secondaryCTA.href} className="btn btn-secondary">
-                  {secondaryCTA.label}
+                <Link href={heroSecondaryCTA.href} className="btn btn-secondary">
+                  {hasDownloadResources && <Download className="h-4 w-4" />}
+                  {heroSecondaryCTA.label}
                 </Link>
                 {hasAvailableProducts && (
                   <QuickSelectButton targetId="available-products" />
@@ -987,15 +994,18 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
       )}
 
       {showDownloads && (
-        <section className="section bg-muted">
+        <section id={documentationSectionId} className="section bg-muted scroll-mt-24">
           <div className="container">
             <div className="max-w-3xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Documentation
               </p>
-              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Documentation Support</h2>
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Documentation Support</h2>
+              <p className="mb-8 text-secondary">
+                Download available catalogs, datasheets, certificates, and CAD files for this family.
+              </p>
               <div className="space-y-4">
-                {(family.resources || []).map((resource) => (
+                {downloadResources.map((resource) => (
                   <DownloadCard
                     key={resource._id}
                     title={resource.title}
