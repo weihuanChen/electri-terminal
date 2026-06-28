@@ -35,28 +35,28 @@ export type ULListedCardData = {
   actions: CertificateAction[];
 };
 
-export const heroTags = ["CE Verified", "RoHS Compliant", "REACH Tested"] as const;
+export const heroTags = ["CE / EMC", "RoHS", "REACH", "UL Planning"] as const;
 
 export const trustSummary = [
   {
-    title: "CE / EMC Verification",
+    title: "Existing File Review",
     description:
-      "Selected terminal products are verified according to applicable EU EMC requirements.",
+      "Selected product families already have CE, RoHS, REACH, or UL-related documents for initial qualification.",
   },
   {
-    title: "RoHS Compliance",
+    title: "Target-market Check",
     description:
-      "Materials are tested for restricted substances such as lead, mercury, cadmium and hexavalent chromium.",
+      "Requirements can be reviewed against the destination market, customer specification, and intended application.",
   },
   {
-    title: "REACH SVHC Screening",
+    title: "Product-specific Scope",
     description:
-      "Products are tested against SVHC requirements for export and distribution in regulated markets.",
+      "Coverage is confirmed by product family, model, material, production batch, and document validity.",
   },
   {
-    title: "Third-party Test Reports",
+    title: "Evaluation Path",
     description:
-      "Test reports are issued by recognized third-party laboratories such as SGS and TÜV SUD.",
+      "Additional testing, certification, or listing coverage can be discussed for qualified project needs.",
   },
 ] as const;
 
@@ -64,7 +64,7 @@ export const certificateCards: CertificateCardData[] = [
   {
     icon: "ce",
     title: "CE Certificate of Compliance",
-    subtitle: "Verification record for selected terminal products under EMC directives.",
+    subtitle: "Reference document for selected terminal products under EMC requirements.",
     images: [
       {
         src: "https://assets.electriterminal.com/certifications/ce-ring-terminals-certificate.webp",
@@ -84,13 +84,13 @@ export const certificateCards: CertificateCardData[] = [
     ],
     actions: [
       {
-        label: "View Certificate",
+        label: "View Reference",
         href: "https://assets.electriterminal.com/certifications/ce-ring-terminals-certificate.webp",
         external: true,
         variant: "primary",
       },
       {
-        label: "Request Full Copy",
+        label: "Request Project Review",
         href: "#request-documents",
         variant: "secondary",
       },
@@ -99,7 +99,7 @@ export const certificateCards: CertificateCardData[] = [
   {
     icon: "rohs",
     title: "RoHS Test Report",
-    subtitle: "Substance screening result for electroplated matte tin terminal materials.",
+    subtitle: "Reference report for restricted-substance planning on selected terminal materials.",
     images: [
       {
         src: "https://assets.electriterminal.com/certifications/rohs-ring-terminals-certification.webp",
@@ -115,13 +115,13 @@ export const certificateCards: CertificateCardData[] = [
     ],
     actions: [
       {
-        label: "View Certificate",
+        label: "View Reference",
         href: "https://assets.electriterminal.com/certifications/rohs-ring-terminals-certification.webp",
         external: true,
         variant: "primary",
       },
       {
-        label: "Request Full Copy",
+        label: "Request Project Review",
         href: "#request-documents",
         variant: "secondary",
       },
@@ -130,7 +130,7 @@ export const certificateCards: CertificateCardData[] = [
   {
     icon: "reach",
     title: "REACH SVHC Test Report",
-    subtitle: "SVHC screening document for regulated export and distribution markets.",
+    subtitle: "SVHC screening reference for regulated export and distribution planning.",
     images: [
       {
         src: "https://assets.electriterminal.com/certifications/reach-ring-terminals-certification.webp",
@@ -146,13 +146,13 @@ export const certificateCards: CertificateCardData[] = [
     ],
     actions: [
       {
-        label: "View Certificate",
+        label: "View Reference",
         href: "https://assets.electriterminal.com/certifications/reach-ring-terminals-certification.webp",
         external: true,
         variant: "primary",
       },
       {
-        label: "Request Full Copy",
+        label: "Request Project Review",
         href: "#request-documents",
         variant: "secondary",
       },
@@ -160,8 +160,8 @@ export const certificateCards: CertificateCardData[] = [
   },
   {
     icon: "ul",
-    title: "UL Certificate of Compliance",
-    subtitle: "Evaluation record for wire connectors and terminals under UL standards.",
+    title: "UL Documentation Reference",
+    subtitle: "Reference document for selected wire connectors and terminals under applicable UL / CSA requirements.",
     images: [
       {
         src: "https://assets.electriterminal.com/certifications/ul-coc-ring-terminal-selected-model.webp",
@@ -175,24 +175,24 @@ export const certificateCards: CertificateCardData[] = [
       { label: "Type", value: "Compliance Certificate" },
       { label: "Market", value: "Canada / North America" },
       { label: "Date", value: "Dec 7, 2022" },
-      { label: "Status", value: "Evaluated to applicable UL standards" },
+      { label: "Status", value: "Product-specific; confirm before project use" },
     ],
     body: [
-      "This certificate confirms that representative samples of selected terminal products have been evaluated by UL in accordance with applicable safety standards.",
-      "It serves as a supporting compliance document for product evaluation, supplier qualification, and project documentation in North American markets.",
+      "Selected product families have UL listing or evaluation records that can be used as a starting point for project qualification.",
+      "Additional model coverage can be discussed for qualified OEM projects based on construction, volume, target market, and documentation route.",
     ],
     note:
-      "Note: This document indicates compliance evaluation of representative samples and does not constitute authorization to apply the UL mark. For specific certification requirements, please confirm with our sales team.",
-    verifiedLabel: "Evaluated document",
+      "UL status is product- and file-specific. Please confirm the exact model and required market before using any UL-related document for project approval.",
+    verifiedLabel: "UL reference document",
     actions: [
       {
-        label: "View Certificate",
+        label: "View Reference",
         href: "https://assets.electriterminal.com/certifications/ul-coc-ring-terminal-selected-model.webp",
         external: true,
         variant: "primary",
       },
       {
-        label: "Request Full UL Documentation",
+        label: "Request UL Project Review",
         href: "#request-documents",
         variant: "secondary",
       },
@@ -201,16 +201,17 @@ export const certificateCards: CertificateCardData[] = [
 ] as const;
 
 export const ulListedCard: ULListedCardData = {
-  title: "UL Listed Components (cULus)",
+  title: "UL Listed Product Families (cULus)",
   fileNo: "E530024",
   productCategory: "Wire Connectors and Soldering Lugs",
   markets: "USA & Canada",
   highlights: [
     "Verified in UL Product iQ database",
-    "Available for selected models",
+    "Selected product families currently listed",
+    "Additional coverage discussable for qualified OEM projects",
   ],
   supportText:
-    "UL coverage applies to selected models only. Please contact us to confirm whether the required model is included in the latest listing or evaluation documents.",
+    "Selected product families are currently listed.\n\nAdditional product coverage can be discussed for qualified OEM projects.",
   actions: [
     {
       label: "Verify on UL Website",
@@ -219,7 +220,7 @@ export const ulListedCard: ULListedCardData = {
       variant: "primary",
     },
     {
-      label: "Request UL Documentation",
+      label: "Request UL Project Review",
       href: "#request-documents",
       variant: "secondary",
     },
@@ -228,76 +229,81 @@ export const ulListedCard: ULListedCardData = {
 
 export const coverageRows = [
   {
-    category: "Terminals",
+    category: "Existing document match",
     document: "CE Certificate",
-    coverage: "Selected terminal models",
+    coverage: "Product family, model, and target-market fit",
   },
   {
-    category: "Tin-plated terminals",
+    category: "Material compliance review",
     document: "RoHS Report",
-    coverage: "Material substance compliance",
+    coverage: "Material type, plating, and restricted-substance requirement",
   },
   {
-    category: "Terminals",
+    category: "Regulated-market screening",
     document: "REACH Report",
-    coverage: "SVHC screening",
+    coverage: "SVHC requirement, export market, and customer specification",
   },
   {
-    category: "Custom products",
-    document: "On request",
-    coverage: "Batch-specific documents",
+    category: "UL planning",
+    document: "UL Product iQ / UL-related documents",
+    coverage: "Selected listed families and qualified OEM coverage discussion",
+  },
+  {
+    category: "Additional certification",
+    document: "Project evaluation",
+    coverage: "Product type, target market, volume, and project scope",
   },
 ] as const;
 
 export const qualitySteps = [
   {
-    title: "Raw Material Check",
+    title: "Requirement Intake",
     description:
-      "Incoming conductive metals and insulation materials are checked before release to production.",
+      "Collect product family, model, target market, customer specification, project volume, and required compliance route.",
   },
   {
-    title: "Production Inspection",
+    title: "Existing File Check",
     description:
-      "In-process checks help confirm stable forming, plating, and assembly conditions during production.",
+      "Review whether current CE, RoHS, REACH, UL, or third-party documents cover the requested product scope.",
   },
   {
-    title: "Dimensional & Surface Check",
+    title: "Coverage Confirmation",
     description:
-      "Critical dimensions, finish condition, and appearance are reviewed against production requirements.",
+      "Confirm model, material, batch, and validity details before documents are used for project approval.",
   },
   {
-    title: "Electrical / Mechanical Testing",
+    title: "Gap Evaluation",
     description:
-      "Selected products undergo electrical and mechanical verification based on applicable standards and project needs.",
+      "Identify whether additional testing, retesting, listing expansion, or customer-specific documents are required.",
   },
   {
-    title: "Packing Inspection",
+    title: "Project Support Plan",
     description:
-      "Final packaging is checked to reduce mix-ups and support traceable batch handling.",
+      "Discuss the feasible certification or documentation path for qualified OEM, distribution, or project requirements.",
   },
   {
-    title: "Shipment Documentation",
+    title: "Document Release",
     description:
-      "Relevant reports and document references are prepared to support shipment and customer approval workflows.",
+      "Prepare available reports, references, and confirmation notes for qualified buyers after scope is confirmed.",
   },
 ] as const;
 
 export const buyerBenefits = [
   {
-    title: "Reduce supplier risk",
+    title: "Confirm existing coverage",
     description:
-      "Compliance documents provide an extra verification layer when evaluating suppliers for critical electrical components.",
+      "Clarify which current documents apply before a buyer relies on them for supplier approval or project use.",
   },
   {
-    title: "Support customs clearance",
+    title: "Plan market requirements",
     description:
-      "Verified reports help buyers prepare import files, customs checks, and destination-market compliance reviews.",
+      "Evaluate destination-market expectations early so certification, testing, or documentation gaps can be discussed.",
   },
   {
-    title: "Improve procurement confidence",
+    title: "Support OEM approvals",
     description:
-      "Clear documentation helps sourcing teams move faster on supplier approval, repeat orders, and bulk purchasing decisions.",
+      "For qualified OEM projects, additional product coverage or project-specific document support can be reviewed.",
   },
 ] as const;
 
-export const certificateOptions = ["CE", "RoHS", "REACH", "Other"] as const;
+export const certificateOptions = ["CE", "RoHS", "REACH", "UL", "Other"] as const;

@@ -6,9 +6,9 @@ import { toast } from "sonner";
 
 import { submitPublicInquiry } from "@/lib/inquiry-client";
 
-type CertificateType = "CE" | "RoHS" | "REACH" | "Other";
+type CertificateType = "CE" | "RoHS" | "REACH" | "UL" | "Other";
 
-const certificateOptions: CertificateType[] = ["CE", "RoHS", "REACH", "Other"];
+const certificateOptions: CertificateType[] = ["CE", "RoHS", "REACH", "UL", "Other"];
 
 export default function ComplianceRequestForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,9 +44,9 @@ export default function ComplianceRequestForm() {
     }
 
     const compiledMessage = [
-      "Compliance document request",
+      "Compliance planning request",
       `Required Product: ${formData.requiredProduct}`,
-      `Required Certificate: ${formData.requiredCertificate}`,
+      `Required Compliance Route: ${formData.requiredCertificate}`,
       formData.message ? `Message: ${formData.message}` : undefined,
     ]
       .filter(Boolean)
@@ -93,11 +93,12 @@ export default function ComplianceRequestForm() {
           Project Request
         </p>
         <h3 className="mt-2 text-2xl font-semibold text-[#0F172A] dark:text-white">
-          Request Compliance Documents
+          Request Compliance Planning Support
         </h3>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[#475569] dark:text-slate-300">
-          Share the product model and the certificate type you need. Our team will confirm the
-          latest available file for your project or customs workflow.
+          Share the product type, target market, and compliance route you need. Our team will
+          confirm existing documents first, then discuss additional evaluation if the project
+          qualifies.
         </p>
       </div>
 
@@ -184,7 +185,7 @@ export default function ComplianceRequestForm() {
               htmlFor="requiredProduct"
               className="mb-2 block text-sm font-medium text-[#1E293B] dark:text-slate-200"
             >
-              Required Product <span className="text-orange-400">*</span>
+              Product / Family <span className="text-orange-400">*</span>
             </label>
             <input
               id="requiredProduct"
@@ -203,7 +204,7 @@ export default function ComplianceRequestForm() {
               htmlFor="requiredCertificate"
               className="mb-2 block text-sm font-medium text-[#1E293B] dark:text-slate-200"
             >
-              Required Certificate <span className="text-orange-400">*</span>
+              Required Compliance Route <span className="text-orange-400">*</span>
             </label>
             <select
               id="requiredCertificate"
@@ -234,7 +235,7 @@ export default function ComplianceRequestForm() {
             rows={5}
             value={formData.message}
             onChange={handleChange}
-            placeholder="Project scope, target market, customs needs, or specific batch requests"
+            placeholder="Project scope, target market, certification route, customs needs, or specific batch requests"
             className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
           />
         </div>
@@ -256,7 +257,7 @@ export default function ComplianceRequestForm() {
             disabled={isSubmitting}
             className="btn btn-primary w-full justify-center md:w-auto"
           >
-            {isSubmitting ? "Submitting..." : "Request Compliance Documents"}
+            {isSubmitting ? "Submitting..." : "Request Compliance Support"}
           </button>
         </div>
       </form>

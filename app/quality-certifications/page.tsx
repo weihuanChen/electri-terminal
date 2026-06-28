@@ -29,12 +29,13 @@ import {
   ulListedCard,
 } from "./data";
 
-const pageHeading = "Electrical Terminal Certifications & Compliance";
+const pageHeading = "Compliance Documentation & Project Certification Support";
 const pageIntroDescription =
-  "Our products are tested and verified according to international electrical safety and environmental compliance standards, helping distributors, OEMs and project buyers source with confidence.";
-const metadataTitle = "Electrical Terminal Certifications & Compliance | Electri Terminal";
+  "Use existing compliance documents as a starting point for supplier qualification, then evaluate additional certification needs according to product type, target market, and project scope.";
+const metadataTitle =
+  "Compliance Documentation & Project Certification Support | Electri Terminal";
 const metadataDescription =
-  "Documentation and compliance information for insulated terminals, copper lugs, and electrical connection components, including cULus, CE, RoHS, and REACH qualification standards.";
+  "Compliance documentation and project certification support for electrical terminals, including selected CE, RoHS, REACH, and UL-related references plus project-specific evaluation support.";
 
 const trustIcons = [BadgeCheck, FlaskConical, ShieldCheck, FileCheck2];
 const benefitIcons = [ShieldCheck, FileCheck2, CheckCircle2];
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://assets.electriterminal.com/certifications/ce-ring-terminals-certificate.webp",
-        alt: "Quality certificates for electrical terminals",
+        alt: "Compliance documentation for electrical terminal projects",
       },
     ],
   },
@@ -73,21 +74,21 @@ export const metadata: Metadata = {
 };
 
 export default function QualityCertificationsPage() {
-  const breadcrumbItems = [{ label: "Quality & Certifications" }];
+  const breadcrumbItems = [{ label: "Compliance Documentation" }];
   const structuredData = [
     makeBreadcrumbSchema([
       { name: "Home", path: "/" },
-      { name: "Quality & Certifications", path: "/quality-certifications" },
+      { name: "Compliance Documentation", path: "/quality-certifications" },
     ]),
     makeCollectionPageSchema({
-      name: "Quality & Certifications",
+      name: pageHeading,
       description: metadataDescription,
       path: "/quality-certifications",
     }),
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "Certificate Gallery",
+      name: "Compliance Document References",
       url: toAbsoluteSiteUrl("/quality-certifications"),
       itemListElement: [ulListedCard.title, ...certificateCards.map((card) => card.title)].map(
         (name, index) => ({
@@ -114,7 +115,7 @@ export default function QualityCertificationsPage() {
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.02fr]">
             <div className="space-y-7">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
-                Quality & Certifications
+                Compliance Planning
               </p>
               <h1 className="max-w-4xl text-4xl font-semibold leading-tight !text-white md:text-5xl">
                 {pageHeading}
@@ -128,13 +129,13 @@ export default function QualityCertificationsPage() {
                   href="#request-documents"
                   className="btn btn-primary w-full justify-center sm:w-auto"
                 >
-                  Request Certificates
+                  Request Compliance Support
                 </Link>
                 <Link
                   href="/contact"
                   className="btn btn-hero-secondary w-full justify-center sm:w-auto"
                 >
-                  Contact Sales
+                  Discuss Project Scope
                 </Link>
               </div>
 
@@ -162,13 +163,13 @@ export default function QualityCertificationsPage() {
                 <div className="space-y-4">
                   <div className="rounded-sm border border-slate-700 bg-slate-950/80 p-4">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Compliance Snapshot
+                      Compliance Planning Snapshot
                     </p>
                     <div className="mt-4 space-y-3">
                       {[
-                        "International safety and environmental standards",
-                        "Third-party laboratory reports for selected materials",
-                        "Document support for customs and project approvals",
+                        "Existing documents for selected product families",
+                        "Coverage confirmation by model, material, and batch",
+                        "Additional evaluation support for qualified OEM projects",
                       ].map((item) => (
                         <div key={item} className="flex gap-3">
                           <CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-400" />
@@ -182,7 +183,7 @@ export default function QualityCertificationsPage() {
                     href="#gallery"
                     className="group flex items-center justify-between rounded-sm border border-slate-700 bg-slate-900/90 px-4 py-4 text-sm font-semibold text-white transition hover:border-blue-500 hover:bg-slate-900"
                   >
-                    Browse certificate previews
+                    Review documentation references
                     <ArrowDown className="h-4 w-4 transition group-hover:translate-y-0.5" />
                   </a>
                 </div>
@@ -201,6 +202,11 @@ export default function QualityCertificationsPage() {
             <h2 className="text-3xl font-semibold text-[#0F172A] md:text-4xl">
               Compliance signals buyers can verify quickly
             </h2>
+            <p className="mt-4 text-base leading-7 text-[#475569]">
+              Existing certifications cover selected product families. Additional compliance
+              requirements can be evaluated according to product type, target market, and project
+              scope.
+            </p>
           </div>
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -227,15 +233,15 @@ export default function QualityCertificationsPage() {
         <div className="container text-zinc-950">
           <div className="max-w-3xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-              Certificate Gallery
+              Documentation References
             </p>
             <h2 className="text-3xl font-semibold text-[#0F172A] md:text-4xl">
-              Preview selected certificates and test reports
+              Use certificate previews as planning references
             </h2>
             <p className="mt-4 text-base leading-7 text-[#475569]">
-              Website previews are intended for initial supplier qualification. Full copies can be
-              shared with qualified buyers when project scope, product model, and required batch are
-              confirmed.
+              Website previews are intended for initial supplier qualification and project planning.
+              Full copies and coverage confirmation can be shared when product model, target market,
+              project scope, and required batch are confirmed.
             </p>
           </div>
 
@@ -253,19 +259,19 @@ export default function QualityCertificationsPage() {
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div className="max-w-2xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-                Compliance Coverage
+                Planning Scope
               </p>
               <h2 className="text-3xl font-semibold text-[#0F172A] md:text-4xl">
-                Coverage is model-specific, material-specific, and batch-sensitive
+                Compliance support depends on product type, market, and project scope
               </h2>
               <p className="mt-5 text-base leading-7 text-[#475569]">
-                Our certification and test reports cover selected product families, materials and
-                production batches.
+                We first confirm whether an existing document covers the requested product family,
+                model, material, or batch.
               </p>
               <p className="mt-4 text-base leading-7 text-[#475569]">
-                For project purchasing or customs clearance, please contact us to confirm whether
-                the specific model, material and batch you require is covered by the latest
-                certificate or test report.
+                When extra certification, retesting, listing expansion, or customer-specific
+                documentation is required, our team evaluates feasibility against product type,
+                target market, and qualified project scope.
               </p>
             </div>
 
@@ -275,13 +281,13 @@ export default function QualityCertificationsPage() {
                   <thead className="bg-[#F8FAFC]">
                     <tr>
                       <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[#94A3B8]">
-                        Category
+                        Planning Item
                       </th>
                       <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[#94A3B8]">
-                        Certificate / Report
+                        Document / Route
                       </th>
                       <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[#94A3B8]">
-                        Coverage
+                        Confirmation Basis
                       </th>
                     </tr>
                   </thead>
@@ -308,10 +314,10 @@ export default function QualityCertificationsPage() {
         <div className="container text-zinc-950">
           <div className="max-w-3xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-              Quality Control Process
+              Compliance Planning Workflow
             </p>
             <h2 className="text-3xl font-semibold text-[#0F172A] md:text-4xl">
-              How inspection and documentation move through production
+              How documentation and certification support move from request to project file
             </h2>
           </div>
 
@@ -341,15 +347,15 @@ export default function QualityCertificationsPage() {
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div className="max-w-2xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
-                Why Certificates Matter
+                Why Planning Matters
               </p>
               <h2 className="text-3xl font-semibold text-[#0F172A] md:text-4xl">
-                Documents that reduce friction for procurement teams
+                Documentation support that reduces sourcing and approval risk
               </h2>
               <p className="mt-5 text-base leading-7 text-[#475569]">
-                For distributors, OEM buyers and project contractors, compliance documents help
-                reduce sourcing risk, simplify supplier evaluation and support import
-                documentation.
+                For distributors, OEM buyers, and project contractors, compliance planning helps
+                clarify what is already covered, what must be confirmed, and what may require
+                additional evaluation before approval.
               </p>
             </div>
 
@@ -383,17 +389,19 @@ export default function QualityCertificationsPage() {
         <div className="container">
           <div className="mb-10 max-w-3xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-              Request Documents
+              Project Certification Support
             </p>
             <h2 className="text-3xl font-semibold !text-white md:text-4xl">
-              Need Full Certificates for Your Project?
+              Need compliance planning for your project?
             </h2>
             <p className="mt-5 text-base leading-7 text-slate-200">
-              To protect supplier information and document traceability, some sensitive details may
-              be masked on the website.
+              Tell us the required product, target market, and compliance route. We will confirm
+              existing documentation first, then discuss additional evaluation or product coverage
+              when the project qualifies.
             </p>
             <p className="mt-4 text-base leading-7 text-slate-200">
-              Full certificates and test reports can be provided to qualified buyers upon request.
+              Full document copies and test reports can be provided to qualified buyers when the
+              product model, batch, and project scope are confirmed.
             </p>
           </div>
 
@@ -406,8 +414,8 @@ export default function QualityCertificationsPage() {
                     What helps us respond faster
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-slate-200">
-                    Include exact model numbers, target country, and the certificate type required
-                    by your customer, customs broker, or project specification.
+                    Include exact model numbers, target country, project volume, and the compliance
+                    route required by your customer, customs broker, or project specification.
                   </p>
                 </div>
               </div>
@@ -416,9 +424,9 @@ export default function QualityCertificationsPage() {
                   Typical requests
                 </p>
                 <ul className="mt-3 space-y-3 text-sm text-slate-300">
-                  <li>CE file for terminal families in EU distribution projects</li>
-                  <li>RoHS report for material compliance checks</li>
-                  <li>REACH report for customs or customer qualification</li>
+                  <li>Existing CE, RoHS, or REACH file review for selected product families</li>
+                  <li>UL listing confirmation for product-family planning</li>
+                  <li>Additional certification discussion for qualified OEM projects</li>
                 </ul>
               </div>
             </aside>

@@ -17,7 +17,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
           <div className="flex h-full min-h-[280px] flex-col justify-between rounded-sm border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-950">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] dark:text-slate-400">
-                UL Registry Record
+                UL Listing Reference
               </p>
               <div className="mt-4 flex h-14 w-14 items-center justify-center rounded-sm border border-slate-200 bg-[#F8FAFC] text-[#1E293B] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
                 <Database className="h-6 w-6" />
@@ -34,7 +34,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
               <div className="flex items-start gap-3">
                 <Search className="mt-0.5 h-4 w-4 flex-none text-blue-700 dark:text-blue-300" />
                 <p className="text-sm leading-6 text-[#475569] dark:text-slate-300">
-                  Verify this file number in the official UL Product iQ database.
+                  Verify the listing record in the official UL Product iQ database.
                 </p>
               </div>
             </div>
@@ -43,7 +43,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
 
         <div className="flex flex-col px-6 py-6 md:px-7 md:py-7">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] dark:text-slate-400">
-            Listing Summary
+            UL Planning Summary
           </p>
 
           <div className="mt-3 flex items-start gap-3">
@@ -56,7 +56,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
               </h3>
               <div className="mt-2 flex items-center gap-2 text-sm font-medium text-emerald-700">
                 <Check className="h-4 w-4" />
-                Selected models UL listed
+                Selected families currently listed
               </div>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
           </ul>
 
           <div className="mt-6 rounded-sm border border-slate-200 bg-[#F8FAFC] px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
-            <p className="text-sm leading-6 text-[#475569] dark:text-slate-300">
+            <p className="whitespace-pre-line text-sm leading-6 text-[#475569] dark:text-slate-300">
               {listing.supportText}
             </p>
           </div>
