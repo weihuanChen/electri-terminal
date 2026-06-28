@@ -8,7 +8,6 @@ import {
   ProductionImageCard,
 } from "@/components/manufacturing/ManufacturingBlocks";
 import {
-  ArrowDown,
   CheckCircle2,
   ClipboardCheck,
   Gauge,
@@ -230,13 +229,13 @@ export default function ManufacturingPage() {
 
   return (
     <>
-      <div className="border-b border-border bg-muted">
+      <div className="border-b border-border bg-muted dark:bg-slate-900/40 transition-colors duration-300">
         <div className="container">
           <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
 
-      <section className="border-b border-slate-800 bg-[#11151A] py-14 md:py-20">
+      <section className="border-b border-slate-800 bg-[#11151A] py-14 md:py-20 transition-colors duration-300">
         <div className="container">
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr]">
             <div className="space-y-7">
@@ -252,30 +251,30 @@ export default function ManufacturingPage() {
                 batch quality for industrial applications.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/contact" className="btn btn-primary">
+                <Link href="/contact" className="btn btn-primary transition-all duration-300">
                   View Manufacturing Process →
                 </Link>
-                <Link href="/contact#request-quote" className="btn btn-hero-secondary">
+                <Link href="/contact#request-quote" className="btn btn-hero-secondary transition-all duration-300">
                   Request Quote
                 </Link>
               </div>
               <ul className="space-y-2 pt-1 text-sm text-slate-200">
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2 transition-colors duration-300">
                   <CheckCircle2 className="h-4 w-4 text-slate-300" />
                   Precision forming workflows
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2 transition-colors duration-300">
                   <CheckCircle2 className="h-4 w-4 text-slate-300" />
                   Controlled production processes
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2 transition-colors duration-300">
                   <CheckCircle2 className="h-4 w-4 text-slate-300" />
                   Batch-level inspection and handling
                 </li>
               </ul>
             </div>
 
-            <div className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-slate-900 shadow-2xl md:h-[440px]">
+            <div className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-slate-900 shadow-2xl md:h-[440px] transition-colors duration-300">
               <ImagePreview
                 src={heroImage}
                 alt="CNC machining line in active industrial manufacturing"
@@ -284,12 +283,12 @@ export default function ManufacturingPage() {
                 sizes="(max-width: 1024px) 100vw, 52vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-200">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent transition-colors duration-300" />
+              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 transition-colors duration-300">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-200 transition-colors duration-300">
                   Live Production Visual
                 </p>
-                <p className="mt-1 text-sm text-slate-100 md:text-base">
+                <p className="mt-1 text-sm text-slate-100 md:text-base transition-colors duration-300">
                   High-speed CNC machining under continuous process control.
                 </p>
               </div>
@@ -298,13 +297,13 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section bg-white">
+      <section className="section bg-white dark:bg-slate-950 transition-colors duration-300">
         <div className="container">
           <ManufacturingSectionHeading
             eyebrow="01 Process Overview"
             title="Manufacturing Process Overview"
             description="Each stage of production is organized to improve dimensional accuracy, structural integrity, and consistency across batches."
-            descriptionClassName="!text-slate-500"
+            descriptionClassName="!text-slate-500 dark:!text-slate-400"
           />
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
             {processSteps.map((step) => (
@@ -314,14 +313,14 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section border-y border-slate-300 bg-[#EEF2F6]">
+      <section className="section border-y border-slate-300 dark:border-slate-800 bg-[#EEF2F6] dark:bg-slate-900 transition-colors duration-300">
         <div className="container">
           <ManufacturingSectionHeading
             eyebrow="02 Shopfloor"
             title="Real Production Environment"
             description="Consistent production depends not only on equipment, but also on disciplined on-site workflows and process control."
-            titleClassName="!text-slate-900"
-            descriptionClassName="!text-slate-700"
+            titleClassName="!text-slate-900 dark:!text-slate-50"
+            descriptionClassName="!text-slate-700 dark:!text-slate-300"
           />
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {productionEnvironment.map((item) => (
@@ -331,15 +330,15 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section bg-white">
+      <section className="section bg-white dark:bg-slate-950 transition-colors duration-300">
         <div className="container">
           <ManufacturingSectionHeading
             eyebrow="03 Output & Storage"
             title="Finished Products & Storage"
             description="From controlled production to organized storage, finished terminals are prepared for efficient handling and shipment readiness."
-            descriptionClassName="!text-slate-500"
+            descriptionClassName="!text-slate-500 dark:!text-slate-400"
           />
-          <div className="mt-10 overflow-hidden rounded-sm border border-border bg-slate-950">
+          <div className="mt-10 overflow-hidden rounded-sm border border-border dark:border-slate-800 bg-slate-950 transition-colors duration-300">
             <div className="relative h-[360px] w-full md:h-[460px]">
               <ImagePreview
                 src="https://assets.electriterminal.com/factory/5s-managed-cable-glands-warehouse.webp"
@@ -349,22 +348,22 @@ export default function ManufacturingPage() {
                 sizes="100vw"
                 className="object-cover opacity-85"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-900/45 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-900/45 to-transparent transition-colors duration-300" />
               <div className="absolute left-0 top-0 z-10 max-w-xl p-6 md:p-8">
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-300">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-300 transition-colors duration-300">
                   Current Warehouse Visual
                 </p>
-                <h3 className="mt-2 text-2xl font-semibold !text-white md:text-3xl">
+                <h3 className="mt-2 text-2xl font-semibold !text-white md:text-3xl transition-colors duration-300">
                   5S-Managed Storage for Ready-to-Ship Batches
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-200 md:text-base">
+                <p className="mt-3 text-sm leading-7 text-slate-200 md:text-base transition-colors duration-300">
                   Clear batch organization supports accurate picking and delivery processes.
                   Structured storage improves visibility, consistency, and overall logistics
                   efficiency.
                 </p>
               </div>
-              <div className="absolute bottom-4 right-4 z-10 hidden w-[320px] overflow-hidden rounded-sm border border-slate-500/70 bg-slate-900/85 p-3 backdrop-blur-sm md:block">
-                <div className="relative h-40 w-full overflow-hidden rounded-sm">
+              <div className="absolute bottom-4 right-4 z-10 hidden w-[320px] overflow-hidden rounded-sm border border-slate-500/70 dark:border-slate-600/70 bg-slate-900/85 p-3 backdrop-blur-sm md:block transition-colors duration-300">
+                <div className="relative h-40 w-full overflow-hidden rounded-sm transition-colors duration-300">
                   <ImagePreview
                     src="https://assets.electriterminal.com/factory/cable-glands-packed-ready-for-shipment.webp"
                     alt="Packed finished products ready for shipment"
@@ -374,15 +373,15 @@ export default function ManufacturingPage() {
                     className="object-cover"
                   />
                 </div>
-                <p className="mt-2 text-xs font-medium uppercase tracking-[0.1em] text-slate-200">
+                <p className="mt-2 text-xs font-medium uppercase tracking-[0.1em] text-slate-200 transition-colors duration-300">
                   Finished Packaging Close-Up
                 </p>
               </div>
             </div>
           </div>
-          <div className="mt-4 block md:hidden">
-            <div className="card overflow-hidden p-3">
-              <div className="relative h-48 w-full overflow-hidden rounded-sm">
+          <div className="mt-4 block md:hidden transition-colors duration-300">
+            <div className="card overflow-hidden p-3 dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
+              <div className="relative h-48 w-full overflow-hidden rounded-sm transition-colors duration-300">
                 <ImagePreview
                   src="https://assets.electriterminal.com/factory/cable-glands-packed-ready-for-shipment.webp"
                   alt="Packed finished products ready for shipment"
@@ -392,7 +391,7 @@ export default function ManufacturingPage() {
                   className="object-cover"
                 />
               </div>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.1em] text-slate-600">
+              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.1em] text-slate-600 dark:text-slate-400 transition-colors duration-300">
                 Finished Packaging Close-Up
               </p>
             </div>
@@ -400,61 +399,61 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section border-y border-slate-300 bg-[#EEF2F6]">
+      <section className="section border-y border-slate-300 dark:border-slate-800 bg-[#EEF2F6] dark:bg-slate-900 transition-colors duration-300">
         <div className="container">
           <ManufacturingSectionHeading
             eyebrow="04 Capability Highlights"
             title="Built for Consistency"
             description="Structured capability points for engineering evaluation and sourcing-side due diligence."
-            titleClassName="!text-slate-900"
-            descriptionClassName="!text-slate-700"
+            titleClassName="!text-slate-900 dark:!text-slate-50"
+            descriptionClassName="!text-slate-700 dark:!text-slate-300"
           />
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 transition-colors duration-300">
             {capabilityHighlights.map((item) => (
               <CapabilityCard key={item.title} {...item} />
             ))}
           </div>
-          <div className="mt-12 rounded-sm border border-slate-200 bg-white p-6 shadow-sm md:p-10">
-            <div className="mb-10 flex flex-col gap-4 border-b border-slate-100 pb-8 md:flex-row md:items-end md:justify-between">
+          <div className="mt-12 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm md:p-10 transition-colors duration-300">
+            <div className="mb-10 flex flex-col gap-4 border-b border-slate-100 dark:border-slate-700 pb-8 md:flex-row md:items-end md:justify-between transition-colors duration-300">
               <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700 dark:text-blue-300 transition-colors duration-300">
                   <Workflow className="h-4 w-4" />
                   OEM Project Workflow
                 </div>
-                <h3 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 md:text-4xl transition-colors duration-300">
                   From RFQ Review to Global Delivery
                 </h3>
               </div>
-              <p className="max-w-md text-sm leading-relaxed text-slate-500 md:text-right">
+              <p className="max-w-md text-sm leading-relaxed text-slate-500 dark:text-slate-400 md:text-right transition-colors duration-300">
                 A practical decision path for OEM, custom manufacturing, packaging, and delivery planning before production starts.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1fr_1fr]">
+            <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1fr_1fr] transition-colors duration-300">
               {/* Left Column: Timeline */}
               <div className="relative">
                 {/* Vertical connecting line */}
-                <div className="absolute bottom-10 left-[27px] top-6 hidden w-[2px] bg-slate-200 md:block">
-                  <div className="h-1/3 w-full bg-gradient-to-b from-blue-500 to-transparent"></div>
+                <div className="absolute bottom-10 left-[27px] top-6 hidden w-[2px] bg-slate-200 dark:bg-slate-700 md:block transition-colors duration-300">
+                  <div className="h-1/3 w-full bg-gradient-to-b from-blue-500 to-transparent transition-colors duration-300"></div>
                 </div>
                 <div className="relative flex flex-col gap-6">
                   {oemProjectWorkflowSteps.map((entry, index) => (
                     <div key={entry.step} className="group/step relative flex flex-col gap-4 md:flex-row md:gap-6">
-                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm border-[3px] border-white bg-slate-100 text-base font-bold text-slate-500 shadow-sm transition-all duration-300 group-hover/step:bg-blue-600 group-hover/step:border-blue-100 group-hover/step:text-white group-hover/step:scale-105">
+                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm border-[3px] border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-base font-bold text-slate-500 dark:text-slate-400 shadow-sm transition-all duration-300 group-hover/step:bg-blue-600 group-hover/step:border-blue-100 group-hover/step:text-white group-hover/step:scale-105">
                         {index + 1}
                       </div>
-                      <div className="flex-1 rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 group-hover/step:-translate-y-1 group-hover/step:border-blue-300 group-hover/step:bg-blue-50/40 group-hover/step:shadow-md">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600">
+                      <div className="flex-1 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm transition-all duration-300 group-hover/step:-translate-y-1 group-hover/step:border-blue-300 group-hover/step:bg-blue-50/40 dark:group-hover/step:bg-blue-900/20 group-hover/step:shadow-md">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400 transition-colors duration-300">
                           {entry.step}
                         </p>
-                        <h4 className="mt-2 text-lg font-bold text-slate-900">
+                        <h4 className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100 transition-colors duration-300">
                           {entry.title}
                         </h4>
-                        <div className="mt-4 flex flex-wrap gap-2">
+                        <div className="mt-4 flex flex-wrap gap-2 transition-colors duration-300">
                           {entry.details.map((detail) => (
                             <span
                               key={detail}
-                              className="rounded-sm border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-hover/step:border-blue-300 group-hover/step:bg-white group-hover/step:text-blue-700"
+                              className="rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors group-hover/step:border-blue-300 group-hover/step:bg-white dark:group-hover/step:bg-slate-900 group-hover/step:text-blue-700 dark:group-hover/step:text-blue-400"
                             >
                               {detail}
                             </span>
@@ -467,26 +466,26 @@ export default function ManufacturingPage() {
               </div>
 
               {/* Right Column: Information & Decision Logic */}
-              <div className="flex flex-col gap-6">
-                <div className="flex-1 rounded-sm border border-slate-200 bg-slate-50 p-6 md:p-8">
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-slate-200 bg-white text-blue-600 shadow-sm">
+              <div className="flex flex-col gap-6 transition-colors duration-300">
+                <div className="flex-1 rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-6 md:p-8 transition-colors duration-300">
+                  <div className="mb-6 flex items-center gap-3 transition-colors duration-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm transition-colors duration-300">
                       <ClipboardCheck className="h-5 w-5" />
                     </div>
-                    <h4 className="text-xl font-bold tracking-tight text-slate-900">
+                    <h4 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 transition-colors duration-300">
                       Manufacturing Information
                     </h4>
                   </div>
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 transition-colors duration-300">
                     {manufacturingInformationRows.map((row) => (
                       <div
                         key={row.label}
-                        className="group flex flex-col gap-1.5 rounded-sm border border-slate-200 bg-white p-5 transition-all duration-300 hover:border-blue-300 hover:shadow-sm"
+                        className="group flex flex-col gap-1.5 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-sm"
                       >
-                        <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-800 transition-colors group-hover:text-blue-700">
+                        <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-700 dark:group-hover:text-blue-400">
                           {row.label}
                         </span>
-                        <span className="text-sm font-medium leading-relaxed text-slate-600">
+                        <span className="text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-400 transition-colors duration-300">
                           {row.value}
                         </span>
                       </div>
@@ -494,14 +493,14 @@ export default function ManufacturingPage() {
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden rounded-sm bg-blue-600 p-6 text-white shadow-md md:p-8">
+                <div className="relative overflow-hidden rounded-sm bg-blue-600 dark:bg-blue-700 p-6 text-white shadow-md md:p-8 transition-colors duration-300">
                   <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white opacity-10 blur-3xl transition-transform duration-700 hover:scale-150"></div>
-                  <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400 opacity-20 blur-2xl"></div>
-                  <div className="relative z-10">
-                    <span className="mb-3 inline-block rounded-sm border border-blue-400/50 bg-blue-700/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100">
+                  <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400 dark:bg-blue-500 opacity-20 blur-2xl transition-colors duration-300"></div>
+                  <div className="relative z-10 transition-colors duration-300">
+                    <span className="mb-3 inline-block rounded-sm border border-blue-400/50 bg-blue-700/50 dark:bg-blue-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100 transition-colors duration-300">
                       Decision Logic
                     </span>
-                    <p className="text-base font-medium leading-relaxed text-blue-50 md:text-lg">
+                    <p className="text-base font-medium leading-relaxed text-blue-50 md:text-lg transition-colors duration-300">
                       Confirm buyer requirements, review feasibility, align MOQ and lead time, then finalize packaging and shipping before production release.
                     </p>
                   </div>
@@ -509,19 +508,19 @@ export default function ManufacturingPage() {
               </div>
             </div>
           </div>
-          <div className="mt-10 rounded-sm border border-slate-300 bg-white p-6 md:p-8">
-            <h3 className="text-xl font-semibold text-slate-900 md:text-2xl">
+          <div className="mt-10 rounded-sm border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 md:p-8 transition-colors duration-300">
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 md:text-2xl transition-colors duration-300">
               Need Manufacturing Support for Engineering Review?
             </h3>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-secondary md:text-base">
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-secondary dark:text-slate-400 md:text-base transition-colors duration-300">
               Share your model requirements and target application. Our team can support technical
               review with process-focused manufacturing information.
             </p>
-            <div className="mt-6 flex flex-wrap gap-4">
-              <Link href="/contact" className="btn btn-primary">
+            <div className="mt-6 flex flex-wrap gap-4 transition-colors duration-300">
+              <Link href="/contact" className="btn btn-primary transition-all duration-300">
                 Contact Engineering Team
               </Link>
-              <Link href="/contact#request-quote" className="btn btn-secondary">
+              <Link href="/contact#request-quote" className="btn btn-secondary transition-all duration-300">
                 Submit RFQ
               </Link>
             </div>
@@ -529,20 +528,19 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section bg-white">
+      <section className="section bg-white dark:bg-slate-950 transition-colors duration-300">
         <div className="container">
           <ManufacturingSectionHeading
             eyebrow="05 FAQ"
             title="Manufacturing FAQ"
             description="Common OEM, manufacturing, and ordering questions from industrial buyers."
-            descriptionClassName="!text-slate-500"
+            descriptionClassName="!text-slate-500 dark:!text-slate-400"
           />
-          <div className="mt-8 max-w-4xl">
+          <div className="mt-8 max-w-4xl transition-colors duration-300">
             <FAQAccordion items={faqItems} />
           </div>
         </div>
       </section>
-
     </>
   );
 }
