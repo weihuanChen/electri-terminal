@@ -9,12 +9,12 @@ import {
 } from "@/components/manufacturing/ManufacturingBlocks";
 import {
   ArrowDown,
-  ArrowRight,
   CheckCircle2,
   ClipboardCheck,
   Gauge,
   PackageCheck,
   ShieldCheck,
+  Workflow,
 } from "lucide-react";
 
 const heroImage = "https://assets.electriterminal.com/factory/cnc-machining-copper-tube.webp";
@@ -151,9 +151,19 @@ const faqItems = [
       "Yes. Depending on the product family, we support private labeling, laser marking, custom packaging, carton labeling and OEM documentation for qualified manufacturing projects.",
   },
   {
+    question: "Can you support certification requirements for OEM projects?",
+    answer:
+      "We support certification planning based on project requirements. Existing certifications cover selected product families, while additional certification or testing can be discussed according to application and order requirements.",
+  },
+  {
     question: "How does your minimum order quantity (MOQ) work?",
     answer:
       "MOQ depends on product type, factory packaging, customization requirements and project scope rather than a fixed quantity.",
+  },
+  {
+    question: "How are production lead times determined for manufacturing orders?",
+    answer:
+      "Production lead times depend on product type, order quantity, customization requirements, material availability, and production scheduling. Standard catalog products are typically completed within approximately one working week after order confirmation, while customized projects require additional engineering review and production planning.",
   },
   {
     question: "What types of product customization do you support?",
@@ -187,6 +197,31 @@ const oemProjectWorkflowSteps = [
     step: "Step 4",
     title: "Packaging & Global Delivery",
     details: ["Private Label", "Export Cartons", "Air & Sea Freight"],
+  },
+];
+
+const manufacturingInformationRows = [
+  {
+    label: "MOQ",
+    value: "Determined by product type, factory packaging and customization requirements.",
+  },
+  {
+    label: "Production Lead Time",
+    value:
+      "Standard catalog products are typically completed within approximately one working week after order confirmation.",
+  },
+  {
+    label: "Shipping",
+    value:
+      "Air freight for samples and urgent orders; sea freight for production shipments. Transit time depends on destination and carrier schedules.",
+  },
+  {
+    label: "Samples",
+    value: "Engineering samples are available before mass production for qualified projects.",
+  },
+  {
+    label: "Packaging",
+    value: "Standard export packaging and OEM/private-label packaging options are available.",
   },
 ];
 
@@ -379,6 +414,101 @@ export default function ManufacturingPage() {
               <CapabilityCard key={item.title} {...item} />
             ))}
           </div>
+          <div className="mt-12 rounded-sm border border-slate-200 bg-white p-6 shadow-sm md:p-10">
+            <div className="mb-10 flex flex-col gap-4 border-b border-slate-100 pb-8 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700">
+                  <Workflow className="h-4 w-4" />
+                  OEM Project Workflow
+                </div>
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+                  From RFQ Review to Global Delivery
+                </h3>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed text-slate-500 md:text-right">
+                A practical decision path for OEM, custom manufacturing, packaging, and delivery planning before production starts.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1fr_1fr]">
+              {/* Left Column: Timeline */}
+              <div className="relative">
+                {/* Vertical connecting line */}
+                <div className="absolute bottom-10 left-[27px] top-6 hidden w-[2px] bg-slate-200 md:block">
+                  <div className="h-1/3 w-full bg-gradient-to-b from-blue-500 to-transparent"></div>
+                </div>
+                <div className="relative flex flex-col gap-6">
+                  {oemProjectWorkflowSteps.map((entry, index) => (
+                    <div key={entry.step} className="group/step relative flex flex-col gap-4 md:flex-row md:gap-6">
+                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm border-[3px] border-white bg-slate-100 text-base font-bold text-slate-500 shadow-sm transition-all duration-300 group-hover/step:bg-blue-600 group-hover/step:border-blue-100 group-hover/step:text-white group-hover/step:scale-105">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 rounded-sm border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 group-hover/step:-translate-y-1 group-hover/step:border-blue-300 group-hover/step:bg-blue-50/40 group-hover/step:shadow-md">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600">
+                          {entry.step}
+                        </p>
+                        <h4 className="mt-2 text-lg font-bold text-slate-900">
+                          {entry.title}
+                        </h4>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {entry.details.map((detail) => (
+                            <span
+                              key={detail}
+                              className="rounded-sm border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-hover/step:border-blue-300 group-hover/step:bg-white group-hover/step:text-blue-700"
+                            >
+                              {detail}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Information & Decision Logic */}
+              <div className="flex flex-col gap-6">
+                <div className="flex-1 rounded-sm border border-slate-200 bg-slate-50 p-6 md:p-8">
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-slate-200 bg-white text-blue-600 shadow-sm">
+                      <ClipboardCheck className="h-5 w-5" />
+                    </div>
+                    <h4 className="text-xl font-bold tracking-tight text-slate-900">
+                      Manufacturing Information
+                    </h4>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {manufacturingInformationRows.map((row) => (
+                      <div
+                        key={row.label}
+                        className="group flex flex-col gap-1.5 rounded-sm border border-slate-200 bg-white p-5 transition-all duration-300 hover:border-blue-300 hover:shadow-sm"
+                      >
+                        <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-800 transition-colors group-hover:text-blue-700">
+                          {row.label}
+                        </span>
+                        <span className="text-sm font-medium leading-relaxed text-slate-600">
+                          {row.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-sm bg-blue-600 p-6 text-white shadow-md md:p-8">
+                  <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white opacity-10 blur-3xl transition-transform duration-700 hover:scale-150"></div>
+                  <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400 opacity-20 blur-2xl"></div>
+                  <div className="relative z-10">
+                    <span className="mb-3 inline-block rounded-sm border border-blue-400/50 bg-blue-700/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100">
+                      Decision Logic
+                    </span>
+                    <p className="text-base font-medium leading-relaxed text-blue-50 md:text-lg">
+                      Confirm buyer requirements, review feasibility, align MOQ and lead time, then finalize packaging and shipping before production release.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="mt-10 rounded-sm border border-slate-300 bg-white p-6 md:p-8">
             <h3 className="text-xl font-semibold text-slate-900 md:text-2xl">
               Need Manufacturing Support for Engineering Review?
@@ -413,53 +543,6 @@ export default function ManufacturingPage() {
         </div>
       </section>
 
-      <section className="section-compact bg-slate-50 pb-14 md:pb-16">
-        <div className="container">
-          <div className="mx-auto max-w-[980px]">
-            <details className="group rounded-sm border border-border bg-white p-5 md:p-6">
-              <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
-                OEM Project Workflow
-                <span className="text-primary transition-transform duration-200 group-open:rotate-180">
-                  ▼
-                </span>
-              </summary>
-              <div className="mt-5 overflow-hidden rounded-sm border border-slate-200 bg-slate-50">
-                <div className="grid grid-cols-1 divide-y divide-slate-200 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
-                  {oemProjectWorkflowSteps.map((entry, index) => (
-                    <article key={entry.step} className="relative p-4 md:p-5">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <span className="inline-flex rounded-sm bg-slate-900 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
-                          {entry.step}
-                        </span>
-                        {index < oemProjectWorkflowSteps.length - 1 && (
-                          <ArrowRight
-                            className="hidden h-5 w-5 text-primary lg:block"
-                            aria-hidden="true"
-                          />
-                        )}
-                      </div>
-                      <h3 className="text-base font-semibold text-slate-900">{entry.title}</h3>
-                      <p className="mt-2 text-sm leading-7 text-secondary">
-                        ({entry.details.join(" / ")})
-                      </p>
-                      {index < oemProjectWorkflowSteps.length - 1 && (
-                        <div className="mt-4 flex justify-center lg:hidden">
-                          <ArrowDown className="h-5 w-5 text-primary" aria-hidden="true" />
-                        </div>
-                      )}
-                    </article>
-                  ))}
-                </div>
-                <div className="border-t border-slate-200 bg-white px-4 py-4 text-sm leading-7 text-secondary md:px-5">
-                  <span className="font-semibold text-slate-900">Decision logic:</span> confirm
-                  the buyer requirement, review engineering feasibility, lock production controls,
-                  then align packaging and delivery for the order.
-                </div>
-              </div>
-            </details>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
