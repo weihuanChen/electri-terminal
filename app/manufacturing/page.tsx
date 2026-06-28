@@ -7,7 +7,15 @@ import {
   ProcessStepCard,
   ProductionImageCard,
 } from "@/components/manufacturing/ManufacturingBlocks";
-import { CheckCircle2, ClipboardCheck, Gauge, PackageCheck, ShieldCheck } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  CheckCircle2,
+  ClipboardCheck,
+  Gauge,
+  PackageCheck,
+  ShieldCheck,
+} from "lucide-react";
 
 const heroImage = "https://assets.electriterminal.com/factory/cnc-machining-copper-tube.webp";
 const metadataTitle =
@@ -138,43 +146,47 @@ const capabilityHighlights = [
 
 const faqItems = [
   {
-    question: "What processes are involved in terminal manufacturing?",
+    question: "Do you support private-label manufacturing for OEM projects?",
     answer:
-      "Terminal manufacturing typically includes material preparation, cutting, forming, structuring, and inspection before storage and shipment.",
+      "Yes. Depending on the product family, we support private labeling, laser marking, custom packaging, carton labeling and OEM documentation for qualified manufacturing projects.",
   },
   {
-    question: "How do you maintain consistency across batches?",
+    question: "How does your minimum order quantity (MOQ) work?",
     answer:
-      "Consistency is supported through controlled forming processes, stable material selection, and structured inspection workflows.",
+      "MOQ depends on product type, factory packaging, customization requirements and project scope rather than a fixed quantity.",
   },
   {
-    question: "Do you support custom production requirements?",
+    question: "What types of product customization do you support?",
     answer:
-      "Production processes can be adapted to meet application-specific requirements, including dimensional and structural adjustments.",
+      "Customization can include material, dimensions, thread, color, marking and packaging, depending on the product family and project requirements.",
   },
   {
-    question: "How are finished terminals stored before shipment?",
+    question: "What packaging options are available for manufacturing orders?",
     answer:
-      "Finished products are organized by batch to improve traceability, handling efficiency, and shipment preparation.",
+      "Packaging options include factory pack, bulk carton, inner box, private label, export packaging and pallet arrangements.",
   },
 ];
 
-const seoReadMoreItems = [
+const oemProjectWorkflowSteps = [
   {
-    title: "What This Process Supports",
-    body: "Our manufacturing workflow is designed to support dimensional consistency, stable terminal structure, and reliable electrical performance across applications.",
+    step: "Step 1",
+    title: "Discuss Your Requirements",
+    details: ["OEM", "Thread", "Material", "Packaging"],
   },
   {
-    title: "Why Process Control Matters",
-    body: "Controlled cutting, forming, and inspection steps help reduce variation and improve consistency between production batches.",
+    step: "Step 2",
+    title: "Engineering Review",
+    details: ["Samples", "Drawings", "MOQ"],
   },
   {
-    title: "Where These Products Are Used",
-    body: "Manufactured terminals are widely applied in industrial equipment, control panels, automotive wiring, and power distribution systems.",
+    step: "Step 3",
+    title: "Production & Quality Control",
+    details: ["Inspection", "Batch Consistency", "Documentation"],
   },
   {
-    title: "Storage and Delivery Readiness",
-    body: "Organized storage and batch handling improve product traceability and ensure efficient delivery workflows.",
+    step: "Step 4",
+    title: "Packaging & Global Delivery",
+    details: ["Private Label", "Export Cartons", "Air & Sea Freight"],
   },
 ];
 
@@ -392,7 +404,7 @@ export default function ManufacturingPage() {
           <ManufacturingSectionHeading
             eyebrow="05 FAQ"
             title="Manufacturing FAQ"
-            description="Common process and storage questions for industrial terminal manufacturing."
+            description="Common OEM, manufacturing, and ordering questions from industrial buyers."
             descriptionClassName="!text-slate-500"
           />
           <div className="mt-8 max-w-4xl">
@@ -406,18 +418,43 @@ export default function ManufacturingPage() {
           <div className="mx-auto max-w-[980px]">
             <details className="group rounded-sm border border-border bg-white p-5 md:p-6">
               <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
-                Read More: Manufacturing Notes
+                OEM Project Workflow
                 <span className="text-primary transition-transform duration-200 group-open:rotate-180">
                   ▼
                 </span>
               </summary>
-              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                {seoReadMoreItems.map((entry) => (
-                  <article key={entry.title} className="rounded-sm border border-border bg-muted p-4">
-                    <h3 className="mb-2 text-base font-semibold text-slate-900">{entry.title}</h3>
-                    <p className="text-sm leading-7 text-secondary">{entry.body}</p>
-                  </article>
-                ))}
+              <div className="mt-5 overflow-hidden rounded-sm border border-slate-200 bg-slate-50">
+                <div className="grid grid-cols-1 divide-y divide-slate-200 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+                  {oemProjectWorkflowSteps.map((entry, index) => (
+                    <article key={entry.step} className="relative p-4 md:p-5">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <span className="inline-flex rounded-sm bg-slate-900 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
+                          {entry.step}
+                        </span>
+                        {index < oemProjectWorkflowSteps.length - 1 && (
+                          <ArrowRight
+                            className="hidden h-5 w-5 text-primary lg:block"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </div>
+                      <h3 className="text-base font-semibold text-slate-900">{entry.title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-secondary">
+                        ({entry.details.join(" / ")})
+                      </p>
+                      {index < oemProjectWorkflowSteps.length - 1 && (
+                        <div className="mt-4 flex justify-center lg:hidden">
+                          <ArrowDown className="h-5 w-5 text-primary" aria-hidden="true" />
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                </div>
+                <div className="border-t border-slate-200 bg-white px-4 py-4 text-sm leading-7 text-secondary md:px-5">
+                  <span className="font-semibold text-slate-900">Decision logic:</span> confirm
+                  the buyer requirement, review engineering feasibility, lock production controls,
+                  then align packaging and delivery for the order.
+                </div>
               </div>
             </details>
           </div>

@@ -439,7 +439,7 @@ export default function CategoryHubClient({
         <section className="section-compact">
           <div className="container">
             <div className="mx-auto max-w-[700px]">
-              <details className="group rounded-sm border border-border bg-white p-5 md:p-6">
+              <details open className="group rounded-sm border border-border bg-white p-5 md:p-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
                   Read More: Terminal Selection Guide
                   <span className="text-primary transition-transform duration-200 group-open:rotate-180">
