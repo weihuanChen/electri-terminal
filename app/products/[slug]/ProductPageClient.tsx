@@ -11,7 +11,7 @@ import {
   MarkdownRenderer,
 } from "@/components/shared";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, FileText, Download } from "lucide-react";
 import { resolveProductPageViewModel } from "@/lib/productPage";
 import { categoryUrl, familyUrl } from "@/lib/routes";
 import {
@@ -373,25 +373,42 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       )}
 
       {hasResources && (
-        <section id="documentation" className="section scroll-mt-24 bg-muted border-y border-border">
+        <section id="documentation" className="py-6 md:py-10 scroll-mt-24 border-y border-border bg-slate-50 dark:bg-slate-950/50">
           <div className="container">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Documentation
+            <div className="w-full border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
+              <h2 className="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">
+                Engineering Resources
+              </h2>
+              <p className="mb-4 text-sm font-medium text-secondary">
+                Technical catalogs, selection guides and application documents.
               </p>
-              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Documentation Support</h2>
-              <div className="space-y-4">
-                {(product.resources || []).map((resource) => (
-                  <DownloadCard
-                    key={resource._id}
-                    title={resource.title}
-                    type={resource.type}
-                    fileUrl={resource.fileUrl}
-                    previewImage={resource.previewImage}
-                    fileSize={resource.fileSize}
-                    language={resource.language}
-                    version={resource.version}
-                  />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {(product.resources || []).map((resource, index) => (
+                  <a
+                    key={resource._id || index}
+                    href={resource.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between border border-border bg-slate-50 p-3 hover:border-primary dark:bg-slate-800"
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-white border border-border dark:bg-slate-700">
+                        <FileText className="h-5 w-5 text-slate-400 group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="flex flex-col truncate">
+                        <span className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">
+                          {resource.title}
+                        </span>
+                        <span className="text-xs text-secondary mt-0.5">
+                          {resource.version ? `v${resource.version}` : 'Latest'} · PDF
+                        </span>
+                      </div>
+                    </div>
+                    <div className="ml-3 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity">
+                      <Download className="h-4 w-4 text-primary" />
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>
