@@ -238,28 +238,28 @@ export default function CategoryHubClient({
     ? engineeringApplicationsIntro
     : applicationsIntroFromConfig;
 
-  const readMoreSections = [
-    {
-      title: "What Are Electrical Terminals",
-      paragraphs: [category.pageConfig?.content?.overview?.intro?.trim() || defaultDefinition],
-      points: [] as string[],
-    },
-    {
-      title: "Common Types of Terminals",
-      paragraphs: [] as string[],
-      points: resolvedTypePoints,
-    },
-    {
-      title: "Applications",
-      paragraphs: [resolvedApplicationsIntro],
-      points: resolvedApplicationPoints,
-    },
-    {
-      title: "How to Choose the Right Terminal",
-      paragraphs: [category.pageConfig?.content?.selectionGuide?.intro?.trim() || "Choosing the right terminal depends on:"],
-      points: resolvedSelectionGuidePoints,
-    },
-  ].filter((section) => section.paragraphs.length > 0 || section.points.length > 0);
+  const definitionSection = {
+    title: "What Are Electrical Terminals",
+    paragraphs: [category.pageConfig?.content?.overview?.intro?.trim() || defaultDefinition],
+    points: [] as string[],
+  };
+  const typesSection = {
+    title: "Common Types of Terminals",
+    paragraphs: [] as string[],
+    points: resolvedTypePoints,
+  };
+  const applicationsSection = {
+    title: "Applications",
+    paragraphs: [resolvedApplicationsIntro],
+    points: resolvedApplicationPoints,
+  };
+  const selectionGuideSection = {
+    title: "How to Choose the Right Terminal",
+    paragraphs: [category.pageConfig?.content?.selectionGuide?.intro?.trim() || "Choosing the right terminal depends on:"],
+    points: resolvedSelectionGuidePoints,
+  };
+
+  const engineeringGuideSections = [typesSection, applicationsSection].filter((section) => section.paragraphs.length > 0 || section.points.length > 0);
 
   return (
     <>
@@ -332,6 +332,21 @@ export default function CategoryHubClient({
         </div>
       </section>
 
+      {definitionSection.paragraphs.length > 0 && (
+        <section className="py-6 border-b border-border bg-white dark:bg-slate-900">
+          <div className="container">
+            <div className="mx-auto max-w-4xl text-center">
+              <h2 className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-secondary">
+                {definitionSection.title}
+              </h2>
+              <p className="line-clamp-3 text-base font-medium text-slate-700 dark:text-slate-300 sm:text-lg">
+                {definitionSection.paragraphs[0]}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section id="terminal-subcategories" className="section">
         <div className="container">
           <div className="mb-10 flex flex-col gap-2 md:mb-12 md:flex-row md:items-end md:justify-between">
@@ -373,6 +388,37 @@ export default function CategoryHubClient({
           )}
         </div>
       </section>
+
+      {selectionGuideSection.points.length > 0 && (
+        <section className="py-8 bg-slate-50 dark:bg-slate-950/50 border-t border-border">
+          <div className="container">
+            <div className="mb-6 text-center">
+              <h2 className="text-xl font-semibold md:text-2xl text-slate-900 dark:text-slate-100">{selectionGuideSection.title}</h2>
+              {selectionGuideSection.paragraphs[0] && (
+                <p className="mx-auto mt-2 max-w-2xl text-sm text-secondary">{selectionGuideSection.paragraphs[0]}</p>
+              )}
+            </div>
+            
+            <div className="mx-auto max-w-4xl relative">
+              <div className="hidden md:block absolute left-[12%] right-[12%] top-2.5 h-[1px] bg-slate-200 dark:bg-slate-700"></div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                {selectionGuideSection.points.map((point, index) => (
+                  <div key={index} className="relative flex flex-col items-center text-center">
+                    <div className="z-10 flex h-6 w-6 items-center justify-center bg-slate-50 dark:bg-slate-950/50">
+                      <div className="flex h-5 w-5 items-center justify-center bg-slate-800 text-[11px] font-bold text-white dark:bg-slate-200 dark:text-slate-900 shadow-sm">
+                        {index + 1}
+                      </div>
+                    </div>
+                    <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200 px-2">
+                      {point}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {featuredCards.length > 0 && (
         <section className="section bg-muted border-y border-border">
@@ -435,41 +481,62 @@ export default function CategoryHubClient({
         </section>
       )}
 
-      {readMoreSections.length > 0 && (
-        <section className="section-compact">
+      {engineeringGuideSections.length > 0 && (
+        <section className="py-6 md:py-10 bg-slate-50 dark:bg-slate-950/50 border-y border-border">
           <div className="container">
-            <div className="mx-auto max-w-[700px]">
-              <details open className="group rounded-sm border border-border bg-white p-5 md:p-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
-                  Read More: Terminal Selection Guide
-                  <span className="text-primary transition-transform duration-200 group-open:rotate-180">
-                    ▼
-                  </span>
-                </summary>
-
-                <div className="mt-5 space-y-4 text-sm leading-7 text-secondary">
-                  {readMoreSections.map((section) => (
-                    <article key={section.title} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
-                      <h3 className="mb-2 text-base font-semibold text-slate-900">{section.title}</h3>
-                      {section.paragraphs.map((paragraph, index) => (
-                        <p key={`${section.title}-paragraph-${index}`} className="mb-2 last:mb-0">
-                          {paragraph}
-                        </p>
-                      ))}
-                      {section.points.length > 0 && (
-                        <ul className="mt-2 space-y-1.5">
-                          {section.points.map((point, index) => (
-                            <li key={`${section.title}-point-${index}`} className="flex items-start gap-2">
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
-                              <span>{point}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </article>
-                  ))}
+            <div className="mx-auto max-w-5xl">
+              <div className="border border-border bg-white p-5 shadow-sm dark:bg-slate-900 md:p-8">
+                <div className="mb-8 border-b border-border pb-5">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-primary">
+                    Engineering Guide
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 md:text-4xl">
+                    Category Design Guide
+                  </h2>
                 </div>
-              </details>
+                
+                <div className="relative ml-2 md:ml-4">
+                  {/* Reading Axis */}
+                  <div className="absolute top-2 bottom-4 left-[11px] w-[2px] bg-slate-200 dark:bg-slate-800" />
+                  
+                  <div className="space-y-10">
+                    {engineeringGuideSections.map((section, index) => (
+                      <div key={section.title} className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-slate-300 dark:border-slate-900 dark:bg-slate-700 shadow-sm" />
+                        <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          {section.title}
+                        </h3>
+                        {section.paragraphs.length > 0 && (
+                          <div className="prose prose-slate prose-sm md:prose-base dark:prose-invert max-w-none text-slate-600 dark:text-slate-300">
+                            {section.paragraphs.map((paragraph, pIndex) => (
+                              <p key={`${section.title}-paragraph-${pIndex}`} className="mb-4 last:mb-0">
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                        {section.points.length > 0 && (
+                          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {section.points.map((point, pIndex) => (
+                              <div
+                                key={`${section.title}-point-${pIndex}`}
+                                className="flex items-start gap-3 border border-slate-200 bg-slate-50 p-3 transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/50"
+                              >
+                                <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                                  <span className="h-1.5 w-1.5 bg-current" />
+                                </div>
+                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                  {point}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
