@@ -1,4 +1,4 @@
-import { Breadcrumb, SKUTable, FAQAccordion, DownloadCard, CTABanner } from "@/components/shared";
+import { Breadcrumb, SKUTable, FAQAccordion, CTABanner } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle2, Download, FileText } from "lucide-react";
@@ -704,23 +704,26 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </div>
       </div>
 
-      <section className="section-compact bg-muted border-y border-border">
+      {/* 1. Hero - Primary Peak */}
+      <section className="py-12 md:py-16 bg-muted border-b border-border">
         <div className="container">
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+          <div className="grid grid-cols-1 gap-6 lg:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
+            <div className="flex flex-col justify-center">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Product Family
               </p>
-              <h1 className="mb-4 text-3xl font-semibold md:text-4xl">{family.name}</h1>
+              <h1 className="mb-5 text-3xl font-bold md:text-5xl text-slate-900 dark:text-slate-100">{family.name}</h1>
               {fullHeroIntro && (
-                <ExpandableHeroIntro text={fullHeroIntro} preview={compactHeroIntro} />
+                <div className="mb-6 text-lg text-slate-600 dark:text-slate-300">
+                  <ExpandableHeroIntro text={fullHeroIntro} preview={compactHeroIntro} />
+                </div>
               )}
               <div className="flex flex-wrap gap-3">
                 <Link href={primaryCTA.href} className="btn btn-primary">
                   {primaryCTA.label}
                 </Link>
                 <Link href={heroSecondaryCTA.href} className="btn btn-secondary">
-                  {hasDownloadResources && <Download className="h-4 w-4" />}
+                  {hasDownloadResources && <Download className="h-4 w-4 mr-2" />}
                   {heroSecondaryCTA.label}
                 </Link>
                 {hasAvailableProducts && (
@@ -730,7 +733,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
             </div>
 
             {heroImageUrl && (
-              <div className="relative min-h-[260px] overflow-hidden rounded-sm border border-border bg-white p-4 sm:min-h-[320px]">
+              <div className="relative min-h-[300px] overflow-hidden rounded-md border border-border bg-white shadow-sm p-4 sm:min-h-[380px]">
                 <Image
                   src={heroImageUrl}
                   alt={heroImageAlt}
@@ -741,223 +744,307 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
               </div>
             )}
           </div>
-
-          {quickFacts.length > 0 && (
-            <div className="mt-4 rounded-sm border border-border bg-white p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Quick Facts
-              </p>
-              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                {quickFacts.map((fact) => (
-                  <li key={fact} className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                    <span>{fact}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </section>
 
-      {hasOverviewAndFeatures && (
-        <section className="section-compact border-y border-border">
+      {/* 2. Quick Facts - Scanning Bar */}
+      {quickFacts.length > 0 && (
+        <section className="py-4 md:py-6 border-b border-border bg-white">
           <div className="container">
-            <div className="mb-8 max-w-3xl">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Overview + Key Features
-              </p>
-              <h2 className="text-2xl font-semibold md:text-3xl">Overview + Key Features</h2>
-            </div>
-            <div className="grid gap-8 lg:grid-cols-2">
-              {showOverview && overviewParagraphs.length > 0 && (
-                <div>
-                  <h3 className="mb-4 text-xl font-semibold">Overview</h3>
-                  <div className="space-y-4">
-                    {overviewParagraphs.map((paragraph, index) => (
-                      <p key={`${paragraph}-${index}`} className="text-secondary leading-7">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {showFeatures && compactFeatures.length > 0 && (
-                <div>
-                  <h3 className="mb-4 text-xl font-semibold">Key Features</h3>
-                  {featuresIntro && (
-                    <p className="mb-4 text-sm text-secondary">{compactSentence(featuresIntro, 18)}</p>
-                  )}
-                  <ul className="space-y-3">
-                    {compactFeatures.map((feature, index) => (
-                      <li key={`${feature}-${index}`} className="flex items-start gap-2 text-secondary">
-                        <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {quickSpecs.length > 0 && (
-        <section className="section-compact border-y border-border bg-muted">
-          <div className="container">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Quick Specs
-              </p>
-              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Quick Specs</h2>
-              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                {quickSpecs.map((spec) => (
-                  <div key={spec.label} className="rounded-sm border border-border bg-muted/60 p-3">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
-                      {spec.label}
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium text-foreground">{spec.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {hasAvailableProducts && (
-        <section id="available-products" className="section scroll-mt-24">
-          <div className="container">
-            <div className="mb-8">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Available Models
-              </p>
-              <h2 className="mb-2 text-2xl font-semibold md:text-3xl">Available Products</h2>
-              <p className="text-secondary">
-                Select a product to view detailed specifications
-              </p>
-            </div>
-            <SKUTable skus={availableProducts} />
-          </div>
-        </section>
-      )}
-
-      {showLongform && longformMarkdown && (
-        <section className="section bg-muted">
-          <div className="container">
-            <div className="max-w-4xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Technical Article
-              </p>
-              <LongformMarkdown markdown={longformMarkdown} />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {showApplications && applicationTags.length > 0 && (
-        <section className="section-compact">
-          <div className="container">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Applications
-              </p>
-              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Typical Applications</h2>
-              {applicationsIntro && (
-                <p className="mb-4 text-sm text-secondary">{compactSentence(applicationsIntro, 24)}</p>
-              )}
-              <div className="flex flex-wrap gap-3">
-                {applicationTags.map((application, index) => (
-                  <span
-                    key={`${application}-${index}`}
-                    className="inline-flex rounded-full border border-border bg-muted px-4 py-2 text-sm text-foreground"
-                  >
-                    {application}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {hasSelectionAndTechnical && (
-        <section className="section-compact bg-muted">
-          <div className="container">
-            <div className="rounded-sm border border-border bg-white p-5 md:p-6">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Selection & Technical Guidance
-              </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Selection & Technical Guidance</h2>
-              <div className="grid gap-8 lg:grid-cols-2">
-                <div>
-                  <h3 className="mb-3 text-lg font-semibold">Selection Steps</h3>
-                  {selectionGuideIntro && (
-                    <p className="mb-4 text-sm text-secondary">{compactSentence(selectionGuideIntro, 24)}</p>
-                  )}
-                  <ol className="space-y-3">
-                    {selectionStepsForRender.map((step, index) => (
-                      <li key={`${step}-${index}`} className="flex gap-3 text-secondary">
-                        <span className="font-semibold text-foreground">{index + 1}.</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-
-                <div>
-                  <h3 className="mb-3 text-lg font-semibold">Technical Notes</h3>
-                  <ul className="space-y-3">
-                    {compactTechnicalNotes.map((note, index) => (
-                      <li key={`${note}-${index}`} className="flex gap-2 text-secondary">
-                        <span className="mt-[9px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                        <span>{note}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="section-compact">
-        <div className="container">
-          <div className="max-w-3xl rounded-sm border border-border bg-white p-5 md:p-6">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Certification
-            </p>
-            <h2 className="mb-4 text-xl font-semibold md:text-2xl">Certification Support</h2>
-            <ul className="space-y-3">
-              {certificationSupportItems.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-secondary">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
-                  <span>{item}</span>
+            <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {quickFacts.map((fact) => (
+                <li key={fact} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  <span>{fact}</span>
                 </li>
               ))}
             </ul>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {mediaItems.length > 0 && (
-        <section className="section bg-muted">
+      {/* 3. Engineering Reference (Specs, Workflow, Applications, Certification) */}
+      {(quickSpecs.length > 0 || hasSelectionAndTechnical || (showApplications && applicationTags.length > 0) || certificationSupportItems.length > 0) && (
+        <section className="py-8 md:py-12 bg-slate-50 border-b border-border dark:bg-slate-900/50">
           <div className="container">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Visual References
+            <h2 className="mb-6 text-xl font-bold md:text-2xl">Engineering Reference</h2>
+            <div className="rounded-sm border border-border bg-white shadow-sm dark:bg-slate-900 overflow-visible flex flex-col">
+              {/* Top Row: Specs & Workflow */}
+              <div className="grid md:grid-cols-[35fr_65fr]">
+                {/* Left: Specs (35%) */}
+                {quickSpecs.length > 0 && (
+                  <div className="p-6 lg:p-8 border-b md:border-b-0 md:border-r border-border">
+                    <h3 className="mb-6 text-sm font-bold uppercase tracking-widest text-secondary">Specifications</h3>
+                    <dl className="space-y-0">
+                      {quickSpecs.map((spec, index) => (
+                        <div key={spec.label} className="relative pl-8 pb-5 last:pb-0">
+                          {index < quickSpecs.length - 1 && (
+                            <div className="absolute left-[9px] top-5 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-700" />
+                          )}
+                          <div className="absolute left-0 top-1 h-5 w-5 rounded-full border-2 border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-800 z-10" />
+                          <div>
+                            <dt className="text-[11px] font-semibold uppercase tracking-wide text-secondary mb-0.5">{spec.label}</dt>
+                            <dd className="text-sm font-medium text-foreground">{spec.value}</dd>
+                          </div>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
+
+                {/* Right: Workflow (65%) */}
+                {showSelectionGuide && selectionStepsForRender.length > 0 && (
+                  <div className="p-6 lg:p-8">
+                    <div className="mb-6 flex items-center justify-between">
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Selection Workflow</h3>
+                    </div>
+                    <div className="space-y-0">
+                      {selectionStepsForRender.map((step, index) => (
+                        <div key={`${step}-${index}`} className="relative pl-10 pb-5 last:pb-0">
+                          {index < selectionStepsForRender.length - 1 && (
+                            <div className="absolute left-[11px] top-6 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-700" />
+                          )}
+                          <div className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600 border-2 border-white ring-2 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-900 dark:ring-slate-700 z-10">
+                            {index + 1}
+                          </div>
+                          <div className="pt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">
+                            {step}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Divider */}
+              {((quickSpecs.length > 0 || showSelectionGuide) && ((showApplications && applicationTags.length > 0) || certificationSupportItems.length > 0)) && (
+                <hr className="border-border" />
+              )}
+
+              {/* Middle Row: Applications */}
+              {showApplications && applicationTags.length > 0 && (
+                <div className="p-4 lg:px-8 lg:py-5 border-b border-border flex flex-col md:flex-row md:items-center gap-4 lg:gap-16">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-secondary whitespace-nowrap w-32 md:w-40 shrink-0">
+                    Applications
+                  </h3>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {applicationTags.map((application, index) => (
+                      <span
+                        key={`${application}-${index}`}
+                        className="inline-flex rounded-sm border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                      >
+                        {application}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Row: Certification */}
+              {certificationSupportItems.length > 0 && (
+                <div className="p-4 lg:px-8 lg:py-5 flex flex-col md:flex-row md:items-center gap-4 lg:gap-16">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-secondary whitespace-nowrap w-32 md:w-40 shrink-0">
+                    Certification
+                  </h3>
+                  <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
+                    {certificationSupportItems.map((item) => (
+                      <div key={item} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 4. Available Products */}
+      {hasAvailableProducts && (
+        <section id="available-products" className="py-8 md:py-12 border-b border-border bg-white scroll-mt-24">
+          <div className="container">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold md:text-3xl">Available Models</h2>
+                <p className="mt-2 text-secondary">Select a product to view detailed specifications</p>
+              </div>
+            </div>
+            <div className="rounded-md border border-border shadow-sm overflow-hidden">
+              <SKUTable skus={availableProducts} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. Engineering Knowledge (Cards & Notes) */}
+      {(hasOverviewAndFeatures || (showTechnicalNote && compactTechnicalNotes.length > 0) || (showLongform && longformMarkdown)) && (
+        <section className="py-12 md:py-16 bg-slate-50 border-b border-border dark:bg-slate-900/50">
+          <div className="container">
+            <div className="mb-8">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+                Engineering Knowledge
+              </p>
+              <h2 className="text-2xl font-bold md:text-3xl">Engineering Overview</h2>
+            </div>
+            
+            <div className="grid gap-8 lg:grid-cols-3">
+              <div className="lg:col-span-2 space-y-8">
+                {/* Overview Reading Guide (What Is It / Why It Matters) */}
+                {showOverview && overviewParagraphs.length > 0 && (
+                  <div className="rounded-sm border border-border bg-white shadow-sm dark:bg-slate-900 flex flex-col">
+                    {/* What Is It */}
+                    <div className="p-6 lg:p-8">
+                      <h3 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                        What Is It
+                      </h3>
+                      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed max-w-3xl">
+                        {overviewParagraphs[0]}
+                      </p>
+                    </div>
+
+                    {/* Why It Matters (if second paragraph exists) */}
+                    {overviewParagraphs.length > 1 && (
+                      <>
+                        <hr className="border-border mx-6 lg:mx-8" />
+                        <div className="p-6 lg:p-8">
+                          <h3 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                            Why It Matters
+                          </h3>
+                          <div className="space-y-4">
+                            {overviewParagraphs.slice(1).map((paragraph, index) => (
+                              <p key={index} className="text-sm text-secondary leading-relaxed max-w-3xl">
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+                
+                {/* Longform Article (keep if exists, but styled more neatly) */}
+                {showLongform && longformMarkdown && (
+                  <div className="rounded-sm border border-border bg-white p-6 shadow-sm dark:bg-slate-900 prose prose-slate dark:prose-invert max-w-none text-sm">
+                    <LongformMarkdown markdown={longformMarkdown} />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                {/* Features List as a block */}
+                {showFeatures && compactFeatures.length > 0 && (
+                  <div className="rounded-sm border border-border bg-white p-5 shadow-sm dark:bg-slate-900">
+                    <h3 className="mb-4 text-lg font-bold">Key Features</h3>
+                    {featuresIntro && (
+                      <p className="mb-4 text-xs text-secondary">{featuresIntro}</p>
+                    )}
+                    <ul className="space-y-3">
+                      {compactFeatures.map((feature, index) => (
+                        <li key={`${feature}-${index}`} className="flex items-start gap-2 text-sm text-secondary">
+                          <span className="mt-[7px] inline-block h-1 w-1 shrink-0 rounded-full bg-primary" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Technical Notes as Callouts */}
+                {showTechnicalNote && compactTechnicalNotes.length > 0 && (
+                  <div className="rounded-sm border border-blue-200 bg-blue-50/50 p-5 dark:border-blue-900/50 dark:bg-blue-900/10">
+                    <h3 className="mb-3 text-sm font-bold text-blue-900 dark:text-blue-200 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Engineering Notes
+                    </h3>
+                    <ul className="space-y-3">
+                      {compactTechnicalNotes.map((note, index) => (
+                        <li key={`${note}-${index}`} className="flex items-start gap-2 text-xs text-blue-800 dark:text-blue-300">
+                          <span className="mt-[6px] inline-block h-1 w-1 shrink-0 rounded-full bg-blue-500" />
+                          <span>{note}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+
+
+      {/* 7. Engineering Resources (Downloads) - Moved Up! */}
+      {showDownloads && hasDownloadResources && (
+        <section id={documentationSectionId} className="py-8 md:py-10 bg-slate-50 border-b border-border dark:bg-slate-900/50 scroll-mt-24">
+          <div className="container">
+            <h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+              Engineering Resources
+            </h2>
+            <p className="mb-6 text-sm text-secondary">
+              Download available catalogs, datasheets, certificates, and CAD files.
             </p>
-            <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Media</h2>
-            <div className="space-y-10">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {downloadResources.map((resource) => {
+                const extension = resource.fileUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)?.[1]?.toUpperCase() || "FILE";
+                return (
+                  <div 
+                    key={resource._id} 
+                    className="group flex items-center justify-between rounded-sm border border-slate-200 bg-white p-3 hover:border-slate-300 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 transition-all"
+                  >
+                    {/* Left: Icon & Title */}
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-slate-100 text-slate-500 dark:bg-slate-800">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium text-slate-900 group-hover:text-primary transition-colors dark:text-slate-100 text-sm">
+                          {resource.title}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          {resource.version ? `v${resource.version} · ` : ""}{extension}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Right: Download */}
+                    <div className="shrink-0 pl-3">
+                      <a
+                        href={resource.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700 transition-colors"
+                        aria-label={`Download ${resource.title}`}
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 8. Related Resources & Media & FAQ */}
+      {mediaItems.length > 0 && (
+        <section className="py-10 md:py-16 bg-white border-b border-border">
+          <div className="container">
+            <h2 className="mb-6 text-xl font-bold md:text-2xl">Media Gallery</h2>
+            <div className="space-y-8">
               {mediaSections.map((section) =>
                 mediaGroups[section.key].length > 0 ? (
                   <div key={section.key}>
-                    <h3 className="mb-4 text-xl font-semibold">{section.title}</h3>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-secondary">{section.title}</h3>
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                       {mediaGroups[section.key].map((item, index) => (
-                        <div key={`${item.type}-${item.url}-${index}`} className="relative h-48 overflow-hidden rounded-sm border border-border bg-white">
+                        <div key={`${item.type}-${item.url}-${index}`} className="relative h-40 overflow-hidden rounded-sm border border-border bg-slate-50">
                           <Image
                             src={item.url}
                             alt={item.alt || `${family.name} - ${section.title} ${index + 1}`}
@@ -976,155 +1063,102 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
         </section>
       )}
 
-      {showBottomCta && (
-        <CTABanner
-          title="Need More Information?"
-          titleAs="p"
-          description="Our team is ready to help you find the right product for your application."
-          variant="primary"
-          primaryCTA={{
-            label: secondaryCTA.label,
-            href: secondaryCTA.href,
-          }}
-          secondaryCTA={{
-            label: primaryCTA.label,
-            href: primaryCTA.href,
-          }}
-        />
-      )}
-
-      {showDownloads && (
-        <section id={documentationSectionId} className="py-6 md:py-10 scroll-mt-24">
-          <div className="container">
-            <div className="w-full border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
-              <h2 className="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">
-                Engineering Resources
-              </h2>
-              <p className="mb-4 text-sm text-secondary">
-                Download available catalogs, datasheets, certificates, and CAD files for this family.
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {downloadResources.map((resource) => {
-                  const extension = resource.fileUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)?.[1]?.toUpperCase() || "FILE";
-                  return (
-                    <div 
-                      key={resource._id} 
-                      className="group flex items-center justify-between border border-slate-200 bg-white p-2 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800/80 transition-colors"
-                    >
-                      {/* Left: Icon & Title */}
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-100 text-slate-500 dark:bg-slate-800">
-                          <FileText className="h-4 w-4" />
-                        </div>
-                        <span className="truncate font-medium text-slate-900 group-hover:text-primary transition-colors dark:text-slate-100 text-sm">
-                          {resource.title}
-                        </span>
-                      </div>
-                      
-                      {/* Right: Version & Download */}
-                      <div className="flex items-center gap-4 shrink-0 pl-3">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
-                          {resource.version ? `v${resource.version} · ` : ""}{extension}
-                        </span>
-                        <a
-                          href={resource.fileUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700 transition-colors"
-                          aria-label={`Download ${resource.title}`}
-                        >
-                          <Download className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {showRelatedLinks &&
         ((family.relatedCategories && family.relatedCategories.length > 0) ||
           (family.relatedFamilies && family.relatedFamilies.length > 0) ||
           (family.relatedArticles && family.relatedArticles.length > 0)) && (
-          <section className="section bg-muted">
+          <section className="py-10 md:py-16 bg-slate-50 border-b border-border dark:bg-slate-900/50">
             <div className="container">
-              <div className="max-w-5xl">
-                <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Related Resources</h2>
-                <div className="grid gap-8 md:grid-cols-3">
-                  {family.relatedCategories && family.relatedCategories.length > 0 && (
-                    <div className="rounded-sm border border-border bg-white p-5">
-                      <h3 className="mb-3 text-xl font-semibold">Related Categories</h3>
-                      <div className="space-y-2">
-                        {family.relatedCategories.map((item) => (
-                          <Link
-                            key={item._id}
-                            href={categoryUrl(item.slug)}
-                            className="block text-primary hover:underline"
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
+              <h2 className="mb-6 text-xl font-bold md:text-2xl">Related Resources</h2>
+              <div className="grid gap-6 md:grid-cols-3">
+                {family.relatedCategories && family.relatedCategories.length > 0 && (
+                  <div className="rounded-sm border border-border bg-white p-5 shadow-sm dark:bg-slate-900">
+                    <h3 className="mb-3 text-sm font-semibold uppercase text-secondary">Categories</h3>
+                    <div className="space-y-2">
+                      {family.relatedCategories.map((item) => (
+                        <Link
+                          key={item._id}
+                          href={categoryUrl(item.slug)}
+                          className="block text-sm font-medium text-primary hover:underline"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {family.relatedFamilies && family.relatedFamilies.length > 0 && (
-                    <div className="rounded-sm border border-border bg-white p-5">
-                      <h3 className="mb-3 text-xl font-semibold">Related Families</h3>
-                      <div className="space-y-2">
-                        {family.relatedFamilies.map((item) => (
-                          <Link
-                            key={item._id}
-                            href={familyUrl(item.slug)}
-                            className="block text-primary hover:underline"
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
+                {family.relatedFamilies && family.relatedFamilies.length > 0 && (
+                  <div className="rounded-sm border border-border bg-white p-5 shadow-sm dark:bg-slate-900">
+                    <h3 className="mb-3 text-sm font-semibold uppercase text-secondary">Families</h3>
+                    <div className="space-y-2">
+                      {family.relatedFamilies.map((item) => (
+                        <Link
+                          key={item._id}
+                          href={familyUrl(item.slug)}
+                          className="block text-sm font-medium text-primary hover:underline"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {family.relatedArticles && family.relatedArticles.length > 0 && (
-                    <div className="rounded-sm border border-border bg-white p-5">
-                      <h3 className="mb-3 text-xl font-semibold">Related Articles</h3>
-                      <div className="space-y-2">
-                        {family.relatedArticles.map((item) => (
-                          <Link
-                            key={item._id}
-                            href={`/blog/${item.slug}`}
-                            className="block text-primary hover:underline"
-                          >
-                            {item.title}
-                          </Link>
-                        ))}
-                      </div>
+                {family.relatedArticles && family.relatedArticles.length > 0 && (
+                  <div className="rounded-sm border border-border bg-white p-5 shadow-sm dark:bg-slate-900">
+                    <h3 className="mb-3 text-sm font-semibold uppercase text-secondary">Articles</h3>
+                    <div className="space-y-2">
+                      {family.relatedArticles.map((item) => (
+                        <Link
+                          key={item._id}
+                          href={`/blog/${item.slug}`}
+                          className="block text-sm font-medium text-primary hover:underline"
+                        >
+                          {item.title}
+                        </Link>
+                      ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </section>
         )}
 
       {showFaq && faqItems.length > 0 && (
-        <section className="section border-y border-border">
+        <section className="py-12 md:py-16 bg-white border-b border-border">
           <div className="container">
             <div className="max-w-3xl mx-auto">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary text-center">
                 Technical FAQ
               </p>
-              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
+              <h2 className="mb-8 text-2xl font-bold md:text-3xl text-center">Frequently Asked Questions</h2>
               <FAQAccordion items={faqItems} />
             </div>
           </div>
         </section>
       )}
 
+      {/* 9. CTA Banner */}
+      {showBottomCta && (
+        <div className="py-4">
+          <CTABanner
+            title="Need More Information?"
+            titleAs="p"
+            description="Our team is ready to help you find the right product for your application."
+            variant="primary"
+            primaryCTA={{
+              label: secondaryCTA.label,
+              href: secondaryCTA.href,
+            }}
+            secondaryCTA={{
+              label: primaryCTA.label,
+              href: primaryCTA.href,
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }
