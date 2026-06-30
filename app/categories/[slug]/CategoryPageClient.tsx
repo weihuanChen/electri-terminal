@@ -3,7 +3,7 @@ import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
 import { categoryUrl, familyUrl } from "@/lib/routes";
 import CategoryContentTabs, { CategoryFilterSidebar } from "./CategoryPageControls";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText, Download } from "lucide-react";
 import {
   type CategoryContentView,
   type CategoryFilterState,
@@ -392,7 +392,7 @@ export default function CategoryPageClient({
       )}
 
       {category.children && category.children.length > 0 && (
-        <section className="section">
+        <section className="py-6 md:py-10">
           <div className="container">
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary mb-6">Subcategories</h2>
             <div className="flex flex-wrap gap-3">
@@ -451,9 +451,9 @@ export default function CategoryPageClient({
         </section>
       )}
 
-      <section className="section">
+      <section className="py-6 md:py-10">
         <div className="container">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             <CategoryFilterSidebar
               filterGroups={filterGroups}
               activeFilters={activeFilters}
@@ -463,7 +463,7 @@ export default function CategoryPageClient({
               collapsedFilterGroupKeys={collapsedFilterGroupKeys}
             />
 
-            <div className="flex-1 rounded-sm border border-border bg-white p-5 md:p-8 dark:bg-slate-900">
+            <div className="flex-1 rounded-none border border-border bg-white p-4 md:p-6 dark:bg-slate-900">
               <CategoryContentTabs
                 filterGroups={filterGroups}
                 activeFilters={activeFilters}
@@ -533,8 +533,240 @@ export default function CategoryPageClient({
         </div>
       </section>
 
+      {(cleanAboutIntroParagraphs.length > 0 || cleanOverviewKeyPoints.length > 0 || cleanTypesPoints.length > 0 || cleanApplicationsItems.length > 0 || cleanSelectionGuideSteps.length > 0) && (
+        <section className="py-6 md:py-10 bg-slate-50 dark:bg-slate-950/50 border-y border-border">
+          <div className="container">
+            <div className="mx-auto max-w-5xl">
+              <div className="border border-border bg-white p-5 shadow-sm dark:bg-slate-900 md:p-8">
+                <div className="mb-8 border-b border-border pb-5">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-primary">
+                    Engineering Guide
+                  </p>
+                  <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 md:text-4xl">
+                    {isRingTerminals ? "Ring Terminals Design Guide" : "Category Design Guide"}
+                  </h2>
+                </div>
+                
+                <div className="relative ml-2 md:ml-4">
+                  {/* Reading Axis */}
+                  <div className="absolute top-2 bottom-4 left-[11px] w-[2px] bg-slate-200 dark:bg-slate-800" />
+                  
+                  <div className="space-y-10">
+                    {/* Layer 1: Introduction */}
+                    {cleanAboutIntroParagraphs.length > 0 && (
+                      <div className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-slate-300 dark:border-slate-900 dark:bg-slate-700 shadow-sm" />
+                        <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          {isRingTerminals ? "What Are Ring Terminals?" : "Introduction"}
+                        </h3>
+                        <div className="prose prose-slate dark:prose-invert max-w-none text-base leading-7 text-slate-700 dark:text-slate-300">
+                          {cleanAboutIntroParagraphs.map((text, index) => (
+                            <p key={index} className="mb-4 last:mb-0">
+                              {text}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer 2: Features (Cards) */}
+                    {cleanOverviewKeyPoints.length > 0 && (
+                      <div className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-primary dark:border-slate-900 shadow-sm" />
+                        <h3 className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          Key Features
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {cleanOverviewKeyPoints.map((point, index) => (
+                            <div key={index} className="border border-slate-200 bg-slate-50 p-4 transition-shadow hover:shadow-sm dark:border-slate-800 dark:bg-slate-800/50">
+                              <p className="text-sm font-medium leading-relaxed text-slate-800 dark:text-slate-200">
+                                {point}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Layer 3: Types (Table) */}
+                    {cleanTypesPoints.length > 0 && (
+                      <div className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-slate-400 dark:border-slate-900 dark:bg-slate-600 shadow-sm" />
+                        <h3 className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          Available Types
+                        </h3>
+                        {isRingTerminals ? (
+                          <div className="overflow-hidden border border-slate-200 dark:border-slate-800">
+                            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                              <thead className="bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100">
+                                <tr>
+                                  <th className="px-5 py-3 font-semibold border-b border-slate-200 dark:border-slate-800">Type</th>
+                                  <th className="px-5 py-3 font-semibold border-b border-slate-200 dark:border-slate-800">Material</th>
+                                  <th className="px-5 py-3 font-semibold border-b border-slate-200 dark:border-slate-800">Insulation</th>
+                                  <th className="px-5 py-3 font-semibold border-b border-slate-200 dark:border-slate-800">Typical Use</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900/50">
+                                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+                                  <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">PVC</td>
+                                  <td className="px-5 py-3">Copper</td>
+                                  <td className="px-5 py-3">PVC</td>
+                                  <td className="px-5 py-3">General wiring</td>
+                                </tr>
+                                <tr className="bg-slate-50/50 hover:bg-slate-50 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 transition-colors">
+                                  <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">Nylon</td>
+                                  <td className="px-5 py-3">Copper</td>
+                                  <td className="px-5 py-3">Nylon</td>
+                                  <td className="px-5 py-3">Higher temperature</td>
+                                </tr>
+                                <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+                                  <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">Bare</td>
+                                  <td className="px-5 py-3">Copper</td>
+                                  <td className="px-5 py-3">None</td>
+                                  <td className="px-5 py-3">Industrial</td>
+                                </tr>
+                                <tr className="bg-slate-50/50 hover:bg-slate-50 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 transition-colors">
+                                  <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">Heavy Duty</td>
+                                  <td className="px-5 py-3">Copper</td>
+                                  <td className="px-5 py-3">None</td>
+                                  <td className="px-5 py-3">High Current</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {cleanTypesPoints.map((point, index) => (
+                              <div key={index} className="border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+                                <p className="text-sm text-slate-700 dark:text-slate-300">
+                                  {point}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Layer 4: Applications (Logo Wall / Grid) */}
+                    {(cleanApplicationsItems.length > 0 || cleanApplicationsParagraphs.length > 0) && (
+                      <div className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-indigo-500 dark:border-slate-900 shadow-sm" />
+                        <h3 className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          Applications
+                        </h3>
+                        {cleanApplicationsParagraphs.length > 0 && (
+                          <div className="mb-5 prose prose-slate dark:prose-invert max-w-none text-base text-slate-700 dark:text-slate-300">
+                            {cleanApplicationsParagraphs.map((text, index) => (
+                              <p key={index}>{text}</p>
+                            ))}
+                          </div>
+                        )}
+                        {cleanApplicationsItems.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {cleanApplicationsItems.map((item, index) => (
+                              <span key={index} className="inline-flex items-center border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-[0_1px_2px_rgba(0,0,0,0.05)] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 transition-colors hover:border-slate-300 dark:hover:border-slate-600">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Layer 5: Selection Flow (Vertical Stepper) */}
+                    {(cleanSelectionGuideSteps.length > 0 || cleanSelectionGuideParagraphs.length > 0) && (
+                      <div className="relative pl-10 md:pl-16 scroll-mt-20">
+                        <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-green-500 dark:border-slate-900 shadow-sm" />
+                        <h3 className="mb-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                          Selection Guide
+                        </h3>
+                        {cleanSelectionGuideParagraphs.length > 0 && (
+                          <div className="mb-6 prose prose-slate dark:prose-invert max-w-none text-base text-slate-700 dark:text-slate-300">
+                            {cleanSelectionGuideParagraphs.map((text, index) => (
+                              <p key={index}>{text}</p>
+                            ))}
+                          </div>
+                        )}
+                        {cleanSelectionGuideSteps.length > 0 && (
+                          <div className="space-y-4">
+                            {cleanSelectionGuideSteps.map((step, index) => (
+                              <div key={index} className="flex gap-4">
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-slate-100 text-sm font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                  {index + 1}
+                                </div>
+                                <div className="pt-1 text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
+                                  {step}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {showDownloads && (
+        <section className="py-6 md:py-10">
+          <div className="container">
+            <div className="w-full border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
+              <h2 className="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">
+                Engineering Resources
+              </h2>
+              <p className="mb-4 text-sm text-secondary">
+                Technical catalogs, selection guides and application documents.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {(category.resources || []).map((resource) => {
+                  const extension = resource.fileUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)?.[1]?.toUpperCase() || "FILE";
+                  return (
+                    <div 
+                      key={resource._id} 
+                      className="group flex items-center justify-between border border-slate-200 bg-white p-2 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800/80 transition-colors"
+                    >
+                      {/* Left: Icon & Title */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-100 text-slate-500 dark:bg-slate-800">
+                          <FileText className="h-4 w-4" />
+                        </div>
+                        <span className="truncate font-medium text-slate-900 group-hover:text-primary transition-colors dark:text-slate-100 text-sm">
+                          {resource.title}
+                        </span>
+                      </div>
+                      
+                      {/* Right: Version & Download */}
+                      <div className="flex items-center gap-4 shrink-0 pl-3">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          {resource.version ? `v${resource.version} · ` : ""}{extension}
+                        </span>
+                        <a
+                          href={resource.fileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700 transition-colors"
+                          aria-label={`Download ${resource.title}`}
+                        >
+                          <Download className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {showFaq && (
-        <section className="section bg-muted border-y border-border">
+        <section className="py-6 md:py-10 bg-muted border-y border-border">
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
@@ -544,77 +776,6 @@ export default function CategoryPageClient({
                 Frequently Asked Questions
               </h2>
               <FAQAccordion items={faqItems} />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {showDownloads && (
-        <section className="section">
-          <div className="container">
-            <div className="max-w-4xl rounded-sm border border-border bg-white p-6 md:p-8 dark:bg-slate-900">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Documentation
-              </p>
-              <h2 className="mb-4 text-3xl font-semibold text-slate-900 dark:text-slate-100">Documentation Support</h2>
-              <p className="mb-8 text-secondary">
-                Public files are listed below. Additional product documentation can be provided upon request.
-              </p>
-              <div className="space-y-4">
-                {(category.resources || []).map((resource) => (
-                  <DownloadCard
-                    key={resource._id}
-                    title={resource.title}
-                    type={resource.type}
-                    fileUrl={resource.fileUrl}
-                    previewImage={resource.previewImage}
-                    fileSize={resource.fileSize}
-                    language={resource.language}
-                    version={resource.version}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {aboutSections.length > 0 && (
-        <section className="section-compact">
-          <div className="container">
-            <div className="mx-auto max-w-[700px]">
-              <details className="group rounded-sm border border-border bg-white p-5 md:p-6 dark:bg-slate-900">
-                <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
-                  {isRingTerminals ? "About Ring Terminals" : "About This Category"}
-                  <span className="text-primary transition-transform duration-200 group-open:rotate-180">
-                    ▼
-                  </span>
-                </summary>
-                <div className="mt-5 space-y-4 text-sm leading-7 text-secondary">
-                  {aboutSections.map((section) => (
-                    <article key={section.title} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
-                      <h3 className="mb-2 text-base font-semibold text-slate-900 dark:text-slate-100">
-                        {section.title}
-                      </h3>
-                      {section.paragraphs.map((text, index) => (
-                        <p key={`${section.title}-p-${index}`} className="mb-2 last:mb-0">
-                          {text}
-                        </p>
-                      ))}
-                      {section.points.length > 0 && (
-                        <ul className="mt-2 space-y-1">
-                          {section.points.map((point, index) => (
-                            <li key={`${section.title}-point-${index}`} className="flex items-start gap-2">
-                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
-                              <span>{point}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              </details>
             </div>
           </div>
         </section>

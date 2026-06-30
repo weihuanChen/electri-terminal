@@ -1,7 +1,7 @@
 import { Breadcrumb, SKUTable, FAQAccordion, DownloadCard, CTABanner } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Download, FileText } from "lucide-react";
 import {
   resolveFamilyPageViewModel,
   resolveFamilyPrimaryImage,
@@ -994,29 +994,52 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
       )}
 
       {showDownloads && (
-        <section id={documentationSectionId} className="section bg-muted scroll-mt-24">
+        <section id={documentationSectionId} className="py-6 md:py-10 scroll-mt-24">
           <div className="container">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Documentation
-              </p>
-              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Documentation Support</h2>
-              <p className="mb-8 text-secondary">
+            <div className="w-full border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
+              <h2 className="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">
+                Engineering Resources
+              </h2>
+              <p className="mb-4 text-sm text-secondary">
                 Download available catalogs, datasheets, certificates, and CAD files for this family.
               </p>
-              <div className="space-y-4">
-                {downloadResources.map((resource) => (
-                  <DownloadCard
-                    key={resource._id}
-                    title={resource.title}
-                    type={resource.type}
-                    fileUrl={resource.fileUrl}
-                    previewImage={resource.previewImage}
-                    fileSize={resource.fileSize}
-                    language={resource.language}
-                    version={resource.version}
-                  />
-                ))}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {downloadResources.map((resource) => {
+                  const extension = resource.fileUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)?.[1]?.toUpperCase() || "FILE";
+                  return (
+                    <div 
+                      key={resource._id} 
+                      className="group flex items-center justify-between border border-slate-200 bg-white p-2 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:bg-slate-800/80 transition-colors"
+                    >
+                      {/* Left: Icon & Title */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-100 text-slate-500 dark:bg-slate-800">
+                          <FileText className="h-4 w-4" />
+                        </div>
+                        <span className="truncate font-medium text-slate-900 group-hover:text-primary transition-colors dark:text-slate-100 text-sm">
+                          {resource.title}
+                        </span>
+                      </div>
+                      
+                      {/* Right: Version & Download */}
+                      <div className="flex items-center gap-4 shrink-0 pl-3">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          {resource.version ? `v${resource.version} · ` : ""}{extension}
+                        </span>
+                        <a
+                          href={resource.fileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700 transition-colors"
+                          aria-label={`Download ${resource.title}`}
+                        >
+                          <Download className="h-3 w-3" />
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
