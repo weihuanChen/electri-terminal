@@ -799,19 +799,36 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                       <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Selection Workflow</h3>
                     </div>
                     <div className="space-y-0">
-                      {selectionStepsForRender.map((step, index) => (
-                        <div key={`${step}-${index}`} className="relative pl-10 pb-5 last:pb-0">
-                          {index < selectionStepsForRender.length - 1 && (
-                            <div className="absolute left-[11px] top-6 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-700" />
-                          )}
-                          <div className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600 border-2 border-white ring-2 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-900 dark:ring-slate-700 z-10">
-                            {index + 1}
+                      {selectionStepsForRender.map((step, index) => {
+                        const shortStep = step.split(':')[0].split('. ')[0].split(' - ')[0];
+                        const finalStep = shortStep.split(' ').length > 6 ? shortStep.split(' ').slice(0, 6).join(' ') + '...' : shortStep;
+                        return (
+                          <div
+                            key={`${step}-${index}`}
+                            className="group relative pl-10 pb-5 outline-none last:pb-0"
+                            tabIndex={0}
+                            aria-label={step}
+                          >
+                            {index < selectionStepsForRender.length - 1 && (
+                              <div className="absolute left-[11px] top-6 bottom-0 w-[2px] bg-slate-200 dark:bg-slate-700" />
+                            )}
+                            <div className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600 border-2 border-white ring-2 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-900 dark:ring-slate-700 z-10">
+                              {index + 1}
+                            </div>
+                            <div className="pt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                              <span className="truncate">{finalStep}</span>
+                              <div className="flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600 group-hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:group-hover:bg-slate-600">
+                                ?
+                              </div>
+                            </div>
+
+                            {/* Custom Tooltip */}
+                            <div className="pointer-events-none absolute left-10 top-7 z-50 w-max max-w-[240px] sm:max-w-[320px] md:max-w-md translate-y-1 rounded-sm border border-slate-200 bg-white px-3 py-2 text-xs font-medium leading-5 text-slate-700 opacity-0 shadow-lg transition duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200">
+                              <div className="whitespace-normal break-words">{step}</div>
+                            </div>
                           </div>
-                          <div className="pt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">
-                            {step}
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}

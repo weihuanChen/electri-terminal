@@ -9,7 +9,7 @@ type ExpandableHeroIntroProps = {
 };
 
 export default function ExpandableHeroIntro({ text, preview }: ExpandableHeroIntroProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const canExpand = text !== preview;
 
   return (
