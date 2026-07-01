@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { FileUp, X } from "lucide-react";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
 
 interface InquiryFormProps {
@@ -18,12 +19,16 @@ export default function InquiryForm({
 }: InquiryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     company: "",
-    country: "",
-    phone: "",
-    message: productName ? `I'm interested in ${productName}. ` : "",
+    message: "",
+  });
+  const [attachments, setAttachments] = useState<{
+    drawing: File | null;
+    bom: File | null;
+  }>({
+    drawing: null,
+    bom: null,
   });
 
   const handleChange = (
@@ -33,35 +38,55 @@ export default function InquiryForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "drawing" | "bom"
+  ) => {
+    setAttachments((prev) => ({ ...prev, [field]: e.target.files?.[0] ?? null }));
+  };
+
+  const removeFile = (field: "drawing" | "bom") => {
+    setAttachments((prev) => ({ ...prev, [field]: null }));
+  };
+
+  const formatFileSize = (size: number) => {
+    if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.email.trim() || !formData.message.trim()) {
       toast.error("Please fill in all required fields");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await submitPublicInquiry({
-        type: sourceType === "general" ? "general" : "product",
-        ...formData,
-        replyTo: formData.email,
-        sourceType,
-        sourceId,
-        sourcePage: window.location.pathname,
-      });
+      const payload = new FormData();
+      payload.append("type", sourceType === "general" ? "general" : "product");
+      payload.append("email", formData.email.trim());
+      payload.append("replyTo", formData.email.trim());
+      payload.append("name", formData.company.trim() || formData.email.trim());
+      payload.append("company", formData.company.trim());
+      payload.append("message", formData.message.trim());
+      payload.append("sourceType", sourceType);
+      payload.append("sourcePage", window.location.pathname);
+      if (sourceId) payload.append("sourceId", sourceId);
+      if (productName) payload.append("productName", productName);
+      if (attachments.drawing) payload.append("drawing", attachments.drawing);
+      if (attachments.bom) payload.append("bom", attachments.bom);
+
+      await submitPublicInquiry(payload);
 
       toast.success("Thank you for your inquiry. Our team will respond as soon as possible.");
       setFormData({
-        name: "",
         email: "",
         company: "",
-        country: "",
-        phone: "",
         message: "",
       });
+      setAttachments({ drawing: null, bom: null });
     } catch (error) {
       console.error("Failed to submit inquiry:", error);
       const message =
@@ -75,32 +100,14 @@ export default function InquiryForm({
   return (
     <div className="card">
       <div className="p-6 border-b border-border">
-        <h2 className="text-xl font-semibold">Send Inquiry</h2>
+        <h2 className="text-xl font-semibold">Request a Quote</h2>
         <p className="text-sm text-secondary mt-1">
-          Fill out the form below and our team will respond as soon as possible.
+          Share your requirement and attach drawings or BOM files if available.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-2">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              placeholder="Your name"
-            />
-          </div>
-
-          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
               Email <span className="text-red-500">*</span>
@@ -117,7 +124,6 @@ export default function InquiryForm({
             />
           </div>
 
-          {/* Company */}
           <div>
             <label htmlFor="company" className="block text-sm font-medium mb-2">
               Company
@@ -132,41 +138,8 @@ export default function InquiryForm({
               placeholder="Company name"
             />
           </div>
-
-          {/* Country */}
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium mb-2">
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              placeholder="Your country"
-            />
-          </div>
         </div>
 
-        {/* Phone */}
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium mb-2">
-            Phone
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-            placeholder="+1 (555) 000-0000"
-          />
-        </div>
-
-        {/* Message */}
         <div>
           <label htmlFor="message" className="block text-sm font-medium mb-2">
             Message <span className="text-red-500">*</span>
@@ -179,11 +152,61 @@ export default function InquiryForm({
             value={formData.message}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-vertical"
-            placeholder="Tell us about your requirements..."
+            placeholder={
+              productName
+                ? `Tell us about your requirements for ${productName}...`
+                : "Tell us about your requirements..."
+            }
           />
         </div>
 
-        {/* Submit Button */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {(["drawing", "bom"] as const).map((field) => {
+            const file = attachments[field];
+            const label = field === "drawing" ? "Attach Drawing" : "Attach BOM";
+
+            return (
+              <div key={field} className="rounded-sm border border-border bg-muted/40 p-3">
+                <label
+                  htmlFor={`rfq-${field}`}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                >
+                  <FileUp className="h-4 w-4" />
+                  {label}
+                </label>
+                <input
+                  key={file ? `${file.name}-${file.size}` : "empty"}
+                  id={`rfq-${field}`}
+                  name={field}
+                  type="file"
+                  className="sr-only"
+                  onChange={(e) => handleFileChange(e, field)}
+                  accept={
+                    field === "drawing"
+                      ? ".pdf,.dwg,.dxf,.step,.stp,.igs,.iges,.jpg,.jpeg,.png"
+                      : ".xlsx,.xls,.csv,.pdf"
+                  }
+                />
+                {file && (
+                  <div className="mt-3 flex items-center justify-between gap-3 text-xs text-secondary">
+                    <span className="min-w-0 truncate">
+                      {file.name} · {formatFileSize(file.size)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(field)}
+                      className="shrink-0 text-secondary transition-colors hover:text-red-600"
+                      aria-label={`Remove ${label}`}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
         <button
           type="submit"
           disabled={isSubmitting}

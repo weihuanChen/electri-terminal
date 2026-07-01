@@ -25,6 +25,7 @@ export interface PublicInquiryPayload {
   sourceType?: InquirySourceType;
   sourceId?: string;
   sourcePage?: string;
+  productName?: string;
   attachmentName?: string;
   items?: InquiryItemInput[];
 }

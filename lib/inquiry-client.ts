@@ -4,13 +4,16 @@ type InquiryApiError = {
   error?: string;
 };
 
-export async function submitPublicInquiry(payload: PublicInquiryPayload) {
+export async function submitPublicInquiry(payload: PublicInquiryPayload | FormData) {
+  const isFormData = payload instanceof FormData;
   const response = await fetch("/api/inquiries", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+    headers: isFormData
+      ? undefined
+      : {
+          "Content-Type": "application/json",
+        },
+    body: isFormData ? payload : JSON.stringify(payload),
   });
 
   if (response.ok) {

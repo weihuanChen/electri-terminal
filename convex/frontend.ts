@@ -381,6 +381,221 @@ function resolveFamilyHeroImage(family: {
   return resolveFamilyManualHeroImage(family) ?? resolveFamilyFallbackProductImage(family);
 }
 
+type RelatedSeriesLabel = "Single Crimp" | "Heat Shrink" | "Nylon" | "Non Insulated";
+
+const RELATED_SERIES_RULES: Array<{
+  label: RelatedSeriesLabel;
+  priority: number;
+  keywords: string[];
+  excludeKeywords?: string[];
+  preferredSlugs?: string[];
+}> = [
+  {
+    label: "Single Crimp",
+    priority: 100,
+    keywords: [
+      "single crimp",
+      "single crimp ring",
+      "vinyl insulated ring",
+      "vinyl insulated terminals",
+      "insulated ring terminals",
+    ],
+    excludeKeywords: ["double crimp", "heat shrink", "nylon", "non insulated"],
+    preferredSlugs: [
+      "single-crimp-ring-terminals",
+      "vinyl-insulated-ring-terminals",
+      "insulated-ring-terminals",
+    ],
+  },
+  {
+    label: "Heat Shrink",
+    priority: 80,
+    keywords: ["heat shrink", "heat shrink ring"],
+    preferredSlugs: ["heat-shrink-ring-terminals"],
+  },
+  {
+    label: "Nylon",
+    priority: 70,
+    keywords: ["nylon", "nylon ring", "nylon insulated"],
+    preferredSlugs: ["nylon-ring-terminals", "nylon-insulated-ring-terminals"],
+  },
+  {
+    label: "Non Insulated",
+    priority: 60,
+    keywords: [
+      "non insulated",
+      "non insulated ring",
+      "standard ring terminals",
+      "ring terminals standard type",
+    ],
+    excludeKeywords: ["heat shrink", "nylon"],
+    preferredSlugs: ["standard-ring-terminals", "non-insulated-ring-terminals"],
+  },
+];
+const MANUAL_RELATED_SERIES_LABELS: RelatedSeriesLabel[] = [
+  "Single Crimp",
+  "Heat Shrink",
+  "Nylon",
+  "Non Insulated",
+];
+
+function normalizeSeriesText(value: unknown) {
+  return String(value ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getFamilySearchText(family: any) {
+  return normalizeSeriesText([
+    family.name,
+    family.slug,
+    family.summary,
+    family.content,
+    JSON.stringify(family.attributes ?? {}),
+  ].filter(Boolean).join(" "));
+}
+
+function getRelatedSeriesRule(family: any) {
+  const searchText = getFamilySearchText(family);
+  return RELATED_SERIES_RULES.find((rule) =>
+    !(rule.excludeKeywords ?? []).some((keyword) =>
+      searchText.includes(normalizeSeriesText(keyword))
+    ) &&
+    rule.keywords.some((keyword) => searchText.includes(normalizeSeriesText(keyword)))
+  );
+}
+
+function toRelatedSeriesItem(family: any, label: RelatedSeriesLabel) {
+  return {
+    _id: family._id,
+    name: family.name,
+    slug: family.slug,
+    summary: family.summary,
+    image: resolveFamilyHeroImage(family),
+    relationLabel: label,
+  };
+}
+
+function dedupeRelatedSeriesItems(items: any[]) {
+  const seenLabels = new Set<string>();
+  const seenIds = new Set<string>();
+
+  return items.filter((item) => {
+    if (!item || seenLabels.has(item.relationLabel) || seenIds.has(item._id)) {
+      return false;
+    }
+    seenLabels.add(item.relationLabel);
+    seenIds.add(item._id);
+    return true;
+  });
+}
+
+async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
+  if (!family) return [];
+
+  const manualFamilies = family.pageConfig?.linking?.relatedFamilyIds?.length
+    ? await Promise.all(family.pageConfig.linking.relatedFamilyIds.map((id: any) => ctx.db.get(id)))
+    : [];
+
+  const manualItems = manualFamilies
+    .filter((item: any) => item && item.status === "published" && item._id !== family._id)
+    .map((item: any, index: number) => {
+      const rule = getRelatedSeriesRule(item);
+      const fallbackLabel = MANUAL_RELATED_SERIES_LABELS[index];
+      return rule || fallbackLabel
+        ? toRelatedSeriesItem(item, rule?.label ?? fallbackLabel)
+        : null;
+    })
+    .filter(Boolean);
+
+  if (manualItems.length > 0) {
+    return dedupeRelatedSeriesItems(manualItems).slice(0, 4);
+  }
+
+  const category = await ctx.db.get(product.categoryId);
+  const siblingCategories = category?.parentId
+    ? await ctx.db
+        .query("categories")
+        .withIndex("by_parentId", (q: any) => q.eq("parentId", category.parentId))
+        .collect()
+    : [];
+  const candidateCategoryIds = Array.from(
+    new Set(
+      [
+        category?.parentId,
+        product.categoryId,
+        ...siblingCategories
+          .filter((item: any) => item.status === "published")
+          .map((item: any) => item._id),
+      ]
+        .filter(Boolean)
+        .map(String)
+    )
+  );
+  const [familyBuckets, products] = await Promise.all([
+    Promise.all(
+      candidateCategoryIds.map((categoryId: any) =>
+        ctx.db
+          .query("productFamilies")
+          .withIndex("by_categoryId", (q: any) => q.eq("categoryId", categoryId))
+          .collect()
+      )
+    ),
+    ctx.db
+      .query("products")
+      .withIndex("by_categoryId", (q: any) => q.eq("categoryId", product.categoryId))
+      .collect(),
+  ]);
+  const families = Array.from(
+    new Map(familyBuckets.flat().map((item: any) => [item._id, item])).values()
+  );
+  const publishedProductCounts = new Map<string, number>();
+
+  for (const candidateProduct of products) {
+    if (candidateProduct.status !== "published") continue;
+    publishedProductCounts.set(
+      candidateProduct.familyId,
+      (publishedProductCounts.get(candidateProduct.familyId) ?? 0) + 1
+    );
+  }
+
+  const currentSearchText = getFamilySearchText(family);
+  const currentIsRingSeries = currentSearchText.includes("ring terminal");
+
+  return families
+    .filter((item: any) => item.status === "published")
+    .map((item: any) => {
+      const rule = getRelatedSeriesRule(item);
+      if (!rule) return null;
+
+      const searchText = getFamilySearchText(item);
+      const preferredSlugIndex = (rule.preferredSlugs ?? []).indexOf(item.slug);
+      const score =
+        rule.priority +
+        (preferredSlugIndex >= 0 ? 1000 - preferredSlugIndex * 25 : 0) +
+        (item._id === family._id ? 120 : 0) +
+        (item.categoryId === product.categoryId ? 20 : 0) +
+        (currentIsRingSeries && searchText.includes("ring terminal") ? 50 : 0) +
+        ((publishedProductCounts.get(item._id) ?? 0) > 0 ? 10 : 0) +
+        (resolveFamilyHeroImage(item) || item.summary ? 5 : 0);
+
+      return {
+        item: toRelatedSeriesItem(item, rule.label),
+        score,
+        sortOrder: item.sortOrder ?? 0,
+      };
+    })
+    .filter(Boolean)
+    .sort((left: any, right: any) => right.score - left.score || left.sortOrder - right.sortOrder)
+    .map((entry: any) => entry.item)
+    .filter((item: any, index: number, items: any[]) =>
+      items.findIndex((candidate: any) => candidate.relationLabel === item.relationLabel) === index
+    )
+    .slice(0, 4);
+}
+
 async function getCategoryFilters(ctx: any, categoryId: string) {
   const [fields, products, families] = await Promise.all([
     getTemplateFields(ctx, categoryId),
@@ -1311,6 +1526,7 @@ export const getProductBySlug = query({
       .query("productVariants")
       .withIndex("by_productId_sortOrder", (q) => q.eq("productId", product._id))
       .collect();
+    const relatedSeries = await getRelatedSeriesForProduct(ctx, product, family);
 
     return {
       ...omitBrand(product),
@@ -1324,6 +1540,7 @@ export const getProductBySlug = query({
       category,
       resources: await getRelatedAssets(ctx, "product", product._id),
       faqs: await getRelatedFaqs(ctx, "product", product._id),
+      relatedSeries,
       specificationFields,
       variants: variants
         .filter((variant) => variant.status === "published")

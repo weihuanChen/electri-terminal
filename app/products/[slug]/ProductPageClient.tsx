@@ -1,17 +1,13 @@
 import {
   Breadcrumb,
   ImageGallery,
-  SpecificationTable,
   VariantTable,
-  DownloadCard,
   FAQAccordion,
   InquiryForm,
   ProductCard,
-  CTABanner,
-  MarkdownRenderer,
 } from "@/components/shared";
 import Link from "next/link";
-import { CheckCircle2, FileText, Download } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileText, Download } from "lucide-react";
 import { resolveProductPageViewModel } from "@/lib/productPage";
 import { categoryUrl, familyUrl } from "@/lib/routes";
 import {
@@ -21,14 +17,17 @@ import {
 import { buildProductKeySpecifications } from "@/lib/productKeySpecifications";
 
 interface CategorySummary {
+  _id?: string;
   slug?: string;
   name?: string;
+  parentId?: string;
   description?: string;
   shortDescription?: string;
   seoDescription?: string;
 }
 
 interface FamilySummary {
+  _id?: string;
   slug: string;
   name: string;
   summary?: string;
@@ -80,10 +79,23 @@ interface ProductVariant {
   attributes?: Record<string, unknown>;
 }
 
+type RelatedSeriesLabel = "Single Crimp" | "Heat Shrink" | "Nylon" | "Non Insulated";
+
+interface RelatedSeriesItem {
+  _id: string;
+  name: string;
+  slug: string;
+  summary?: string;
+  image?: string;
+  relationLabel: RelatedSeriesLabel;
+}
+
 export interface ProductPageData {
   _id: string;
   title: string;
   shortTitle?: string;
+  categoryId?: string;
+  familyId?: string;
   skuCode: string;
   model: string;
   summary?: string;
@@ -101,6 +113,7 @@ export interface ProductPageData {
   faqs?: FaqItem[];
   specificationFields?: SpecificationField[];
   variants?: ProductVariant[];
+  relatedSeries?: RelatedSeriesItem[];
   category?: CategorySummary | null;
   family?: FamilySummary | null;
 }
@@ -109,18 +122,84 @@ interface ProductPageClientProps {
   product: ProductPageData;
 }
 
+const relatedSeriesDescriptions: Record<RelatedSeriesLabel, string> = {
+  "Single Crimp": "Simpler insulated construction for standard wiring and cost-focused projects.",
+  "Heat Shrink": "Sealed insulation path for moisture, vibration, and harsher installation environments.",
+  Nylon: "Abrasion-resistant insulation option for higher heat and tougher handling conditions.",
+  "Non Insulated": "Base copper terminal series for low-cost assemblies or separate insulation processes.",
+};
+
+function RelatedSeriesSection({ items }: { items: RelatedSeriesItem[] }) {
+  if (items.length === 0) return null;
+
+  return (
+    <section id="related-series" className="py-6 md:py-10 border-b border-border">
+      <div className="container">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
+              Related Series
+            </p>
+            <h2 className="text-2xl font-semibold md:text-3xl">Series Options</h2>
+          </div>
+          <p className="max-w-2xl text-sm leading-6 text-secondary md:text-right">
+            Compare nearby ring terminal series by crimp structure, insulation material, and protection level.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          {items.map((item, index) => (
+            <Link
+              key={item._id}
+              href={familyUrl(item.slug)}
+              className="group relative min-h-[190px] overflow-hidden rounded-sm border border-border bg-white p-4 transition-colors hover:border-primary dark:bg-slate-900"
+            >
+              {item.image && (
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-24 bg-cover bg-center opacity-15 transition-opacity group-hover:opacity-25"
+                  style={{ backgroundImage: `url(${item.image})` }}
+                />
+              )}
+              <div className="relative flex h-full flex-col">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <span className="inline-flex min-h-8 items-center rounded-sm border border-border bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-secondary">
+                    {item.relationLabel}
+                  </span>
+                  {index < items.length - 1 && (
+                    <ArrowRight className="hidden h-4 w-4 shrink-0 text-secondary md:block" />
+                  )}
+                </div>
+
+                <h3 className="line-clamp-2 text-lg font-semibold leading-6 transition-colors group-hover:text-primary">
+                  {item.name}
+                </h3>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-secondary">
+                  {item.summary || relatedSeriesDescriptions[item.relationLabel]}
+                </p>
+                <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-primary">
+                  View Series
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ProductPageClient({ product }: ProductPageClientProps) {
   const {
     heroTitle,
     heroSummary,
-    overviewContent,
     primaryCTA,
     secondaryCTA,
     faqItems,
     showDownloads,
     showFaq,
     showInquiry,
-    showBottomCta,
   } = resolveProductPageViewModel(product);
   const breadcrumbItems = [
     { label: "Categories", href: "/categories" },
@@ -138,47 +217,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
     defaultAlt: product.shortTitle || product.title,
   });
 
-  const specGroups = new Map<string, Array<{
-    label: string;
-    value: unknown;
-    displayPrecision?: number;
-    unitKey?: "mm" | "mm2" | "g" | "kg" | "v" | "a" | "c" | "awg" | "nm" | "pcs";
-    unit?: string;
-    fieldType?: "string" | "number" | "boolean" | "enum" | "array" | "range";
-  }>>();
-  for (const field of product.specificationFields || []) {
-    const value = product.attributes?.[field.fieldKey];
-    if (value === undefined || value === null || value === "") {
-      continue;
-    }
-    const groupName = field.groupName || "Technical Specifications";
-    const group = specGroups.get(groupName) || [];
-    group.push({
-      label: field.label,
-      value,
-      displayPrecision: field.displayPrecision,
-      unitKey: field.unitKey,
-      unit: field.unit,
-      fieldType: field.fieldType,
-    });
-    specGroups.set(groupName, group);
-  }
 
-  const specifications = [
-    {
-      groupName: "Basic Information",
-      attributes: [
-        { label: "Product Code", value: product.skuCode || product.model },
-        ...(product.moq ? [{ label: "Minimum Order Quantity", value: product.moq }] : []),
-        ...(product.leadTime ? [{ label: "Lead Time", value: product.leadTime }] : []),
-        ...(product.origin ? [{ label: "Country of Origin", value: product.origin }] : []),
-      ],
-    },
-    ...Array.from(specGroups.entries()).map(([groupName, attributes]) => ({
-      groupName,
-      attributes,
-    })),
-  ];
 
   const variantFields = (product.specificationFields || []).filter(
     (field: SpecificationField) =>
@@ -192,8 +231,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
   const hasVariants = (product.variants || []).length > 0 && variantFields.length > 0;
   const hasResources = showDownloads && (product.resources || []).length > 0;
   const keySpecifications = buildProductKeySpecifications(product);
-  const trimmedOverviewContent = overviewContent?.trim();
-  const showProductOverview = Boolean(trimmedOverviewContent);
+  const descriptionText = product.summary?.trim();
+  const showProductOverview = Boolean(descriptionText);
+  const relatedSeries = product.relatedSeries || [];
+  const hasRelatedSeries = relatedSeries.length > 0;
 
   const mockRelatedProducts: RelatedProduct[] = [];
 
@@ -205,7 +246,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </div>
       </div>
 
-      <section className="section bg-muted border-y border-border">
+      <section className="py-6 md:py-10 bg-muted border-y border-border">
         <div className="container">
           <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
             <div className="rounded-sm border border-border bg-white p-2 sm:p-4 md:p-5">
@@ -230,11 +271,11 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               <h1 className="mb-4 text-2xl font-semibold leading-tight md:text-4xl">{heroTitle}</h1>
 
               {heroSummary && (
-                <p className="mb-6 text-base leading-7 text-secondary md:text-lg">{heroSummary}</p>
+                <p className="mb-4 text-base leading-7 text-secondary md:text-lg">{heroSummary}</p>
               )}
 
               {keySpecifications.length > 0 && (
-                <div className="mb-6 border-y border-border py-4">
+                <div className="mb-4 border-y border-border py-4">
                   <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-secondary">Key Specifications</h3>
                   <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                     {keySpecifications.map((item) => (
@@ -259,7 +300,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
               )}
 
               {product.featureBullets && product.featureBullets.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-4">
                   <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-secondary">Features</h3>
                   <ul className="space-y-2">
                     {product.featureBullets.map((bullet, index) => (
@@ -299,9 +340,12 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     Overview
                   </a>
                 )}
-                <a href="#technical-data" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                  Specs
-                </a>
+                {hasRelatedSeries && (
+                  <a href="#related-series" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                    Series
+                  </a>
+                )}
+
                 {hasVariants && (
                   <a href="#variant-matrix" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     Variants
@@ -312,9 +356,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                     Docs
                   </a>
                 )}
-                <a href="#compliance" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                  Compliance
-                </a>
+
                 {showFaq && (
                   <a href="#technical-faq" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     FAQ
@@ -332,38 +374,30 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       </section>
 
       {showProductOverview && (
-        <section id="product-overview" className="section scroll-mt-24 border-b border-border">
+        <section id="product-overview" className="py-6 md:py-10 scroll-mt-24 border-b border-border">
           <div className="container">
             <div className="max-w-4xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Product Overview
               </p>
-              <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Description</h2>
-              <MarkdownRenderer content={trimmedOverviewContent || ""} />
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Description</h2>
+              <p className="text-base leading-7 text-secondary md:text-lg">
+                {descriptionText}
+              </p>
             </div>
           </div>
         </section>
       )}
 
-      <section id="technical-data" className="section scroll-mt-24 bg-muted">
-        <div className="container">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-            Technical Data
-          </p>
-          <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Specifications</h2>
-          <SpecificationTable specifications={specifications} />
-        </div>
-      </section>
-
       {hasVariants && (
-        <section id="variant-matrix" className="section scroll-mt-24 border-y border-border">
+        <section id="variant-matrix" className="py-6 md:py-10 scroll-mt-24 border-y border-border">
           <div className="container">
             <div className="max-w-7xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Variant Matrix
               </p>
               <h2 className="mb-3 text-2xl font-semibold md:text-3xl">Specification Table</h2>
-              <p className="text-secondary mb-8">
+              <p className="text-secondary mb-5">
                 Select the exact item number from the specification rows below when requesting a quote.
               </p>
               <VariantTable variants={product.variants || []} fields={variantFields} />
@@ -416,36 +450,18 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </section>
       )}
 
-      <section id="compliance" className="section scroll-mt-24">
-        <div className="container">
-          <div className="max-w-4xl">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Compliance
-            </p>
-            <h2 className="mb-6 text-2xl font-semibold md:text-3xl">Compliance Support</h2>
-            <div className="card p-6 md:p-8">
-              <p className="text-secondary leading-relaxed">
-                Certificates and compliance documents are available upon request for selected models.
-                Please include the item numbers and project requirements when contacting our team.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/contact#request-quote" className="btn btn-secondary">
-                  Submit RFQ with Item Numbers
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {hasRelatedSeries && <RelatedSeriesSection items={relatedSeries} />}
+
+
 
       {showFaq && (
-        <section id="technical-faq" className="section scroll-mt-24 bg-muted border-y border-border">
+        <section id="technical-faq" className="py-6 md:py-10 scroll-mt-24 bg-muted border-y border-border">
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 Technical FAQ
               </p>
-              <h2 className="mb-8 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
+              <h2 className="mb-5 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
               <FAQAccordion items={faqItems} />
             </div>
           </div>
@@ -453,10 +469,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       )}
 
       {mockRelatedProducts.length > 0 && (
-        <section className="section bg-muted">
+        <section className="py-6 md:py-10 bg-muted">
           <div className="container">
-            <h2 className="text-3xl font-semibold mb-8">Related Products</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <h2 className="text-3xl font-semibold mb-5">Related Products</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {mockRelatedProducts.map((relatedProduct) => (
                 <ProductCard
                   key={relatedProduct._id}
@@ -473,10 +489,10 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
       )}
 
       {showInquiry && (
-        <section id="inquiry-form" className="section">
+        <section id="inquiry-form" className="py-6 md:py-10">
           <div className="container">
             <div className="max-w-3xl mx-auto">
-              <div className="mb-8 text-center">
+              <div className="mb-5 text-center">
                 <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Request a Quote</h2>
                 <p className="text-secondary">
                   Fill out the form below and our sales team will respond as soon as possible.
@@ -490,22 +506,6 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
             </div>
           </div>
         </section>
-      )}
-
-      {showBottomCta && (
-        <CTABanner
-          title="Need Help Choosing?"
-          description="Our team of experts is ready to help you find the perfect solution."
-          variant="primary"
-          primaryCTA={{
-            label: "Contact Us",
-            href: "/contact",
-          }}
-          secondaryCTA={{
-            label: "Browse Products",
-            href: categoryUrl(product.category?.slug || ""),
-          }}
-        />
       )}
 
     </>
