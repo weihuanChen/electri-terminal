@@ -3,12 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Globe, Linkedin, Menu, Search, X } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  Globe,
+  Linkedin,
+  Menu,
+  Search,
+  X,
+} from "lucide-react";
 import { getSocialMediaDisplayLabel } from "@/lib/contactConfig";
 
 interface HeaderCategory {
   name: string;
   href: string;
+  children?: HeaderCategory[];
 }
 
 interface HeaderClientProps {
@@ -53,7 +62,10 @@ const STATIC_NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export default function HeaderClient({ productCategories, socialLink = null }: HeaderClientProps) {
+export default function HeaderClient({
+  productCategories,
+  socialLink = null,
+}: HeaderClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -68,6 +80,11 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
 
   const handleDropdownToggle = (itemName: string) => {
     setActiveDropdown((current) => (current === itemName ? null : itemName));
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    setActiveDropdown(null);
   };
 
   return (
@@ -98,45 +115,121 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
               <div
                 key={item.name}
                 className="relative"
-                onMouseEnter={() => item.children && setActiveDropdown(item.name)}
+                onMouseEnter={() =>
+                  item.children && setActiveDropdown(item.name)
+                }
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 {item.children?.length ? (
                   <>
                     <button
-                      className="flex items-center px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-blue-300"
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={activeDropdown === item.name}
+                      className="flex items-center px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-orange-500"
                       onClick={() => handleDropdownToggle(item.name)}
                     >
                       {item.name}
-                      <svg
+                      <ChevronDown
                         className={`ml-1 h-4 w-4 transition-transform ${
                           activeDropdown === item.name ? "rotate-180" : ""
                         }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      />
                     </button>
 
                     {activeDropdown === item.name && (
-                      <div className="absolute left-0 mt-0 w-56 bg-white border border-slate-200 shadow-lg">
-                        <div className="py-1">
-                          {item.children.map((child) => (
+                      <div className="absolute left-0 top-full z-50 pt-5">
+                        <div 
+                          className="w-[960px] max-w-[calc(100vw-2rem)] rounded-none bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] ring-1 ring-slate-200 border-t-4 border-t-orange-500 overflow-hidden"
+                        >
+                          {/* Header section */}
+                          <div 
+                            className="flex items-center justify-between bg-slate-100 px-8 py-4 border-b border-slate-200"
+                          >
                             <Link
-                              key={child.name}
-                              href={child.href}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              href={item.href}
+                              className="group inline-flex items-center gap-2 text-sm font-bold text-slate-950 hover:text-orange-600 transition-colors"
+                              onClick={() => setActiveDropdown(null)}
                             >
-                              {child.name}
+                              Explore All Products
+                              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </Link>
-                          ))}
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-slate-200 px-2.5 py-1 rounded-none">
+                              Categories
+                            </span>
+                          </div>
+
+                          {/* Content section */}
+                          <div className="max-h-[calc(100vh-140px)] overflow-y-auto p-8">
+                            <div className="grid grid-cols-12 gap-x-6 gap-y-8">
+                              {item.children.map((category) => {
+                                const hasChildren = Boolean(category.children?.length);
+                                const numChildren = category.children?.length ?? 0;
+                                
+                                // Dynamically allocate width based on how many subcategories there are.
+                                // 1-3 items = 1 inner column (takes 1/3 of row)
+                                // 4-6 items = 2 inner columns (takes 1/2 of row)
+                                // 7-9 items = 3 inner columns (takes 2/3 of row)
+                                // 10+ items = 4+ inner columns (takes full row)
+                                let colSpanClass = "col-span-4";
+                                if (numChildren > 3) colSpanClass = "col-span-6";
+                                if (numChildren > 6) colSpanClass = "col-span-8";
+                                if (numChildren > 9) colSpanClass = "col-span-12";
+
+                                return (
+                                  <div
+                                    key={category.href}
+                                    className={`min-w-0 ${colSpanClass}`}
+                                  >
+                                    <Link
+                                      href={category.href}
+                                      className="group flex items-center justify-between gap-3 border-b-2 border-slate-200 pb-3 text-base font-bold text-slate-950 hover:border-orange-500 transition-colors"
+                                      onClick={() => setActiveDropdown(null)}
+                                    >
+                                      <span className="truncate group-hover:text-orange-600 transition-colors">
+                                        {category.name}
+                                      </span>
+                                      <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition-all group-hover:text-orange-500 group-hover:translate-x-1" />
+                                    </Link>
+
+                                    {hasChildren ? (
+                                      <div
+                                        className={
+                                          category.children &&
+                                          category.children.length > 3
+                                            ? "mt-4 grid grid-rows-3 grid-flow-col auto-cols-fr gap-x-6 gap-y-0.5"
+                                            : "mt-4 space-y-0.5"
+                                        }
+                                      >
+                                        {category.children?.map((child) => (
+                                          <Link
+                                            key={child.href}
+                                            href={child.href}
+                                            className="group/link flex items-center gap-2 rounded-none px-2 py-1.5 text-sm font-medium text-slate-900 transition-all duration-200 hover:bg-orange-50 hover:text-orange-700 hover:shadow-sm hover:translate-x-1"
+                                            onClick={() =>
+                                              setActiveDropdown(null)
+                                            }
+                                          >
+                                            <div className="h-1.5 w-1.5 rounded-none bg-slate-400 transition-colors group-hover/link:bg-orange-500" />
+                                            {child.name}
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <Link
+                                        href={category.href}
+                                        className="mt-4 group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-500 hover:text-orange-600 transition-colors"
+                                        onClick={() => setActiveDropdown(null)}
+                                      >
+                                        Browse category
+                                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                                      </Link>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -144,7 +237,7 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
                 ) : (
                   <Link
                     href={item.href}
-                    className="block px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-blue-300"
+                    className="block px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-orange-500"
                   >
                     {item.name}
                   </Link>
@@ -156,14 +249,14 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
           <div className="flex items-center space-x-2">
             <Link
               href="/search"
-              className="p-2 text-slate-300 hover:text-blue-300 transition-colors"
+              className="p-2 text-slate-300 hover:text-orange-500 transition-colors"
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
             </Link>
 
             <button
-              className="hidden sm:flex p-2 text-slate-300 hover:text-blue-300 transition-colors items-center space-x-1"
+              className="hidden sm:flex p-2 text-slate-300 hover:text-orange-500 transition-colors items-center space-x-1"
               aria-label="Language switcher"
             >
               <Globe className="h-4 w-4" />
@@ -175,7 +268,7 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
                 href={socialLink.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center justify-center rounded-md border border-slate-700 p-2 text-slate-300 transition-colors hover:border-blue-400 hover:text-blue-300"
+                className="hidden sm:inline-flex items-center justify-center rounded-md border border-slate-700 p-2 text-slate-300 transition-colors hover:border-orange-500 hover:text-orange-500"
                 aria-label={getSocialMediaDisplayLabel(socialLink)}
                 title={getSocialMediaDisplayLabel(socialLink)}
               >
@@ -183,7 +276,10 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
               </a>
             )}
 
-            <Link href="/contact#request-quote" className="hidden sm:inline-flex btn btn-primary btn-sm">
+            <Link
+              href="/contact#request-quote"
+              className="hidden sm:inline-flex btn btn-primary btn-sm"
+            >
               Request Quote
             </Link>
 
@@ -192,7 +288,11 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
               onClick={() => setIsMenuOpen((open) => !open)}
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
@@ -211,7 +311,7 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
                   href={socialLink.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-blue-300"
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-orange-500"
                 >
                   <Linkedin className="h-4 w-4" />
                   {getSocialMediaDisplayLabel(socialLink)}
@@ -222,37 +322,54 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
                   {item.children?.length ? (
                     <>
                       <button
+                        type="button"
+                        aria-haspopup="menu"
+                        aria-expanded={activeDropdown === item.name}
                         className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium text-slate-100 hover:bg-slate-800"
                         onClick={() => handleDropdownToggle(item.name)}
                       >
                         {item.name}
-                        <svg
+                        <ChevronDown
                           className={`h-4 w-4 transition-transform ${
                             activeDropdown === item.name ? "rotate-180" : ""
                           }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+                        />
                       </button>
                       {activeDropdown === item.name && (
-                        <div className="mt-1 space-y-1 pl-4">
-                          {item.children.map((child) => (
-                            <Link
-                              key={child.name}
-                              href={child.href}
-                              className="block px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-blue-300"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              {child.name}
-                            </Link>
+                        <div className="mt-1 space-y-3 border-l border-slate-700 pl-3">
+                          <Link
+                            href={item.href}
+                            className="block px-3 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:text-orange-500"
+                            onClick={closeMenu}
+                          >
+                            Product Directory
+                          </Link>
+
+                          {item.children.map((category) => (
+                            <div key={category.href} className="space-y-1">
+                              <Link
+                                href={category.href}
+                                className="block px-3 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:text-orange-500"
+                                onClick={closeMenu}
+                              >
+                                {category.name}
+                              </Link>
+
+                              {category.children?.length ? (
+                                <div className="space-y-1 pl-3">
+                                  {category.children.map((child) => (
+                                    <Link
+                                      key={child.href}
+                                      href={child.href}
+                                      className="block px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-orange-500"
+                                      onClick={closeMenu}
+                                    >
+                                      {child.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
                           ))}
                         </div>
                       )}
@@ -260,8 +377,8 @@ export default function HeaderClient({ productCategories, socialLink = null }: H
                   ) : (
                     <Link
                       href={item.href}
-                      className="block px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-blue-300"
-                      onClick={() => setIsMenuOpen(false)}
+                      className="block px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-orange-500"
+                      onClick={closeMenu}
                     >
                       {item.name}
                     </Link>
