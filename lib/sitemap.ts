@@ -71,6 +71,7 @@ const STATIC_PAGE_ENTRIES: SitemapPageEntry[] = [
   { url: toAbsoluteSiteUrl("/resources"), changeFrequency: "weekly", priority: 0.8 },
   { url: toAbsoluteSiteUrl("/blog"), changeFrequency: "weekly", priority: 0.8 },
   { url: toAbsoluteSiteUrl("/contact"), changeFrequency: "monthly", priority: 0.6 },
+  { url: toAbsoluteSiteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.4 },
 ];
 
 function toDate(timestamp?: number) {

@@ -206,6 +206,12 @@ export default async function Footer() {
                 Documentation Requests
               </Link>
               <Link
+                href="/privacy-policy"
+                className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
                 href="/contact"
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
