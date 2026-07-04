@@ -3,11 +3,11 @@ import { loadAdminData } from "@/lib/convex-admin";
 import { DashboardLayout } from "../components/DashboardLayout";
 import { Plus, Edit2, FileText } from "lucide-react";
 import Link from "next/link";
-import { Doc } from "@/convex/_generated/dataModel";
 
 export default async function ArticlesPage() {
   await requireAdmin();
-  const { articles, categories, families, products } = await loadAdminData();
+  const { articles, authors } = await loadAdminData();
+  const authorById = new Map(authors.map((author) => [author._id, author]));
 
   const typeLabels: Record<string, string> = {
     blog: "博客",
@@ -47,9 +47,9 @@ export default async function ArticlesPage() {
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
-            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">博客</p>
+            <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">作者数</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {articles.filter((a) => a.type === "blog").length}
+              {authors.length}
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
@@ -71,7 +71,7 @@ export default async function ArticlesPage() {
               <FileText className="mx-auto h-12 w-12 text-zinc-300" />
               <p className="mt-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">暂无文章</p>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                点击"新建文章"创建第一篇文章
+                点击“新建文章”创建第一篇文章
               </p>
             </div>
           ) : (
@@ -87,6 +87,9 @@ export default async function ArticlesPage() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
                       摘要
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                      作者
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
                       状态
@@ -114,6 +117,11 @@ export default async function ArticlesPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-md truncate">
                         {article.excerpt || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
+                        {article.authorId && authorById.get(article.authorId.toString())
+                          ? authorById.get(article.authorId.toString())!.name
+                          : "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${

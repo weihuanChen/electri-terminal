@@ -25,7 +25,7 @@ export default async function EditArticlePage({
       maxItems: 5000,
     }).catch(() => ({ items: [] })),
   ]);
-  const { categories, families, products, assets } = adminData;
+  const { categories, authors, families, products, assets } = adminData;
 
   if (!article) {
     notFound();
@@ -41,6 +41,7 @@ export default async function EditArticlePage({
         <ArticleForm
           article={article}
           categories={categories}
+          authors={authors}
           families={families}
           products={products}
           assets={assets}

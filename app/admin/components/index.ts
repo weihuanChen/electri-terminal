@@ -7,4 +7,5 @@ export { QuickActions } from "./QuickActions";
 export { ActivityFeed } from "./ActivityFeed";
 export { Sidebar } from "./Sidebar";
 export { DashboardLayout } from "./DashboardLayout";
+export { AuthorForm } from "./AuthorForm";
 export { ProductDetailSections } from "./ProductDetailSections";

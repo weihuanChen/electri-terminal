@@ -1,6 +1,7 @@
 import * as articles from "./articles";
 import * as assets from "./assets";
 import * as attributeTemplates from "./attributeTemplates";
+import * as authors from "./authors";
 import * as categories from "./categories";
 import * as imports from "./imports";
 import * as inquiries from "./inquiries";
@@ -12,6 +13,7 @@ export {
   articles,
   assets,
   attributeTemplates,
+  authors,
   categories,
   imports,
   inquiries,
@@ -23,6 +25,7 @@ export {
 export * from "./articles";
 export * from "./assets";
 export * from "./attributeTemplates";
+export * from "./authors";
 export * from "./categories";
 export * from "./imports";
 export * from "./inquiries";

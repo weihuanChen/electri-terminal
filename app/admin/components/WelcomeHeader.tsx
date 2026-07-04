@@ -3,16 +3,19 @@ interface WelcomeHeaderProps {
     name: string;
     email: string;
   } | null;
+  currentTime: number;
   systemMessage?: string;
   onLogout?: () => void;
 }
 
 export function WelcomeHeader({
   user,
+  currentTime,
   systemMessage = "Manage your product catalog, content, and inquiries.",
 }: WelcomeHeaderProps) {
+  const currentDate = new Date(currentTime);
   const getGreeting = () => {
-    const hour = new Date().getHours();
+    const hour = currentDate.getUTCHours();
     if (hour < 12) return "Good morning";
     if (hour < 18) return "Good afternoon";
     return "Good evening";
@@ -54,7 +57,12 @@ export function WelcomeHeader({
             <div className="rounded-lg border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
               <p className="text-xs text-zinc-400 dark:text-zinc-500">Last Sync</p>
               <p className="mt-2 text-sm font-medium">
-                {new Date().toLocaleTimeString()}
+                {currentDate.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "UTC",
+                  timeZoneName: "short",
+                })}
               </p>
             </div>
             <div className="rounded-lg border border-white/10 bg-white/5 p-3 backdrop-blur-sm">

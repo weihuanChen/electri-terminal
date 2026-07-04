@@ -65,6 +65,16 @@ export interface AdminAssetWithRelations {
   }>;
 }
 
+export interface AdminAuthor {
+  _id: string;
+  name: string;
+  title?: string;
+  description?: string;
+  avatar?: string;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export interface AdminFaqWithRelations {
   _id: string;
   title: string;
@@ -180,7 +190,7 @@ export async function actionAdmin<T>(
 
 export async function loadAdminData() {
   try {
-    const [categories, families, products, articles, inquiries, importJobs, attributeTemplates, assets] =
+    const [categories, families, products, articles, authors, inquiries, importJobs, attributeTemplates, assets] =
       await Promise.all([
         queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
           limit: 100,
@@ -194,6 +204,9 @@ export async function loadAdminData() {
         }),
         queryAdmin<Doc<"articles">[]>("queries/modules/articles:listArticles", {
           limit: 100,
+        }),
+        queryAdmin<AdminAuthor[]>("queries/modules/authors:listAuthors", {
+          limit: 300,
         }),
         queryAdmin<Doc<"inquiries">[]>("queries/modules/inquiries:listInquiries", {
           limit: 100,
@@ -212,6 +225,7 @@ export async function loadAdminData() {
       families,
       products,
       articles,
+      authors,
       inquiries,
       importJobs,
       attributeTemplates,
@@ -222,6 +236,7 @@ export async function loadAdminData() {
       families: Doc<"productFamilies">[];
       products: Doc<"products">[];
       articles: Doc<"articles">[];
+      authors: AdminAuthor[];
       inquiries: Doc<"inquiries">[];
       importJobs: Doc<"importJobs">[];
       attributeTemplates: AdminAttributeTemplateSummary[];
@@ -234,6 +249,7 @@ export async function loadAdminData() {
       families: [],
       products: [],
       articles: [],
+      authors: [],
       inquiries: [],
       importJobs: [],
       attributeTemplates: [],
@@ -244,6 +260,7 @@ export async function loadAdminData() {
       families: Doc<"productFamilies">[];
       products: Doc<"products">[];
       articles: Doc<"articles">[];
+      authors: AdminAuthor[];
       inquiries: Doc<"inquiries">[];
       importJobs: Doc<"importJobs">[];
       attributeTemplates: AdminAttributeTemplateSummary[];
@@ -281,6 +298,10 @@ export async function getImportJobRows(id: string) {
 
 export async function getArticle(id: string) {
   return queryAdmin<Doc<"articles">>("queries/modules/articles:getArticleById", { id });
+}
+
+export async function getAuthor(id: string) {
+  return queryAdmin<AdminAuthor | null>("queries/modules/authors:getAuthorById", { id });
 }
 
 export async function getProductFamily(id: string) {

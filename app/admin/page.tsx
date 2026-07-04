@@ -70,7 +70,9 @@ export default async function AdminPage({
   const categoryMap = categoryLabelById(categories);
 
   // Calculate inquiry statistics
-  const today = new Date();
+  const now = new Date();
+  const currentTime = now.getTime();
+  const today = new Date(now);
   today.setHours(0, 0, 0, 0);
   const inquiriesToday = inquiries.filter(i => new Date(i._creationTime) >= today).length;
 
@@ -87,7 +89,7 @@ export default async function AdminPage({
       type: "product" as const,
       action: "created" as const,
       description: "New product UK-2.5B added to Terminal Blocks",
-      timestamp: Date.now() - 3600000,
+      timestamp: currentTime - 3600000,
       user: "Admin",
     },
     {
@@ -95,7 +97,7 @@ export default async function AdminPage({
       type: "article" as const,
       action: "published" as const,
       description: "Blog post 'How to Choose Terminal Blocks' published",
-      timestamp: Date.now() - 7200000,
+      timestamp: currentTime - 7200000,
       user: "Editor",
     },
     {
@@ -103,7 +105,7 @@ export default async function AdminPage({
       type: "import" as const,
       action: "completed" as const,
       description: "CSV import completed: 150 products processed",
-      timestamp: Date.now() - 14400000,
+      timestamp: currentTime - 14400000,
       user: "Admin",
     },
     {
@@ -111,7 +113,7 @@ export default async function AdminPage({
       type: "inquiry" as const,
       action: "updated" as const,
       description: "Inquiry from Acme Corp marked as resolved",
-      timestamp: Date.now() - 28800000,
+      timestamp: currentTime - 28800000,
       user: "Sales",
     },
     {
@@ -119,7 +121,7 @@ export default async function AdminPage({
       type: "category" as const,
       action: "created" as const,
       description: "New category 'DIN Rail Accessories' created",
-      timestamp: Date.now() - 43200000,
+      timestamp: currentTime - 43200000,
       user: "Admin",
     },
   ];
@@ -135,6 +137,7 @@ export default async function AdminPage({
         <WelcomeHeader
           user={{ name: "Admin", email: "admin@electripro.com" }}
           systemMessage="Manage your product catalog, content, inquiries, and import jobs."
+          currentTime={currentTime}
         />
 
         {/* Message Alerts */}
@@ -239,7 +242,7 @@ export default async function AdminPage({
 
         {/* Activity Feed */}
         <section>
-          <ActivityFeed activities={activities} limit={10} />
+          <ActivityFeed activities={activities} limit={10} referenceTime={currentTime} />
         </section>
       </div>
     </DashboardLayout>

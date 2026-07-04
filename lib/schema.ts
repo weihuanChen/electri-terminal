@@ -225,6 +225,7 @@ export function makeArticleSchema({
   image,
   publishedAt,
   updatedAt,
+  authorName,
 }: {
   slug: string;
   title: string;
@@ -232,6 +233,7 @@ export function makeArticleSchema({
   image?: string;
   publishedAt?: number;
   updatedAt?: number;
+  authorName?: string;
 }) {
   const normalizedImage = normalizeSchemaImage(image);
 
@@ -248,8 +250,8 @@ export function makeArticleSchema({
       url: toAbsoluteSiteUrl("/"),
     },
     author: {
-      "@type": "Organization",
-      name: "Electri Terminal",
+      "@type": authorName ? "Person" : "Organization",
+      name: authorName || "Electri Terminal",
     },
     datePublished: publishedAt ? new Date(publishedAt).toISOString() : undefined,
     dateModified: updatedAt ? new Date(updatedAt).toISOString() : undefined,

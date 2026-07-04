@@ -353,6 +353,7 @@ export async function createArticleAction(formData: FormData): Promise<ActionRes
   const type = str(formData, "type") as "blog" | "guide" | "faq" | "application";
   const title = str(formData, "title");
   const slug = str(formData, "slug");
+  const authorId = optionalStr(formData, "authorId") as Id<"authors"> | undefined;
 
   if (!type || !title || !slug) {
     return { ok: false, error: "required_fields_missing" };
@@ -364,6 +365,7 @@ export async function createArticleAction(formData: FormData): Promise<ActionRes
       type,
       title,
       slug,
+      authorId,
       excerpt: optionalStr(formData, "excerpt"),
       coverImage: optionalStr(formData, "coverImage"),
       content: optionalStr(formData, "content"),
@@ -856,6 +858,7 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
   const type = str(formData, "type") as "blog" | "guide" | "faq" | "application";
   const title = str(formData, "title");
   const slug = str(formData, "slug");
+  const authorId = optionalStr(formData, "authorId") as Id<"authors"> | undefined;
 
   if (!id || !type || !title || !slug) {
     return { ok: false, error: "required_fields_missing" };
@@ -869,6 +872,8 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
       type,
       title,
       slug,
+      authorId,
+      clearAuthor: !authorId && boolFromForm(formData, "clearAuthor"),
       excerpt: optionalStr(formData, "excerpt"),
       coverImage: optionalStr(formData, "coverImage"),
       content: optionalStr(formData, "content"),
@@ -892,6 +897,86 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
     if (typeof currentArticle?.slug === "string" && currentArticle.slug !== slug) {
       revalidatePath(`/blog/${currentArticle.slug}`);
     }
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+// Author management actions
+export async function createAuthorAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+
+  const name = str(formData, "name");
+
+  if (!name) {
+    return { ok: false, error: "required_fields_missing" };
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    await client.mutation("mutations/admin/authors:createAuthor", {
+      name,
+      title: optionalStr(formData, "title"),
+      description: optionalStr(formData, "description"),
+      avatar: optionalStr(formData, "avatar"),
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/authors");
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+export async function updateAuthorAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"authors">;
+  const name = str(formData, "name");
+
+  if (!id || !name) {
+    return { ok: false, error: "required_fields_missing" };
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    await client.mutation("mutations/admin/authors:updateAuthor", {
+      id,
+      name,
+      title: str(formData, "title"),
+      description: str(formData, "description"),
+      avatar: str(formData, "avatar"),
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/authors");
+    revalidatePath("/admin/articles");
+    revalidatePath("/blog");
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+export async function deleteAuthorAction(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"authors">;
+
+  if (!id) {
+    return { ok: false, error: "id_required" };
+  }
+
+  try {
+    const client = getAdminConvexClient();
+    await client.mutation("mutations/admin/authors:deleteAuthor", { id });
+
+    revalidatePath("/admin");
+    revalidatePath("/admin/authors");
+    revalidatePath("/admin/articles");
+    revalidatePath("/blog");
     return { ok: true };
   } catch (error: unknown) {
     return { ok: false, error: errorMessage(error) };

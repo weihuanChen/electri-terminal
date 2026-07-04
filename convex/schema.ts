@@ -338,10 +338,20 @@ export default defineSchema({
     .index("by_entityType_entityId", ["entityType", "entityId"])
     .index("by_asset_entity", ["assetId", "entityType", "entityId"]),
 
+  authors: defineTable({
+    name: v.string(),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_name", ["name"]),
+
   articles: defineTable({
     type: articleType,
     title: v.string(),
     slug: v.string(),
+    authorId: v.optional(v.id("authors")),
     excerpt: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     content: v.optional(v.string()),
@@ -360,6 +370,7 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_slug", ["slug"]) // enforce uniqueness in mutation
+    .index("by_authorId", ["authorId"])
     .index("by_type_status", ["type", "status"])
     .index("by_status_publishedAt", ["status", "publishedAt"])
     .searchIndex("search_title", {

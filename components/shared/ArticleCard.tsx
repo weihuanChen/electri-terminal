@@ -26,6 +26,7 @@ export default function ArticleCard({
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "UTC",
     });
   };
 

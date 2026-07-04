@@ -16,6 +16,7 @@ interface Article {
   type: "blog" | "guide" | "faq" | "application";
   title: string;
   slug: string;
+  authorId?: string;
   excerpt?: string;
   coverImage?: string;
   content?: string;
@@ -30,6 +31,13 @@ interface Article {
   seoTitle?: string;
   seoDescription?: string;
   canonical?: string;
+}
+
+interface Author {
+  _id: string;
+  name: string;
+  title?: string;
+  avatar?: string;
 }
 
 interface Category {
@@ -70,6 +78,7 @@ interface R2MetadataItem {
 interface ArticleFormProps {
   article?: Article;
   categories?: Category[];
+  authors?: Author[];
   families?: Family[];
   products?: Product[];
   assets?: Asset[];
@@ -123,6 +132,7 @@ function normalizeArticleSaveError(message: string) {
 export function ArticleForm({
   article,
   categories = [],
+  authors = [],
   families = [],
   products = [],
   assets = [],
@@ -138,6 +148,7 @@ export function ArticleForm({
     type: article?.type || "blog" as const,
     title: article?.title || "",
     slug: article?.slug || "",
+    authorId: article?.authorId || "",
     excerpt: article?.excerpt || "",
     coverImage: article?.coverImage || "",
     content: article?.content || "",
@@ -219,6 +230,11 @@ export function ArticleForm({
       formDataToSend.append("type", formData.type);
       formDataToSend.append("title", formData.title);
       formDataToSend.append("slug", formData.slug);
+      if (formData.authorId) {
+        formDataToSend.append("authorId", formData.authorId);
+      } else if (isEdit) {
+        formDataToSend.append("clearAuthor", "true");
+      }
 
       // Optional fields
       if (formData.excerpt) formDataToSend.append("excerpt", formData.excerpt);
@@ -380,7 +396,7 @@ export function ArticleForm({
             />
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               状态
             </label>
@@ -394,6 +410,25 @@ export function ArticleForm({
               <option value="draft">草稿</option>
               <option value="published">已发布</option>
               <option value="archived">已归档</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              作者
+            </label>
+            <select
+              value={formData.authorId}
+              onChange={(e) => setFormData({ ...formData, authorId: e.target.value })}
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
+            >
+              <option value="">未选择作者</option>
+              {authors.map((author) => (
+                <option key={author._id} value={author._id}>
+                  {author.name}
+                  {author.title ? ` - ${author.title}` : ""}
+                </option>
+              ))}
             </select>
           </div>
 

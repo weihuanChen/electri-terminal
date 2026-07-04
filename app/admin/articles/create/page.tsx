@@ -5,7 +5,7 @@ import { ArticleForm } from "../../components/ArticleForm";
 
 export default async function CreateArticlePage() {
   await requireAdmin();
-  const [{ categories, families, products, assets }, r2Data] = await Promise.all([
+  const [{ categories, authors, families, products, assets }, r2Data] = await Promise.all([
     loadAdminData(),
     actionAdmin<{
       items: Array<{
@@ -28,6 +28,7 @@ export default async function CreateArticlePage() {
         </div>
         <ArticleForm
           categories={categories}
+          authors={authors}
           families={families}
           products={products}
           assets={assets}

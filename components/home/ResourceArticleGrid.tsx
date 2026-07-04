@@ -75,7 +75,12 @@ export default function ResourceArticleGrid({
                   {article.publishedAt && (
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {new Date(article.publishedAt).toLocaleDateString()}
+                      {new Date(article.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        timeZone: "UTC",
+                      })}
                     </span>
                   )}
                   {article.readTime && (

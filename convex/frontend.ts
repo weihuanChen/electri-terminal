@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import type { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
 import { getExpandedTemplateFieldsByCategoryId } from "./lib/attributes";
 import {
   DEFAULT_CONTACT_SETTINGS,
@@ -88,6 +90,52 @@ async function getRelatedFaqs(ctx: any, entityType: "category" | "family" | "pro
     }
     return (article.relatedProductIds ?? []).some((id: any) => id === entityId);
   });
+}
+
+type PublicAuthor = Pick<
+  Doc<"authors">,
+  "_id" | "name" | "title" | "description" | "avatar"
+>;
+
+function toPublicAuthor(author: Doc<"authors"> | null): PublicAuthor | null {
+  if (!author) return null;
+
+  return {
+    _id: author._id,
+    name: author.name,
+    title: author.title,
+    description: author.description,
+    avatar: author.avatar,
+  };
+}
+
+async function getArticleAuthor(
+  ctx: QueryCtx,
+  article?: Pick<Doc<"articles">, "authorId"> | null
+) {
+  if (!article?.authorId) return null;
+  const author = await ctx.db.get(article.authorId);
+  return toPublicAuthor(author);
+}
+
+async function attachArticleAuthors(ctx: QueryCtx, articles: Doc<"articles">[]) {
+  const authorIds = Array.from(
+    new Set(
+      articles.flatMap((article) => (article.authorId ? [article.authorId] : []))
+    )
+  ) as Id<"authors">[];
+
+  const authors = await Promise.all(authorIds.map((authorId) => ctx.db.get(authorId)));
+  const authorById = new Map<string, PublicAuthor | null>(
+    authors
+      .filter((author): author is Doc<"authors"> => Boolean(author))
+      .map((author) => [String(author._id), toPublicAuthor(author)])
+  );
+
+  return articles.map((article) => ({
+    ...article,
+    author: article.authorId ? authorById.get(String(article.authorId)) ?? null : null,
+  }));
 }
 
 async function getLinkedFamilyRelations(ctx: any, family: any) {
@@ -920,13 +968,15 @@ export const listLatestArticles = query({
       )
       .collect();
 
-    return articles
+    const latestArticles = articles
       .sort((a, b) => {
         const aTime = a.publishedAt ?? a.createdAt;
         const bTime = b.publishedAt ?? b.createdAt;
         return bTime - aTime;
       })
       .slice(0, limit);
+
+    return await attachArticleAuthors(ctx, latestArticles);
   },
 });
 
@@ -1200,10 +1250,13 @@ export const listApplicationArticles = query({
       .withIndex("by_type_status", (q) => q.eq("type", "application").eq("status", "published"))
       .collect();
 
-    return applications
+    const slicedApplications = applications
       .sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt))
-      .slice(0, limit)
-      .map((item) => ({
+      .slice(0, limit);
+
+    const applicationsWithAuthors = await attachArticleAuthors(ctx, slicedApplications);
+
+    return applicationsWithAuthors.map((item) => ({
         ...item,
         productCount: item.relatedProductIds?.length ?? 0,
       }));
@@ -1568,20 +1621,23 @@ export const getArticleBySlug = query({
 
     if (!article) return null;
 
-    const relatedProducts = article.relatedProductIds
-      ? (
-          await Promise.all(article.relatedProductIds.map((productId) => ctx.db.get(productId)))
-        ).filter(Boolean).map((product) => omitBrand(product))
-      : [];
-
-    const relatedFamilies = article.relatedFamilyIds
-      ? (
-          await Promise.all(article.relatedFamilyIds.map((familyId) => ctx.db.get(familyId)))
-        ).filter(Boolean).map((family) => omitBrand(family))
-      : [];
+    const [author, relatedProducts, relatedFamilies] = await Promise.all([
+      getArticleAuthor(ctx, article),
+      article.relatedProductIds
+        ? (
+            await Promise.all(article.relatedProductIds.map((productId) => ctx.db.get(productId)))
+          ).filter(Boolean).map((product) => omitBrand(product))
+        : [],
+      article.relatedFamilyIds
+        ? (
+            await Promise.all(article.relatedFamilyIds.map((familyId) => ctx.db.get(familyId)))
+          ).filter(Boolean).map((family) => omitBrand(family))
+        : [],
+    ]);
 
     return {
       ...article,
+      author,
       relatedProducts,
       relatedFamilies,
     };
@@ -1681,7 +1737,7 @@ export const listRelatedArticlesBySlug = query({
     const rankedArticles = scoredArticles.filter((item) => item.score > 0).map((item) => item.candidate);
     const fallbackArticles = scoredArticles.filter((item) => item.score <= 0).map((item) => item.candidate);
 
-    return [...rankedArticles, ...fallbackArticles].slice(0, limit);
+    return await attachArticleAuthors(ctx, [...rankedArticles, ...fallbackArticles].slice(0, limit));
   },
 });
 

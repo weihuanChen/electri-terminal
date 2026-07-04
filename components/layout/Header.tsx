@@ -1,7 +1,25 @@
 import HeaderClient from "./HeaderClient";
 import { getEnabledSocialMediaLinks } from "@/lib/contactConfig";
 import { categoryUrl } from "@/lib/routes";
-import { getHeaderNavigation, getPublicContactSettings } from "@/lib/publicData";
+import type { NavigationCategoryTree } from "@/lib/publicData";
+import {
+  getHeaderNavigation,
+  getPublicContactSettings,
+} from "@/lib/publicData";
+
+interface HeaderCategory {
+  name: string;
+  href: string;
+  children: HeaderCategory[];
+}
+
+function toHeaderCategory(category: NavigationCategoryTree): HeaderCategory {
+  return {
+    name: category.name,
+    href: categoryUrl(category.slug),
+    children: category.children.map(toHeaderCategory),
+  };
+}
 
 export default async function Header() {
   const [categories, contactSettings] = await Promise.all([
@@ -10,15 +28,12 @@ export default async function Header() {
   ]);
   const socialLinks = getEnabledSocialMediaLinks(contactSettings);
   const linkedInLink = socialLinks.find(
-    (item) => item.platform.trim().toLowerCase() === "linkedin"
+    (item) => item.platform.trim().toLowerCase() === "linkedin",
   );
 
   return (
     <HeaderClient
-      productCategories={categories.map((category) => ({
-        name: category.name,
-        href: categoryUrl(category.slug),
-      }))}
+      productCategories={categories.map(toHeaderCategory)}
       socialLink={
         linkedInLink
           ? {

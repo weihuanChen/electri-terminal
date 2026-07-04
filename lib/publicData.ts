@@ -10,9 +10,57 @@ export interface NavigationCategory {
   _id: string;
   slug: string;
   name: string;
+  parentId?: string | null;
   level: number;
   sortOrder: number;
   isVisibleInNav: boolean;
+}
+
+export interface NavigationCategoryTree extends NavigationCategory {
+  children: NavigationCategoryTree[];
+}
+
+function buildNavigationTree(
+  categories: NavigationCategory[],
+): NavigationCategoryTree[] {
+  const visibleCategories: NavigationCategoryTree[] = categories
+    .filter((category) => category.isVisibleInNav)
+    .map((category) => ({
+      ...category,
+      parentId: category.parentId ? category.parentId.toString() : null,
+      children: [],
+    }));
+
+  const categoriesById = new Map(
+    visibleCategories.map((category) => [category._id.toString(), category]),
+  );
+  const rootCategories: NavigationCategoryTree[] = [];
+
+  for (const category of visibleCategories) {
+    const parent = category.parentId
+      ? categoriesById.get(category.parentId)
+      : null;
+
+    if (parent && category.level > 0) {
+      parent.children.push(category);
+    } else if (category.level === 0 || !category.parentId) {
+      rootCategories.push(category);
+    }
+  }
+
+  const sortTree = (items: NavigationCategoryTree[]) => {
+    items.sort(
+      (left, right) =>
+        left.sortOrder - right.sortOrder || left.name.localeCompare(right.name),
+    );
+    for (const item of items) {
+      sortTree(item.children);
+    }
+  };
+
+  sortTree(rootCategories);
+
+  return rootCategories;
 }
 
 export interface ProductsHubCategory {
@@ -76,16 +124,17 @@ export interface HomePageData {
 
 export const getHeaderNavigation = unstable_cache(
   async () => {
-    const categories = (await getAdminConvexClient().query("frontend:listCategoriesForPublic", {
-      limit: 20,
-    })) as NavigationCategory[];
+    const categories = (await getAdminConvexClient().query(
+      "frontend:listCategoriesForPublic",
+      {
+        limit: 100,
+      },
+    )) as NavigationCategory[];
 
-    return categories
-      .filter((category) => category.isVisibleInNav && category.level === 0)
-      .sort((left, right) => left.sortOrder - right.sortOrder);
+    return buildNavigationTree(categories);
   },
-  ["header-navigation"],
-  { revalidate: 3600 }
+  ["header-navigation-v2"],
+  { revalidate: 3600 },
 );
 
 export const getProductsHubData = unstable_cache(
@@ -96,19 +145,20 @@ export const getProductsHubData = unstable_cache(
     })) as ProductsHubData;
   },
   ["products-hub-data-v2"],
-  { revalidate: 3600 }
+  { revalidate: 3600 },
 );
 
 export const getPublicContactSettings = unstable_cache(
   async (): Promise<PublicContactSettings> => {
-    const rawSettings = (await getAdminConvexClient().query("frontend:getPublicContactSettings", {})) as
-      | Partial<PublicContactSettings>
-      | null;
+    const rawSettings = (await getAdminConvexClient().query(
+      "frontend:getPublicContactSettings",
+      {},
+    )) as Partial<PublicContactSettings> | null;
 
     return normalizePublicContactSettings(rawSettings);
   },
   ["public-contact-settings"],
-  { revalidate: 3600 }
+  { revalidate: 3600 },
 );
 
 export const getHomePageData = unstable_cache(
@@ -124,9 +174,10 @@ export const getHomePageData = unstable_cache(
         getAdminConvexClient().query("frontend:listApplicationArticles", {
           limit: 8,
         }) as Promise<HomePageApplicationArticle[]>,
-        getAdminConvexClient().query("frontend:getPublicContactSettings", {}) as Promise<
-          Partial<PublicContactSettings> | null
-        >,
+        getAdminConvexClient().query(
+          "frontend:getPublicContactSettings",
+          {},
+        ) as Promise<Partial<PublicContactSettings> | null>,
       ]);
 
     return {
@@ -137,5 +188,5 @@ export const getHomePageData = unstable_cache(
     };
   },
   ["home-page-data-v1"],
-  { revalidate: 3600 }
+  { revalidate: 3600 },
 );

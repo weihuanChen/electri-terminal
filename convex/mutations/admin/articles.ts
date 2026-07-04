@@ -12,6 +12,7 @@ export const createArticle = mutation({
     type: articleType,
     title: v.string(),
     slug: v.string(),
+    authorId: v.optional(v.id("authors")),
     excerpt: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     content: v.optional(v.string()),
@@ -46,6 +47,8 @@ export const updateArticle = mutation({
     type: v.optional(articleType),
     title: v.optional(v.string()),
     slug: v.optional(v.string()),
+    authorId: v.optional(v.id("authors")),
+    clearAuthor: v.optional(v.boolean()),
     excerpt: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     content: v.optional(v.string()),
@@ -75,6 +78,11 @@ export const updateArticle = mutation({
         ...(args.type !== undefined ? { type: args.type } : {}),
         ...(args.title !== undefined ? { title: args.title } : {}),
         ...(args.slug !== undefined ? { slug: args.slug } : {}),
+        ...(args.authorId !== undefined
+          ? { authorId: args.authorId }
+          : args.clearAuthor
+            ? { authorId: undefined }
+            : {}),
         ...(args.excerpt !== undefined ? { excerpt: args.excerpt } : {}),
         ...(args.coverImage !== undefined ? { coverImage: args.coverImage } : {}),
         ...(args.content !== undefined ? { content: args.content } : {}),
@@ -125,7 +133,10 @@ export const bulkUpdateArticles = mutation({
   },
   handler: async (ctx, args) => {
     for (const id of args.ids) {
-      const updateData: any = {};
+      const updateData: {
+        status?: "draft" | "published" | "archived";
+        type?: "blog" | "guide" | "faq" | "application";
+      } = {};
       if (args.updates.status !== undefined) {
         updateData.status = args.updates.status;
       }

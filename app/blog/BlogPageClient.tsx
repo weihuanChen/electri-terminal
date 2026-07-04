@@ -3,12 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Clock3, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Clock3, Search, UserRound } from "lucide-react";
 
 import { Breadcrumb } from "@/components/shared";
 import { getBlogPagePath } from "@/lib/blogPagination";
 
 type ArticleType = "blog" | "guide" | "faq" | "application";
+
+type BlogAuthor = {
+  _id: string;
+  name: string;
+  title?: string;
+  avatar?: string;
+};
 
 type BlogArticle = {
   _id: string;
@@ -24,6 +31,8 @@ type BlogArticle = {
   updatedAt?: number;
   createdAt: number;
   readingMinutes?: number;
+  authorId?: string;
+  author?: BlogAuthor | null;
 };
 
 const ARTICLE_TYPES: ArticleType[] = ["guide", "blog", "faq", "application"];
@@ -62,6 +71,7 @@ function formatUpdatedDate(article: BlogArticle) {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   }).format(new Date(date));
 }
 
@@ -78,6 +88,10 @@ function getReadTime(article: BlogArticle) {
   const wordCount = rawText ? rawText.split(/\s+/).filter(Boolean).length : 0;
   const minutes = wordCount > 0 ? Math.max(1, Math.ceil(wordCount / 220)) : 5;
   return `${minutes} min read`;
+}
+
+function getAuthorName(article: BlogArticle) {
+  return article.author?.name || "Electri Terminal Team";
 }
 
 function ArticleBadge({ type }: { type: ArticleType }) {
@@ -119,7 +133,12 @@ function DenseArticleCard({ article }: { article: BlogArticle }) {
           {article.excerpt || "Technical guidance, practical setup notes, and field-ready tips."}
         </p>
 
-        <div className="mt-auto flex items-center gap-2 pt-4 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="mt-auto flex flex-wrap items-center gap-2 pt-4 text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1">
+            <UserRound className="h-3.5 w-3.5" />
+            {getAuthorName(article)}
+          </span>
+          <span className="text-slate-300 dark:text-slate-600">·</span>
           <span className="inline-flex items-center gap-1">
             <Clock3 className="h-3.5 w-3.5" />
             {getReadTime(article)}
@@ -169,7 +188,12 @@ function FeaturedMainCard({ article }: { article: BlogArticle }) {
         <p className="mt-2 line-clamp-1 text-sm text-slate-500 dark:text-slate-400">
           {article.excerpt || "Featured technical guide with practical selection and implementation notes."}
         </p>
-        <div className="mt-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1">
+            <UserRound className="h-3.5 w-3.5" />
+            {getAuthorName(article)}
+          </span>
+          <span className="text-slate-300 dark:text-slate-600">·</span>
           <span className="inline-flex items-center gap-1">
             <Clock3 className="h-3.5 w-3.5" />
             {getReadTime(article)}
@@ -453,6 +477,8 @@ export default function BlogPageClient({
       article.excerpt ?? "",
       article.content ?? "",
       (article.tagNames ?? []).join(" "),
+      article.author?.name ?? "",
+      article.author?.title ?? "",
       TYPE_LABEL[article.type],
     ]
       .join(" ")

@@ -26,10 +26,19 @@ interface RelatedArticle {
   publishedAt?: number;
 }
 
+interface ArticleAuthor {
+  _id: string;
+  name: string;
+  title?: string;
+  description?: string;
+  avatar?: string;
+}
+
 export interface ArticlePageData {
   _id: string;
   title: string;
   type: string;
+  author?: ArticleAuthor | null;
   excerpt?: string;
   content?: string;
   coverImage?: string;
@@ -570,6 +579,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "UTC",
     });
   };
 
@@ -610,6 +620,11 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
     secondRelatedSectionKey
   );
   const resolvedRelatedArticles = (relatedArticles ?? []).filter((item) => item.slug !== slug).slice(0, 3);
+  const authorName = article.author?.name || "Electri Terminal Team";
+  const authorTitle = article.author?.title || "Editorial Team";
+  const shouldShowAuthorBio = Boolean(
+    article.author && (article.author.description || article.author.avatar || article.author.title)
+  );
   const usedSectionKeys = new Set<SectionProductKey>();
   const sectionRenderData = markdownSections.map((section) => {
     if (!isWireTerminalGuide) {
@@ -729,7 +744,12 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
               </div>
               <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
                 <User className="h-4 w-4" />
-                <span>Electri Terminal Team</span>
+                <span className="min-w-0">
+                  <span className="block truncate">{authorName}</span>
+                  {authorTitle && (
+                    <span className="block truncate text-xs text-secondary">{authorTitle}</span>
+                  )}
+                </span>
               </div>
             </div>
 
@@ -741,6 +761,36 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 64rem"
                   className="object-cover"
                 />
+              </div>
+            )}
+
+            {shouldShowAuthorBio && article.author && (
+              <div className="mt-5 flex flex-col gap-4 rounded-sm border border-border bg-background p-4 sm:flex-row sm:items-start">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
+                  {article.author.avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={article.author.avatar}
+                      alt={article.author.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-secondary">
+                      {article.author.name.slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{article.author.name}</p>
+                  {article.author.title && (
+                    <p className="mt-1 text-sm text-secondary">{article.author.title}</p>
+                  )}
+                  {article.author.description && (
+                    <p className="mt-2 text-sm leading-6 text-secondary">
+                      {article.author.description}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>

@@ -12,9 +12,10 @@ interface ActivityItem {
 interface ActivityFeedProps {
   activities: ActivityItem[];
   limit?: number;
+  referenceTime: number;
 }
 
-function getActivityIcon(type: string, action: string) {
+function getActivityIcon(type: string) {
   const icons = {
     product: "📦",
     sku: "🏷️",
@@ -37,9 +38,21 @@ function getActionColor(action: string) {
   return colors[action as keyof typeof colors] || colors.updated;
 }
 
-function formatTimestamp(timestamp: number) {
-  const now = Date.now();
-  const diff = now - timestamp;
+function formatDateKey(timestamp: number) {
+  return new Date(timestamp).toISOString().slice(0, 10);
+}
+
+function formatDisplayDate(timestamp: number) {
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+function formatTimestamp(timestamp: number, referenceTime: number) {
+  const diff = referenceTime - timestamp;
 
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
@@ -49,16 +62,17 @@ function formatTimestamp(timestamp: number) {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 7) return `${days}d ago`;
-  return new Date(timestamp).toLocaleDateString();
+  return formatDisplayDate(timestamp);
 }
 
-export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
+export function ActivityFeed({ activities, limit = 10, referenceTime }: ActivityFeedProps) {
   const displayActivities = activities.slice(0, limit);
+  const todayKey = formatDateKey(referenceTime);
 
   // Group activities by date
   const groupedActivities = displayActivities.reduce(
     (acc, activity) => {
-      const date = new Date(activity.timestamp).toDateString();
+      const date = formatDateKey(activity.timestamp);
       if (!acc[date]) {
         acc[date] = [];
       }
@@ -98,13 +112,9 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
             {Object.entries(groupedActivities).map(([date, dayActivities]) => (
               <div key={date} className="mb-6 last:mb-0">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                  {date === new Date().toDateString()
+                  {date === todayKey
                     ? "Today"
-                    : new Date(date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                    : formatDisplayDate(new Date(`${date}T00:00:00.000Z`).getTime())}
                 </p>
                 <div className="space-y-3">
                   {dayActivities.map((activity) => (
@@ -113,7 +123,7 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
                       className="flex items-start gap-3 rounded-lg border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
                     >
                       <div className="flex shrink-0 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 text-lg">
-                        {getActivityIcon(activity.type, activity.action)}
+                        {getActivityIcon(activity.type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -137,7 +147,7 @@ export function ActivityFeed({ activities, limit = 10 }: ActivityFeedProps) {
                             </>
                           )}
                           <span>•</span>
-                          <span>{formatTimestamp(activity.timestamp)}</span>
+                          <span>{formatTimestamp(activity.timestamp, referenceTime)}</span>
                         </p>
                       </div>
                     </div>
