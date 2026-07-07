@@ -74,6 +74,29 @@ Only `published` can be exposed to public search surfaces.
 
 `approved` is intentionally separate from `published`. This allows a language to prepare many pages and release them only when the whole language gate passes.
 
+### 3.1 Current P2-2 workflow API
+
+The backend workflow API is available through Convex admin mutations and module queries.
+
+Admin mutations:
+
+- `upsertLocalizationDraft`: create or reset a translation record to `draft`.
+- `updateLocalizationContent`: edit localized copy, metadata, hashes, audits, and validation issues while the record is editable.
+- `moveLocalizationStatus`: move a record through the allowed workflow states.
+- `unpublishLocalization`: move `published` back to `approved` without deleting the translation.
+- `markEntityLocalizationsStale`: mark all non-draft translations for a source entity as `stale`.
+- `deleteLocalization`: delete a non-published translation record.
+
+Module queries:
+
+- `getLocalizationById`
+- `getLocalizationByEntityLocale`
+- `listLocalizations`
+- `listLocalizationReviewQueue`
+- `listStaleLocalizations`
+
+Publication is deliberately conservative: a record can only move to `published` from `approved`. Machine-generated or imported records must first pass through review/approval before they can become search-visible.
+
 ---
 
 ## 4. Source Change Tracking

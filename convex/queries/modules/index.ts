@@ -5,6 +5,7 @@ import * as authors from "./authors";
 import * as categories from "./categories";
 import * as imports from "./imports";
 import * as inquiries from "./inquiries";
+import * as localizations from "./localizations";
 import * as navigation from "./navigation";
 import * as products from "./products";
 import * as relations from "./relations";
@@ -18,6 +19,7 @@ export {
   categories,
   imports,
   inquiries,
+  localizations,
   navigation,
   products,
   relations,
@@ -31,6 +33,7 @@ export * from "./authors";
 export * from "./categories";
 export * from "./imports";
 export * from "./inquiries";
+export * from "./localizations";
 export * from "./navigation";
 export * from "./products";
 export * from "./relations";

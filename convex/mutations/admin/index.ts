@@ -6,6 +6,7 @@ import * as categories from "./categories";
 import * as catalog from "./catalog";
 import * as imports from "./imports";
 import * as inquiries from "./inquiries";
+import * as localizations from "./localizations";
 import * as navigation from "./navigation";
 import * as productFamilies from "./productFamilies";
 import * as products from "./products";
@@ -23,6 +24,7 @@ export {
   categories,
   imports,
   inquiries,
+  localizations,
   navigation,
   productFamilies,
   products,
@@ -40,6 +42,7 @@ export * from "./catalog";
 export * from "./categories";
 export * from "./imports";
 export * from "./inquiries";
+export * from "./localizations";
 export * from "./navigation";
 export * from "./productFamilies";
 export * from "./products";

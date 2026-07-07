@@ -29,6 +29,7 @@ import type * as mutations_admin_categories from "../mutations/admin/categories.
 import type * as mutations_admin_imports from "../mutations/admin/imports.js";
 import type * as mutations_admin_index from "../mutations/admin/index.js";
 import type * as mutations_admin_inquiries from "../mutations/admin/inquiries.js";
+import type * as mutations_admin_localizations from "../mutations/admin/localizations.js";
 import type * as mutations_admin_navigation from "../mutations/admin/navigation.js";
 import type * as mutations_admin_productFamilies from "../mutations/admin/productFamilies.js";
 import type * as mutations_admin_productVariants from "../mutations/admin/productVariants.js";
@@ -48,6 +49,7 @@ import type * as queries_modules_categories from "../queries/modules/categories.
 import type * as queries_modules_imports from "../queries/modules/imports.js";
 import type * as queries_modules_index from "../queries/modules/index.js";
 import type * as queries_modules_inquiries from "../queries/modules/inquiries.js";
+import type * as queries_modules_localizations from "../queries/modules/localizations.js";
 import type * as queries_modules_navigation from "../queries/modules/navigation.js";
 import type * as queries_modules_products from "../queries/modules/products.js";
 import type * as queries_modules_relations from "../queries/modules/relations.js";
@@ -83,6 +85,7 @@ declare const fullApi: ApiFromModules<{
   "mutations/admin/imports": typeof mutations_admin_imports;
   "mutations/admin/index": typeof mutations_admin_index;
   "mutations/admin/inquiries": typeof mutations_admin_inquiries;
+  "mutations/admin/localizations": typeof mutations_admin_localizations;
   "mutations/admin/navigation": typeof mutations_admin_navigation;
   "mutations/admin/productFamilies": typeof mutations_admin_productFamilies;
   "mutations/admin/productVariants": typeof mutations_admin_productVariants;
@@ -102,6 +105,7 @@ declare const fullApi: ApiFromModules<{
   "queries/modules/imports": typeof queries_modules_imports;
   "queries/modules/index": typeof queries_modules_index;
   "queries/modules/inquiries": typeof queries_modules_inquiries;
+  "queries/modules/localizations": typeof queries_modules_localizations;
   "queries/modules/navigation": typeof queries_modules_navigation;
   "queries/modules/products": typeof queries_modules_products;
   "queries/modules/relations": typeof queries_modules_relations;

@@ -67,3 +67,37 @@ export const localizationValidationIssueValidator = v.object({
   resolvedAt: v.optional(v.number()),
 });
 
+export const localizationEditableFieldValidators = {
+  localizedSlug: v.optional(v.string()),
+  title: v.optional(v.string()),
+  seoTitle: v.optional(v.string()),
+  seoDescription: v.optional(v.string()),
+  localizedFields: v.optional(v.record(v.string(), v.any())),
+  sourceUpdatedAt: v.optional(v.number()),
+  sourceContentHash: v.optional(v.string()),
+  sourceFieldHashes: v.optional(v.record(v.string(), v.string())),
+  localizedContentHash: v.optional(v.string()),
+  localizedFieldHashes: v.optional(v.record(v.string(), v.string())),
+  fieldAudits: v.optional(v.record(v.string(), localizationFieldAuditValidator)),
+  requiredFieldKeys: v.optional(v.array(v.string())),
+  protectedFieldKeys: v.optional(v.array(v.string())),
+  translationMethod: v.optional(translationMethodValidator),
+  translatedBy: v.optional(v.string()),
+  generatedBy: v.optional(v.string()),
+  owner: v.optional(v.string()),
+  reviewRequired: v.optional(v.boolean()),
+  requiredForRelease: v.optional(v.boolean()),
+  reviewNotes: v.optional(v.string()),
+  workflowNotes: v.optional(v.string()),
+  validationIssues: v.optional(v.array(localizationValidationIssueValidator)),
+};
+
+export const localizationEditableFieldsValidator = v.object(
+  localizationEditableFieldValidators
+);
+
+export const localizationIdentityValidator = {
+  entityType: localizationEntityTypeValidator,
+  sourceId: v.string(),
+  locale: v.string(),
+};

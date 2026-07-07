@@ -385,6 +385,7 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_entity_locale", ["entityType", "sourceId", "locale"])
+    .index("by_entity", ["entityType", "sourceId"])
     .index("by_locale_status", ["locale", "status"])
     .index("by_locale_entity_status", ["locale", "entityType", "status"])
     .index("by_locale_owner_status", ["locale", "owner", "status"])

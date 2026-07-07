@@ -64,6 +64,16 @@ export type LocalizationValidationIssue = {
   resolvedAt?: number;
 };
 
+export const LOCALIZATION_STATUS_TRANSITIONS = {
+  missing: ["draft"],
+  draft: ["machine_ready", "review_required", "approved"],
+  machine_ready: ["draft", "review_required", "approved"],
+  review_required: ["draft", "approved"],
+  approved: ["draft", "published", "stale"],
+  published: ["stale"],
+  stale: ["draft", "machine_ready", "review_required"],
+} as const satisfies Record<LocalizationStatus, readonly LocalizationStatus[]>;
+
 export type LocalizationRecordV2 = {
   entityType: LocalizableEntityType;
   sourceId: string;
@@ -111,3 +121,11 @@ export function isTranslationMethod(value: string): value is TranslationMethod {
   return TRANSLATION_METHODS.includes(value as TranslationMethod);
 }
 
+export function canTransitionLocalizationStatus(
+  currentStatus: LocalizationStatus,
+  nextStatus: LocalizationStatus
+) {
+  return (LOCALIZATION_STATUS_TRANSITIONS[currentStatus] as readonly LocalizationStatus[]).includes(
+    nextStatus
+  );
+}
