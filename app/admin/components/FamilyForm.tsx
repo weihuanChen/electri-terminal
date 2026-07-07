@@ -81,6 +81,18 @@ interface Family {
       downloadsMode?: "auto" | "manual";
       pinnedDownloadIds?: string[];
     };
+    seoBoost?: {
+      faqMode?: "relation" | "embedded" | "mixed";
+      embeddedFaqItems?: Array<{
+        question: string;
+        answer: string;
+      }>;
+    };
+    linking?: {
+      relatedCategoryIds?: string[];
+      relatedFamilyIds?: string[];
+      relatedArticleIds?: string[];
+    };
     display?: {
       showOverview?: boolean;
       showFeatures?: boolean;
@@ -115,7 +127,7 @@ interface ArticleSummary {
 interface AssetSummary {
   _id: string;
   title: string;
-  type: "catalog" | "datasheet" | "certificate" | "cad" | "manual";
+  type: "catalog" | "datasheet" | "certificate" | "cad" | "manual" | "image";
   language?: string;
   isPublic: boolean;
 }

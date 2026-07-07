@@ -1,11 +1,17 @@
 import { FileText, FileTextIcon, BookOpen, Award, DraftingCompass } from "lucide-react";
 
+export type ResourceNavType = "all" | "catalog" | "datasheet" | "certificate" | "cad" | "manual";
+
 interface ResourceNavProps {
-  activeType: string;
-  onTypeChange: (type: string) => void;
+  activeType: ResourceNavType;
+  onTypeChange: (type: ResourceNavType) => void;
 }
 
-const resourceTypes = [
+const resourceTypes: Array<{
+  id: ResourceNavType;
+  label: string;
+  icon: typeof FileText;
+}> = [
   { id: "all", label: "All Resources", icon: FileText },
   { id: "catalog", label: "Catalogs", icon: BookOpen },
   { id: "datasheet", label: "Datasheets", icon: FileTextIcon },

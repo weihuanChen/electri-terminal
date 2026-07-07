@@ -1,4 +1,3 @@
-import { Doc } from "@/convex/_generated/dataModel";
 import { requireAdmin } from "@/lib/admin-auth";
 import { loadAdminData } from "@/lib/convex-admin";
 import {
@@ -6,20 +5,9 @@ import {
   Layers,
   Package,
   FileText,
-  MessageSquare,
-  Upload,
   BarChart3,
   TrendingUp,
 } from "lucide-react";
-
-import {
-  createArticleAction,
-  createCategoryAction,
-  createFamilyAction,
-  createProductAction,
-  logoutAction,
-  updateInquiryStatusAction,
-} from "./actions";
 
 import {
   StatCard,
@@ -31,28 +19,6 @@ import {
   ActivityFeed,
   DashboardLayout,
 } from "./components";
-
-function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  return (
-    <span className="rounded-full bg-zinc-900 dark:bg-zinc-100 px-2 py-1 text-xs font-medium text-white dark:text-zinc-900">{status}</span>
-  );
-}
-
-function categoryLabelById(categories: Doc<"categories">[]) {
-  return new Map(categories.map((item) => [item._id, item.name]));
-}
 
 export default async function AdminPage({
   searchParams,
@@ -67,7 +33,6 @@ export default async function AdminPage({
 
   const { categories, families, products, articles, inquiries, importJobs, loadError } =
     await loadAdminData();
-  const categoryMap = categoryLabelById(categories);
 
   // Calculate inquiry statistics
   const now = new Date();

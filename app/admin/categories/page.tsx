@@ -19,6 +19,8 @@ function buildCategoryTree(categories: Doc<"categories">[]) {
   // 构建树形结构
   categories.forEach((cat) => {
     const node = map.get(cat._id);
+    if (!node) return;
+
     if (cat.parentId) {
       const parent = map.get(cat.parentId);
       if (parent) {

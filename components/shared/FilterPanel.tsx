@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 
-interface FilterOption {
+export interface FilterOption {
   label: string;
   value: string;
   count?: number;
 }
 
-interface FilterGroup {
+export interface FilterGroup {
   id: string;
   label: string;
-  type: "checkbox" | "radio" | "range";
+  type?: "checkbox" | "radio" | "range";
   options: FilterOption[];
 }
 

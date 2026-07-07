@@ -1,4 +1,5 @@
 import { mutation } from "../../_generated/server";
+import type { Id } from "../../_generated/dataModel";
 
 function now() {
   return Date.now();
@@ -60,7 +61,7 @@ export const seedMockCatalog = mutation({
       },
     ] as const;
 
-    const categories = new Map<string, string>();
+    const categories = new Map<string, Id<"categories">>();
     for (const [index, seed] of categorySeeds.entries()) {
       const existing = await ctx.db
         .query("categories")
@@ -179,7 +180,7 @@ export const seedMockCatalog = mutation({
           fieldKey: field.fieldKey,
           label: field.label,
           fieldType: field.fieldType,
-          unit: field.unit,
+          unit: "unit" in field ? field.unit : undefined,
           options: undefined,
           groupName: field.groupName,
           description: undefined,
@@ -286,7 +287,7 @@ export const seedMockCatalog = mutation({
         "https://images.unsplash.com/photo-1517420879255-5f3c250e6bc4?q=80&w=2000&auto=format&fit=crop",
     };
 
-    const families = new Map<string, string>();
+    const families = new Map<string, Id<"productFamilies">>();
     for (const [index, seed] of familySeeds.entries()) {
       const existing = await ctx.db
         .query("productFamilies")
@@ -550,7 +551,7 @@ export const seedMockCatalog = mutation({
       },
     ] as const;
 
-    const products = new Map<string, string>();
+    const products = new Map<string, Id<"products">>();
     for (const [index, seed] of productSeeds.entries()) {
       const existing = await ctx.db
         .query("products")
@@ -654,7 +655,7 @@ export const seedMockCatalog = mutation({
     ] as const;
 
     const existingAssets = await ctx.db.query("assets").collect();
-    const assets = new Map<string, string>();
+    const assets = new Map<string, Id<"assets">>();
     for (const seed of assetSeeds) {
       const existing = existingAssets.find((asset) => asset.title === seed.title);
       const data = {

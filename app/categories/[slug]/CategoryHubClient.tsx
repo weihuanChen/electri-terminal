@@ -314,17 +314,18 @@ export default function CategoryHubClient({
               </div>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-4 rounded-[20px] bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                <img
-                  src={heroImageUrl}
-                  alt="Bulk metal cable glands in manufacturing facility"
-                  className="h-[260px] w-full object-cover sm:h-[320px] lg:h-[360px]"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                />
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-[20px] bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
+                <div className="relative h-[260px] overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
+                  <Image
+                    src={heroImageUrl}
+                    alt="Bulk metal cable glands in manufacturing facility"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 520px"
+                    unoptimized={shouldBypassNextImageOptimization(heroImageUrl)}
+                    className="object-cover"
+                  />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20" />
               </div>
             </div>
@@ -500,7 +501,7 @@ export default function CategoryHubClient({
                   <div className="absolute top-2 bottom-4 left-[11px] w-[2px] bg-slate-200 dark:bg-slate-800" />
                   
                   <div className="space-y-10">
-                    {engineeringGuideSections.map((section, index) => (
+                    {engineeringGuideSections.map((section) => (
                       <div key={section.title} className="relative pl-10 md:pl-16 scroll-mt-20">
                         <div className="absolute left-0 top-1.5 h-6 w-6 border-4 border-white bg-slate-300 dark:border-slate-900 dark:bg-slate-700 shadow-sm" />
                         <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-slate-100">

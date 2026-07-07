@@ -11,14 +11,13 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { ChevronDown, ChevronUp, ChevronsUpDown, MoreHorizontal, Trash2, Edit2 } from "lucide-react";
+import { ChevronDown, ChevronUp, ChevronsUpDown, Trash2 } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey?: string;
   onDelete?: (rows: TData[]) => void;
-  onEdit?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -26,12 +25,12 @@ export function DataTable<TData, TValue>({
   data,
   searchKey,
   onDelete,
-  onEdit,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns table helpers that React Compiler cannot memoize safely.
   const table = useReactTable({
     data,
     columns,

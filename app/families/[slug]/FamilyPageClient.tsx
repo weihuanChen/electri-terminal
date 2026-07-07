@@ -593,7 +593,6 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     overviewDetails,
     featuresIntro,
     featuresList,
-    applicationsIntro,
     applicationsList,
     selectionGuideIntro,
     selectionGuideSteps,

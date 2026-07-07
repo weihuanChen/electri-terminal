@@ -271,7 +271,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
             );
           },
           img({ src, alt, width, height }) {
-            if (!src) {
+            if (typeof src !== "string" || src.length === 0) {
               return null;
             }
 

@@ -20,23 +20,26 @@ export default function LazyToaster() {
       }
     };
 
-    if ("requestIdleCallback" in window) {
-      const idleId = window.requestIdleCallback(() => {
+    const requestIdleCallback = window.requestIdleCallback?.bind(window);
+    const cancelIdleCallback = window.cancelIdleCallback?.bind(window);
+
+    if (requestIdleCallback && cancelIdleCallback) {
+      const idleId = requestIdleCallback(() => {
         void load();
       });
       return () => {
         active = false;
-        window.cancelIdleCallback(idleId);
+        cancelIdleCallback(idleId);
       };
     }
 
-    const timerId = window.setTimeout(() => {
+    const timerId = globalThis.setTimeout(() => {
       void load();
     }, 1200);
 
     return () => {
       active = false;
-      window.clearTimeout(timerId);
+      globalThis.clearTimeout(timerId);
     };
   }, []);
 

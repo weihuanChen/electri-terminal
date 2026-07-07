@@ -4,24 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { FilterPanel } from "@/components/shared";
+import type { FilterGroup } from "@/components/shared/FilterPanel";
 import {
   buildCategoryFilterQueryString,
   type CategoryContentView,
   type CategoryFilterState,
 } from "@/lib/categoryFilters";
-
-interface FilterOption {
-  value: string;
-  label: string;
-  count?: number;
-}
-
-interface FilterGroup {
-  id: string;
-  label: string;
-  type?: "checkbox" | "radio";
-  options: FilterOption[];
-}
 
 interface CategoryPageControlsProps {
   filterGroups: FilterGroup[];

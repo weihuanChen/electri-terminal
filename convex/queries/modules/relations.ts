@@ -1,23 +1,26 @@
 import { v } from "convex/values";
 import { QueryCtx, query } from "../../_generated/server";
+import type { Id } from "../../_generated/dataModel";
 import { r2 } from "../../r2Assets";
+
+type RelationEntityType = "category" | "family" | "product" | "article";
 
 async function resolveRelationTarget(
   ctx: QueryCtx,
-  entityType: string,
+  entityType: RelationEntityType,
   entityId: string
 ) {
   if (entityType === "category") {
-    return await ctx.db.get(entityId);
+    return await ctx.db.get(entityId as Id<"categories">);
   }
   if (entityType === "family") {
-    return await ctx.db.get(entityId);
+    return await ctx.db.get(entityId as Id<"productFamilies">);
   }
   if (entityType === "product") {
-    return await ctx.db.get(entityId);
+    return await ctx.db.get(entityId as Id<"products">);
   }
   if (entityType === "article") {
-    return await ctx.db.get(entityId);
+    return await ctx.db.get(entityId as Id<"articles">);
   }
   return null;
 }

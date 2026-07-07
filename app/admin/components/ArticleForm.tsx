@@ -198,6 +198,7 @@ export function ArticleForm({
         previewUrl: buildPublicAssetUrl(item.key),
         fileSize: item.size,
         mimeType: item.contentType,
+        isPublic: true,
       }))
       .filter((asset) => {
         if (asset.mimeType?.startsWith("image/")) return true;

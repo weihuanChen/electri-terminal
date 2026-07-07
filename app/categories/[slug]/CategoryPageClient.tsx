@@ -1,6 +1,8 @@
-import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, DownloadCard, CTABanner } from "@/components/shared";
+import Image from "next/image";
+import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, CTABanner } from "@/components/shared";
 import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
 import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
+import { shouldBypassNextImageOptimization } from "@/lib/images";
 import CategoryContentTabs, { CategoryFilterSidebar } from "./CategoryPageControls";
 import Link from "next/link";
 import { ArrowRight, FileText, Download } from "lucide-react";
@@ -260,28 +262,6 @@ export default function CategoryPageClient({
   const cleanApplicationsItems = sanitizeAboutTextList(applicationsItems);
   const cleanSelectionGuideParagraphs = sanitizeAboutTextList([selectionGuideIntro]);
   const cleanSelectionGuideSteps = sanitizeAboutTextList(selectionGuideSteps);
-  const aboutSections = [
-    {
-      title: isRingTerminals ? "What Are Ring Terminals" : "What Is This Category",
-      paragraphs: cleanAboutIntroParagraphs,
-      points: cleanOverviewKeyPoints,
-    },
-    {
-      title: isRingTerminals ? "Types of Ring Terminals" : "Types",
-      paragraphs: [],
-      points: cleanTypesPoints,
-    },
-    {
-      title: "Applications",
-      paragraphs: cleanApplicationsParagraphs,
-      points: cleanApplicationsItems,
-    },
-    {
-      title: "How to Choose",
-      paragraphs: cleanSelectionGuideParagraphs,
-      points: cleanSelectionGuideSteps,
-    },
-  ].filter((section) => section.paragraphs.length > 0 || section.points.length > 0);
   const heroIntroText = isRingTerminals
     ? "Ring terminals provide secure wire-to-stud electrical connections for industrial and automotive applications."
     : heroDescription || heroShortDescription || "Find the right series, filters, and products for this category.";
@@ -357,14 +337,15 @@ export default function CategoryPageClient({
 
               <div className="relative">
                 <div className="absolute -inset-4 rounded-[20px] bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
-                <div className="relative overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                  <img
+                <div className="relative h-[260px] overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
+                  <Image
                     src={heroVisualImage}
                     alt={`${category.name} manufacturing process`}
-                    className="h-[260px] w-full object-cover sm:h-[320px] lg:h-[360px]"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 520px"
+                    unoptimized={shouldBypassNextImageOptimization(heroVisualImage)}
+                    className="object-cover"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20" />
                   <div className="absolute bottom-4 left-4 right-4 rounded-sm border border-slate-200/25 bg-slate-950/68 px-4 py-3 backdrop-blur-sm">

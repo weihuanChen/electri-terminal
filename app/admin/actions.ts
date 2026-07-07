@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { Id } from "@/convex/_generated/dataModel";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
 import { clearAdminSession, requireAdmin } from "@/lib/admin-auth";
 import {
   normalizePublicContactSettings,
@@ -289,9 +289,9 @@ export async function createFamilyAction(formData: FormData) {
     });
 
     if (parsedPageConfig !== undefined) {
-      const savedFamily = await client.query("queries/modules/products:getProductFamilyById", {
+      const savedFamily = (await client.query("queries/modules/products:getProductFamilyById", {
         id: createdId,
-      });
+      })) as Pick<Doc<"productFamilies">, "pageConfig"> | null;
       const actualSelectionReason = extractSelectionReason(savedFamily?.pageConfig);
       if (actualSelectionReason !== expectedSelectionReason) {
         throw new Error("selection_reason_save_verification_failed");
@@ -881,7 +881,9 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
 
   try {
     const client = getAdminConvexClient();
-    const currentArticle = await client.query("queries/modules/articles:getArticleById", { id });
+    const currentArticle = (await client.query("queries/modules/articles:getArticleById", {
+      id,
+    })) as Pick<Doc<"articles">, "slug"> | null;
     await mutationWithExtraFieldFallback(client, "mutations/admin/articles:updateArticle", {
       id,
       type,
@@ -1089,9 +1091,9 @@ export async function updateProductFamilyAction(formData: FormData) {
     });
 
     if (parsedPageConfig !== undefined) {
-      const savedFamily = await client.query("queries/modules/products:getProductFamilyById", {
+      const savedFamily = (await client.query("queries/modules/products:getProductFamilyById", {
         id,
-      });
+      })) as Pick<Doc<"productFamilies">, "pageConfig"> | null;
       const actualSelectionReason = extractSelectionReason(savedFamily?.pageConfig);
       if (actualSelectionReason !== expectedSelectionReason) {
         throw new Error("selection_reason_save_verification_failed");

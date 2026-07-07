@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
 
 import { api } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 import { httpAction } from "./_generated/server";
 
 const http = httpRouter();
@@ -111,7 +112,7 @@ export const listFamilies = httpAction(async (ctx, request) => {
   }
 
   const families = await ctx.runQuery(
-    api["queries/modules/products"].exportProductFamiliesForContent,
+    api.queries.modules.products.exportProductFamiliesForContent,
     status ? ({ status } as never) : ({} as never)
   );
 
@@ -142,8 +143,8 @@ export const getFamilyPageConfig = httpAction(async (ctx, request) => {
     return json({ error: "Missing id query param" }, 400);
   }
 
-  const family = await ctx.runQuery(api["queries/modules/products"].getProductFamilyById, {
-    id: id as never,
+  const family = await ctx.runQuery(api.queries.modules.products.getProductFamilyById, {
+    id: id as Id<"productFamilies">,
   });
 
   if (!family) {
@@ -182,7 +183,7 @@ export const getFamilyPageConfigBySlug = httpAction(async (ctx, request) => {
     return json({ error: "Missing slug query param" }, 400);
   }
 
-  const family = await ctx.runQuery(api["queries/modules/products"].getProductFamilyBySlug, {
+  const family = await ctx.runQuery(api.queries.modules.products.getProductFamilyBySlug, {
     slug,
   });
 
@@ -252,8 +253,8 @@ export const backfillCatalogCopy = httpAction(async (ctx, request) => {
   }
 
   if (entityType === "category") {
-    const current = await ctx.runQuery(api["queries/modules/categories"].getCategoryById, {
-      id: entityId as never,
+    const current = await ctx.runQuery(api.queries.modules.categories.getCategoryById, {
+      id: entityId as Id<"categories">,
     });
 
     if (!current) {
@@ -277,7 +278,7 @@ export const backfillCatalogCopy = httpAction(async (ctx, request) => {
       return json({ ok: true, entityType, entityId, updatedFields: [] });
     }
 
-    await ctx.runMutation(api["mutations/admin/categories"].updateCategory, mutationArgs as never);
+    await ctx.runMutation(api.mutations.admin.categories.updateCategory, mutationArgs as never);
 
     return json({
       ok: true,
@@ -289,10 +290,10 @@ export const backfillCatalogCopy = httpAction(async (ctx, request) => {
 
   const current =
     typeof entityId === "string"
-      ? await ctx.runQuery(api["queries/modules/products"].getProductFamilyById, {
-          id: entityId as never,
+      ? await ctx.runQuery(api.queries.modules.products.getProductFamilyById, {
+          id: entityId as Id<"productFamilies">,
         })
-      : await ctx.runQuery(api["queries/modules/products"].getProductFamilyBySlug, {
+      : await ctx.runQuery(api.queries.modules.products.getProductFamilyBySlug, {
           slug: entitySlug as string,
         });
 
@@ -327,7 +328,7 @@ export const backfillCatalogCopy = httpAction(async (ctx, request) => {
   }
 
   await ctx.runMutation(
-    api["mutations/admin/productFamilies"].updateProductFamily,
+    api.mutations.admin.productFamilies.updateProductFamily,
     mutationArgs as never
   );
 

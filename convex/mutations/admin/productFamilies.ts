@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "../../_generated/server";
+import type { Id } from "../../_generated/dataModel";
 import { validateAttributesAgainstCategory } from "../../lib/attributes";
 import { familyPageConfig } from "../../lib/familyPageConfig";
 import {
@@ -78,7 +79,7 @@ function mergeFamilyPageConfigFromLegacy(
       ctaSecondaryLabel?: string;
       ctaSecondaryHref?: string;
       downloadsMode?: "auto" | "manual";
-      pinnedDownloadIds?: string[];
+      pinnedDownloadIds?: Id<"assets">[];
     };
     seoBoost?: {
       faqMode?: "relation" | "embedded" | "mixed";
@@ -88,9 +89,9 @@ function mergeFamilyPageConfigFromLegacy(
       }>;
     };
     linking?: {
-      relatedCategoryIds?: string[];
-      relatedFamilyIds?: string[];
-      relatedArticleIds?: string[];
+      relatedCategoryIds?: Id<"categories">[];
+      relatedFamilyIds?: Id<"productFamilies">[];
+      relatedArticleIds?: Id<"articles">[];
     };
     display?: {
       showOverview?: boolean;

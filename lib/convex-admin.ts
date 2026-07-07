@@ -1,7 +1,9 @@
 import "server-only";
 
 import { ConvexHttpClient } from "convex/browser";
-import { Doc } from "@/convex/_generated/dataModel";
+import type { Doc } from "@/convex/_generated/dataModel";
+
+export type AdminAssetType = Doc<"assets">["type"];
 
 export interface AdminAttributeTemplateSummary {
   _id: string;
@@ -44,7 +46,7 @@ export interface AdminAttributeTemplateSummary {
 export interface AdminAssetWithRelations {
   _id: string;
   title: string;
-  type: string;
+  type: AdminAssetType;
   fileUrl?: string;
   objectKey?: string;
   originalFilename?: string;

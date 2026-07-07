@@ -84,7 +84,7 @@ async function getTemplateForCategory(ctx: ConvexCtx, categoryId: Id<"categories
 export async function getExpandedTemplateFieldsByTemplateId(
   ctx: ConvexCtx,
   templateId: Id<"attributeTemplates">
-) {
+): Promise<ExpandedAttributeField[]> {
   const fields = await ctx.db
     .query("attributeFields")
     .withIndex("by_templateId_sortOrder", (q) => q.eq("templateId", templateId))
@@ -97,7 +97,7 @@ export async function getExpandedTemplateFieldsByTemplateId(
   );
 
   return fields
-    .map((field, index) => {
+    .map((field, index): ExpandedAttributeField | null => {
       const definition = definitions[index];
       if (!definition) {
         if (!field.fieldKey || !field.label || !field.fieldType) {
@@ -141,7 +141,7 @@ export async function getExpandedTemplateFieldsByTemplateId(
 export async function getExpandedTemplateFieldsByCategoryId(
   ctx: ConvexCtx,
   categoryId: Id<"categories">
-) {
+): Promise<ExpandedAttributeField[]> {
   const template = await getTemplateForCategory(ctx, categoryId);
   if (!template) {
     return [];
