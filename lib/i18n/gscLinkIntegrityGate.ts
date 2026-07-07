@@ -19,6 +19,8 @@ import {
   resolveRedirectTarget,
 } from "./urlResolver";
 import type { SeoOutput } from "./seoOutput";
+import { hasLocalizedRouteRenderer } from "./localizedRenderer";
+import type { LocalizedRouteKind } from "./localizedRoutes";
 
 export type GscLinkIntegritySeverity = "blocker" | "high" | "medium" | "low";
 
@@ -293,6 +295,42 @@ function validateCandidateSeo(candidate: GscLinkIntegrityCandidate) {
       })
     );
   }
+
+  return issues;
+}
+
+function getLocalizedRendererKind(entity?: PublicUrlEntityRef): LocalizedRouteKind | null {
+  if (!entity || entity.type === "customPath") {
+    return null;
+  }
+
+  return entity.type;
+}
+
+function validateLocalizedRenderer(candidate: GscLinkIntegrityCandidate) {
+  const issues: GscLinkIntegrityIssue[] = [];
+
+  if (candidate.locale === DEFAULT_LOCALE) {
+    return issues;
+  }
+
+  const rendererKind = getLocalizedRendererKind(candidate.entity);
+  if (!rendererKind || hasLocalizedRouteRenderer(rendererKind)) {
+    return issues;
+  }
+
+  issues.push(
+    makeIssue({
+      severity: "blocker",
+      code: "localized_renderer_not_configured",
+      message: "A non-default locale candidate must have a configured localized renderer.",
+      source: candidate.source,
+      sourceLocale: candidate.locale,
+      sourceUrl: candidate.url,
+      entity: candidate.entity,
+      reasons: [rendererKind],
+    })
+  );
 
   return issues;
 }
@@ -678,6 +716,7 @@ export function runGscLinkIntegrityGate(
       ...issues,
       ...validateCandidateUrl(candidate),
       ...validateCandidateSeo(candidate),
+      ...validateLocalizedRenderer(candidate),
       ...validateCandidateHreflang(candidate),
     ];
   }

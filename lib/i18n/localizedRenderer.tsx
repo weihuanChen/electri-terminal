@@ -46,9 +46,30 @@ export type LocalizedRendererContext = {
   route: LocalizedRouteMatch;
 };
 
-type LocalizedRouteRenderer = (context: LocalizedRendererContext) => Promise<ReactNode>;
+export type LocalizedRouteRenderer = (context: LocalizedRendererContext) => Promise<ReactNode>;
 
 const LOCALIZED_RENDERERS: Partial<Record<LocalizedRouteKind, LocalizedRouteRenderer>> = {};
+
+export function registerLocalizedRouteRenderer(
+  kind: LocalizedRouteKind,
+  renderer: LocalizedRouteRenderer
+) {
+  const existingRenderer = LOCALIZED_RENDERERS[kind];
+
+  if (existingRenderer && existingRenderer !== renderer) {
+    throw new Error(`Localized renderer already registered for route kind: ${kind}`);
+  }
+
+  LOCALIZED_RENDERERS[kind] = renderer;
+}
+
+export function hasLocalizedRouteRenderer(kind: LocalizedRouteKind) {
+  return Boolean(LOCALIZED_RENDERERS[kind]);
+}
+
+export function getConfiguredLocalizedRouteKinds() {
+  return Object.keys(LOCALIZED_RENDERERS) as LocalizedRouteKind[];
+}
 
 function getLocalizedRouteTitle(state: LocalizedRouteRenderState) {
   const seoTitle = state.translationEligibility?.seoTitle;

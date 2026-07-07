@@ -18,7 +18,7 @@ import {
   resolveLanguageWorkflow,
   type StoredLanguageWorkflow,
 } from "@/lib/i18n";
-import { buildSitemapGscLinkIntegrityReport } from "@/lib/sitemap";
+import { buildLocaleReleaseGscLinkIntegrityReport } from "@/lib/sitemap";
 
 function str(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -1573,7 +1573,8 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
     );
   }
 
-  const requestedGscSubmission = nextStatus === "published" && boolFromForm(formData, "gscSubmissionEnabled");
+  const requestedGscSubmission =
+    nextStatus === "published" && boolFromForm(formData, "gscSubmissionEnabled");
   const releaseOwner = optionalStr(formData, "releaseOwner");
   const notes = optionalStr(formData, "notes");
   let gateReport:
@@ -1587,8 +1588,12 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
       }
     | undefined;
 
+  if (nextStatus === "published" && currentWorkflow.runtimeStatus !== "published") {
+    redirect(`/admin/settings/languages?locale=${localeValue}&error=runtime_not_published`);
+  }
+
   if (nextStatus === "published" || requestedGscSubmission) {
-    const report = await buildSitemapGscLinkIntegrityReport();
+    const report = await buildLocaleReleaseGscLinkIntegrityReport(localeValue);
     gateReport = {
       reportId: report.reportId,
       checksum: report.checksum,

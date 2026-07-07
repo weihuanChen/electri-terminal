@@ -355,6 +355,26 @@ function buildMissingRouteEligibility(locale: string) {
   };
 }
 
+function getLocalizedFieldString(localization: unknown, keys: string[]) {
+  if (!localization || typeof localization !== "object") {
+    return null;
+  }
+
+  const fields = (localization as { localizedFields?: unknown }).localizedFields;
+  if (!fields || typeof fields !== "object" || Array.isArray(fields)) {
+    return null;
+  }
+
+  for (const key of keys) {
+    const value = (fields as Record<string, unknown>)[key];
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
 async function getLinkedFamilyRelations(
   ctx: QueryCtx,
   family: Doc<"productFamilies">
@@ -1696,9 +1716,15 @@ export const getLocalizedRouteEligibility = query({
       sourceUpdatedAt: source.sourceUpdatedAt,
       localizationStatus,
       localizedSlug: localization?.localizedSlug ?? null,
-      title: localization?.title ?? null,
-      seoTitle: localization?.seoTitle ?? null,
-      seoDescription: localization?.seoDescription ?? null,
+      title:
+        localization?.title ??
+        getLocalizedFieldString(localization, ["title", "name", "headline"]),
+      seoTitle:
+        localization?.seoTitle ??
+        getLocalizedFieldString(localization, ["seoTitle", "metaTitle"]),
+      seoDescription:
+        localization?.seoDescription ??
+        getLocalizedFieldString(localization, ["seoDescription", "metaDescription"]),
       updatedAt: localization?.updatedAt ?? null,
       eligible: reasons.length === 0,
       reasons,

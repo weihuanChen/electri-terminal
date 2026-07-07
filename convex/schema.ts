@@ -2,6 +2,13 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { categoryPageConfig } from "./lib/categoryPageConfig";
 import { familyPageConfig } from "./lib/familyPageConfig";
+import {
+  localizationEntityTypeValidator,
+  localizationFieldAuditValidator,
+  localizationStatusValidator,
+  localizationValidationIssueValidator,
+  translationMethodValidator,
+} from "./lib/localization";
 import { contactSettingsValidator, languageWorkflowSettingsValidator } from "./lib/siteSettings";
 
 const statusCommon = v.union(
@@ -113,24 +120,6 @@ const relationEntityType = v.union(
   v.literal("family"),
   v.literal("product"),
   v.literal("article")
-);
-
-const localizationEntityType = v.union(
-  v.literal("staticPage"),
-  v.literal("category"),
-  v.literal("family"),
-  v.literal("product"),
-  v.literal("article")
-);
-
-const localizationStatus = v.union(
-  v.literal("missing"),
-  v.literal("draft"),
-  v.literal("machine_ready"),
-  v.literal("review_required"),
-  v.literal("approved"),
-  v.literal("published"),
-  v.literal("stale")
 );
 
 export default defineSchema({
@@ -358,14 +347,36 @@ export default defineSchema({
     .index("by_asset_entity", ["assetId", "entityType", "entityId"]),
 
   localizations: defineTable({
-    entityType: localizationEntityType,
+    entityType: localizationEntityTypeValidator,
     sourceId: v.string(),
     locale: v.string(),
-    status: localizationStatus,
+    status: localizationStatusValidator,
     localizedSlug: v.optional(v.string()),
     title: v.optional(v.string()),
     seoTitle: v.optional(v.string()),
     seoDescription: v.optional(v.string()),
+    localizedFields: v.optional(v.record(v.string(), v.any())),
+    sourceContentHash: v.optional(v.string()),
+    sourceFieldHashes: v.optional(v.record(v.string(), v.string())),
+    localizedContentHash: v.optional(v.string()),
+    localizedFieldHashes: v.optional(v.record(v.string(), v.string())),
+    fieldAudits: v.optional(v.record(v.string(), localizationFieldAuditValidator)),
+    requiredFieldKeys: v.optional(v.array(v.string())),
+    protectedFieldKeys: v.optional(v.array(v.string())),
+    translationMethod: v.optional(translationMethodValidator),
+    translatedBy: v.optional(v.string()),
+    generatedBy: v.optional(v.string()),
+    reviewer: v.optional(v.string()),
+    publishedBy: v.optional(v.string()),
+    owner: v.optional(v.string()),
+    reviewRequired: v.optional(v.boolean()),
+    requiredForRelease: v.optional(v.boolean()),
+    reviewNotes: v.optional(v.string()),
+    workflowNotes: v.optional(v.string()),
+    staleReason: v.optional(v.string()),
+    staleSourceUpdatedAt: v.optional(v.number()),
+    changedFieldKeys: v.optional(v.array(v.string())),
+    validationIssues: v.optional(v.array(localizationValidationIssueValidator)),
     sourceUpdatedAt: v.optional(v.number()),
     translatedAt: v.optional(v.number()),
     reviewedAt: v.optional(v.number()),
@@ -375,7 +386,9 @@ export default defineSchema({
   })
     .index("by_entity_locale", ["entityType", "sourceId", "locale"])
     .index("by_locale_status", ["locale", "status"])
-    .index("by_locale_entity_status", ["locale", "entityType", "status"]),
+    .index("by_locale_entity_status", ["locale", "entityType", "status"])
+    .index("by_locale_owner_status", ["locale", "owner", "status"])
+    .index("by_locale_required_status", ["locale", "requiredForRelease", "status"]),
 
   authors: defineTable({
     name: v.string(),

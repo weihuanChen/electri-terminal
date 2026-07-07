@@ -41,6 +41,21 @@ Example entity types:
 
 This keeps catalog data stable and makes it easier to audit one language at a time.
 
+### 2.1 Current implementation record
+
+The current Convex `localizations` table uses a backward-compatible v2 record:
+
+- identity: `entityType`, `sourceId`, `locale`;
+- workflow: `status`, `owner`, `reviewRequired`, `requiredForRelease`;
+- localized copy: legacy summary fields plus `localizedFields`;
+- source tracking: `sourceUpdatedAt`, `sourceContentHash`, `sourceFieldHashes`;
+- localized tracking: `localizedContentHash`, `localizedFieldHashes`, `fieldAudits`;
+- production metadata: `translationMethod`, `translatedBy`, `generatedBy`, `reviewer`, `publishedBy`;
+- stale handling: `staleReason`, `staleSourceUpdatedAt`, `changedFieldKeys`;
+- validation: `validationIssues`.
+
+Legacy top-level `title`, `seoTitle`, and `seoDescription` remain supported so the P1 eligibility gate can continue to operate while P2 editors move toward structured `localizedFields`.
+
 ---
 
 ## 3. Page-Level Status Model

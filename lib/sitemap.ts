@@ -5,11 +5,15 @@ import { BLOG_PAGE_SIZE, getBlogPageCount } from "@/lib/blogPagination";
 import { isRedirectedFamilySlug } from "@/lib/familyRedirects";
 import {
   DEFAULT_LOCALE,
+  STATIC_PAGE_DEFINITIONS,
+  type Locale,
   type PublicUrlEntityRef,
   type StaticPageKey,
   createGscLinkIntegrityCandidate,
+  matchLocalizedRoute,
   resolveEntityPath,
   resolveSeoOutput,
+  resolveTranslationEligibility,
   runGscLinkIntegrityGate,
 } from "@/lib/i18n";
 import { isRedirectedProductSlug } from "@/lib/productRedirects";
@@ -245,6 +249,55 @@ async function fetchSitemapContent() {
   return (await getAdminConvexClient().query("frontend:listSitemapContent", {})) as SitemapContent;
 }
 
+function buildSitemapGscCandidatesFromEntries(entries: SitemapPageEntry[]) {
+  return entries.map((entry) => ({
+    source: "sitemap" as const,
+    locale: DEFAULT_LOCALE,
+    url: entry.url,
+    canonical: entry.url,
+    indexable: true,
+    sitemapEligible: true,
+    alternates: entry.alternates,
+  }));
+}
+
+async function buildLocaleReleaseCandidate({
+  locale,
+  entity,
+  fallbackPath,
+}: {
+  locale: Locale;
+  entity: PublicUrlEntityRef;
+  fallbackPath: string;
+}) {
+  const route = matchLocalizedRoute(locale, fallbackPath);
+  const eligibility =
+    locale === DEFAULT_LOCALE || !route
+      ? null
+      : await resolveTranslationEligibility(locale, route);
+  const localizationStatus =
+    locale === DEFAULT_LOCALE ? "published" : eligibility?.localizationStatus ?? "missing";
+  const sourceStatus =
+    locale === DEFAULT_LOCALE ? "published" : eligibility?.sourceStatus ?? "missing";
+  const seo = resolveSeoOutput({
+    locale,
+    entity,
+    fallbackPath,
+    sourceStatus,
+    localizationStatus,
+    localizationStatusByLocale: {
+      [locale]: localizationStatus,
+    },
+  });
+
+  return createGscLinkIntegrityCandidate({
+    source: "sitemap",
+    locale,
+    entity,
+    seo,
+  });
+}
+
 export async function buildSitemapEntries() {
   const content = await fetchSitemapContent();
   const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
@@ -298,15 +351,55 @@ export async function buildSitemapEntries() {
 
 export async function buildSitemapGscLinkIntegrityReport() {
   const entries = await buildSitemapEntries();
-  const candidates = entries.map((entry) => ({
-    source: "sitemap" as const,
-    locale: DEFAULT_LOCALE,
-    url: entry.url,
-    canonical: entry.url,
-    indexable: true,
-    sitemapEligible: true,
-    alternates: entry.alternates,
-  }));
+  const candidates = buildSitemapGscCandidatesFromEntries(entries);
+
+  return runGscLinkIntegrityGate(candidates);
+}
+
+export async function buildLocaleReleaseGscLinkIntegrityReport(locale: Locale) {
+  if (locale === DEFAULT_LOCALE) {
+    return buildSitemapGscLinkIntegrityReport();
+  }
+
+  const content = await fetchSitemapContent();
+  const sitemapFamilies = content.families.filter((family) => !isRedirectedFamilySlug(family.slug));
+  const sitemapProducts = content.products.filter((product) => !isRedirectedProductSlug(product.slug));
+  const requiredStaticCandidates = STATIC_PAGE_DEFINITIONS.filter(
+    (page) => page.requiredForLanguageLaunch
+  ).map((page) =>
+    buildLocaleReleaseCandidate({
+      locale,
+      entity: { type: "staticPage", key: page.key },
+      fallbackPath: page.path,
+    })
+  );
+  const catalogCandidates = [
+    ...content.categories.map((category) =>
+      buildLocaleReleaseCandidate({
+        locale,
+        entity: { type: "category", slug: category.slug },
+        fallbackPath: resolveEntityPath({ type: "category", slug: category.slug }),
+      })
+    ),
+    ...sitemapFamilies.map((family) =>
+      buildLocaleReleaseCandidate({
+        locale,
+        entity: { type: "family", slug: family.slug },
+        fallbackPath: resolveEntityPath({ type: "family", slug: family.slug }),
+      })
+    ),
+    ...sitemapProducts.map((product) =>
+      buildLocaleReleaseCandidate({
+        locale,
+        entity: { type: "product", slug: product.slug },
+        fallbackPath: resolveEntityPath({ type: "product", slug: product.slug }),
+      })
+    ),
+  ];
+  const candidates = await Promise.all([
+    ...requiredStaticCandidates,
+    ...catalogCandidates,
+  ]);
 
   return runGscLinkIntegrityGate(candidates);
 }

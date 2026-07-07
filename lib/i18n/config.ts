@@ -1,5 +1,6 @@
 export const DEFAULT_LOCALE = "en" as const;
 export const PILOT_LOCALE = "ru" as const;
+export const I18N_REQUEST_LOCALE_HEADER = "x-electri-locale" as const;
 
 export const SUPPORTED_LOCALES = [DEFAULT_LOCALE, PILOT_LOCALE] as const;
 
@@ -182,6 +183,11 @@ export const LOCALE_PREFIXES = Object.fromEntries(
 
 export function isLocale(value: string): value is Locale {
   return SUPPORTED_LOCALES.includes(value as Locale);
+}
+
+export function resolveLocaleFromPathname(pathname: string): Locale {
+  const firstSegment = pathname.split(/[/?#]/).filter(Boolean)[0];
+  return firstSegment && isLocale(firstSegment) ? firstSegment : DEFAULT_LOCALE;
 }
 
 export function isDefaultLocale(locale: Locale) {

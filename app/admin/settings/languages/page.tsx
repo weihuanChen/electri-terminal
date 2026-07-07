@@ -90,6 +90,8 @@ function errorText(error: string, blockers: string, high: string) {
       return "默认语言是源语言，不能通过语言工作流修改。";
     case "transition_not_allowed":
       return "当前状态不允许执行这个流转。";
+    case "runtime_not_published":
+      return "运行时语言配置尚未发布该语言。请先通过代码配置打开语言发布边界，再执行后台发布。";
     case "gsc_gate_failed":
       return `GSC Link Integrity Gate 未通过，阻断项 ${blockers || "0"} 个，高风险项 ${high || "0"} 个。`;
     default:
