@@ -6,6 +6,7 @@ import ResourcesPageClient, {
   type ResourceDocumentType,
 } from "./ResourcesPageClient";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
+import { resourcesUrl } from "@/lib/routes";
 
 type RawPublicResource = {
   _id: string;
@@ -87,7 +88,7 @@ export async function generateMetadata({
 
   return buildPageMetadata({
     entity: { status: "published" },
-    fallbackPath: "/resources",
+    fallbackPath: resourcesUrl(),
     fallbackTitle: "Technical Documentation & Product Resources | Electri Terminal",
     fallbackDescription:
       "Access product catalogs, technical specifications, compliance documents, and engineering resources for electrical terminals, copper connectors, and industrial wiring components.",

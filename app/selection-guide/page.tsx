@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { Breadcrumb, FAQAccordion, ImagePreview } from "@/components/shared";
+import { homeUrl, productsUrl, requestQuoteUrl, selectionGuideUrl } from "@/lib/routes";
 import { makeBreadcrumbSchema, makeCollectionPageSchema, makeFAQPageSchema } from "@/lib/schema";
 import {
   colorWireRows,
@@ -54,13 +55,13 @@ export const metadata: Metadata = {
   title: pageTitle,
   description: pageDescription,
   alternates: {
-    canonical: "/selection-guide",
+    canonical: selectionGuideUrl(),
   },
   openGraph: {
     type: "website",
     title: pageTitle,
     description: pageDescription,
-    url: "/selection-guide",
+    url: selectionGuideUrl(),
     images: [
       {
         url: selectionGuideImages.namingDiagramTerminal,
@@ -81,16 +82,16 @@ export default function SelectionGuidePage() {
 
   const structuredData = [
     makeBreadcrumbSchema([
-      { name: "Home", path: "/" },
-      { name: "Terminal Selection Guide", path: "/selection-guide" },
+      { name: "Home", path: homeUrl() },
+      { name: "Terminal Selection Guide", path: selectionGuideUrl() },
     ]),
     makeCollectionPageSchema({
       name: "Terminal Selection Guide",
       description: pageDescription,
-      path: "/selection-guide",
+      path: selectionGuideUrl(),
     }),
     makeFAQPageSchema({
-      path: "/selection-guide",
+      path: selectionGuideUrl(),
       items: selectionGuideFaqItems.map((item) => ({
         question: item.question,
         answer: item.answer,
@@ -126,7 +127,7 @@ export default function SelectionGuidePage() {
                 <Link href="#section-a" className="btn btn-primary w-full justify-center sm:w-auto">
                   Start with Terminal Type
                 </Link>
-                <Link href="/contact#request-quote" className="btn btn-hero-secondary w-full justify-center sm:w-auto">
+                <Link href={requestQuoteUrl()} className="btn btn-hero-secondary w-full justify-center sm:w-auto">
                   Request Quote
                 </Link>
               </div>
@@ -718,7 +719,7 @@ export default function SelectionGuidePage() {
                   {item.title}
                 </a>
               ))}
-              <Link href="/products" className="btn btn-outline mt-2 w-full text-center">
+              <Link href={productsUrl()} className="btn btn-outline mt-2 w-full text-center">
                 Browse Products
               </Link>
             </div>

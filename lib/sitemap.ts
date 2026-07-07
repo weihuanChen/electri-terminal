@@ -1,10 +1,19 @@
 import "server-only";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
-import { BLOG_PAGE_SIZE, getBlogPageCount, getBlogPagePath } from "@/lib/blogPagination";
+import { BLOG_PAGE_SIZE, getBlogPageCount } from "@/lib/blogPagination";
 import { isRedirectedFamilySlug } from "@/lib/familyRedirects";
+import {
+  DEFAULT_LOCALE,
+  type PublicUrlEntityRef,
+  type StaticPageKey,
+  createGscLinkIntegrityCandidate,
+  resolveEntityPath,
+  resolveSeoOutput,
+  runGscLinkIntegrityGate,
+} from "@/lib/i18n";
 import { isRedirectedProductSlug } from "@/lib/productRedirects";
-import { getSiteUrl, toAbsoluteSiteUrl } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site";
 
 type SitemapImage = {
   url?: string;
@@ -51,6 +60,9 @@ export type SitemapPageEntry = {
     | "yearly"
     | "never";
   priority?: number;
+  alternates?: {
+    languages?: Record<string, string>;
+  };
 };
 
 export type SitemapImageEntry = {
@@ -62,30 +74,109 @@ export type SitemapImageEntry = {
   }>;
 };
 
-const STATIC_PAGE_ENTRIES: SitemapPageEntry[] = [
-  { url: toAbsoluteSiteUrl("/"), changeFrequency: "weekly", priority: 1 },
-  { url: toAbsoluteSiteUrl("/categories"), changeFrequency: "weekly", priority: 0.9 },
-  { url: toAbsoluteSiteUrl("/products"), changeFrequency: "weekly", priority: 0.9 },
-  { url: toAbsoluteSiteUrl("/manufacturing"), changeFrequency: "weekly", priority: 0.8 },
-  { url: toAbsoluteSiteUrl("/selection-guide"), changeFrequency: "weekly", priority: 0.8 },
-  { url: toAbsoluteSiteUrl("/resources"), changeFrequency: "weekly", priority: 0.8 },
-  { url: toAbsoluteSiteUrl("/blog"), changeFrequency: "weekly", priority: 0.8 },
-  { url: toAbsoluteSiteUrl("/contact"), changeFrequency: "monthly", priority: 0.6 },
-  { url: toAbsoluteSiteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.4 },
+const STATIC_PAGE_ENTRY_CONFIGS: Array<
+  Omit<SitemapPageEntry, "url" | "alternates"> & { key: StaticPageKey }
+> = [
+  { key: "home", changeFrequency: "weekly", priority: 1 },
+  { key: "categories", changeFrequency: "weekly", priority: 0.9 },
+  { key: "products", changeFrequency: "weekly", priority: 0.9 },
+  { key: "manufacturing", changeFrequency: "weekly", priority: 0.8 },
+  { key: "selection-guide", changeFrequency: "weekly", priority: 0.8 },
+  { key: "resources", changeFrequency: "weekly", priority: 0.8 },
+  { key: "blog", changeFrequency: "weekly", priority: 0.8 },
+  { key: "contact", changeFrequency: "monthly", priority: 0.6 },
+  { key: "privacy-policy", changeFrequency: "yearly", priority: 0.4 },
 ];
+
+const STATIC_PAGE_ENTRIES: SitemapPageEntry[] = STATIC_PAGE_ENTRY_CONFIGS.map(
+  ({ key, ...entry }) =>
+    buildSitemapPageEntry({
+      ...entry,
+      entity: { type: "staticPage", key },
+      fallbackPath: getStaticPageFallbackPath(key),
+    })
+).filter((entry): entry is SitemapPageEntry => Boolean(entry));
 
 function toDate(timestamp?: number) {
   return typeof timestamp === "number" ? new Date(timestamp) : undefined;
 }
 
-function normalizeCanonicalUrl(canonical?: string, fallbackPath?: string) {
-  if (canonical?.trim()) {
-    return toAbsoluteSiteUrl(canonical.trim());
+function getStaticPageFallbackPath(key: StaticPageKey) {
+  return resolveEntityPath({ type: "staticPage", key });
+}
+
+function buildSitemapPageEntry({
+  entity,
+  fallbackPath,
+  canonical,
+  lastModified,
+  changeFrequency,
+  priority,
+}: Omit<SitemapPageEntry, "url" | "alternates"> & {
+  entity: PublicUrlEntityRef;
+  fallbackPath: string;
+  canonical?: string;
+}): SitemapPageEntry | null {
+  const seo = resolveSeoOutput({
+    locale: DEFAULT_LOCALE,
+    entity,
+    fallbackPath,
+    canonical,
+    sourceStatus: "published",
+    localizationStatus: "published",
+  });
+
+  if (!seo.sitemapEligible || !seo.canonical) {
+    return null;
   }
-  if (!fallbackPath) {
-    throw new Error("Missing sitemap fallback path.");
+
+  const gateReport = runGscLinkIntegrityGate([
+    createGscLinkIntegrityCandidate({
+      source: "sitemap",
+      entity,
+      seo,
+    }),
+  ]);
+
+  if (!gateReport.passed) {
+    return null;
   }
-  return toAbsoluteSiteUrl(fallbackPath);
+
+  const entry: SitemapPageEntry = {
+    url: seo.canonical,
+  };
+
+  if (lastModified) {
+    entry.lastModified = lastModified;
+  }
+
+  if (changeFrequency) {
+    entry.changeFrequency = changeFrequency;
+  }
+
+  if (priority !== undefined) {
+    entry.priority = priority;
+  }
+
+  if (seo.sitemapAlternates) {
+    entry.alternates = seo.sitemapAlternates;
+  }
+
+  return entry;
+}
+
+function resolveSitemapPageUrl(
+  entity: PublicUrlEntityRef,
+  fallbackPath: string,
+  canonical?: string
+) {
+  return (
+    buildSitemapPageEntry({
+      entity,
+      fallbackPath,
+      canonical,
+    })?.url ?? null
+  );
 }
 
 function normalizeImageUrl(url?: string) {
@@ -132,12 +223,13 @@ function buildBlogPaginationSitemapEntries(articleCount: number): SitemapPageEnt
 
   return Array.from({ length: pageCount - 1 }, (_, index) => {
     const page = index + 2;
-    return {
-      url: toAbsoluteSiteUrl(getBlogPagePath(page)),
+    return buildSitemapPageEntry({
+      entity: { type: "blogPage", page },
+      fallbackPath: resolveEntityPath({ type: "blogPage", page }),
       changeFrequency: "weekly" as const,
       priority: Number(Math.max(0.3, 0.7 - index * 0.05).toFixed(2)),
-    };
-  });
+    });
+  }).filter((entry): entry is SitemapPageEntry => Boolean(entry));
 }
 
 function escapeXml(value: string) {
@@ -161,31 +253,62 @@ export async function buildSitemapEntries() {
   return [
     ...STATIC_PAGE_ENTRIES,
     ...buildBlogPaginationSitemapEntries(content.articles.length),
-    ...content.categories.map((category) => ({
-      url: normalizeCanonicalUrl(category.canonical, `/categories/${category.slug}`),
-      lastModified: toDate(category.updatedAt),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    ...sitemapFamilies.map((family) => ({
-      url: normalizeCanonicalUrl(family.canonical, `/families/${family.slug}`),
-      lastModified: toDate(family.updatedAt),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    ...sitemapProducts.map((product) => ({
-      url: normalizeCanonicalUrl(product.canonical, `/products/${product.slug}`),
-      lastModified: toDate(product.updatedAt),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
-    ...content.articles.map((article) => ({
-      url: normalizeCanonicalUrl(article.canonical, `/blog/${article.slug}`),
-      lastModified: toDate(article.updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-  ];
+    ...content.categories.map((category) =>
+      buildSitemapPageEntry({
+        entity: { type: "category", slug: category.slug },
+        fallbackPath: resolveEntityPath({ type: "category", slug: category.slug }),
+        canonical: category.canonical,
+        lastModified: toDate(category.updatedAt),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      })
+    ),
+    ...sitemapFamilies.map((family) =>
+      buildSitemapPageEntry({
+        entity: { type: "family", slug: family.slug },
+        fallbackPath: resolveEntityPath({ type: "family", slug: family.slug }),
+        canonical: family.canonical,
+        lastModified: toDate(family.updatedAt),
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      })
+    ),
+    ...sitemapProducts.map((product) =>
+      buildSitemapPageEntry({
+        entity: { type: "product", slug: product.slug },
+        fallbackPath: resolveEntityPath({ type: "product", slug: product.slug }),
+        canonical: product.canonical,
+        lastModified: toDate(product.updatedAt),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })
+    ),
+    ...content.articles.map((article) =>
+      buildSitemapPageEntry({
+        entity: { type: "article", slug: article.slug },
+        fallbackPath: resolveEntityPath({ type: "article", slug: article.slug }),
+        canonical: article.canonical,
+        lastModified: toDate(article.updatedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      })
+    ),
+  ].filter((entry): entry is SitemapPageEntry => Boolean(entry));
+}
+
+export async function buildSitemapGscLinkIntegrityReport() {
+  const entries = await buildSitemapEntries();
+  const candidates = entries.map((entry) => ({
+    source: "sitemap" as const,
+    locale: DEFAULT_LOCALE,
+    url: entry.url,
+    canonical: entry.url,
+    indexable: true,
+    sitemapEligible: true,
+    alternates: entry.alternates,
+  }));
+
+  return runGscLinkIntegrityGate(candidates);
 }
 
 export async function buildImageSitemapEntries() {
@@ -198,8 +321,14 @@ export async function buildImageSitemapEntries() {
   for (const category of content.categories) {
     const images = dedupeImages([{ url: category.image, title: category.slug }]);
     if (!images.length) continue;
+    const pageUrl = resolveSitemapPageUrl(
+      { type: "category", slug: category.slug },
+      resolveEntityPath({ type: "category", slug: category.slug }),
+      category.canonical
+    );
+    if (!pageUrl) continue;
     entries.push({
-      pageUrl: normalizeCanonicalUrl(category.canonical, `/categories/${category.slug}`),
+      pageUrl,
       lastModified: toDate(category.updatedAt),
       images,
     });
@@ -213,8 +342,14 @@ export async function buildImageSitemapEntries() {
       }))
     );
     if (!images.length) continue;
+    const pageUrl = resolveSitemapPageUrl(
+      { type: "family", slug: family.slug },
+      resolveEntityPath({ type: "family", slug: family.slug }),
+      family.canonical
+    );
+    if (!pageUrl) continue;
     entries.push({
-      pageUrl: normalizeCanonicalUrl(family.canonical, `/families/${family.slug}`),
+      pageUrl,
       lastModified: toDate(family.updatedAt),
       images,
     });
@@ -228,8 +363,14 @@ export async function buildImageSitemapEntries() {
       }))
     );
     if (!images.length) continue;
+    const pageUrl = resolveSitemapPageUrl(
+      { type: "product", slug: product.slug },
+      resolveEntityPath({ type: "product", slug: product.slug }),
+      product.canonical
+    );
+    if (!pageUrl) continue;
     entries.push({
-      pageUrl: normalizeCanonicalUrl(product.canonical, `/products/${product.slug}`),
+      pageUrl,
       lastModified: toDate(product.updatedAt),
       images,
     });
@@ -238,8 +379,14 @@ export async function buildImageSitemapEntries() {
   for (const article of content.articles) {
     const images = dedupeImages([{ url: article.coverImage, title: article.title }]);
     if (!images.length) continue;
+    const pageUrl = resolveSitemapPageUrl(
+      { type: "article", slug: article.slug },
+      resolveEntityPath({ type: "article", slug: article.slug }),
+      article.canonical
+    );
+    if (!pageUrl) continue;
     entries.push({
-      pageUrl: normalizeCanonicalUrl(article.canonical, `/blog/${article.slug}`),
+      pageUrl,
       lastModified: toDate(article.updatedAt),
       images,
     });

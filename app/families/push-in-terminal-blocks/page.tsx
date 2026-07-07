@@ -2,6 +2,7 @@ import Breadcrumb from "@/components/shared/Breadcrumb";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { categoryUrl, homeUrl, productsUrl } from "@/lib/routes";
 
 export const metadata = {
     title: "Push-in Terminal Blocks | Industrial Electrical Components",
@@ -14,9 +15,9 @@ export const metadata = {
 
 export default function PushInTerminalBlocksPage() {
     const breadcrumbItems = [
-        { label: "Home", href: "/" },
-        { label: "Products", href: "/products" },
-        { label: "Terminal Blocks", href: "/categories/terminal-blocks" },
+        { label: "Home", href: homeUrl() },
+        { label: "Products", href: productsUrl() },
+        { label: "Terminal Blocks", href: categoryUrl("terminal-blocks") },
         { label: "Push-in Terminal Blocks" },
     ];
 
@@ -28,7 +29,7 @@ export default function PushInTerminalBlocksPage() {
             current: "24A",
             wireSize: "0.2–4 mm²",
             color: "Gray",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 4",
@@ -37,7 +38,7 @@ export default function PushInTerminalBlocksPage() {
             current: "32A",
             wireSize: "0.5–6 mm²",
             color: "Gray",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 6",
@@ -46,7 +47,7 @@ export default function PushInTerminalBlocksPage() {
             current: "41A",
             wireSize: "0.5–10 mm²",
             color: "Gray",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 10",
@@ -55,7 +56,7 @@ export default function PushInTerminalBlocksPage() {
             current: "57A",
             wireSize: "2–16 mm²",
             color: "Gray",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 16",
@@ -64,7 +65,7 @@ export default function PushInTerminalBlocksPage() {
             current: "76A",
             wireSize: "4–25 mm²",
             color: "Gray",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 2.5-PE",
@@ -73,7 +74,7 @@ export default function PushInTerminalBlocksPage() {
             current: "24A",
             wireSize: "0.2–4 mm²",
             color: "Green/Yellow",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 4-P",
@@ -82,7 +83,7 @@ export default function PushInTerminalBlocksPage() {
             current: "32A",
             wireSize: "0.5–6 mm²",
             color: "Gray/Black",
-            href: "/products"
+            href: productsUrl()
         },
         {
             name: "PT 6-F",
@@ -91,7 +92,7 @@ export default function PushInTerminalBlocksPage() {
             current: "32A",
             wireSize: "0.5–6 mm²",
             color: "Black/Green",
-            href: "/products"
+            href: productsUrl()
         }
     ];
 
@@ -333,27 +334,27 @@ export default function PushInTerminalBlocksPage() {
                         {[
                             {
                                 name: "Screw Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Spring Clamp Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Ground Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Double-Level Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Fuse Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Disconnect Terminal Blocks",
-                                href: "/products"
+                                href: productsUrl()
                             }
                         ].map((series, idx) => (
                             <Link
@@ -379,17 +380,17 @@ export default function PushInTerminalBlocksPage() {
                             {
                                 name: "Cable Glands",
                                 description: "Cable entry protection for enclosures and cabinets",
-                                href: "/categories/cable-glands"
+                                href: categoryUrl("cable-glands")
                             },
                             {
                                 name: "Electrical Enclosures",
                                 description: "Protection for electrical components in industrial environments",
-                                href: "/categories/electrical-enclosures"
+                                href: categoryUrl("electrical-enclosures")
                             },
                             {
                                 name: "DIN Rail Accessories",
                                 description: "End brackets, mounting rails, and labeling systems",
-                                href: "/categories/din-rail-accessories"
+                                href: categoryUrl("din-rail-accessories")
                             }
                         ].map((category, idx) => (
                             <Link

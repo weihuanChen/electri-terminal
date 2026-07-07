@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { articleUrl } from "@/lib/routes";
 
 interface Application {
   title: string;
@@ -17,7 +18,7 @@ interface ApplicationCardProps {
 export default function ApplicationCard({ application }: ApplicationCardProps) {
   return (
     <Link
-      href={`/blog/${application.slug}`}
+      href={articleUrl(application.slug)}
       className="group block relative h-96 w-full rounded-sm overflow-hidden bg-slate-900 shadow-sm hover:shadow-lg transition-shadow duration-300"
     >
       {/* Background Image */}

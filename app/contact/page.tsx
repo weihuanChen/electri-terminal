@@ -28,6 +28,7 @@ import {
   normalizePublicContactSettings,
 } from "@/lib/contactConfig";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
+import { productsUrl, resourcesUrl } from "@/lib/routes";
 
 type InquiryMode = "general" | "rfq";
 
@@ -589,7 +590,7 @@ export default function ContactPage() {
                 <div className="p-6 md:p-8 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors duration-300">
                   <p className="text-sm text-slate-500 dark:text-slate-400 order-2 sm:order-1 text-center sm:text-left transition-colors duration-300">
                     By submitting, you agree to our{" "}
-                    <Link href="/resources" className="text-primary hover:underline font-medium">
+                    <Link href={resourcesUrl()} className="text-primary hover:underline font-medium">
                       Documentation Policy
                     </Link>
                   </p>
@@ -798,8 +799,8 @@ export default function ContactPage() {
       <CTABanner 
         title="Ready to Start Your Project?" 
         description="Connect with our engineering team for a comprehensive technical review." 
-        primaryCTA={{ label: "View Products", href: "/products" }}
-        secondaryCTA={{ label: "Browse Resources", href: "/resources" }}
+        primaryCTA={{ label: "View Products", href: productsUrl() }}
+        secondaryCTA={{ label: "Browse Resources", href: resourcesUrl() }}
         variant="default"
       />
     </>

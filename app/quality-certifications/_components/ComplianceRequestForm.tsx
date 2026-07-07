@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { submitPublicInquiry } from "@/lib/inquiry-client";
+import { resourcesUrl } from "@/lib/routes";
 
 type CertificateType = "CE" | "RoHS" | "REACH" | "UL" | "Other";
 
@@ -244,7 +245,7 @@ export default function ComplianceRequestForm() {
           <p className="text-xs leading-6 text-[#64748B] dark:text-slate-400">
             By submitting this form, you agree to our{" "}
             <Link
-              href="/resources"
+              href={resourcesUrl()}
               className="text-blue-700 hover:text-blue-800 hover:underline dark:text-blue-300 dark:hover:text-blue-200"
             >
               documentation support policy

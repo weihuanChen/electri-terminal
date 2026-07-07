@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Breadcrumb, DownloadCard, ResourceNav } from "@/components/shared";
+import { blogUrl, contactUrl, requestQuoteUrl } from "@/lib/routes";
 
 export type ResourceDocumentType =
   | "catalog"
@@ -198,10 +199,10 @@ export default function ResourcesPageClient({
               Share your product models or item numbers and we&apos;ll prepare the required documentation package.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact" className="btn btn-primary">
+              <Link href={contactUrl()} className="btn btn-primary">
                 Request Documentation
               </Link>
-              <Link href="/contact#request-quote" className="btn btn-secondary">
+              <Link href={requestQuoteUrl()} className="btn btn-secondary">
                 Submit RFQ
               </Link>
             </div>
@@ -217,7 +218,7 @@ export default function ResourcesPageClient({
               <p className="text-sm text-secondary mb-4">
                 Our product pages and technical references are updated as new models and revisions are released.
               </p>
-              <Link href="/blog" className="text-sm text-primary hover:underline">
+              <Link href={blogUrl()} className="text-sm text-primary hover:underline">
                 View Updates →
               </Link>
             </div>
@@ -227,7 +228,7 @@ export default function ResourcesPageClient({
               <p className="text-sm text-secondary mb-4">
                 Our engineering team can support model selection and provide project-specific technical files.
               </p>
-              <Link href="/contact" className="text-sm text-primary hover:underline">
+              <Link href={contactUrl()} className="text-sm text-primary hover:underline">
                 Get Support →
               </Link>
             </div>
@@ -237,7 +238,7 @@ export default function ResourcesPageClient({
               <p className="text-sm text-secondary mb-4">
                 Certificates and custom product documentation are available upon request for selected models.
               </p>
-              <Link href="/contact#request-quote" className="text-sm text-primary hover:underline">
+              <Link href={requestQuoteUrl()} className="text-sm text-primary hover:underline">
                 Start Request →
               </Link>
             </div>

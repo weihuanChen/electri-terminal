@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb, FAQAccordion, ImagePreview } from "@/components/shared";
+import { contactUrl, manufacturingUrl, requestQuoteUrl } from "@/lib/routes";
 import {
   CapabilityCard,
   ManufacturingSectionHeading,
@@ -26,13 +27,13 @@ export const metadata: Metadata = {
   title: metadataTitle,
   description: metadataDescription,
   alternates: {
-    canonical: "/manufacturing",
+    canonical: manufacturingUrl(),
   },
   openGraph: {
     type: "website",
     title: metadataTitle,
     description: metadataDescription,
-    url: "/manufacturing",
+    url: manufacturingUrl(),
     images: [
       {
         url: heroImage,
@@ -251,10 +252,10 @@ export default function ManufacturingPage() {
                 batch quality for industrial applications.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/contact" className="btn btn-primary transition-all duration-300">
+                <Link href={contactUrl()} className="btn btn-primary transition-all duration-300">
                   View Manufacturing Process →
                 </Link>
-                <Link href="/contact#request-quote" className="btn btn-hero-secondary transition-all duration-300">
+                <Link href={requestQuoteUrl()} className="btn btn-hero-secondary transition-all duration-300">
                   Request Quote
                 </Link>
               </div>
@@ -517,10 +518,10 @@ export default function ManufacturingPage() {
               review with process-focused manufacturing information.
             </p>
             <div className="mt-6 flex flex-wrap gap-4 transition-colors duration-300">
-              <Link href="/contact" className="btn btn-primary transition-all duration-300">
+              <Link href={contactUrl()} className="btn btn-primary transition-all duration-300">
                 Contact Engineering Team
               </Link>
-              <Link href="/contact#request-quote" className="btn btn-secondary transition-all duration-300">
+              <Link href={requestQuoteUrl()} className="btn btn-secondary transition-all duration-300">
                 Submit RFQ
               </Link>
             </div>

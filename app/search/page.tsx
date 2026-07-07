@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { ArticleCard, Breadcrumb, FamilyCard, ProductCard } from "@/components/shared";
-import { categoryUrl, familyUrl, productUrl } from "@/lib/routes";
+import { articleUrl, categoryUrl, familyUrl, productUrl, searchUrl } from "@/lib/routes";
 import { queryPublicPage } from "@/lib/metadata";
 import { makeSearchResultsSchema } from "@/lib/schema";
 
@@ -98,7 +98,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const resolvedSearchParams = await searchParams;
   const query = normalizeQuery(resolvedSearchParams.q);
-  const breadcrumbItems = [{ label: "Search", href: "/search" }];
+  const breadcrumbItems = [{ label: "Search", href: searchUrl() }];
 
   const results = query
     ? await queryPublicPage<SearchResults>("frontend:searchSiteContent", {
@@ -139,7 +139,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             })),
             ...results.articles.map((article) => ({
               name: article.title,
-              url: `/blog/${article.slug}`,
+              url: articleUrl(article.slug),
             })),
           ],
         })
@@ -162,7 +162,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <p className="mb-8 text-secondary">
               Search products, product families, categories, and technical articles.
             </p>
-            <form action="/search" method="get" className="flex flex-col gap-4 sm:flex-row">
+            <form action={searchUrl()} method="get" className="flex flex-col gap-4 sm:flex-row">
               <input
                 type="search"
                 name="q"
@@ -194,7 +194,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     {results.popularSuggestions.map((suggestion) => (
                       <Link
                         key={suggestion}
-                        href={`/search?q=${encodeURIComponent(suggestion)}`}
+                        href={searchUrl(suggestion)}
                         className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
@@ -220,7 +220,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     {results.suggestions.map((suggestion) => (
                       <Link
                         key={suggestion}
-                        href={`/search?q=${encodeURIComponent(suggestion)}`}
+                        href={searchUrl(suggestion)}
                         className="rounded-full border border-border px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
@@ -319,7 +319,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     {results.suggestions.map((suggestion) => (
                       <Link
                         key={suggestion}
-                        href={`/search?q=${encodeURIComponent(suggestion)}`}
+                        href={searchUrl(suggestion)}
                         className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
@@ -336,7 +336,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     {results.popularSuggestions.map((suggestion) => (
                       <Link
                         key={suggestion}
-                        href={`/search?q=${encodeURIComponent(suggestion)}`}
+                        href={searchUrl(suggestion)}
                         className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}

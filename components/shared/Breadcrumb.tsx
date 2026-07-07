@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { homeUrl } from "@/lib/routes";
 
 interface BreadcrumbItem {
     label: string;
@@ -17,7 +18,7 @@ export default function Breadcrumb({ items, showHome = true }: BreadcrumbProps) 
             {showHome && (
                 <>
                     <Link
-                        href="/"
+                        href={homeUrl()}
                         className="hover:text-gray-900 transition-colors"
                         aria-label="Home"
                     >

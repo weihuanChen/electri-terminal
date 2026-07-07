@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import { ArrowRight, Cable, Layers3, Wrench } from "lucide-react";
+import { contactUrl } from "@/lib/routes";
 
 interface CapabilityPoint {
   icon: ComponentType<{ className?: string }>;
@@ -39,8 +40,8 @@ export default function SecondaryCapabilitySection({
         "Extended sourcing support for special requirements and combined component needs.",
     },
   ],
-  primaryCta = { text: "Discuss Your Requirements", href: "/contact" },
-  secondaryCta = { text: "Contact Us", href: "/contact" },
+  primaryCta = { text: "Discuss Your Requirements", href: contactUrl() },
+  secondaryCta = { text: "Contact Us", href: contactUrl() },
 }: SecondaryCapabilitySectionProps) {
   return (
     <section className="section border-t border-border bg-background">

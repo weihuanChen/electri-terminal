@@ -10,6 +10,15 @@ import {
   type PublicContactSettings,
 } from "@/lib/contactConfig";
 import { getAdminConvexClient } from "@/lib/convex-admin";
+import {
+  DEFAULT_LOCALE,
+  type LocaleStatus,
+  getAllowedLanguageStatusTransitions,
+  isLocale,
+  resolveLanguageWorkflow,
+  type StoredLanguageWorkflow,
+} from "@/lib/i18n";
+import { buildSitemapGscLinkIntegrityReport } from "@/lib/sitemap";
 
 function str(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -90,6 +99,8 @@ const PRODUCT_VARIANT_STATUSES: ProductVariantStatus[] = [
   "archived",
 ];
 
+const LANGUAGE_STATUSES: LocaleStatus[] = ["draft", "prelaunch", "published", "paused"];
+
 async function mutationWithExtraFieldFallback(
   client: ReturnType<typeof getAdminConvexClient>,
   name: string,
@@ -142,6 +153,10 @@ function normalizeProductVariantStatus(value: unknown): ProductVariantStatus | u
   return PRODUCT_VARIANT_STATUSES.includes(value as ProductVariantStatus)
     ? (value as ProductVariantStatus)
     : undefined;
+}
+
+function normalizeLanguageStatus(value: unknown): LocaleStatus | undefined {
+  return LANGUAGE_STATUSES.includes(value as LocaleStatus) ? (value as LocaleStatus) : undefined;
 }
 
 function parseProductVariantBatchItems(rawItems: string) {
@@ -1514,4 +1529,103 @@ export async function updateContactSettingsAction(formData: FormData) {
   revalidatePath("/contact");
   revalidatePath("/admin/settings/general");
   redirect("/admin/settings/general?success=contact_settings_saved");
+}
+
+export async function updateLanguageWorkflowAction(formData: FormData) {
+  await requireAdmin();
+
+  const localeValue = str(formData, "locale");
+  const nextStatus = normalizeLanguageStatus(str(formData, "nextStatus"));
+
+  if (!isLocale(localeValue)) {
+    redirect("/admin/settings/languages?error=invalid_locale");
+  }
+
+  if (!nextStatus) {
+    redirect(`/admin/settings/languages?locale=${localeValue}&error=invalid_status`);
+  }
+
+  if (localeValue === DEFAULT_LOCALE) {
+    redirect(`/admin/settings/languages?locale=${localeValue}&error=default_locale_locked`);
+  }
+
+  const client = getAdminConvexClient();
+  let existingWorkflows: StoredLanguageWorkflow[] = [];
+
+  try {
+    existingWorkflows = (await client.query("frontend:getLanguageWorkflowSettings", {})) as
+      StoredLanguageWorkflow[];
+  } catch {
+    existingWorkflows = [];
+  }
+
+  const currentWorkflow = resolveLanguageWorkflow(
+    localeValue,
+    existingWorkflows.find((workflow) => workflow.locale === localeValue)
+  );
+  const allowedTransitions = getAllowedLanguageStatusTransitions(currentWorkflow.status, {
+    isDefaultLocale: currentWorkflow.isDefaultLocale,
+  });
+
+  if (!allowedTransitions.includes(nextStatus)) {
+    redirect(
+      `/admin/settings/languages?locale=${localeValue}&error=transition_not_allowed`
+    );
+  }
+
+  const requestedGscSubmission = nextStatus === "published" && boolFromForm(formData, "gscSubmissionEnabled");
+  const releaseOwner = optionalStr(formData, "releaseOwner");
+  const notes = optionalStr(formData, "notes");
+  let gateReport:
+    | {
+        reportId: string;
+        checksum: string;
+        checkedAt: string;
+        passed: boolean;
+        blockerCount: number;
+        highCount: number;
+      }
+    | undefined;
+
+  if (nextStatus === "published" || requestedGscSubmission) {
+    const report = await buildSitemapGscLinkIntegrityReport();
+    gateReport = {
+      reportId: report.reportId,
+      checksum: report.checksum,
+      checkedAt: report.checkedAt,
+      passed: report.passed,
+      blockerCount: report.issueCounts.blocker,
+      highCount: report.issueCounts.high,
+    };
+
+    if (!report.passed) {
+      redirect(
+        `/admin/settings/languages?locale=${localeValue}&error=gsc_gate_failed&blockers=${report.issueCounts.blocker}&high=${report.issueCounts.high}`
+      );
+    }
+  }
+
+  let saveError: unknown;
+  try {
+    await client.mutation("mutations/admin/siteSettings:upsertLanguageWorkflow", {
+      locale: localeValue,
+      status: nextStatus,
+      gscSubmissionEnabled: requestedGscSubmission,
+      releaseOwner,
+      notes,
+      gateReport,
+    });
+  } catch (error: unknown) {
+    saveError = error;
+  }
+
+  if (saveError) {
+    redirect(
+      `/admin/settings/languages?locale=${localeValue}&error=${encodeURIComponent(errorMessage(saveError))}`
+    );
+  }
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/admin/settings/languages");
+  redirect(`/admin/settings/languages?locale=${localeValue}&success=language_workflow_updated`);
 }

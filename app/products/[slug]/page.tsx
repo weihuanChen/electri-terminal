@@ -9,6 +9,7 @@ import {
   resolveProductMetadataEntity,
 } from "@/lib/productPage";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
+import { productUrl } from "@/lib/routes";
 
 type ProductPageProps = {
   params: Promise<{
@@ -259,7 +260,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   return buildPageMetadata({
     entity: resolveProductMetadataEntity(product),
-    fallbackPath: `/products/${slug}`,
+    fallbackPath: productUrl(slug),
     fallbackTitle: product?.shortTitle || product?.title || "Product",
     fallbackDescription: resolveProductMetadataDescription(product),
     image: {

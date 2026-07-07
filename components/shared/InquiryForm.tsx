@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { FileUp, X } from "lucide-react";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
+import { resourcesUrl } from "@/lib/routes";
 
 interface InquiryFormProps {
   sourceType?: "category" | "family" | "product" | "article" | "general";
@@ -217,7 +218,7 @@ export default function InquiryForm({
 
         <p className="text-xs text-secondary text-center">
           By submitting this form, you agree to our{" "}
-          <Link href="/resources" className="text-primary hover:underline">
+          <Link href={resourcesUrl()} className="text-primary hover:underline">
             Documentation Policy
           </Link>
         </p>

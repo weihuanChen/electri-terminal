@@ -5,6 +5,7 @@ import {
   Settings,
   Users,
   Globe,
+  Languages,
   Mail,
   Shield,
   Bell,
@@ -35,6 +36,14 @@ export default async function SettingsPage() {
       color: "text-emerald-600",
       bgColor: "bg-emerald-100",
       count: users.length,
+    },
+    {
+      id: "languages",
+      title: "语言工作流",
+      description: "管理语言级 draft、prelaunch、published、paused 状态",
+      icon: Languages,
+      color: "text-cyan-600",
+      bgColor: "bg-cyan-100",
     },
     {
       id: "notifications",

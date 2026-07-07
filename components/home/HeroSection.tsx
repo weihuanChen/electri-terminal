@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { categoriesUrl, requestQuoteUrl } from "@/lib/routes";
 
 interface HeroSectionProps {
   title?: string;
@@ -25,8 +26,8 @@ export default function HeroSection({
     "Electrical Enclosures",
     "DIN Rail Accessories",
   ],
-  primaryCta = { text: "Browse Products", href: "/categories" },
-  secondaryCta = { text: "Request Quote", href: "/contact#request-quote" },
+  primaryCta = { text: "Browse Products", href: categoriesUrl() },
+  secondaryCta = { text: "Request Quote", href: requestQuoteUrl() },
   imageUrl = "https://assets.electriterminal.com/factory/copper-tube-cutting-manufacturing-process.webp",
   imageAlt = "engineer cutting copper tubes in terminal manufacturing workshop, industrial electrical connector production process",
 }: HeroSectionProps) {

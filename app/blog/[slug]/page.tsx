@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import JsonLd from "@/components/seo/JsonLd";
 import ArticlePageClient, { type ArticlePageData } from "./ArticlePageClient";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
+import { articleUrl, blogUrl } from "@/lib/routes";
 import { makeArticleSchema, makeBreadcrumbSchema, makeFAQPageSchema } from "@/lib/schema";
 
 type ArticlePageProps = {
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
   return buildPageMetadata({
     entity: article,
-    fallbackPath: `/blog/${slug}`,
+    fallbackPath: articleUrl(slug),
     fallbackTitle: article?.title || "Article",
     fallbackDescription:
       article?.seoDescription ||
@@ -67,8 +68,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const structuredData = [
     makeBreadcrumbSchema([
-      { name: "Blog", path: "/blog" },
-      { name: article.title, path: `/blog/${slug}` },
+      { name: "Blog", path: blogUrl() },
+      { name: article.title, path: articleUrl(slug) },
     ]),
     makeArticleSchema({
       slug,
@@ -82,7 +83,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     ...(article.type === "faq" && articleFaqAnswer
       ? [
           makeFAQPageSchema({
-            path: `/blog/${slug}`,
+            path: articleUrl(slug),
             items: [
               {
                 question: article.title,

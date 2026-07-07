@@ -13,8 +13,8 @@ import {
 
 import JsonLd from "@/components/seo/JsonLd";
 import { Breadcrumb } from "@/components/shared";
+import { contactUrl, homeUrl, qualityCertificationsUrl } from "@/lib/routes";
 import { makeBreadcrumbSchema, makeCollectionPageSchema } from "@/lib/schema";
-import { toAbsoluteSiteUrl } from "@/lib/site";
 
 import CertificateCard from "./_components/CertificateCard";
 import ComplianceRequestForm from "./_components/ComplianceRequestForm";
@@ -49,13 +49,13 @@ export const metadata: Metadata = {
   title: metadataTitle,
   description: metadataDescription,
   alternates: {
-    canonical: "/quality-certifications",
+    canonical: qualityCertificationsUrl(),
   },
   openGraph: {
     type: "website",
     title: metadataTitle,
     description: metadataDescription,
-    url: "/quality-certifications",
+    url: qualityCertificationsUrl(),
     images: [
       {
         url: "https://assets.electriterminal.com/certifications/ce-ring-terminals-certificate.webp",
@@ -77,19 +77,19 @@ export default function QualityCertificationsPage() {
   const breadcrumbItems = [{ label: "Compliance Documentation" }];
   const structuredData = [
     makeBreadcrumbSchema([
-      { name: "Home", path: "/" },
-      { name: "Compliance Documentation", path: "/quality-certifications" },
+      { name: "Home", path: homeUrl() },
+      { name: "Compliance Documentation", path: qualityCertificationsUrl() },
     ]),
     makeCollectionPageSchema({
       name: pageHeading,
       description: metadataDescription,
-      path: "/quality-certifications",
+      path: qualityCertificationsUrl(),
     }),
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
       name: "Compliance Document References",
-      url: toAbsoluteSiteUrl("/quality-certifications"),
+      url: qualityCertificationsUrl({ absolute: true }),
       itemListElement: [ulListedCard.title, ...certificateCards.map((card) => card.title)].map(
         (name, index) => ({
         "@type": "ListItem",
@@ -132,7 +132,7 @@ export default function QualityCertificationsPage() {
                   Request Compliance Support
                 </Link>
                 <Link
-                  href="/contact"
+                  href={contactUrl()}
                   className="btn btn-hero-secondary w-full justify-center sm:w-auto"
                 >
                   Discuss Project Scope

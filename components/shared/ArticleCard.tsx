@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock } from "lucide-react";
+import { articleUrl } from "@/lib/routes";
 
 interface ArticleCardProps {
   slug: string;
@@ -39,7 +40,7 @@ export default function ArticleCard({
   };
 
   return (
-    <Link href={`/blog/${slug}`} className="card group block h-full">
+    <Link href={articleUrl(slug)} className="card group block h-full">
       {coverImage && (
         <div className="relative h-48 bg-muted overflow-hidden">
           <Image

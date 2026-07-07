@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { contactUrl } from "@/lib/routes";
 
 export default function FactoryOverview() {
     const factoryImages = [
@@ -61,7 +62,7 @@ export default function FactoryOverview() {
 
                         <div className="pt-6">
                             <Link
-                                href="/contact"
+                                href={contactUrl()}
                                 className="inline-flex items-center text-primary hover:text-white font-bold text-lg transition-colors group"
                             >
                                 Request Factory Capability Details

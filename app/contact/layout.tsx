@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { contactUrl } from "@/lib/routes";
 
 const metadataTitle =
   "Contact Electri Terminal | OEM Electrical Terminal Manufacturer";
@@ -9,13 +10,13 @@ export const metadata: Metadata = {
   title: metadataTitle,
   description: metadataDescription,
   alternates: {
-    canonical: "/contact",
+    canonical: contactUrl(),
   },
   openGraph: {
     type: "website",
     title: metadataTitle,
     description: metadataDescription,
-    url: "/contact",
+    url: contactUrl(),
   },
   twitter: {
     card: "summary",

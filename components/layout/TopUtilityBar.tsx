@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, Phone, Globe, FileText } from "lucide-react";
+import { resourcesUrl } from "@/lib/routes";
 
 interface TopUtilityBarProps {
   email?: string;
@@ -42,7 +43,7 @@ export default function TopUtilityBar({
           <div className="flex items-center gap-4">
             {showCatalogDownload && (
               <Link
-                href="/resources"
+                href={resourcesUrl()}
                 className="flex items-center gap-1.5 hover:text-slate-300 transition-colors"
               >
                 <FileText className="w-4 h-4" />

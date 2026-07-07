@@ -1,5 +1,13 @@
-import { categoryUrl, familyUrl, productUrl } from "@/lib/routes";
-import { toAbsoluteSiteUrl } from "@/lib/site";
+import { resolveAbsoluteUrl } from "@/lib/i18n/urlResolver";
+import {
+  articleUrl,
+  categoryUrl,
+  familyUrl,
+  homeUrl,
+  productUrl,
+  productsUrl,
+  searchUrl,
+} from "@/lib/routes";
 
 type BreadcrumbItem = {
   name: string;
@@ -19,7 +27,7 @@ type FaqEntry = {
 type ProductAttributeValue = string | number | boolean | string[];
 
 function normalizeSchemaImage(url?: string) {
-  return url ? toAbsoluteSiteUrl(url) : undefined;
+  return url ? resolveAbsoluteUrl(url) : undefined;
 }
 
 function normalizeProductPropertyValue(value: ProductAttributeValue) {
@@ -37,9 +45,9 @@ export function makeOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${toAbsoluteSiteUrl("/")}#organization`,
+    "@id": `${resolveAbsoluteUrl(homeUrl())}#organization`,
     name: "Electri Terminal",
-    url: toAbsoluteSiteUrl("/"),
+    url: resolveAbsoluteUrl(homeUrl()),
     email: "info@electriterminal.com",
   };
 }
@@ -48,15 +56,15 @@ export function makeWebsiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": `${toAbsoluteSiteUrl("/")}#website`,
+    "@id": `${resolveAbsoluteUrl(homeUrl())}#website`,
     name: "Electri Terminal",
-    url: toAbsoluteSiteUrl("/"),
+    url: resolveAbsoluteUrl(homeUrl()),
     inLanguage: "en",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${toAbsoluteSiteUrl("/search")}?q={search_term_string}`,
+        urlTemplate: `${resolveAbsoluteUrl(searchUrl())}?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -71,7 +79,7 @@ export function makeBreadcrumbSchema(items: BreadcrumbItem[]) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.path ? toAbsoluteSiteUrl(item.path) : undefined,
+      item: item.path ? resolveAbsoluteUrl(item.path) : undefined,
     })),
   };
 }
@@ -90,7 +98,7 @@ export function makeCollectionPageSchema({
     "@type": "CollectionPage",
     name,
     description,
-    url: toAbsoluteSiteUrl(path),
+    url: resolveAbsoluteUrl(path),
   };
 }
 
@@ -107,11 +115,11 @@ export function makeItemListSchema({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name,
-    url: toAbsoluteSiteUrl(path),
+    url: resolveAbsoluteUrl(path),
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: toAbsoluteSiteUrl(item.url),
+      url: resolveAbsoluteUrl(item.url),
       name: item.name,
     })),
   };
@@ -127,7 +135,7 @@ export function makeFAQPageSchema({
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    url: toAbsoluteSiteUrl(path),
+    url: resolveAbsoluteUrl(path),
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,
@@ -163,7 +171,7 @@ export function makeProductSchema({
   attributes?: Record<string, ProductAttributeValue>;
 }) {
   const normalizedImage = normalizeSchemaImage(image);
-  const productPageUrl = toAbsoluteSiteUrl(productUrl(slug));
+  const productPageUrl = resolveAbsoluteUrl(productUrl(slug));
 
   return {
     "@context": "https://schema.org",
@@ -205,14 +213,14 @@ export function makeSearchResultsSchema({
     "@context": "https://schema.org",
     "@type": "SearchResultsPage",
     name: `Search results for ${query}`,
-    url: `${toAbsoluteSiteUrl("/search")}?q=${encodeURIComponent(query)}`,
+    url: resolveAbsoluteUrl(searchUrl(query)),
     mainEntity: {
       "@type": "ItemList",
       itemListElement: items.map((item, index) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
-        url: toAbsoluteSiteUrl(item.url),
+        url: resolveAbsoluteUrl(item.url),
       })),
     },
   };
@@ -242,12 +250,12 @@ export function makeArticleSchema({
     "@type": "Article",
     headline: title,
     description,
-    url: toAbsoluteSiteUrl(`/blog/${slug}`),
+    url: resolveAbsoluteUrl(articleUrl(slug)),
     image: normalizedImage ? [normalizedImage] : undefined,
     publisher: {
       "@type": "Organization",
       name: "Electri Terminal",
-      url: toAbsoluteSiteUrl("/"),
+      url: resolveAbsoluteUrl(homeUrl()),
     },
     author: {
       "@type": authorName ? "Person" : "Organization",
@@ -269,11 +277,11 @@ export function makeProductsHubSchemas({
     makeCollectionPageSchema({
       name: "Products",
       description: "Browse product categories and featured series for industrial electrical components.",
-      path: "/products",
+      path: productsUrl(),
     }),
     makeItemListSchema({
       name: "Product Categories",
-      path: "/products",
+      path: productsUrl(),
       items: categories.map((category) => ({
         name: category.name,
         url: categoryUrl(category.slug),
@@ -281,7 +289,7 @@ export function makeProductsHubSchemas({
     }),
     makeItemListSchema({
       name: "Featured Product Series",
-      path: "/products",
+      path: productsUrl(),
       items: families.map((family) => ({
         name: family.name,
         url: familyUrl(family.slug),

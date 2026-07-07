@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 import { Breadcrumb, CategoryCard, CTABanner } from "@/components/shared";
-import { familyUrl } from "@/lib/routes";
+import { categoriesUrl, contactUrl, familyUrl, requestQuoteUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
 
 interface HubChildCategory {
@@ -114,7 +114,7 @@ export default function CategoryHubClient({
   fallbackFamilies,
 }: CategoryHubClientProps) {
   const breadcrumbItems = [
-    { label: "Categories", href: "/categories" },
+    { label: "Categories", href: categoriesUrl() },
     { label: category.name },
   ];
 
@@ -296,7 +296,7 @@ export default function CategoryHubClient({
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
-                  href="/contact#request-quote"
+                  href={requestQuoteUrl()}
                   className="inline-flex items-center rounded-sm border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
                 >
                   Request Quote
@@ -548,11 +548,11 @@ export default function CategoryHubClient({
         variant="primary"
         primaryCTA={{
           label: "Request Quote",
-          href: "/contact#request-quote",
+          href: requestQuoteUrl(),
         }}
         secondaryCTA={{
           label: "Contact Team",
-          href: "/contact",
+          href: contactUrl(),
         }}
       />
     </>

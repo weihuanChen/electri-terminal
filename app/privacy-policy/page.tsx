@@ -12,8 +12,8 @@ import {
 
 import JsonLd from "@/components/seo/JsonLd";
 import { Breadcrumb } from "@/components/shared";
+import { contactUrl, homeUrl, privacyPolicyUrl } from "@/lib/routes";
 import { makeBreadcrumbSchema } from "@/lib/schema";
-import { toAbsoluteSiteUrl } from "@/lib/site";
 
 const pageTitle = "Privacy Policy";
 const pageDescription =
@@ -147,13 +147,13 @@ export const metadata: Metadata = {
   title: `${pageTitle} | Electri Terminal`,
   description: pageDescription,
   alternates: {
-    canonical: "/privacy-policy",
+    canonical: privacyPolicyUrl(),
   },
   openGraph: {
     type: "website",
     title: `${pageTitle} | Electri Terminal`,
     description: pageDescription,
-    url: "/privacy-policy",
+    url: privacyPolicyUrl(),
   },
   twitter: {
     card: "summary",
@@ -166,15 +166,15 @@ export default function PrivacyPolicyPage() {
   const breadcrumbItems = [{ label: pageTitle }];
   const structuredData = [
     makeBreadcrumbSchema([
-      { name: "Home", path: "/" },
-      { name: pageTitle, path: "/privacy-policy" },
+      { name: "Home", path: homeUrl() },
+      { name: pageTitle, path: privacyPolicyUrl() },
     ]),
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: pageTitle,
       description: pageDescription,
-      url: toAbsoluteSiteUrl("/privacy-policy"),
+      url: privacyPolicyUrl({ absolute: true }),
       dateModified: "2026-07-03",
       inLanguage: "en",
     },
@@ -264,7 +264,7 @@ export default function PrivacyPolicyPage() {
                 </div>
 
                 <Link
-                  href="/contact"
+                  href={contactUrl()}
                   className="btn btn-outline mt-6 w-full justify-center bg-white"
                 >
                   <Mail className="h-4 w-4" />

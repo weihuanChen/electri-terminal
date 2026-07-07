@@ -9,7 +9,7 @@ import {
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, FileText, Download } from "lucide-react";
 import { resolveProductPageViewModel } from "@/lib/productPage";
-import { categoryUrl, familyUrl } from "@/lib/routes";
+import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
 import {
   normalizeVisualMediaItems,
   type VisualMediaItem,
@@ -202,7 +202,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
     showInquiry,
   } = resolveProductPageViewModel(product);
   const breadcrumbItems = [
-    { label: "Categories", href: "/categories" },
+    { label: "Categories", href: categoriesUrl() },
     { label: product.category?.name || "Category", href: categoryUrl(product.category?.slug || "") },
     ...(product.family
       ? [{ label: product.family.name, href: familyUrl(product.family.slug) }]

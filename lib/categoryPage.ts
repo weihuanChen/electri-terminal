@@ -20,7 +20,14 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
-import { familyUrl, productUrl } from "@/lib/routes";
+import {
+  categoriesUrl,
+  categoryUrl,
+  contactUrl,
+  familyUrl,
+  productUrl,
+  requestQuoteUrl,
+} from "@/lib/routes";
 
 type CategoryFilterOption = {
   value: string;
@@ -276,11 +283,11 @@ export function resolveCategoryPageViewModel(
     showDownloads: (category.resources || []).length > 0,
     primaryCTA: {
       label: "Contact Us",
-      href: "/contact",
+      href: contactUrl(),
     } satisfies CTAConfig,
     secondaryCTA: {
       label: "Request Quote",
-      href: "/contact#request-quote",
+      href: requestQuoteUrl(),
     } satisfies CTAConfig,
   };
 }
@@ -294,8 +301,8 @@ export function buildCategoryStructuredData(
 
   return [
     makeBreadcrumbSchema([
-      { name: "Categories", path: "/categories" },
-      { name: category.name, path: `/categories/${slug}` },
+      { name: "Categories", path: categoriesUrl() },
+      { name: category.name, path: categoryUrl(slug) },
     ]),
     makeCollectionPageSchema({
       name: category.name,
@@ -306,13 +313,13 @@ export function buildCategoryStructuredData(
         category.pageConfig?.content?.heroIntro ||
         category.description ||
         category.shortDescription,
-      path: `/categories/${slug}`,
+      path: categoryUrl(slug),
     }),
     ...((category.pageConfig?.content?.featuredFamilies || []).length > 0
       ? [
           makeItemListSchema({
             name: `${category.name} Featured Families`,
-            path: `/categories/${slug}`,
+            path: categoryUrl(slug),
             items: (category.pageConfig?.content?.featuredFamilies || []).map((item) => ({
               name: item.name,
               url: item.link,
@@ -324,7 +331,7 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Families`,
-            path: `/categories/${slug}`,
+            path: categoryUrl(slug),
             items: content.families.map((family) => ({
               name: family.name,
               url: familyUrl(family.slug),
@@ -336,7 +343,7 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Products`,
-            path: `/categories/${slug}`,
+            path: categoryUrl(slug),
             items: content.products.map((product) => ({
               name: product.shortTitle || product.title,
               url: productUrl(product.slug),
@@ -347,7 +354,7 @@ export function buildCategoryStructuredData(
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({
-            path: `/categories/${slug}`,
+            path: categoryUrl(slug),
             items: faqItems,
           }),
         ]
@@ -356,7 +363,7 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Downloads`,
-            path: `/categories/${slug}`,
+            path: categoryUrl(slug),
             items: (category.resources || []).map((resource) => ({
               name: resource.title,
               url: resource.fileUrl,

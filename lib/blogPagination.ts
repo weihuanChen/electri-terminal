@@ -1,3 +1,5 @@
+import { blogPageUrl } from "@/lib/routes";
+
 export const BLOG_PAGE_SIZE = 9;
 
 export function getBlogPageCount(totalItems: number, pageSize = BLOG_PAGE_SIZE) {
@@ -5,7 +7,7 @@ export function getBlogPageCount(totalItems: number, pageSize = BLOG_PAGE_SIZE) 
 }
 
 export function getBlogPagePath(page: number) {
-  return page <= 1 ? "/blog" : `/blog/page/${page}`;
+  return blogPageUrl(page);
 }
 
 export function parseBlogPageParam(value: string) {

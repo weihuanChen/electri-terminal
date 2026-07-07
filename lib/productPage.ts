@@ -6,7 +6,7 @@ import {
   type BasicFaqRecord,
   type CTAConfig,
 } from "@/lib/pageResolvers";
-import { familyUrl, productUrl } from "@/lib/routes";
+import { categoriesUrl, categoryUrl, familyUrl, productUrl } from "@/lib/routes";
 
 type ProductVariantRecord = {
   itemNo?: string;
@@ -132,9 +132,9 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
 
   return [
     makeBreadcrumbSchema([
-      { name: "Categories", path: "/categories" },
+      { name: "Categories", path: categoriesUrl() },
       ...(product.category?.slug
-        ? [{ name: product.category.name || "Category", path: `/categories/${product.category.slug}` }]
+        ? [{ name: product.category.name || "Category", path: categoryUrl(product.category.slug) }]
         : []),
       ...(product.family?.slug
         ? [{ name: product.family.name, path: familyUrl(product.family.slug) }]
@@ -155,7 +155,7 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({
-            path: `/products/${slug}`,
+            path: productUrl(slug),
             items: faqItems,
           }),
         ]

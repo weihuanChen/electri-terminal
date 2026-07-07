@@ -7,7 +7,7 @@ import {
   resolveFamilyPrimaryImage,
   resolveFamilyPrimaryImageAlt,
 } from "@/lib/familyPage";
-import { categoryUrl, familyUrl } from "@/lib/routes";
+import { articleUrl, categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
 import {
   groupMediaItemsByType,
@@ -563,7 +563,7 @@ function resolveQuickSpecs({
 
 export default function FamilyPageClient({ family }: FamilyPageClientProps) {
   const breadcrumbItems = [
-    { label: "Categories", href: "/categories" },
+    { label: "Categories", href: categoriesUrl() },
     { label: family.category?.name || "Category", href: categoryUrl(family.category?.slug || "") },
     { label: family.name },
   ];
@@ -1129,7 +1129,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                       {family.relatedArticles.map((item) => (
                         <Link
                           key={item._id}
-                          href={`/blog/${item.slug}`}
+                          href={articleUrl(item.slug)}
                           className="block text-sm font-medium text-primary hover:underline"
                         >
                           {item.title}

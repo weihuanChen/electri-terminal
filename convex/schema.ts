@@ -2,7 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { categoryPageConfig } from "./lib/categoryPageConfig";
 import { familyPageConfig } from "./lib/familyPageConfig";
-import { contactSettingsValidator } from "./lib/siteSettings";
+import { contactSettingsValidator, languageWorkflowSettingsValidator } from "./lib/siteSettings";
 
 const statusCommon = v.union(
   v.literal("draft"),
@@ -115,6 +115,24 @@ const relationEntityType = v.union(
   v.literal("article")
 );
 
+const localizationEntityType = v.union(
+  v.literal("staticPage"),
+  v.literal("category"),
+  v.literal("family"),
+  v.literal("product"),
+  v.literal("article")
+);
+
+const localizationStatus = v.union(
+  v.literal("missing"),
+  v.literal("draft"),
+  v.literal("machine_ready"),
+  v.literal("review_required"),
+  v.literal("approved"),
+  v.literal("published"),
+  v.literal("stale")
+);
+
 export default defineSchema({
   users: defineTable({
     name: v.string(),
@@ -130,6 +148,7 @@ export default defineSchema({
   siteSettings: defineTable({
     key: v.string(),
     contact: contactSettingsValidator,
+    languageWorkflows: v.optional(languageWorkflowSettingsValidator),
     createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
@@ -337,6 +356,26 @@ export default defineSchema({
     .index("by_assetId", ["assetId"])
     .index("by_entityType_entityId", ["entityType", "entityId"])
     .index("by_asset_entity", ["assetId", "entityType", "entityId"]),
+
+  localizations: defineTable({
+    entityType: localizationEntityType,
+    sourceId: v.string(),
+    locale: v.string(),
+    status: localizationStatus,
+    localizedSlug: v.optional(v.string()),
+    title: v.optional(v.string()),
+    seoTitle: v.optional(v.string()),
+    seoDescription: v.optional(v.string()),
+    sourceUpdatedAt: v.optional(v.number()),
+    translatedAt: v.optional(v.number()),
+    reviewedAt: v.optional(v.number()),
+    publishedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_entity_locale", ["entityType", "sourceId", "locale"])
+    .index("by_locale_status", ["locale", "status"])
+    .index("by_locale_entity_status", ["locale", "entityType", "status"]),
 
   authors: defineTable({
     name: v.string(),

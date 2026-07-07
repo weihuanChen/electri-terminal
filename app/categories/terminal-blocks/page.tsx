@@ -3,6 +3,7 @@ import { TerminalBlocksSidebar } from "@/components/shared/TechnicalSidebar";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { categoryUrl, familyUrl, homeUrl, productsUrl } from "@/lib/routes";
 
 export const metadata = {
     title: "Terminal Blocks | Industrial Electrical Components",
@@ -15,8 +16,8 @@ export const metadata = {
 
 export default function TerminalBlocksCategoryPage() {
     const breadcrumbItems = [
-        { label: "Home", href: "/" },
-        { label: "Products", href: "/products" },
+        { label: "Home", href: homeUrl() },
+        { label: "Products", href: productsUrl() },
         { label: "Terminal Blocks" },
     ];
 
@@ -52,32 +53,32 @@ export default function TerminalBlocksCategoryPage() {
                             {
                                 name: "Screw Terminal Blocks",
                                 description: "Universal screw connection technology for reliable, maintenance-free connections",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Push-in Terminal Blocks",
                                 description: "Tool-free wiring for solid conductors and ferrules. Fast installation",
-                                href: "/families/push-in-terminal-blocks"
+                                href: familyUrl("push-in-terminal-blocks")
                             },
                             {
                                 name: "Spring Clamp Terminal Blocks",
                                 description: "Constant contact force. Ideal for high-vibration environments",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Ground Terminal Blocks",
                                 description: "Secure mechanical and electrical connection to DIN rail",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Double-Level Terminal Blocks",
                                 description: "Compact design for space-saving control cabinet wiring",
-                                href: "/products"
+                                href: productsUrl()
                             },
                             {
                                 name: "Fuse Terminal Blocks",
                                 description: "Integrated fuse holder for circuit protection applications",
-                                href: "/products"
+                                href: productsUrl()
                             }
                         ].map((series, idx) => (
                             <Link
@@ -123,7 +124,7 @@ export default function TerminalBlocksCategoryPage() {
                                     </ul>
                                 </div>
                                 <Link
-                                    href="/products"
+                                    href={productsUrl()}
                                     className="link-arrow inline-flex items-center text-sm font-medium"
                                 >
                                     View Published Series <ArrowRight className="w-4 h-4" />
@@ -152,7 +153,7 @@ export default function TerminalBlocksCategoryPage() {
                                     </ul>
                                 </div>
                                 <Link
-                                    href="/products"
+                                    href={productsUrl()}
                                     className="link-arrow inline-flex items-center text-sm font-medium"
                                 >
                                     View Published Series <ArrowRight className="w-4 h-4" />
@@ -238,22 +239,22 @@ export default function TerminalBlocksCategoryPage() {
                             {
                                 name: "Cable Glands",
                                 description: "Cable entry protection for enclosures and cabinets",
-                                href: "/categories/cable-glands"
+                                href: categoryUrl("cable-glands")
                             },
                             {
                                 name: "Electrical Enclosures",
                                 description: "Protection for electrical components in industrial environments",
-                                href: "/categories/electrical-enclosures"
+                                href: categoryUrl("electrical-enclosures")
                             },
                             {
                                 name: "DIN Rail Accessories",
                                 description: "End brackets, mounting rails, and labeling systems",
-                                href: "/categories/din-rail-accessories"
+                                href: categoryUrl("din-rail-accessories")
                             },
                             {
                                 name: "Relays & Sockets",
                                 description: "Electromechanical switching and control devices",
-                                href: "/categories/relays-sockets"
+                                href: categoryUrl("relays-sockets")
                             }
                         ].map((category, idx) => (
                             <Link

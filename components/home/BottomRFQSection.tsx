@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Check } from "lucide-react";
+import { contactUrl, requestQuoteUrl } from "@/lib/routes";
 
 interface BottomRFQSectionProps {
   title?: string;
@@ -26,11 +27,11 @@ export default function BottomRFQSection({
   subtitle = "Share your item numbers and quantity plan. MOQ and lead time are confirmed per item number and order quantity.",
   primaryCta = {
     text: "Contact Sales",
-    href: "/contact#request-quote",
+    href: requestQuoteUrl(),
   },
   secondaryCta = {
     text: "Request Documentation",
-    href: "/contact",
+    href: contactUrl(),
   },
   benefits = [
     "Direct factory communication",

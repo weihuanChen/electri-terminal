@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import HomePageClient from "./HomePageClient";
+import { homeUrl } from "@/lib/routes";
 
 const homeTitle =
   "Electri Terminal | Ring Terminal & Cable Gland Manufacturer";
@@ -21,12 +22,12 @@ export const metadata: Metadata = {
     "industrial electrical connectors",
   ],
   alternates: {
-    canonical: "/",
+    canonical: homeUrl(),
   },
   openGraph: {
     title: homeTitle,
     description: homeDescription,
-    url: "/",
+    url: homeUrl(),
     siteName: "Electri Terminal",
     type: "website",
   },

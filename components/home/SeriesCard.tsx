@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, FileText, ShoppingCart } from "lucide-react";
-import { categoryUrl, familyUrl } from "@/lib/routes";
+import { ShoppingCart } from "lucide-react";
+import { categoryUrl, familyUrl, requestQuoteUrl } from "@/lib/routes";
 
 interface ProductSeries {
   _id: string;
@@ -95,7 +95,7 @@ export default function SeriesCard({
               Details
             </Link>
             <Link
-              href={`/rfq?series=${series._id}`}
+              href={requestQuoteUrl({ query: { series: series._id } })}
               className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-primary text-white text-sm font-semibold rounded-sm hover:bg-primary/90 transition-colors gap-2 shadow-sm"
             >
               <ShoppingCart className="w-4 h-4" />

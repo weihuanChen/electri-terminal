@@ -14,6 +14,7 @@ import {
   toSingleLineAddress,
 } from "@/lib/contactConfig";
 import { getHomePageData } from "@/lib/publicData";
+import { contactUrl, productsUrl, requestQuoteUrl } from "@/lib/routes";
 
 export default async function HomePageClient() {
   const { categories, featuredProducts, applications, contactSettings } =
@@ -136,7 +137,7 @@ export default async function HomePageClient() {
       ? {
           label: "Address",
           value: toSingleLineAddress(contactSettings.address.lines),
-          href: "/contact",
+          href: contactUrl(),
         }
       : null,
     ...getEnabledSocialMediaLinks(contactSettings).map((item) => ({
@@ -160,8 +161,8 @@ export default async function HomePageClient() {
           "Copper Ring Terminals",
           "Heavy-Duty Cable Lugs",
         ]}
-        primaryCta={{ text: "Request a Quote", href: "/contact#request-quote" }}
-        secondaryCta={{ text: "View Products", href: "/products" }}
+        primaryCta={{ text: "Request a Quote", href: requestQuoteUrl() }}
+        secondaryCta={{ text: "View Products", href: productsUrl() }}
       />
 
       {homepageFocusCategories.length > 0 && (
@@ -209,11 +210,11 @@ export default async function HomePageClient() {
         subtitle="Tell us your requirements. We will respond quickly with suitable options and pricing. MOQ and lead time are confirmed per item number and order quantity."
         primaryCta={{
           text: "Request a Quote",
-          href: "/contact#request-quote",
+          href: requestQuoteUrl(),
         }}
         secondaryCta={{
           text: "View Products",
-          href: "/products",
+          href: productsUrl(),
         }}
         benefits={[
           "Real factory production visibility",

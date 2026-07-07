@@ -13,6 +13,18 @@ import {
   X,
 } from "lucide-react";
 import { getSocialMediaDisplayLabel } from "@/lib/contactConfig";
+import {
+  blogUrl,
+  categoriesUrl,
+  contactUrl,
+  homeUrl,
+  manufacturingUrl,
+  productsUrl,
+  qualityCertificationsUrl,
+  requestQuoteUrl,
+  searchUrl,
+  selectionGuideUrl,
+} from "@/lib/routes";
 
 interface HeaderCategory {
   name: string;
@@ -38,27 +50,27 @@ interface NavItem {
 const STATIC_NAV_ITEMS: NavItem[] = [
   {
     name: "Categories",
-    href: "/categories",
+    href: categoriesUrl(),
   },
   {
     name: "Selection Guide",
-    href: "/selection-guide",
+    href: selectionGuideUrl(),
   },
   {
     name: "Manufacturing",
-    href: "/manufacturing",
+    href: manufacturingUrl(),
   },
   {
     name: "Quality",
-    href: "/quality-certifications",
+    href: qualityCertificationsUrl(),
   },
   {
     name: "Blog",
-    href: "/blog",
+    href: blogUrl(),
   },
   {
     name: "Contact",
-    href: "/contact",
+    href: contactUrl(),
   },
 ];
 
@@ -72,7 +84,7 @@ export default function HeaderClient({
   const navItems: NavItem[] = [
     {
       name: "Products",
-      href: "/products",
+      href: productsUrl(),
       children: productCategories,
     },
     ...STATIC_NAV_ITEMS,
@@ -97,7 +109,7 @@ export default function HeaderClient({
     >
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex h-[72px] items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href={homeUrl()} className="flex items-center space-x-2">
             <Image
               src="/electri-terminal-logo-white.svg"
               alt="Electri Terminal"
@@ -248,7 +260,7 @@ export default function HeaderClient({
 
           <div className="flex items-center space-x-2">
             <Link
-              href="/search"
+              href={searchUrl()}
               className="p-2 text-slate-300 hover:text-orange-500 transition-colors"
               aria-label="Search"
             >
@@ -277,7 +289,7 @@ export default function HeaderClient({
             )}
 
             <Link
-              href="/contact#request-quote"
+              href={requestQuoteUrl()}
               className="hidden sm:inline-flex btn btn-primary btn-sm"
             >
               Request Quote

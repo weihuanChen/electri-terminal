@@ -35,6 +35,37 @@ export const contactSettingsValidator = v.object({
   socialMedia: v.optional(socialMediaSettingsValidator),
 });
 
+export const languageWorkflowStatusValidator = v.union(
+  v.literal("draft"),
+  v.literal("prelaunch"),
+  v.literal("published"),
+  v.literal("paused")
+);
+
+export const languageWorkflowValidator = v.object({
+  locale: v.string(),
+  status: languageWorkflowStatusValidator,
+  gscSubmissionEnabled: v.boolean(),
+  sitemapEnabled: v.boolean(),
+  hreflangEnabled: v.boolean(),
+  languageSwitcherEnabled: v.boolean(),
+  previewEnabled: v.boolean(),
+  releaseOwner: v.optional(v.string()),
+  notes: v.optional(v.string()),
+  lastGateReportId: v.optional(v.string()),
+  lastGateChecksum: v.optional(v.string()),
+  lastGateCheckedAt: v.optional(v.string()),
+  lastGatePassed: v.optional(v.boolean()),
+  lastGateBlockerCount: v.optional(v.number()),
+  lastGateHighCount: v.optional(v.number()),
+  publishedAt: v.optional(v.number()),
+  pausedAt: v.optional(v.number()),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+});
+
+export const languageWorkflowSettingsValidator = v.array(languageWorkflowValidator);
+
 type SocialMediaLink = {
   platform: string;
   label?: string;
@@ -66,6 +97,30 @@ type ContactSettings = {
   };
 };
 
+export type LanguageWorkflowStatus = "draft" | "prelaunch" | "published" | "paused";
+
+export type LanguageWorkflowSettings = {
+  locale: string;
+  status: LanguageWorkflowStatus;
+  gscSubmissionEnabled: boolean;
+  sitemapEnabled: boolean;
+  hreflangEnabled: boolean;
+  languageSwitcherEnabled: boolean;
+  previewEnabled: boolean;
+  releaseOwner?: string;
+  notes?: string;
+  lastGateReportId?: string;
+  lastGateChecksum?: string;
+  lastGateCheckedAt?: string;
+  lastGatePassed?: boolean;
+  lastGateBlockerCount?: number;
+  lastGateHighCount?: number;
+  publishedAt?: number;
+  pausedAt?: number;
+  createdAt: number;
+  updatedAt: number;
+};
+
 export const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
   email: {
     enabled: true,
@@ -94,6 +149,67 @@ export const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
     items: [],
   },
 };
+
+export function resolveLanguageWorkflowExposure(status: LanguageWorkflowStatus, gscEnabled = false) {
+  if (status === "published") {
+    return {
+      gscSubmissionEnabled: Boolean(gscEnabled),
+      sitemapEnabled: true,
+      hreflangEnabled: true,
+      languageSwitcherEnabled: true,
+      previewEnabled: true,
+    };
+  }
+
+  if (status === "prelaunch") {
+    return {
+      gscSubmissionEnabled: false,
+      sitemapEnabled: false,
+      hreflangEnabled: false,
+      languageSwitcherEnabled: false,
+      previewEnabled: true,
+    };
+  }
+
+  return {
+    gscSubmissionEnabled: false,
+    sitemapEnabled: false,
+    hreflangEnabled: false,
+    languageSwitcherEnabled: false,
+    previewEnabled: false,
+  };
+}
+
+export function normalizeLanguageWorkflowSettings(
+  workflows?: LanguageWorkflowSettings[] | null
+): LanguageWorkflowSettings[] {
+  const seen = new Set<string>();
+
+  return (workflows ?? [])
+    .map((workflow) => {
+      const locale = workflow.locale.trim();
+      const exposure = resolveLanguageWorkflowExposure(
+        workflow.status,
+        workflow.gscSubmissionEnabled
+      );
+
+      return {
+        ...workflow,
+        locale,
+        ...exposure,
+        releaseOwner: normalizeOptionalText(workflow.releaseOwner),
+        notes: normalizeOptionalText(workflow.notes),
+      };
+    })
+    .filter((workflow) => {
+      if (!workflow.locale || seen.has(workflow.locale)) {
+        return false;
+      }
+
+      seen.add(workflow.locale);
+      return true;
+    });
+}
 
 export function normalizeContactSettings(
   settings?: ContactSettings | null
@@ -142,4 +258,9 @@ function normalizeAddressLines(lines?: string[]) {
 function buildWhatsAppHref(value: string) {
   const digits = value.replace(/[^\d]/g, "");
   return digits ? `https://wa.me/${digits}` : undefined;
+}
+
+function normalizeOptionalText(value?: string) {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
 }

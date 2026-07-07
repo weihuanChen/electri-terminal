@@ -10,6 +10,7 @@ import {
   type BlogSearchParams,
 } from "../../blogIndex";
 import { getBlogPageCount, parseBlogPageParam } from "@/lib/blogPagination";
+import { blogUrl } from "@/lib/routes";
 
 type BlogPaginatedPageProps = {
   params: Promise<{
@@ -37,7 +38,7 @@ export default async function BlogPaginatedPage({
   }
 
   if (page === 1) {
-    redirect("/blog");
+    redirect(blogUrl());
   }
 
   const [resolvedSearchParams, initialData] = await Promise.all([

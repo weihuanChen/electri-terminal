@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Download, FileText, ShieldCheck } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
+import { contactUrl } from "@/lib/routes";
 
 interface Certification {
   name: string;
@@ -160,7 +161,7 @@ export default function CertificationSection({
                         )}
                       </div>
                       <Link
-                        href={download.fileUrl || "/contact"}
+                        href={download.fileUrl || contactUrl()}
                         className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-sm bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-primary"
                         aria-label={`Request ${download.title}`}
                       >
@@ -175,7 +176,7 @@ export default function CertificationSection({
               {supportNote && (
                 <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
                   <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-4">{supportNote}</p>
-                  <Link href="/contact" className="inline-flex items-center text-primary font-bold hover:underline">
+                  <Link href={contactUrl()} className="inline-flex items-center text-primary font-bold hover:underline">
                     Request Documentation &rarr;
                   </Link>
                 </div>

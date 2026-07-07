@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 import type { BlogPageClientProps } from "./BlogPageClient";
 import { queryPublicPage } from "@/lib/metadata";
-import { BLOG_PAGE_SIZE, getBlogPagePath } from "@/lib/blogPagination";
+import { BLOG_PAGE_SIZE } from "@/lib/blogPagination";
+import { blogPageUrl } from "@/lib/routes";
 
 export const BLOG_METADATA_TITLE =
   "Electrical Terminal Industry Blog & Technical Resources | Electri Terminal";
@@ -29,7 +30,7 @@ export function resolveBlogInitialFilters(searchParams: BlogSearchParams) {
 }
 
 export function buildBlogMetadata(page: number): Metadata {
-  const canonicalPath = getBlogPagePath(page);
+  const canonicalPath = blogPageUrl(page);
   const title =
     page > 1 ? `${BLOG_METADATA_TITLE} - Page ${page}` : BLOG_METADATA_TITLE;
   const description =

@@ -15,7 +15,7 @@ import {
 import { Breadcrumb } from "@/components/shared";
 import { api } from "@/convex/_generated/api";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
-import { categoryUrl } from "@/lib/routes";
+import { blogUrl, categoryUrl, contactUrl, requestQuoteUrl } from "@/lib/routes";
 
 const HERO_IMAGE =
   "https://assets.electriterminal.com/factory/insulated-terminals-warehouse-stock-packed-bags-clean.webp";
@@ -213,17 +213,17 @@ export default function CategoriesPage() {
       title: "How to Choose the Right Terminal Type",
       description:
         "Understand how wire size, connection method, and insulation requirements affect terminal selection.",
-      href: "/blog",
+      href: blogUrl(),
     },
     {
       title: "Crimping Best Practices",
       description: "Ensure reliable connections with proper crimping techniques and tool selection.",
-      href: "/blog",
+      href: blogUrl(),
     },
     {
       title: "Understanding Terminal Materials",
       description: "Compare copper, brass, and plated terminals for different electrical applications.",
-      href: "/blog",
+      href: blogUrl(),
     },
   ];
 
@@ -521,10 +521,10 @@ export default function CategoriesPage() {
               based on your application requirements.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/contact#request-quote" className="btn btn-inverse-solid btn-arrow">
+              <Link href={requestQuoteUrl()} className="btn btn-inverse-solid btn-arrow">
                 Request a Quote
               </Link>
-              <Link href="/contact" className="btn btn-inverse-outline">
+              <Link href={contactUrl()} className="btn btn-inverse-outline">
                 Contact Us
               </Link>
             </div>

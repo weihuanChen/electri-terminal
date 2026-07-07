@@ -2,6 +2,7 @@ import Breadcrumb from "@/components/shared/Breadcrumb";
 import { ProductDetailSidebar } from "@/components/shared/TechnicalSidebar";
 import Image from "next/image";
 import Link from "next/link";
+import { categoryUrl, familyUrl, homeUrl, productsUrl, requestQuoteUrl } from "@/lib/routes";
 
 export const metadata = {
     title: "UK-2.5 Universal Terminal Block | Industrial Electrical Components",
@@ -14,10 +15,10 @@ export const metadata = {
 
 export default function UK25TerminalBlockPage() {
     const breadcrumbItems = [
-        { label: "Home", href: "/" },
-        { label: "Products", href: "/products" },
-        { label: "Terminal Blocks", href: "/categories/terminal-blocks" },
-        { label: "Screw Terminal Blocks", href: "/families/screw-terminal-blocks" },
+        { label: "Home", href: homeUrl() },
+        { label: "Products", href: productsUrl() },
+        { label: "Terminal Blocks", href: categoryUrl("terminal-blocks") },
+        { label: "Screw Terminal Blocks", href: familyUrl("screw-terminal-blocks") },
         { label: "UK-2.5 Terminal Block" },
     ];
 
@@ -91,7 +92,7 @@ export default function UK25TerminalBlockPage() {
                                     </div>
 
                                     <Link
-                                        href="/contact#request-quote"
+                                        href={requestQuoteUrl()}
                                         className="inline-block px-6 py-3 bg-gray-900 text-white font-medium hover:bg-gray-700 transition-colors"
                                     >
                                         Request Quote
@@ -177,9 +178,9 @@ export default function UK25TerminalBlockPage() {
                             <h2 className="text-xl font-semibold text-gray-900 mb-6">Related Products</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {[
-                                    { name: "UK-4", voltage: "800V", current: "41A", href: "/products" },
-                                    { name: "UK-6", voltage: "1000V", current: "57A", href: "/products" },
-                                    { name: "UK-10", voltage: "1000V", current: "76A", href: "/products" },
+                                    { name: "UK-4", voltage: "800V", current: "41A", href: productsUrl() },
+                                    { name: "UK-6", voltage: "1000V", current: "57A", href: productsUrl() },
+                                    { name: "UK-10", voltage: "1000V", current: "76A", href: productsUrl() },
                                 ].map((product) => (
                                     <Link
                                         key={product.name}

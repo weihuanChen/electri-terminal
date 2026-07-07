@@ -12,6 +12,7 @@ import {
   resolveFamilyMetadataRobots,
 } from "@/lib/familyPage";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
+import { familyUrl } from "@/lib/routes";
 
 type FamilyPageProps = {
   params: Promise<{
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: FamilyPageProps): Promise<Met
 
   return buildPageMetadata({
     entity: resolveFamilyMetadataEntity(family),
-    fallbackPath: `/families/${slug}`,
+    fallbackPath: familyUrl(slug),
     fallbackTitle: family?.name || "Product Family",
     fallbackDescription: resolveFamilyMetadataDescription(family),
     image: {

@@ -6,6 +6,7 @@ import { getExpandedTemplateFieldsByCategoryId } from "./lib/attributes";
 import {
   DEFAULT_CONTACT_SETTINGS,
   normalizeContactSettings,
+  normalizeLanguageWorkflowSettings,
   SITE_SETTINGS_GLOBAL_KEY,
 } from "./lib/siteSettings";
 import { r2 } from "./r2Assets";
@@ -20,6 +21,64 @@ type VisualMediaItem = {
 };
 
 type AttributeFilterMode = "exact" | "range_bucket";
+
+type LocalizationEntityType =
+  | "staticPage"
+  | "category"
+  | "family"
+  | "product"
+  | "article";
+
+type LocalizationStatus =
+  | "missing"
+  | "draft"
+  | "machine_ready"
+  | "review_required"
+  | "approved"
+  | "published"
+  | "stale";
+
+type LocalizedEligibilityRoute =
+  | { kind: "staticPage"; pageKey: string }
+  | { kind: "category"; slug: string }
+  | { kind: "family"; slug: string }
+  | { kind: "product"; slug: string }
+  | { kind: "article"; slug: string }
+  | { kind: "blogPage"; page: number };
+
+type LocalizationRouteSource = {
+  entityType: LocalizationEntityType;
+  sourceId: string;
+  sourceStatus: string;
+  sourceUpdatedAt: number | null;
+};
+
+const localizedEligibilityRouteValidator = v.union(
+  v.object({
+    kind: v.literal("staticPage"),
+    pageKey: v.string(),
+  }),
+  v.object({
+    kind: v.literal("category"),
+    slug: v.string(),
+  }),
+  v.object({
+    kind: v.literal("family"),
+    slug: v.string(),
+  }),
+  v.object({
+    kind: v.literal("product"),
+    slug: v.string(),
+  }),
+  v.object({
+    kind: v.literal("article"),
+    slug: v.string(),
+  }),
+  v.object({
+    kind: v.literal("blogPage"),
+    page: v.number(),
+  })
+);
 
 const UNIT_LABELS: Record<string, string> = {
   mm: "mm",
@@ -136,6 +195,110 @@ async function attachArticleAuthors(ctx: QueryCtx, articles: Doc<"articles">[]) 
     ...article,
     author: article.authorId ? authorById.get(String(article.authorId)) ?? null : null,
   }));
+}
+
+async function resolveLocalizedRouteSource(
+  ctx: QueryCtx,
+  route: LocalizedEligibilityRoute
+): Promise<LocalizationRouteSource | null> {
+  switch (route.kind) {
+    case "staticPage":
+      return {
+        entityType: "staticPage",
+        sourceId: route.pageKey,
+        sourceStatus: "published",
+        sourceUpdatedAt: null,
+      };
+    case "blogPage":
+      if (!Number.isSafeInteger(route.page) || route.page <= 1) {
+        return null;
+      }
+
+      return {
+        entityType: "staticPage",
+        sourceId: "blog",
+        sourceStatus: "published",
+        sourceUpdatedAt: null,
+      };
+    case "category": {
+      const category = await ctx.db
+        .query("categories")
+        .withIndex("by_slug", (q) => q.eq("slug", route.slug))
+        .unique();
+
+      return category
+        ? {
+            entityType: "category",
+            sourceId: String(category._id),
+            sourceStatus: category.status,
+            sourceUpdatedAt: category.updatedAt,
+          }
+        : null;
+    }
+    case "family": {
+      const family = await ctx.db
+        .query("productFamilies")
+        .withIndex("by_slug", (q) => q.eq("slug", route.slug))
+        .unique();
+
+      return family
+        ? {
+            entityType: "family",
+            sourceId: String(family._id),
+            sourceStatus: family.status,
+            sourceUpdatedAt: family.updatedAt,
+          }
+        : null;
+    }
+    case "product": {
+      const product = await ctx.db
+        .query("products")
+        .withIndex("by_slug", (q) => q.eq("slug", route.slug))
+        .unique();
+
+      return product
+        ? {
+            entityType: "product",
+            sourceId: String(product._id),
+            sourceStatus: product.status,
+            sourceUpdatedAt: product.updatedAt,
+          }
+        : null;
+    }
+    case "article": {
+      const article = await ctx.db
+        .query("articles")
+        .withIndex("by_slug", (q) => q.eq("slug", route.slug))
+        .unique();
+
+      return article
+        ? {
+            entityType: "article",
+            sourceId: String(article._id),
+            sourceStatus: article.status,
+            sourceUpdatedAt: article.updatedAt,
+          }
+        : null;
+    }
+  }
+}
+
+function buildMissingRouteEligibility(locale: string) {
+  return {
+    locale,
+    sourceEntityType: null,
+    sourceId: null,
+    sourceStatus: "missing",
+    sourceUpdatedAt: null,
+    localizationStatus: "missing" satisfies LocalizationStatus,
+    localizedSlug: null,
+    title: null,
+    seoTitle: null,
+    seoDescription: null,
+    updatedAt: null,
+    eligible: false,
+    reasons: ["source_not_found"],
+  };
 }
 
 async function getLinkedFamilyRelations(ctx: any, family: any) {
@@ -775,6 +938,18 @@ export const getPublicContactSettings = query({
   },
 });
 
+export const getLanguageWorkflowSettings = query({
+  args: {},
+  handler: async (ctx) => {
+    const settingsDoc = await ctx.db
+      .query("siteSettings")
+      .withIndex("by_key", (q) => q.eq("key", SITE_SETTINGS_GLOBAL_KEY))
+      .unique();
+
+    return normalizeLanguageWorkflowSettings(settingsDoc?.languageWorkflows ?? []);
+  },
+});
+
 // Product families for frontend
 export const listFeaturedFamilies = query({
   args: {
@@ -1361,6 +1536,64 @@ export const listPublicResources = query({
     }
 
     return await Promise.all(assets.slice(0, limit).map((asset) => resolveAssetUrl(asset)));
+  },
+});
+
+export const getLocalizedRouteEligibility = query({
+  args: {
+    locale: v.string(),
+    route: localizedEligibilityRouteValidator,
+  },
+  handler: async (ctx, args) => {
+    const source = await resolveLocalizedRouteSource(ctx, args.route);
+    if (!source) {
+      return buildMissingRouteEligibility(args.locale);
+    }
+
+    const localization =
+      args.locale === "en"
+        ? null
+        : await ctx.db
+            .query("localizations")
+            .withIndex("by_entity_locale", (q) =>
+              q
+                .eq("entityType", source.entityType)
+                .eq("sourceId", source.sourceId)
+                .eq("locale", args.locale)
+            )
+            .unique();
+
+    const localizationStatus: LocalizationStatus =
+      args.locale === "en" ? "published" : localization?.status ?? "missing";
+    const reasons: string[] = [];
+
+    if (source.sourceStatus !== "published") {
+      reasons.push("source_not_published");
+    }
+
+    if (args.locale !== "en") {
+      if (!localization) {
+        reasons.push("translation_missing");
+      } else if (localization.status !== "published") {
+        reasons.push("translation_not_published");
+      }
+    }
+
+    return {
+      locale: args.locale,
+      sourceEntityType: source.entityType,
+      sourceId: source.sourceId,
+      sourceStatus: source.sourceStatus,
+      sourceUpdatedAt: source.sourceUpdatedAt,
+      localizationStatus,
+      localizedSlug: localization?.localizedSlug ?? null,
+      title: localization?.title ?? null,
+      seoTitle: localization?.seoTitle ?? null,
+      seoDescription: localization?.seoDescription ?? null,
+      updatedAt: localization?.updatedAt ?? null,
+      eligible: reasons.length === 0,
+      reasons,
+    };
   },
 });
 

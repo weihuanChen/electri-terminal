@@ -17,6 +17,7 @@ import {
   resolveCategoryMetadataRobots,
 } from "@/lib/categoryPage";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
+import { categoryUrl } from "@/lib/routes";
 
 type CategoryPageProps = {
   params: Promise<{
@@ -76,7 +77,7 @@ export async function generateMetadata({
 
   return buildPageMetadata({
     entity: resolveCategoryMetadataEntity(category),
-    fallbackPath: `/categories/${slug}`,
+    fallbackPath: categoryUrl(slug),
     fallbackTitle: category?.name || "Category",
     fallbackDescription: resolveCategoryMetadataDescription(category),
     image: {

@@ -6,7 +6,7 @@ import { useState, type ReactNode } from "react";
 import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Clock3, Search, UserRound } from "lucide-react";
 
 import { Breadcrumb } from "@/components/shared";
-import { getBlogPagePath } from "@/lib/blogPagination";
+import { articleUrl, blogPageUrl, blogUrl, categoryUrl } from "@/lib/routes";
 
 type ArticleType = "blog" | "guide" | "faq" | "application";
 
@@ -52,9 +52,9 @@ const TOPIC_SHORTCUTS = [
 ] as const;
 
 const PRODUCT_TOPIC_LINKS = [
-  { label: "Ring Terminals", href: "/categories/ring-terminals" },
-  { label: "Spade Terminals", href: "/categories/spade-terminals" },
-  { label: "Wire Ferrules", href: "/categories/cord-end-terminals" },
+  { label: "Ring Terminals", href: categoryUrl("ring-terminals") },
+  { label: "Spade Terminals", href: categoryUrl("spade-terminals") },
+  { label: "Wire Ferrules", href: categoryUrl("cord-end-terminals") },
 ];
 
 export type BlogPageClientProps = {
@@ -105,7 +105,7 @@ function ArticleBadge({ type }: { type: ArticleType }) {
 function DenseArticleCard({ article }: { article: BlogArticle }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
+      href={articleUrl(article.slug)}
       className="group flex h-full min-h-[27rem] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-shadow hover:shadow-[0_14px_36px_-24px_rgba(15,23,42,0.55)] dark:border-slate-800 dark:bg-slate-900/95 dark:hover:shadow-[0_18px_36px_-22px_rgba(2,6,23,0.9)]"
     >
       <div className="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -162,7 +162,7 @@ function DenseArticleCard({ article }: { article: BlogArticle }) {
 function FeaturedMainCard({ article }: { article: BlogArticle }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
+      href={articleUrl(article.slug)}
       className="group flex h-[340px] md:h-[360px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_10px_28px_-20px_rgba(15,23,42,0.35)] dark:border-slate-700 dark:bg-slate-900/95 dark:shadow-none"
     >
       <div className="relative h-40 overflow-hidden bg-slate-100 md:h-44 dark:bg-slate-800">
@@ -216,7 +216,7 @@ function FeaturedMainCard({ article }: { article: BlogArticle }) {
 function FeaturedSideCard({ article }: { article: BlogArticle }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
+      href={articleUrl(article.slug)}
       className="group flex h-[170px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_8px_20px_-16px_rgba(15,23,42,0.35)] dark:border-slate-700 dark:bg-slate-900/95 dark:shadow-none"
     >
       <div className="relative h-full w-36 shrink-0 overflow-hidden bg-slate-100 sm:w-40 dark:bg-slate-800">
@@ -293,7 +293,7 @@ function buildBlogPaginationHref(
   }
 
   const query = params.toString();
-  const path = getBlogPagePath(page);
+  const path = blogPageUrl(page);
   return query ? `${path}?${query}` : path;
 }
 
@@ -448,7 +448,7 @@ export default function BlogPageClient({
     }
 
     const query = params.toString();
-    const nextUrl = query ? `/blog?${query}` : "/blog";
+    const nextUrl = query ? `${blogUrl()}?${query}` : blogUrl();
     window.history.replaceState(null, "", nextUrl);
   };
 
@@ -499,7 +499,7 @@ export default function BlogPageClient({
       ? backendFeaturedArticles.slice(0, 3)
       : sortedArticles.slice(0, 3);
   const featuredSideArticles = featuredArticles.slice(1);
-  const breadcrumbItems = [{ label: "Blog", href: "/blog" }];
+  const breadcrumbItems = [{ label: "Blog", href: blogUrl() }];
 
   return (
     <>

@@ -3,7 +3,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
-import { productUrl } from "@/lib/routes";
+import {
+  articleUrl,
+  blogUrl,
+  categoryUrl,
+  contactUrl,
+  productUrl,
+  requestQuoteUrl,
+  selectionGuideUrl,
+} from "@/lib/routes";
 import GithubSlugger from "github-slugger";
 
 interface RelatedProduct {
@@ -36,8 +44,9 @@ interface ArticleAuthor {
 
 export interface ArticlePageData {
   _id: string;
+  slug: string;
   title: string;
-  type: string;
+  type: RelatedArticle["type"];
   author?: ArticleAuthor | null;
   excerpt?: string;
   content?: string;
@@ -107,7 +116,7 @@ const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = 
   ring: {
     headingTerms: ["ring terminal"],
     productTerms: ["ring terminal", "ring terminals", "rnb", "rv", "rny", "rve", "rhb"],
-    viewAllHref: "/categories/ring-terminals",
+    viewAllHref: categoryUrl("ring-terminals"),
     viewAllLabel: "View All Ring Terminals",
     fallbackProducts: [
       {
@@ -133,7 +142,7 @@ const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = 
   spade: {
     headingTerms: ["spade", "fork terminal"],
     productTerms: ["spade", "fork terminal", "sv", "snb"],
-    viewAllHref: "/categories/spade-terminals",
+    viewAllHref: categoryUrl("spade-terminals"),
     viewAllLabel: "View All Spade & Fork Terminals",
     fallbackProducts: [
       {
@@ -159,7 +168,7 @@ const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = 
   disconnect: {
     headingTerms: ["disconnect", "slip-on"],
     productTerms: ["disconnect", "slip-on", "blade terminal", "quick disconnect"],
-    viewAllHref: "/categories/quick-disconnect-terminals",
+    viewAllHref: categoryUrl("quick-disconnect-terminals"),
     viewAllLabel: "View All Quick Disconnect Terminals",
     fallbackProducts: [
       {
@@ -185,7 +194,7 @@ const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = 
   insulation: {
     headingTerms: ["insulation", "heat shrink", "nylon", "pvc"],
     productTerms: ["heat shrink", "nylon", "pvc", "insulated"],
-    viewAllHref: "/selection-guide",
+    viewAllHref: selectionGuideUrl(),
     viewAllLabel: "View Insulation Selection Guide",
     fallbackProducts: [
       {
@@ -211,7 +220,7 @@ const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = 
   "wire-size": {
     headingTerms: ["wire gauge", "wire size", "awg"],
     productTerms: ["awg", "gauge", "wire size", "stud"],
-    viewAllHref: "/selection-guide",
+    viewAllHref: selectionGuideUrl(),
     viewAllLabel: "View Wire Size Matching Guide",
     fallbackProducts: [
       {
@@ -447,7 +456,7 @@ function InlineRelatedProducts({
 }) {
   const config = SECTION_PRODUCT_CONFIG[sectionKey];
   const topProducts = products.slice(0, 3);
-  const fallbackProducts = config.fallbackProducts
+  const fallbackProducts: RelatedProduct[] = config.fallbackProducts
     .filter((item) => !topProducts.some((product) => product.slug === item.slug))
     .map((item, index) => ({
       _id: `fallback-${sectionKey}-${index}`,
@@ -569,8 +578,8 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
     : undefined;
 
   const breadcrumbItems = [
-    { label: "Blog", href: "/blog" },
-    { label: article.type, href: `/blog?type=${article.type}` },
+    { label: "Blog", href: blogUrl() },
+    { label: article.type, href: `${blogUrl()}?type=${article.type}` },
     { label: article.title },
   ];
 
@@ -678,7 +687,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
           <div className="mx-auto max-w-5xl">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <Link
-                href="/blog"
+                href={blogUrl()}
                 className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -726,7 +735,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                   >
                     View Matching Products
                   </Link>
-                  <Link href="/selection-guide" className="btn btn-secondary btn-sm">
+                  <Link href={selectionGuideUrl()} className="btn btn-secondary btn-sm">
                     Selection Guide
                   </Link>
                 </div>
@@ -863,7 +872,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                               <li>4. Confirm stud size</li>
                             </ol>
                             <Link
-                              href="/selection-guide"
+                              href={selectionGuideUrl()}
                               className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
                             >
                               Go to Selection Tool (Selection Guide)
@@ -925,7 +934,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                         <li>4. Confirm stud size</li>
                       </ol>
                       <Link
-                        href="/selection-guide"
+                        href={selectionGuideUrl()}
                         className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
                       >
                         Go to Selection Tool (Selection Guide)
@@ -992,7 +1001,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
         <div className="container">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-semibold md:text-3xl">Related Articles</h2>
-            <Link href="/blog" className="text-sm font-semibold text-primary hover:text-primary-dark">
+            <Link href={blogUrl()} className="text-sm font-semibold text-primary hover:text-primary-dark">
               View all
             </Link>
           </div>
@@ -1001,7 +1010,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
               resolvedRelatedArticles.map((relatedArticle) => (
                 <Link
                   key={relatedArticle._id}
-                  href={`/blog/${relatedArticle.slug}`}
+                  href={articleUrl(relatedArticle.slug)}
                   className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
                 >
                   <div>
@@ -1023,7 +1032,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
               ))
             ) : (
               <Link
-                href="/blog"
+                href={blogUrl()}
                 className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
               >
                 <div>
@@ -1046,11 +1055,11 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
         description="Our team can recommend the exact model based on your application."
         primaryCTA={{
           label: "Request Quote",
-          href: "/contact#request-quote",
+          href: requestQuoteUrl(),
         }}
         secondaryCTA={{
           label: "Talk to Engineer",
-          href: "/contact",
+          href: contactUrl(),
         }}
       />
     </>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import SectionHeader from "@/components/shared/SectionHeader";
+import { articleUrl, blogUrl } from "@/lib/routes";
 
 interface Article {
   _id: string;
@@ -27,7 +28,7 @@ export default function ResourceArticleGrid({
   title = "Technical Resources & Insights",
   subtitle = "Stay updated with industry trends, technical guides, and product applications",
   showViewAll = true,
-  viewAllHref = "/blog",
+  viewAllHref = blogUrl(),
 }: ResourceArticleGridProps) {
   if (!articles || articles.length === 0) {
     return null;
@@ -48,7 +49,7 @@ export default function ResourceArticleGrid({
           {articles.slice(0, 3).map((article) => (
             <Link
               key={article._id}
-              href={`/blog/${article.slug}`}
+              href={articleUrl(article.slug)}
               className="card group block h-full"
             >
               {/* Article Image */}

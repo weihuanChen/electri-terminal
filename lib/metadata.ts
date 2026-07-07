@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { cache } from "react";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
-import { getSiteUrl, toAbsoluteSiteUrl } from "@/lib/site";
+import {
+  type Locale,
+  resolveSeoOutput,
+} from "@/lib/i18n";
+import { getSiteUrl } from "@/lib/site";
 
 type PublishableEntity = {
   status?: string;
@@ -29,37 +33,12 @@ function normalizeImageUrl(url?: string) {
   }
 }
 
-function makeCanonicalUrl(canonical?: string, fallbackPath?: string) {
-  if (canonical?.trim()) {
-    return toAbsoluteSiteUrl(canonical.trim());
-  }
-
-  if (!fallbackPath) {
-    return undefined;
-  }
-
-  return toAbsoluteSiteUrl(fallbackPath);
-}
-
-function makeRobots(indexable: boolean): Metadata["robots"] {
-  return {
-    index: indexable,
-    follow: indexable,
-    googleBot: {
-      index: indexable,
-      follow: indexable,
-      "max-image-preview": indexable ? "large" : "none",
-      "max-snippet": indexable ? -1 : 0,
-      "max-video-preview": indexable ? -1 : 0,
-    },
-  };
-}
-
 type BuildMetadataArgs = {
   entity: PublishableEntity | null;
   fallbackPath: string;
   fallbackTitle: string;
   fallbackDescription: string;
+  locale?: Locale;
   openGraphType?: "website" | "article";
   image?: MetadataImage;
   robots?: Metadata["robots"];
@@ -70,14 +49,20 @@ export function buildPageMetadata({
   fallbackPath,
   fallbackTitle,
   fallbackDescription,
+  locale,
   openGraphType = "website",
   image,
   robots,
 }: BuildMetadataArgs): Metadata {
-  const isPublished = entity?.status === "published";
   const title = entity?.seoTitle || fallbackTitle;
   const description = entity?.seoDescription || fallbackDescription;
-  const canonical = makeCanonicalUrl(entity?.canonical, fallbackPath);
+  const seo = resolveSeoOutput({
+    canonical: entity?.canonical,
+    fallbackPath,
+    locale,
+    sourceStatus: entity?.status ?? "missing",
+    robots: robots ?? undefined,
+  });
   const imageUrl = normalizeImageUrl(image?.url);
   const images = imageUrl
     ? [
@@ -91,17 +76,13 @@ export function buildPageMetadata({
   return {
     title,
     description,
-    alternates: canonical
-      ? {
-          canonical,
-        }
-      : undefined,
-    robots: robots ?? makeRobots(isPublished),
+    alternates: seo.metadataAlternates,
+    robots: seo.robots,
     openGraph: {
       type: openGraphType,
       title,
       description,
-      url: canonical,
+      url: seo.canonical,
       siteName: "Electri Terminal",
       images,
       modifiedTime:

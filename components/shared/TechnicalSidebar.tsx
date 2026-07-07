@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { categoryUrl, familyUrl, productUrl } from "@/lib/routes";
 
 interface NavigationItem {
     name: string;
@@ -181,16 +182,16 @@ export function CategoryPageSidebar({
     activePath?: string;
 }) {
     const productSeries = [
-        { name: "Push-in Terminal Blocks", href: "/families/push-in-terminal-blocks" },
-        { name: "Screw Terminal Blocks", href: "/families/screw-terminal-blocks" },
-        { name: "Spring Clamp Terminal Blocks", href: "/families/spring-clamp-terminal-blocks" },
-        { name: "Ground Terminal Blocks", href: "/families/ground-terminal-blocks" },
+        { name: "Push-in Terminal Blocks", href: familyUrl("push-in-terminal-blocks") },
+        { name: "Screw Terminal Blocks", href: familyUrl("screw-terminal-blocks") },
+        { name: "Spring Clamp Terminal Blocks", href: familyUrl("spring-clamp-terminal-blocks") },
+        { name: "Ground Terminal Blocks", href: familyUrl("ground-terminal-blocks") },
     ];
 
     const relatedCategories = [
-        { name: "Cable Glands", href: "/categories/cable-glands" },
-        { name: "Electrical Enclosures", href: "/categories/electrical-enclosures" },
-        { name: "DIN Rail Accessories", href: "/categories/din-rail-accessories" },
+        { name: "Cable Glands", href: categoryUrl("cable-glands") },
+        { name: "Electrical Enclosures", href: categoryUrl("electrical-enclosures") },
+        { name: "DIN Rail Accessories", href: categoryUrl("din-rail-accessories") },
     ];
 
     return (
@@ -214,19 +215,19 @@ export function SubcategoryPageSidebar({
     activePath?: string;
 }) {
     const productSeries = [
-        { name: "Push-in Terminal Blocks", href: "/families/push-in-terminal-blocks" },
-        { name: "Screw Terminal Blocks", href: "/families/screw-terminal-blocks" },
-        { name: "Spring Clamp Terminal Blocks", href: "/families/spring-clamp-terminal-blocks" },
+        { name: "Push-in Terminal Blocks", href: familyUrl("push-in-terminal-blocks") },
+        { name: "Screw Terminal Blocks", href: familyUrl("screw-terminal-blocks") },
+        { name: "Spring Clamp Terminal Blocks", href: familyUrl("spring-clamp-terminal-blocks") },
     ];
 
     const specifications = [
-        { name: "800V Terminal Blocks", description: "High voltage applications", href: "/products/800v-terminals" },
-        { name: "32A Terminal Blocks", description: "Standard current rating", href: "/products/32a-terminals" },
+        { name: "800V Terminal Blocks", description: "High voltage applications", href: productUrl("800v-terminals") },
+        { name: "32A Terminal Blocks", description: "Standard current rating", href: productUrl("32a-terminals") },
     ];
 
     const relatedCategories = [
-        { name: "Cable Glands", href: "/categories/cable-glands" },
-        { name: "Electrical Enclosures", href: "/categories/electrical-enclosures" },
+        { name: "Cable Glands", href: categoryUrl("cable-glands") },
+        { name: "Electrical Enclosures", href: categoryUrl("electrical-enclosures") },
     ];
 
     return (
@@ -251,20 +252,20 @@ export function ProductDetailSidebar({
     activePath?: string;
 }) {
     const seriesModels = [
-        { name: "UK-2.5", href: "/products/uk-2-5" },
-        { name: "UK-4", href: "/products/uk-4" },
-        { name: "UK-6", href: "/products/uk-6" },
-        { name: "UK-10", href: "/products/uk-10" },
+        { name: "UK-2.5", href: productUrl("uk-2-5") },
+        { name: "UK-4", href: productUrl("uk-4") },
+        { name: "UK-6", href: productUrl("uk-6") },
+        { name: "UK-10", href: productUrl("uk-10") },
     ];
 
     const relatedSeries = [
-        { name: "PT Series Terminal Blocks", description: "Push-in connection technology", href: "/families/pt-series" },
-        { name: "ST Series Terminal Blocks", description: "Spring clamp connection", href: "/families/st-series" },
+        { name: "PT Series Terminal Blocks", description: "Push-in connection technology", href: familyUrl("pt-series") },
+        { name: "ST Series Terminal Blocks", description: "Spring clamp connection", href: familyUrl("st-series") },
     ];
 
     const relatedCategories = [
-        { name: "Cable Glands", href: "/categories/cable-glands" },
-        { name: "DIN Rail Accessories", href: "/categories/din-rail-accessories" },
+        { name: "Cable Glands", href: categoryUrl("cable-glands") },
+        { name: "DIN Rail Accessories", href: categoryUrl("din-rail-accessories") },
     ];
 
     return (
@@ -289,38 +290,38 @@ export function TerminalBlocksSidebar({
     activePath?: string;
 }) {
     const terminalBlocksSeries = [
-        { name: "Push-in Terminal Blocks", href: "/families/push-in-terminal-blocks" },
-        { name: "Screw Terminal Blocks", href: "/families/screw-terminal-blocks" },
-        { name: "Spring Clamp Terminal Blocks", href: "/families/spring-clamp-terminal-blocks" },
-        { name: "Ground Terminal Blocks", href: "/families/ground-terminal-blocks" },
-        { name: "Double-Level Terminal Blocks", href: "/families/double-level-terminal-blocks" },
-        { name: "Fuse Terminal Blocks", href: "/families/fuse-terminal-blocks" },
-        { name: "Disconnect Terminal Blocks", href: "/families/disconnect-terminal-blocks" },
+        { name: "Push-in Terminal Blocks", href: familyUrl("push-in-terminal-blocks") },
+        { name: "Screw Terminal Blocks", href: familyUrl("screw-terminal-blocks") },
+        { name: "Spring Clamp Terminal Blocks", href: familyUrl("spring-clamp-terminal-blocks") },
+        { name: "Ground Terminal Blocks", href: familyUrl("ground-terminal-blocks") },
+        { name: "Double-Level Terminal Blocks", href: familyUrl("double-level-terminal-blocks") },
+        { name: "Fuse Terminal Blocks", href: familyUrl("fuse-terminal-blocks") },
+        { name: "Disconnect Terminal Blocks", href: familyUrl("disconnect-terminal-blocks") },
     ];
 
     const relatedSeries = [
         {
             name: "UK Series Terminal Blocks",
             description: "Universal screw connection technology",
-            href: "/families/uk-series",
+            href: familyUrl("uk-series"),
         },
         {
             name: "PT Series Push-in Terminal Blocks",
             description: "Tool-free wiring in seconds",
-            href: "/families/pt-series",
+            href: familyUrl("pt-series"),
         },
         {
             name: "ST Series Spring Clamp Terminal Blocks",
             description: "Vibration-resistant connections",
-            href: "/families/st-series",
+            href: familyUrl("st-series"),
         },
     ];
 
     const relatedCategories = [
-        { name: "Cable Glands", href: "/categories/cable-glands" },
-        { name: "Electrical Enclosures", href: "/categories/electrical-enclosures" },
-        { name: "DIN Rail Accessories", href: "/categories/din-rail-accessories" },
-        { name: "Relays & Sockets", href: "/categories/relays-sockets" },
+        { name: "Cable Glands", href: categoryUrl("cable-glands") },
+        { name: "Electrical Enclosures", href: categoryUrl("electrical-enclosures") },
+        { name: "DIN Rail Accessories", href: categoryUrl("din-rail-accessories") },
+        { name: "Relays & Sockets", href: categoryUrl("relays-sockets") },
     ];
 
     return (
@@ -345,29 +346,29 @@ export function CableGlandsSidebar({
     activePath?: string;
 }) {
     const cableGlandsSeries = [
-        { name: "Brass Cable Glands", href: "/families/brass-cable-glands" },
-        { name: "Stainless Steel Cable Glands", href: "/families/stainless-steel-cable-glands" },
-        { name: "Nylon Cable Glands", href: "/families/nylon-cable-glands" },
-        { name: "Explosion-Proof Cable Glands", href: "/families/explosion-proof-cable-glands" },
+        { name: "Brass Cable Glands", href: familyUrl("brass-cable-glands") },
+        { name: "Stainless Steel Cable Glands", href: familyUrl("stainless-steel-cable-glands") },
+        { name: "Nylon Cable Glands", href: familyUrl("nylon-cable-glands") },
+        { name: "Explosion-Proof Cable Glands", href: familyUrl("explosion-proof-cable-glands") },
     ];
 
     const relatedSeries = [
         {
             name: "MG Series Brass Cable Glands",
             description: "IP68 rated, metric thread",
-            href: "/families/mg-series",
+            href: familyUrl("mg-series"),
         },
         {
             name: "SS Series Stainless Steel Glands",
             description: "For corrosive environments",
-            href: "/families/ss-series",
+            href: familyUrl("ss-series"),
         },
     ];
 
     const relatedCategories = [
-        { name: "Terminal Blocks", href: "/categories/terminal-blocks" },
-        { name: "Electrical Enclosures", href: "/categories/electrical-enclosures" },
-        { name: "Conduit Systems", href: "/categories/conduit-systems" },
+        { name: "Terminal Blocks", href: categoryUrl("terminal-blocks") },
+        { name: "Electrical Enclosures", href: categoryUrl("electrical-enclosures") },
+        { name: "Conduit Systems", href: categoryUrl("conduit-systems") },
     ];
 
     return (

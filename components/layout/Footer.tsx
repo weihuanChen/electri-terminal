@@ -4,7 +4,18 @@ import {
   getEnabledSocialMediaLinks,
   getSocialMediaDisplayLabel,
 } from "@/lib/contactConfig";
-import { categoryUrl } from "@/lib/routes";
+import {
+  blogUrl,
+  categoriesUrl,
+  categoryUrl,
+  contactUrl,
+  homeUrl,
+  privacyPolicyUrl,
+  productsUrl,
+  requestQuoteUrl,
+  resourcesUrl,
+  searchUrl,
+} from "@/lib/routes";
 import { getPublicContactSettings } from "@/lib/publicData";
 
 interface FooterLink {
@@ -22,10 +33,10 @@ const BASE_FOOTER_SECTIONS: FooterSection[] = [
   {
     title: "Company",
     links: [
-      { name: "Home", href: "/" },
-      { name: "Products", href: "/products" },
-      { name: "Categories", href: "/categories" },
-      { name: "Blog", href: "/blog" },
+      { name: "Home", href: homeUrl() },
+      { name: "Products", href: productsUrl() },
+      { name: "Categories", href: categoriesUrl() },
+      { name: "Blog", href: blogUrl() },
     ],
   },
   {
@@ -40,9 +51,9 @@ const BASE_FOOTER_SECTIONS: FooterSection[] = [
   {
     title: "Support",
     links: [
-      { name: "Contact Support", href: "/contact" },
-      { name: "Submit RFQ", href: "/contact#request-quote" },
-      { name: "Search Products", href: "/search" },
+      { name: "Contact Support", href: contactUrl() },
+      { name: "Submit RFQ", href: requestQuoteUrl() },
+      { name: "Search Products", href: searchUrl() },
     ],
   },
 ];
@@ -57,7 +68,7 @@ export default async function Footer() {
   const socialLinks = getEnabledSocialMediaLinks(contactSettings);
 
   const contactLinks: FooterLink[] = [
-    { name: "Contact Form", href: "/contact" },
+    { name: "Contact Form", href: contactUrl() },
     ...(contactSettings.email.enabled && contactSettings.email.value
       ? [
           {
@@ -200,25 +211,25 @@ export default async function Footer() {
 
             <div className="flex space-x-6">
               <Link
-                href="/resources"
+                href={resourcesUrl()}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 Documentation Requests
               </Link>
               <Link
-                href="/privacy-policy"
+                href={privacyPolicyUrl()}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 Privacy Policy
               </Link>
               <Link
-                href="/contact"
+                href={contactUrl()}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 Contact
               </Link>
               <Link
-                href="/contact#request-quote"
+                href={requestQuoteUrl()}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 RFQ

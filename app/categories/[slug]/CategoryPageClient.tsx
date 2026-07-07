@@ -1,6 +1,6 @@
 import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, DownloadCard, CTABanner } from "@/components/shared";
 import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
-import { categoryUrl, familyUrl } from "@/lib/routes";
+import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
 import CategoryContentTabs, { CategoryFilterSidebar } from "./CategoryPageControls";
 import Link from "next/link";
 import { ArrowRight, FileText, Download } from "lucide-react";
@@ -214,7 +214,7 @@ export default function CategoryPageClient({
   activeFilters,
 }: CategoryPageClientProps) {
   const breadcrumbItems = [
-    { label: "Categories", href: "/categories" },
+    { label: "Categories", href: categoriesUrl() },
     { label: category.name },
   ];
   const {
