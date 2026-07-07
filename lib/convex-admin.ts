@@ -110,6 +110,20 @@ export interface AdminProductDetail {
   variants: AdminProductVariantSummary[];
 }
 
+export interface AdminData {
+  categories: Doc<"categories">[];
+  families: Doc<"productFamilies">[];
+  products: Doc<"products">[];
+  articles: Doc<"articles">[];
+  authors: AdminAuthor[];
+  inquiries: Doc<"inquiries">[];
+  users: Doc<"users">[];
+  importJobs: Doc<"importJobs">[];
+  attributeTemplates: AdminAttributeTemplateSummary[];
+  assets: AdminAssetWithRelations[];
+  loadError?: string;
+}
+
 let convexClient: ConvexHttpClient | undefined;
 let convexClientUrl: string | undefined;
 
@@ -188,9 +202,20 @@ export async function actionAdmin<T>(
   }
 }
 
-export async function loadAdminData() {
+export async function loadAdminData(): Promise<AdminData> {
   try {
-    const [categories, families, products, articles, authors, inquiries, importJobs, attributeTemplates, assets] =
+    const [
+      categories,
+      families,
+      products,
+      articles,
+      authors,
+      inquiries,
+      users,
+      importJobs,
+      attributeTemplates,
+      assets,
+    ] =
       await Promise.all([
         queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
           limit: 100,
@@ -211,6 +236,9 @@ export async function loadAdminData() {
         queryAdmin<Doc<"inquiries">[]>("queries/modules/inquiries:listInquiries", {
           limit: 100,
         }),
+        queryAdmin<Doc<"users">[]>("queries/modules/users:listUsers", {
+          limit: 100,
+        }),
         queryAdmin<Doc<"importJobs">[]>("queries/modules/imports:listImportJobs", {
           limit: 50,
         }),
@@ -227,21 +255,11 @@ export async function loadAdminData() {
       articles,
       authors,
       inquiries,
+      users,
       importJobs,
       attributeTemplates,
       assets,
       loadError: undefined,
-    } as {
-      categories: Doc<"categories">[];
-      families: Doc<"productFamilies">[];
-      products: Doc<"products">[];
-      articles: Doc<"articles">[];
-      authors: AdminAuthor[];
-      inquiries: Doc<"inquiries">[];
-      importJobs: Doc<"importJobs">[];
-      attributeTemplates: AdminAttributeTemplateSummary[];
-      assets: AdminAssetWithRelations[];
-      loadError?: string;
     };
   } catch (error) {
     return {
@@ -251,21 +269,11 @@ export async function loadAdminData() {
       articles: [],
       authors: [],
       inquiries: [],
+      users: [],
       importJobs: [],
       attributeTemplates: [],
       assets: [],
       loadError: getReadableErrorMessage(error),
-    } as {
-      categories: Doc<"categories">[];
-      families: Doc<"productFamilies">[];
-      products: Doc<"products">[];
-      articles: Doc<"articles">[];
-      authors: AdminAuthor[];
-      inquiries: Doc<"inquiries">[];
-      importJobs: Doc<"importJobs">[];
-      attributeTemplates: AdminAttributeTemplateSummary[];
-      assets: AdminAssetWithRelations[];
-      loadError?: string;
     };
   }
 }

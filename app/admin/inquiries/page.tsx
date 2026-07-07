@@ -1,8 +1,7 @@
 import { requireAdmin } from "@/lib/admin-auth";
 import { loadAdminData } from "@/lib/convex-admin";
 import { DashboardLayout } from "../components/DashboardLayout";
-import { Mail, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Mail, Clock, CheckCircle2, XCircle, AlertCircle, type LucideIcon } from "lucide-react";
 
 export default async function InquiriesPage() {
   await requireAdmin();
@@ -16,7 +15,7 @@ export default async function InquiriesPage() {
     spam: "垃圾邮件",
   };
 
-  const statusIcons: Record<string, any> = {
+  const statusIcons: Record<string, LucideIcon> = {
     new: AlertCircle,
     in_progress: Clock,
     resolved: CheckCircle2,
@@ -117,6 +116,10 @@ export default async function InquiriesPage() {
                 <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
                   {inquiries.map((inquiry) => {
                     const StatusIcon = statusIcons[inquiry.status] || AlertCircle;
+                    const summary =
+                      inquiry.message.length > 50
+                        ? `${inquiry.message.substring(0, 50)}...`
+                        : inquiry.message;
                     return (
                       <tr key={inquiry._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
@@ -129,7 +132,7 @@ export default async function InquiriesPage() {
                           {inquiry.company || "-"}
                         </td>
                         <td className="px-6 py-4 text-sm text-zinc-900 dark:text-zinc-100">
-                          {(inquiry as any).subject || inquiry.message?.substring(0, 50) + "..."}
+                          {summary}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${statusColors[inquiry.status]}`}>

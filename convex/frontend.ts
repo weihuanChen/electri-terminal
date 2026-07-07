@@ -20,6 +20,29 @@ type VisualMediaItem = {
   sortOrder?: number;
 };
 
+type AttributeRecord = Record<string, unknown>;
+type ResolvedPublicAsset = Doc<"assets"> & {
+  fileUrl?: string | null;
+};
+type FrontendAttributeField = NonNullable<
+  Awaited<ReturnType<typeof getExpandedTemplateFieldsByCategoryId>>[number]
+>;
+type CategoryContentFamily = Omit<Doc<"productFamilies">, "brand"> & {
+  heroImage?: string;
+  mediaItems: VisualMediaItem[];
+};
+type CategoryContentProduct = Omit<Doc<"products">, "brand" | "attributes"> & {
+  attributes: AttributeRecord;
+  mediaItems: VisualMediaItem[];
+};
+type CategoryContentResult = {
+  families: CategoryContentFamily[];
+  products: CategoryContentProduct[];
+};
+type PublicNavigationItem = Doc<"navItems"> & {
+  children: PublicNavigationItem[];
+};
+
 type AttributeFilterMode = "exact" | "range_bucket";
 
 type LocalizationEntityType =
@@ -93,8 +116,29 @@ const UNIT_LABELS: Record<string, string> = {
   pcs: "pcs",
 };
 
-async function resolveAssetUrl(asset: any) {
-  if (!asset) return asset;
+function isPublishedCategory(
+  item: Doc<"categories"> | null
+): item is Doc<"categories"> {
+  return Boolean(item && item.status === "published");
+}
+
+function isPublishedFamily(
+  item: Doc<"productFamilies"> | null
+): item is Doc<"productFamilies"> {
+  return Boolean(item && item.status === "published");
+}
+
+function isPublishedArticle(
+  item: Doc<"articles"> | null
+): item is Doc<"articles"> {
+  return Boolean(item && item.status === "published");
+}
+
+function isPublicAsset(item: Doc<"assets"> | null): item is Doc<"assets"> {
+  return Boolean(item && item.isPublic);
+}
+
+async function resolveAssetUrl(asset: Doc<"assets">): Promise<ResolvedPublicAsset> {
   const accessUrl = asset.objectKey ? await r2.getUrl(asset.objectKey) : asset.fileUrl;
   return {
     ...asset,
@@ -103,24 +147,30 @@ async function resolveAssetUrl(asset: any) {
   };
 }
 
-async function getRelatedAssets(ctx: any, entityType: "category" | "family" | "product", entityId: string) {
+async function getRelatedAssets(
+  ctx: QueryCtx,
+  entityType: "category" | "family" | "product",
+  entityId: string
+) {
   const relations = await ctx.db
     .query("assetRelations")
-    .withIndex("by_entityType_entityId", (q: any) => q.eq("entityType", entityType).eq("entityId", entityId))
+    .withIndex("by_entityType_entityId", (q) =>
+      q.eq("entityType", entityType).eq("entityId", entityId)
+    )
     .collect();
 
   const assets = await Promise.all(
     relations
-      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-      .map(async (relation: any) => ctx.db.get(relation.assetId))
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map(async (relation) => ctx.db.get(relation.assetId))
   );
 
-  const publicAssets = assets.filter((asset: any) => asset && asset.isPublic);
-  return await Promise.all(publicAssets.map((asset: any) => resolveAssetUrl(asset)));
+  const publicAssets = assets.filter(isPublicAsset);
+  return await Promise.all(publicAssets.map((asset) => resolveAssetUrl(asset)));
 }
 
 function sortFamilyResources(
-  resources: any[],
+  resources: ResolvedPublicAsset[],
   downloadsMode?: "auto" | "manual",
   pinnedDownloadIds?: string[]
 ) {
@@ -134,20 +184,24 @@ function sortFamilyResources(
     .sort((a, b) => (orderMap.get(a._id) ?? 0) - (orderMap.get(b._id) ?? 0));
 }
 
-async function getRelatedFaqs(ctx: any, entityType: "category" | "family" | "product", entityId: string) {
+async function getRelatedFaqs(
+  ctx: QueryCtx,
+  entityType: "category" | "family" | "product",
+  entityId: string
+) {
   const articles = await ctx.db
     .query("articles")
-    .withIndex("by_type_status", (q: any) => q.eq("type", "faq").eq("status", "published"))
+    .withIndex("by_type_status", (q) => q.eq("type", "faq").eq("status", "published"))
     .collect();
 
-  return articles.filter((article: any) => {
+  return articles.filter((article) => {
     if (entityType === "category") {
-      return (article.relatedCategoryIds ?? []).some((id: any) => id === entityId);
+      return (article.relatedCategoryIds ?? []).some((id) => id === entityId);
     }
     if (entityType === "family") {
-      return (article.relatedFamilyIds ?? []).some((id: any) => id === entityId);
+      return (article.relatedFamilyIds ?? []).some((id) => id === entityId);
     }
-    return (article.relatedProductIds ?? []).some((id: any) => id === entityId);
+    return (article.relatedProductIds ?? []).some((id) => id === entityId);
   });
 }
 
@@ -301,38 +355,49 @@ function buildMissingRouteEligibility(locale: string) {
   };
 }
 
-async function getLinkedFamilyRelations(ctx: any, family: any) {
+async function getLinkedFamilyRelations(
+  ctx: QueryCtx,
+  family: Doc<"productFamilies">
+) {
   const linking = family.pageConfig?.linking;
-  const [relatedCategories, relatedFamilies, relatedArticles] = await Promise.all([
+  const [relatedCategories, relatedFamilies, relatedArticles]: [
+    Array<Doc<"categories"> | null>,
+    Array<Doc<"productFamilies"> | null>,
+    Array<Doc<"articles"> | null>,
+  ] = await Promise.all([
     linking?.relatedCategoryIds?.length
-      ? Promise.all(linking.relatedCategoryIds.map((id: any) => ctx.db.get(id)))
+      ? Promise.all(linking.relatedCategoryIds.map((id) => ctx.db.get(id)))
       : [],
     linking?.relatedFamilyIds?.length
-      ? Promise.all(linking.relatedFamilyIds.map((id: any) => ctx.db.get(id)))
+      ? Promise.all(linking.relatedFamilyIds.map((id) => ctx.db.get(id)))
       : [],
     linking?.relatedArticleIds?.length
-      ? Promise.all(linking.relatedArticleIds.map((id: any) => ctx.db.get(id)))
+      ? Promise.all(linking.relatedArticleIds.map((id) => ctx.db.get(id)))
       : [],
   ]);
 
   return {
     relatedCategories: relatedCategories
-      .filter((item: any) => item && item.status === "published")
-      .map((item: any) => ({
+      .filter(isPublishedCategory)
+      .map((item) => ({
         _id: item._id,
         name: item.name,
         slug: item.slug,
       })),
     relatedFamilies: relatedFamilies
-      .filter((item: any) => item && item.status === "published" && item._id !== family._id)
-      .map((item: any) => ({
+      .filter((item): item is Doc<"productFamilies"> =>
+        isPublishedFamily(item) && item._id !== family._id
+      )
+      .map((item) => ({
         _id: item._id,
         name: item.name,
         slug: item.slug,
       })),
     relatedArticles: relatedArticles
-      .filter((item: any) => item && item.status === "published" && item.type !== "faq")
-      .map((item: any) => ({
+      .filter((item): item is Doc<"articles"> =>
+        isPublishedArticle(item) && item.type !== "faq"
+      )
+      .map((item) => ({
         _id: item._id,
         title: item.title,
         slug: item.slug,
@@ -341,14 +406,20 @@ async function getLinkedFamilyRelations(ctx: any, family: any) {
   };
 }
 
-async function getTemplateFields(ctx: any, categoryId: string) {
+async function getTemplateFields(
+  ctx: QueryCtx,
+  categoryId: Id<"categories">
+): Promise<FrontendAttributeField[]> {
   const fields = await getExpandedTemplateFieldsByCategoryId(ctx, categoryId);
-  return fields.filter((field) => field.isVisibleOnFrontend);
+  return fields.filter(
+    (field): field is FrontendAttributeField =>
+      Boolean(field && field.isVisibleOnFrontend)
+  );
 }
 
 function mergeAttributes(
-  familyAttributes?: Record<string, any>,
-  productAttributes?: Record<string, any>
+  familyAttributes?: AttributeRecord,
+  productAttributes?: AttributeRecord
 ) {
   return {
     ...(familyAttributes ?? {}),
@@ -357,9 +428,9 @@ function mergeAttributes(
 }
 
 function mergeVariantAttributes(
-  familyAttributes?: Record<string, any>,
-  productAttributes?: Record<string, any>,
-  variantAttributes?: Record<string, any>
+  familyAttributes?: AttributeRecord,
+  productAttributes?: AttributeRecord,
+  variantAttributes?: AttributeRecord
 ) {
   return {
     ...(familyAttributes ?? {}),
@@ -594,6 +665,34 @@ function resolveFamilyHeroImage(family: {
 
 type RelatedSeriesLabel = "Single Crimp" | "Heat Shrink" | "Nylon" | "Non Insulated";
 
+type RelatedSeriesItem = {
+  _id: Id<"productFamilies">;
+  name: string;
+  slug: string;
+  summary?: string;
+  image?: string;
+  relationLabel: RelatedSeriesLabel;
+};
+
+type ScoredRelatedSeriesItem = {
+  item: RelatedSeriesItem;
+  score: number;
+  sortOrder: number;
+};
+
+type CategoryFilterOption = {
+  label: string;
+  value: string;
+  count: number;
+};
+
+type CategoryFilterGroup = {
+  id: string;
+  label: string;
+  type: "checkbox" | "radio";
+  options: CategoryFilterOption[];
+};
+
 const RELATED_SERIES_RULES: Array<{
   label: RelatedSeriesLabel;
   priority: number;
@@ -658,7 +757,7 @@ function normalizeSeriesText(value: unknown) {
     .trim();
 }
 
-function getFamilySearchText(family: any) {
+function getFamilySearchText(family: Doc<"productFamilies">) {
   return normalizeSeriesText([
     family.name,
     family.slug,
@@ -668,7 +767,7 @@ function getFamilySearchText(family: any) {
   ].filter(Boolean).join(" "));
 }
 
-function getRelatedSeriesRule(family: any) {
+function getRelatedSeriesRule(family: Doc<"productFamilies">) {
   const searchText = getFamilySearchText(family);
   return RELATED_SERIES_RULES.find((rule) =>
     !(rule.excludeKeywords ?? []).some((keyword) =>
@@ -678,7 +777,10 @@ function getRelatedSeriesRule(family: any) {
   );
 }
 
-function toRelatedSeriesItem(family: any, label: RelatedSeriesLabel) {
+function toRelatedSeriesItem(
+  family: Doc<"productFamilies">,
+  label: RelatedSeriesLabel
+): RelatedSeriesItem {
   return {
     _id: family._id,
     name: family.name,
@@ -689,7 +791,7 @@ function toRelatedSeriesItem(family: any, label: RelatedSeriesLabel) {
   };
 }
 
-function dedupeRelatedSeriesItems(items: any[]) {
+function dedupeRelatedSeriesItems(items: RelatedSeriesItem[]) {
   const seenLabels = new Set<string>();
   const seenIds = new Set<string>();
 
@@ -703,23 +805,29 @@ function dedupeRelatedSeriesItems(items: any[]) {
   });
 }
 
-async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
+async function getRelatedSeriesForProduct(
+  ctx: QueryCtx,
+  product: Doc<"products">,
+  family: Doc<"productFamilies"> | null
+) {
   if (!family) return [];
 
   const manualFamilies = family.pageConfig?.linking?.relatedFamilyIds?.length
-    ? await Promise.all(family.pageConfig.linking.relatedFamilyIds.map((id: any) => ctx.db.get(id)))
+    ? await Promise.all(family.pageConfig.linking.relatedFamilyIds.map((id) => ctx.db.get(id)))
     : [];
 
   const manualItems = manualFamilies
-    .filter((item: any) => item && item.status === "published" && item._id !== family._id)
-    .map((item: any, index: number) => {
+    .filter((item): item is Doc<"productFamilies"> =>
+      isPublishedFamily(item) && item._id !== family._id
+    )
+    .map((item, index) => {
       const rule = getRelatedSeriesRule(item);
       const fallbackLabel = MANUAL_RELATED_SERIES_LABELS[index];
       return rule || fallbackLabel
         ? toRelatedSeriesItem(item, rule?.label ?? fallbackLabel)
         : null;
     })
-    .filter(Boolean);
+    .filter((item): item is RelatedSeriesItem => Boolean(item));
 
   if (manualItems.length > 0) {
     return dedupeRelatedSeriesItems(manualItems).slice(0, 4);
@@ -729,7 +837,7 @@ async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
   const siblingCategories = category?.parentId
     ? await ctx.db
         .query("categories")
-        .withIndex("by_parentId", (q: any) => q.eq("parentId", category.parentId))
+        .withIndex("by_parentId", (q) => q.eq("parentId", category.parentId))
         .collect()
     : [];
   const candidateCategoryIds = Array.from(
@@ -738,29 +846,28 @@ async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
         category?.parentId,
         product.categoryId,
         ...siblingCategories
-          .filter((item: any) => item.status === "published")
-          .map((item: any) => item._id),
+          .filter((item) => item.status === "published")
+          .map((item) => item._id),
       ]
-        .filter(Boolean)
-        .map(String)
+        .filter((id): id is Id<"categories"> => Boolean(id))
     )
   );
   const [familyBuckets, products] = await Promise.all([
     Promise.all(
-      candidateCategoryIds.map((categoryId: any) =>
+      candidateCategoryIds.map((categoryId) =>
         ctx.db
           .query("productFamilies")
-          .withIndex("by_categoryId", (q: any) => q.eq("categoryId", categoryId))
+          .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
           .collect()
       )
     ),
     ctx.db
       .query("products")
-      .withIndex("by_categoryId", (q: any) => q.eq("categoryId", product.categoryId))
+      .withIndex("by_categoryId", (q) => q.eq("categoryId", product.categoryId))
       .collect(),
   ]);
   const families = Array.from(
-    new Map(familyBuckets.flat().map((item: any) => [item._id, item])).values()
+    new Map(familyBuckets.flat().map((item) => [item._id, item])).values()
   );
   const publishedProductCounts = new Map<string, number>();
 
@@ -776,8 +883,8 @@ async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
   const currentIsRingSeries = currentSearchText.includes("ring terminal");
 
   return families
-    .filter((item: any) => item.status === "published")
-    .map((item: any) => {
+    .filter((item) => item.status === "published")
+    .map((item): ScoredRelatedSeriesItem | null => {
       const rule = getRelatedSeriesRule(item);
       if (!rule) return null;
 
@@ -798,53 +905,55 @@ async function getRelatedSeriesForProduct(ctx: any, product: any, family: any) {
         sortOrder: item.sortOrder ?? 0,
       };
     })
-    .filter(Boolean)
-    .sort((left: any, right: any) => right.score - left.score || left.sortOrder - right.sortOrder)
-    .map((entry: any) => entry.item)
-    .filter((item: any, index: number, items: any[]) =>
-      items.findIndex((candidate: any) => candidate.relationLabel === item.relationLabel) === index
+    .filter((entry): entry is ScoredRelatedSeriesItem => Boolean(entry))
+    .sort((left, right) => right.score - left.score || left.sortOrder - right.sortOrder)
+    .map((entry) => entry.item)
+    .filter((item, index, items) =>
+      items.findIndex((candidate) => candidate.relationLabel === item.relationLabel) === index
     )
     .slice(0, 4);
 }
 
-async function getCategoryFilters(ctx: any, categoryId: string) {
+async function getCategoryFilters(ctx: QueryCtx, categoryId: Id<"categories">) {
   const [fields, products, families] = await Promise.all([
     getTemplateFields(ctx, categoryId),
     ctx.db
       .query("products")
-      .withIndex("by_categoryId", (q: any) => q.eq("categoryId", categoryId))
+      .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
       .collect(),
     ctx.db
       .query("productFamilies")
-      .withIndex("by_categoryId", (q: any) => q.eq("categoryId", categoryId))
+      .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
       .collect(),
   ]);
 
-  const publishedProducts = products.filter((item: any) => item.status === "published");
-  const familyMap = new Map(families.map((family: any) => [family._id, family]));
+  const publishedProducts = products.filter((item) => item.status === "published");
+  const familyMap = new Map(families.map((family) => [family._id, family]));
 
   return fields
-    .filter((field: any) => field.isFilterable)
-    .map((field: any) => {
+    .filter((field) => field.isFilterable)
+    .map((field): CategoryFilterGroup => {
       const filterMode = getFilterMode(field);
       if (filterMode === "range_bucket") {
-        const numericValues = publishedProducts.flatMap((product) => {
-          const rawValue = mergeAttributes(
-            familyMap.get(product.familyId)?.attributes,
-            product.attributes
-          )[field.fieldKey];
-          if (typeof rawValue === "number") {
-            return [rawValue];
+        const numericValues: Array<number | [number, number]> = publishedProducts.flatMap(
+          (product): Array<number | [number, number]> => {
+            const rawValue = mergeAttributes(
+              familyMap.get(product.familyId)?.attributes,
+              product.attributes
+            )[field.fieldKey];
+            if (typeof rawValue === "number") {
+              return [rawValue];
+            }
+            if (
+              Array.isArray(rawValue) &&
+              rawValue.length === 2 &&
+              rawValue.every((item) => typeof item === "number")
+            ) {
+              return [rawValue as [number, number]];
+            }
+            return [];
           }
-          if (
-            Array.isArray(rawValue) &&
-            rawValue.length === 2 &&
-            rawValue.every((item) => typeof item === "number")
-          ) {
-            return [rawValue as [number, number]];
-          }
-          return [];
-        });
+        );
 
         const options = buildNumericBuckets(numericValues)
           .map((bucket) => {
@@ -904,7 +1013,7 @@ async function getCategoryFilters(ctx: any, categoryId: string) {
         options,
       };
     })
-    .filter((group: any) => group.options.length > 0);
+    .filter((group) => group.options.length > 0);
 }
 
 // Categories for frontend
@@ -1658,7 +1767,7 @@ export const getCategoryContent = query({
       }
     }
 
-    const result = {
+    const result: CategoryContentResult = {
       families: [],
       products: [],
     };
@@ -1859,12 +1968,16 @@ export const getArticleBySlug = query({
       article.relatedProductIds
         ? (
             await Promise.all(article.relatedProductIds.map((productId) => ctx.db.get(productId)))
-          ).filter(Boolean).map((product) => omitBrand(product))
+          )
+            .filter((product): product is Doc<"products"> => Boolean(product))
+            .map((product) => omitBrand(product))
         : [],
       article.relatedFamilyIds
         ? (
             await Promise.all(article.relatedFamilyIds.map((familyId) => ctx.db.get(familyId)))
-          ).filter(Boolean).map((family) => omitBrand(family))
+          )
+            .filter((family): family is Doc<"productFamilies"> => Boolean(family))
+            .map((family) => omitBrand(family))
         : [],
     ]);
 
@@ -1991,10 +2104,10 @@ export const getPublicNavigation = query({
       .collect();
 
     // Build tree structure
-    const buildTree = (parentId: string | null = null) => {
+    const buildTree = (parentId: string | null = null): PublicNavigationItem[] => {
       return items
         .filter((item) => {
-          const itemParentId = item.parentId?._id.toString() || null;
+          const itemParentId = item.parentId?.toString() ?? null;
           return itemParentId === parentId;
         })
         .sort((a, b) => a.sortOrder - b.sortOrder)

@@ -6,8 +6,7 @@ import Link from "next/link";
 
 export default async function UsersSettingsPage() {
   await requireAdmin();
-  const adminData = await loadAdminData();
-  const users = (adminData as any).users || [];
+  const { users } = await loadAdminData();
 
   const roleLabels: Record<string, string> = {
     admin: "管理员",
@@ -48,19 +47,19 @@ export default async function UsersSettingsPage() {
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">管理员</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {users.filter((u: any) => u.role === "admin").length}
+              {users.filter((user) => user.role === "admin").length}
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">激活</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {users.filter((u: any) => u.status === "published").length}
+              {users.filter((user) => user.status === "published").length}
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">禁用</p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {users.filter((u: any) => u.status === "draft").length}
+              {users.filter((user) => user.status === "draft").length}
             </p>
           </div>
         </div>
@@ -80,7 +79,7 @@ export default async function UsersSettingsPage() {
               <Users className="mx-auto h-12 w-12 text-zinc-300" />
               <p className="mt-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">暂无用户</p>
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                点击"新建用户"创建第一个用户
+                点击&quot;新建用户&quot;创建第一个用户
               </p>
             </div>
           ) : (
@@ -109,7 +108,7 @@ export default async function UsersSettingsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                  {users.map((user: any) => (
+                  {users.map((user) => (
                     <tr key={user._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">

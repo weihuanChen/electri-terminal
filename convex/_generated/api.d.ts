@@ -51,6 +51,7 @@ import type * as queries_modules_navigation from "../queries/modules/navigation.
 import type * as queries_modules_products from "../queries/modules/products.js";
 import type * as queries_modules_relations from "../queries/modules/relations.js";
 import type * as queries_modules_shared from "../queries/modules/shared.js";
+import type * as queries_modules_users from "../queries/modules/users.js";
 import type * as r2Assets from "../r2Assets.js";
 
 import type {
@@ -103,6 +104,7 @@ declare const fullApi: ApiFromModules<{
   "queries/modules/products": typeof queries_modules_products;
   "queries/modules/relations": typeof queries_modules_relations;
   "queries/modules/shared": typeof queries_modules_shared;
+  "queries/modules/users": typeof queries_modules_users;
   r2Assets: typeof r2Assets;
 }>;
 

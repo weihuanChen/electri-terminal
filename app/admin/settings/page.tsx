@@ -15,9 +15,7 @@ import {
 
 export default async function SettingsPage() {
   await requireAdmin();
-  const adminData = await loadAdminData();
-  const adminUsers = (adminData as { users?: unknown[] }).users;
-  const users: unknown[] = Array.isArray(adminUsers) ? adminUsers : [];
+  const { users } = await loadAdminData();
 
   const settings = [
     {

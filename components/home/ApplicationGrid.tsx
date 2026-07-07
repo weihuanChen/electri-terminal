@@ -5,7 +5,6 @@ interface Application {
   title: string;
   slug: string;
   description: string;
-  icon?: any;
   image?: string;
   productCount?: number;
 }

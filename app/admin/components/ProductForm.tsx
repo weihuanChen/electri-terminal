@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   createProductAction,
@@ -95,6 +95,7 @@ interface AttributeTemplate {
 
 type RangeValue = [number | "", number | ""];
 type AttributeValue = string | number | boolean | string[] | RangeValue;
+type AttributeEntry = readonly [string, AttributeValue];
 type MediaFormItem = {
   url: string;
   alt?: string;
@@ -180,12 +181,86 @@ function getTemplateForCategory(
   return matches.find((template) => template.status === "published") || matches[0];
 }
 
+function getAttributeFallbackValue(
+  field: AttributeField,
+  productValue: unknown,
+  inheritedValue: AttributeValue | undefined
+): AttributeValue {
+  if (field.fieldType === "array") {
+    if (Array.isArray(productValue)) {
+      return productValue.map(String);
+    }
+    if (Array.isArray(inheritedValue)) {
+      return inheritedValue.map(String);
+    }
+    return [];
+  }
+
+  if (field.fieldType === "range") {
+    if (Array.isArray(productValue) && productValue.length === 2) {
+      return [
+        typeof productValue[0] === "number" ? productValue[0] : "",
+        typeof productValue[1] === "number" ? productValue[1] : "",
+      ];
+    }
+    if (Array.isArray(inheritedValue) && inheritedValue.length === 2) {
+      return [
+        typeof inheritedValue[0] === "number" ? inheritedValue[0] : "",
+        typeof inheritedValue[1] === "number" ? inheritedValue[1] : "",
+      ];
+    }
+    return ["", ""];
+  }
+
+  if (productValue !== undefined && productValue !== null) {
+    return productValue as AttributeValue;
+  }
+  if (inheritedValue !== undefined && inheritedValue !== null) {
+    return inheritedValue;
+  }
+  return field.fieldType === "boolean" ? false : "";
+}
+
+function getActiveAttributeState(
+  values: Record<string, AttributeValue>,
+  fields: AttributeField[],
+  productAttributes: Record<string, unknown> | undefined,
+  inheritedAttributes: Record<string, AttributeValue>
+) {
+  if (!fields.length) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    fields.map((field) => {
+      const fallbackValue = getAttributeFallbackValue(
+        field,
+        productAttributes?.[field.fieldKey],
+        inheritedAttributes[field.fieldKey]
+      );
+
+      return [field.fieldKey, values[field.fieldKey] ?? fallbackValue] as const;
+    })
+  ) as Record<string, AttributeValue>;
+}
+
+function toRangeValue(value: AttributeValue | undefined): RangeValue {
+  if (!Array.isArray(value) || value.length !== 2) {
+    return ["", ""];
+  }
+
+  return [
+    typeof value[0] === "number" ? value[0] : "",
+    typeof value[1] === "number" ? value[1] : "",
+  ];
+}
+
 function normalizeAttributesForSubmit(
   values: Record<string, AttributeValue>,
   fields: AttributeField[],
   inheritedAttributes: Record<string, AttributeValue> = {}
 ) {
-  const normalizedEntries = fields.flatMap((field) => {
+  const normalizedEntries = fields.flatMap((field): AttributeEntry[] => {
     const rawValue = values[field.fieldKey];
     const inheritedValue = inheritedAttributes[field.fieldKey];
 
@@ -233,13 +308,18 @@ function normalizeAttributesForSubmit(
       if (!Array.isArray(rawValue) || rawValue.length !== 2) {
         return [];
       }
-      const parsedRange = rawValue.map((item) =>
-        typeof item === "number" ? item : Number(String(item).trim())
-      );
+      const parsedRange: [number, number] = [
+        typeof rawValue[0] === "number"
+          ? rawValue[0]
+          : Number(String(rawValue[0]).trim()),
+        typeof rawValue[1] === "number"
+          ? rawValue[1]
+          : Number(String(rawValue[1]).trim()),
+      ];
       if (parsedRange.some((item) => !Number.isFinite(item))) {
         return [];
       }
-      return isSameAttributeValue(parsedRange as RangeValue, inheritedValue)
+      return isSameAttributeValue(parsedRange, inheritedValue)
         ? []
         : [[field.fieldKey, parsedRange] as const];
     }
@@ -261,23 +341,6 @@ function isSameAttributeValue(left: AttributeValue, right: AttributeValue) {
   }
 
   return left === right;
-}
-
-function areAttributesEqual(
-  left: Record<string, AttributeValue>,
-  right: Record<string, AttributeValue>
-) {
-  const leftKeys = Object.keys(left);
-  const rightKeys = Object.keys(right);
-
-  if (leftKeys.length !== rightKeys.length) {
-    return false;
-  }
-
-  return leftKeys.every((key) => {
-    const rightValue = right[key];
-    return rightValue !== undefined && isSameAttributeValue(left[key], rightValue);
-  });
 }
 
 export function ProductForm({
@@ -347,50 +410,16 @@ export function ProductForm({
       ),
     [activeTemplate]
   );
-
-  useEffect(() => {
-    setAttributes((current) => {
-      if (!activeFields.length) {
-        return Object.keys(current).length ? {} : current;
-      }
-      const nextEntries = activeFields.map((field) => {
-        const currentValue = current[field.fieldKey];
-        const productValue = product?.attributes?.[field.fieldKey];
-        const inheritedValue = inheritedAttributes[field.fieldKey];
-        const fallbackValue =
-          field.fieldType === "array"
-            ? Array.isArray(productValue)
-              ? productValue.map(String)
-              : Array.isArray(inheritedValue)
-                ? inheritedValue.map(String)
-                : []
-            : field.fieldType === "range"
-              ? Array.isArray(productValue) && productValue.length === 2
-                ? [
-                    typeof productValue[0] === "number" ? productValue[0] : "",
-                    typeof productValue[1] === "number" ? productValue[1] : "",
-                  ]
-                : Array.isArray(inheritedValue) && inheritedValue.length === 2
-                  ? [
-                      typeof inheritedValue[0] === "number" ? inheritedValue[0] : "",
-                      typeof inheritedValue[1] === "number" ? inheritedValue[1] : "",
-                    ]
-                  : ["", ""]
-            : productValue === undefined || productValue === null
-              ? inheritedValue === undefined || inheritedValue === null
-                ? field.fieldType === "boolean"
-                  ? false
-                  : ""
-                : (inheritedValue as AttributeValue)
-              : (productValue as AttributeValue);
-
-        return [field.fieldKey, currentValue ?? fallbackValue] as const;
-      });
-
-      const nextAttributes = Object.fromEntries(nextEntries);
-      return areAttributesEqual(current, nextAttributes) ? current : nextAttributes;
-    });
-  }, [activeFields, inheritedAttributes, product?.attributes]);
+  const activeAttributes = useMemo(
+    () =>
+      getActiveAttributeState(
+        attributes,
+        activeFields,
+        product?.attributes,
+        inheritedAttributes
+      ),
+    [activeFields, attributes, inheritedAttributes, product?.attributes]
+  );
 
   const setAttributeValue = (fieldKey: string, value: AttributeValue) => {
     setAttributes((current) => ({
@@ -423,7 +452,7 @@ export function ProductForm({
         formDataToSend.append(
           "attributes",
           JSON.stringify(
-            normalizeAttributesForSubmit(attributes, activeFields, inheritedAttributes)
+            normalizeAttributesForSubmit(activeAttributes, activeFields, inheritedAttributes)
           )
         );
       }
@@ -697,7 +726,7 @@ export function ProductForm({
 
             <div className="grid gap-4 md:grid-cols-2">
               {activeFields.map((field) => {
-                const value = attributes[field.fieldKey];
+                const value = activeAttributes[field.fieldKey];
                 const inheritedValue = inheritedAttributes[field.fieldKey];
                 const displayUnit = field.unitKey
                   ? UNIT_PRESETS[field.unitKey]?.label
@@ -800,7 +829,7 @@ export function ProductForm({
                 }
 
                 if (field.fieldType === "range") {
-                  const rangeValue = Array.isArray(value) ? value : ["", ""];
+                  const rangeValue = toRangeValue(value);
                   return (
                     <div key={field.fieldKey}>
                       {label}

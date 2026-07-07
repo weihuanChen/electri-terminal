@@ -8,6 +8,7 @@ import * as inquiries from "./inquiries";
 import * as navigation from "./navigation";
 import * as products from "./products";
 import * as relations from "./relations";
+import * as users from "./users";
 
 export {
   articles,
@@ -20,6 +21,7 @@ export {
   navigation,
   products,
   relations,
+  users,
 };
 
 export * from "./articles";
@@ -32,3 +34,4 @@ export * from "./inquiries";
 export * from "./navigation";
 export * from "./products";
 export * from "./relations";
+export * from "./users";
