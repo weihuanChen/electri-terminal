@@ -36,6 +36,12 @@ import {
 
 type SearchParams = Record<string, string | string[] | undefined>;
 type LocalizationRecord = Doc<"localizations">;
+type LocalizationQueueArgs = {
+  locale?: Locale;
+  entityType?: LocalizableEntityType;
+  owner?: string;
+  limit?: number;
+};
 
 type SourceEntity = {
   entityType: LocalizableEntityType;
@@ -298,6 +304,48 @@ function buildCurrentPath(args: {
   return query ? `/admin/localizations?${query}` : "/admin/localizations";
 }
 
+function isMissingConvexPublicFunctionError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("Could not find public function");
+}
+
+function filterLocalizationQueue(
+  localizations: LocalizationRecord[],
+  args: LocalizationQueueArgs,
+  statuses: ReadonlySet<LocalizationStatus>
+) {
+  return localizations
+    .filter((localization) => {
+      if (args.locale && localization.locale !== args.locale) return false;
+      if (args.entityType && localization.entityType !== args.entityType) return false;
+      if (args.owner && localization.owner !== args.owner) return false;
+      return statuses.has(localization.status);
+    })
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .slice(0, args.limit ?? 8);
+}
+
+async function queryLocalizationQueueWithFallback(args: {
+  queryName: string;
+  queueArgs: LocalizationQueueArgs;
+  localizations: LocalizationRecord[];
+  statuses: ReadonlySet<LocalizationStatus>;
+}) {
+  try {
+    return await queryAdmin<LocalizationRecord[]>(args.queryName, args.queueArgs);
+  } catch (error) {
+    if (!isMissingConvexPublicFunctionError(error)) {
+      throw error;
+    }
+
+    return filterLocalizationQueue(
+      args.localizations,
+      args.queueArgs,
+      args.statuses
+    );
+  }
+}
+
 function successText(success: string) {
   switch (success) {
     case "localization_status_updated":
@@ -454,14 +502,12 @@ export default async function LocalizationsPage({
     entityType: selectedEntityType,
     status: selectedStatus,
   });
-  const queueArgs: Record<string, unknown> = { limit: 8 };
+  const queueArgs: LocalizationQueueArgs = { limit: 8 };
   if (selectedLocale !== "all") queueArgs.locale = selectedLocale;
   if (selectedEntityType !== "all") queueArgs.entityType = selectedEntityType;
 
   const [
     localizations,
-    reviewQueue,
-    staleQueue,
     categories,
     families,
     products,
@@ -470,14 +516,6 @@ export default async function LocalizationsPage({
     queryAdmin<LocalizationRecord[]>("queries/modules/localizations:listLocalizations", {
       limit: 500,
     }),
-    queryAdmin<LocalizationRecord[]>(
-      "queries/modules/localizations:listLocalizationReviewQueue",
-      queueArgs
-    ),
-    queryAdmin<LocalizationRecord[]>(
-      "queries/modules/localizations:listStaleLocalizations",
-      queueArgs
-    ),
     queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
       status: "published",
       limit: 200,
@@ -493,6 +531,20 @@ export default async function LocalizationsPage({
     queryAdmin<Doc<"articles">[]>("queries/modules/articles:listArticles", {
       status: "published",
       limit: 200,
+    }),
+  ]);
+  const [reviewQueue, staleQueue] = await Promise.all([
+    queryLocalizationQueueWithFallback({
+      queryName: "queries/modules/localizations:listLocalizationReviewQueue",
+      queueArgs,
+      localizations,
+      statuses: QUEUE_STATUSES,
+    }),
+    queryLocalizationQueueWithFallback({
+      queryName: "queries/modules/localizations:listStaleLocalizations",
+      queueArgs,
+      localizations,
+      statuses: new Set<LocalizationStatus>(["stale"]),
     }),
   ]);
 
