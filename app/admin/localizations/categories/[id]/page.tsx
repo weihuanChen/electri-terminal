@@ -20,6 +20,7 @@ import {
   unpublishLocalizationAction,
 } from "@/app/admin/actions";
 import { DashboardLayout } from "../../../components/DashboardLayout";
+import { SourceCopyButton } from "./SourceCopyButton";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 type LocalizationRecord = Doc<"localizations">;
@@ -165,6 +166,15 @@ export default async function CategoryLocalizationEditPage({
   const pageConfigPatch = getFieldObject(fields, "pageConfig");
   const inheritedLocalizedSlug = category.slug;
   const targetPath = `/${selectedLocale}/categories/${inheritedLocalizedSlug}`;
+  const draftFormId = "category-localization-draft-form";
+  const sourceCopyValues = {
+    title: category.name,
+    description: category.description || "",
+    shortDescription: category.shortDescription || "",
+    seoTitle: category.seoTitle || "",
+    seoDescription: category.seoDescription || "",
+    pageConfigJson: jsonEditorValue(category.pageConfig),
+  };
 
   return (
     <DashboardLayout>
@@ -317,6 +327,7 @@ export default async function CategoryLocalizationEditPage({
           </section>
 
           <form
+            id={draftFormId}
             action={saveCategoryLocalizationDraftAction}
             className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
@@ -324,13 +335,20 @@ export default async function CategoryLocalizationEditPage({
             <input type="hidden" name="sourceSlug" value={category.slug} />
             <input type="hidden" name="locale" value={selectedLocale} />
             <input type="hidden" name="returnTo" value={returnTo} />
-            <div className="border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-              <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
-                Translation draft
-              </h2>
-              <p className="text-sm text-zinc-500">
-                Published records are locked; unpublish before editing content.
-              </p>
+            <div className="flex flex-col gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+                  Translation draft
+                </h2>
+                <p className="text-sm text-zinc-500">
+                  Published records are locked; unpublish before editing content.
+                </p>
+              </div>
+              <SourceCopyButton
+                formId={draftFormId}
+                sourceValues={sourceCopyValues}
+                disabled={isPublished}
+              />
             </div>
             <div className="grid gap-5 p-5">
               <div className="grid gap-4 lg:grid-cols-2">
