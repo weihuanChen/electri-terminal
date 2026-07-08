@@ -44,6 +44,15 @@ export default async function SettingsPage() {
       bgColor: "bg-cyan-100",
     },
     {
+      id: "localizations",
+      title: "翻译治理",
+      description: "查看翻译覆盖率、review queue 和 stale queue",
+      icon: Languages,
+      color: "text-sky-600",
+      bgColor: "bg-sky-100",
+      href: "/admin/localizations",
+    },
+    {
       id: "notifications",
       title: "通知设置",
       description: "配置邮件通知和系统提醒",
@@ -138,7 +147,7 @@ export default async function SettingsPage() {
             return (
               <a
                 key={setting.id}
-                href={`/admin/settings/${setting.id}`}
+                href={setting.href ?? `/admin/settings/${setting.id}`}
                 className="block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm hover:shadow-md hover:border-zinc-300 dark:border-zinc-700 transition-all"
               >
                 <div className="flex items-start gap-4">

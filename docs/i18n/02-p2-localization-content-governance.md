@@ -305,6 +305,22 @@ Recommended admin actions:
 - run link audit;
 - run release gate.
 
+### 8.1 Current P2-3 admin view
+
+The first admin workflow surface is available at `/admin/localizations`.
+
+It provides:
+
+- language and entity-level localization coverage;
+- translation record filters by locale, entity type, and status;
+- review queue visibility for `machine_ready` and `review_required`;
+- stale translation queue visibility;
+- missing-source samples for the active target locale;
+- row-level status transitions backed by the P2-2 workflow API;
+- unpublish action for `published` records.
+
+The P2-3 surface is intentionally an operations dashboard. It does not generate translations and does not replace the future per-entity translation editor.
+
 ---
 
 ## 9. Navigation Governance

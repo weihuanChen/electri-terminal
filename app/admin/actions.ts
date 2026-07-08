@@ -13,7 +13,9 @@ import { getAdminConvexClient } from "@/lib/convex-admin";
 import {
   DEFAULT_LOCALE,
   type LocaleStatus,
+  type LocalizationStatus,
   getAllowedLanguageStatusTransitions,
+  isLocalizationStatus,
   isLocale,
   resolveLanguageWorkflow,
   type StoredLanguageWorkflow,
@@ -100,6 +102,7 @@ const PRODUCT_VARIANT_STATUSES: ProductVariantStatus[] = [
 ];
 
 const LANGUAGE_STATUSES: LocaleStatus[] = ["draft", "prelaunch", "published", "paused"];
+const LOCALIZATION_ACTION_FALLBACK = "/admin/localizations";
 
 async function mutationWithExtraFieldFallback(
   client: ReturnType<typeof getAdminConvexClient>,
@@ -157,6 +160,34 @@ function normalizeProductVariantStatus(value: unknown): ProductVariantStatus | u
 
 function normalizeLanguageStatus(value: unknown): LocaleStatus | undefined {
   return LANGUAGE_STATUSES.includes(value as LocaleStatus) ? (value as LocaleStatus) : undefined;
+}
+
+function safeLocalizationReturnPath(value?: string) {
+  if (!value || !value.startsWith(LOCALIZATION_ACTION_FALLBACK)) {
+    return LOCALIZATION_ACTION_FALLBACK;
+  }
+
+  return value;
+}
+
+function redirectLocalizationAction(
+  returnTo: string | undefined,
+  params: { success?: string; error?: string; selected?: string }
+) {
+  const safeReturnTo = safeLocalizationReturnPath(returnTo);
+  const [pathname, rawSearch = ""] = safeReturnTo.split("?");
+  const searchParams = new URLSearchParams(rawSearch);
+
+  searchParams.delete("success");
+  searchParams.delete("error");
+  searchParams.delete("selected");
+
+  if (params.success) searchParams.set("success", params.success);
+  if (params.error) searchParams.set("error", params.error);
+  if (params.selected) searchParams.set("selected", params.selected);
+
+  const query = searchParams.toString();
+  redirect(query ? `${pathname}?${query}` : pathname);
 }
 
 function parseProductVariantBatchItems(rawItems: string) {
@@ -1635,4 +1666,88 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
   revalidatePath("/admin/settings");
   revalidatePath("/admin/settings/languages");
   redirect(`/admin/settings/languages?locale=${localeValue}&success=language_workflow_updated`);
+}
+
+export async function moveLocalizationStatusAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"localizations">;
+  const returnTo = str(formData, "returnTo");
+  const nextStatusValue = str(formData, "nextStatus");
+
+  if (!id) {
+    redirectLocalizationAction(returnTo, { error: "localization_id_required" });
+  }
+
+  if (!isLocalizationStatus(nextStatusValue) || nextStatusValue === "missing") {
+    redirectLocalizationAction(returnTo, {
+      error: "invalid_localization_status",
+      selected: id,
+    });
+  }
+
+  const nextStatus = nextStatusValue as Exclude<LocalizationStatus, "missing">;
+  const client = getAdminConvexClient();
+  let saveError: unknown;
+
+  try {
+    await client.mutation("mutations/admin/localizations:moveLocalizationStatus", {
+      id,
+      status: nextStatus,
+      actor: optionalStr(formData, "actor") ?? "admin",
+      note: optionalStr(formData, "note"),
+    });
+  } catch (error: unknown) {
+    saveError = error;
+  }
+
+  if (saveError) {
+    redirectLocalizationAction(returnTo, {
+      error: errorMessage(saveError),
+      selected: id,
+    });
+  }
+
+  revalidatePath("/admin/localizations");
+  redirectLocalizationAction(returnTo, {
+    success: "localization_status_updated",
+    selected: id,
+  });
+}
+
+export async function unpublishLocalizationAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"localizations">;
+  const returnTo = str(formData, "returnTo");
+
+  if (!id) {
+    redirectLocalizationAction(returnTo, { error: "localization_id_required" });
+  }
+
+  const client = getAdminConvexClient();
+  let saveError: unknown;
+
+  try {
+    await client.mutation("mutations/admin/localizations:unpublishLocalization", {
+      id,
+      actor: optionalStr(formData, "actor") ?? "admin",
+      note: optionalStr(formData, "note"),
+    });
+  } catch (error: unknown) {
+    saveError = error;
+  }
+
+  if (saveError) {
+    redirectLocalizationAction(returnTo, {
+      error: errorMessage(saveError),
+      selected: id,
+    });
+  }
+
+  revalidatePath("/admin/localizations");
+  redirectLocalizationAction(returnTo, {
+    success: "localization_unpublished",
+    selected: id,
+  });
 }
