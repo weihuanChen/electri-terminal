@@ -7,12 +7,14 @@ import {
   normalizePublicPath,
   renderLocalizedRoutePage,
 } from "@/lib/i18n";
+import "./localized-l2-renderers";
 
 type LocaleRoutePageProps = {
   params: Promise<{
     locale: string;
     path?: string[];
   }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 function getRequestedPath(path?: string[]) {
@@ -40,7 +42,10 @@ export async function generateMetadata({
   });
 }
 
-export default async function LocaleRoutePage({ params }: LocaleRoutePageProps) {
+export default async function LocaleRoutePage({
+  params,
+  searchParams,
+}: LocaleRoutePageProps) {
   const { locale, path } = await params;
 
   if (!isLocale(locale)) {
@@ -50,5 +55,6 @@ export default async function LocaleRoutePage({ params }: LocaleRoutePageProps) 
   return renderLocalizedRoutePage({
     locale,
     path: getRequestedPath(path),
+    searchParams: (await searchParams) ?? {},
   });
 }

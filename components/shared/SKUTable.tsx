@@ -5,6 +5,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { productUrl } from "@/lib/routes";
 import { formatAttributeValue } from "@/lib/productPresentation";
+import type { Locale } from "@/lib/i18n/config";
 
 interface SKU {
   _id: string;
@@ -20,6 +21,7 @@ interface SKU {
 
 interface SKUTableProps {
   skus: SKU[];
+  locale?: Locale;
   displayColumns?: Array<{
     key: string;
     label: string;
@@ -31,6 +33,7 @@ type SortOrder = "asc" | "desc" | null;
 
 export default function SKUTable({
   skus,
+  locale,
   displayColumns,
 }: SKUTableProps) {
   const [sortColumn, setSortColumn] = useState<string>("skuCode");
@@ -204,7 +207,7 @@ export default function SKUTable({
                 ))}
                 <td className="px-6 py-4 text-right">
                   <Link
-                    href={productUrl(sku.slug)}
+                    href={productUrl(sku.slug, locale ? { locale } : undefined)}
                     className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark"
                   >
                     View <ChevronRight className="h-4 w-4" />

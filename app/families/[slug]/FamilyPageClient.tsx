@@ -14,10 +14,12 @@ import {
   normalizeVisualMediaItems,
   type VisualMediaItem,
 } from "@/lib/productPresentation";
+import type { Locale } from "@/lib/i18n/config";
 import ExpandableHeroIntro from "./ExpandableHeroIntro";
 import QuickSelectButton from "./QuickSelectButton";
 
 interface CategorySummary {
+  _id?: string;
   slug?: string;
   name?: string;
 }
@@ -166,6 +168,7 @@ export interface FamilyPageData {
 
 interface FamilyPageClientProps {
   family: FamilyPageData;
+  locale?: Locale;
 }
 
 type MarkdownBlock =
@@ -561,10 +564,14 @@ function resolveQuickSpecs({
   ];
 }
 
-export default function FamilyPageClient({ family }: FamilyPageClientProps) {
+export default function FamilyPageClient({ family, locale }: FamilyPageClientProps) {
+  const urlOptions = locale ? { locale } : undefined;
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl() },
-    { label: family.category?.name || "Category", href: categoryUrl(family.category?.slug || "") },
+    { label: "Categories", href: categoriesUrl(urlOptions) },
+    {
+      label: family.category?.name || "Category",
+      href: categoryUrl(family.category?.slug || "", urlOptions),
+    },
     { label: family.name },
   ];
   const mediaItems = normalizeVisualMediaItems({
@@ -611,24 +618,27 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     showRelatedLinks,
     showBottomCta,
     faqItems,
-  } = resolveFamilyPageViewModel({
-    ...family,
-    pageConfig: {
-      ...family.pageConfig,
-      content: {
-        ...family.pageConfig?.content,
-        features: {
-          ...family.pageConfig?.content?.features,
-          items:
-            family.pageConfig?.content?.features?.items?.length
-              ? family.pageConfig.content.features.items
-              : family.pageConfig?.content?.featuresList?.length
-                ? family.pageConfig.content.featuresList
-                : family.highlights,
+  } = resolveFamilyPageViewModel(
+    {
+      ...family,
+      pageConfig: {
+        ...family.pageConfig,
+        content: {
+          ...family.pageConfig?.content,
+          features: {
+            ...family.pageConfig?.content?.features,
+            items:
+              family.pageConfig?.content?.features?.items?.length
+                ? family.pageConfig.content.features.items
+                : family.pageConfig?.content?.featuresList?.length
+                  ? family.pageConfig.content.featuresList
+                  : family.highlights,
+          },
         },
       },
     },
-  });
+    urlOptions
+  );
   const overviewParagraphs = [overviewIntro, ...overviewDetails]
     .map((paragraph) => normalizeText(paragraph || ""))
     .filter(Boolean)
@@ -699,7 +709,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
     <>
       <div className="bg-muted border-b border-border">
         <div className="container">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb items={breadcrumbItems} locale={locale} />
         </div>
       </div>
 
@@ -889,7 +899,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
               </div>
             </div>
             <div className="rounded-md border border-border shadow-sm overflow-hidden">
-              <SKUTable skus={availableProducts} />
+              <SKUTable skus={availableProducts} locale={locale} />
             </div>
           </div>
         </section>
@@ -1094,7 +1104,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                       {family.relatedCategories.map((item) => (
                         <Link
                           key={item._id}
-                          href={categoryUrl(item.slug)}
+                          href={categoryUrl(item.slug, urlOptions)}
                           className="block text-sm font-medium text-primary hover:underline"
                         >
                           {item.name}
@@ -1111,7 +1121,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                       {family.relatedFamilies.map((item) => (
                         <Link
                           key={item._id}
-                          href={familyUrl(item.slug)}
+                          href={familyUrl(item.slug, urlOptions)}
                           className="block text-sm font-medium text-primary hover:underline"
                         >
                           {item.name}
@@ -1128,7 +1138,7 @@ export default function FamilyPageClient({ family }: FamilyPageClientProps) {
                       {family.relatedArticles.map((item) => (
                         <Link
                           key={item._id}
-                          href={articleUrl(item.slug)}
+                          href={articleUrl(item.slug, urlOptions)}
                           className="block text-sm font-medium text-primary hover:underline"
                         >
                           {item.title}

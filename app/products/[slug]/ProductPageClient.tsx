@@ -15,6 +15,7 @@ import {
   type VisualMediaItem,
 } from "@/lib/productPresentation";
 import { buildProductKeySpecifications } from "@/lib/productKeySpecifications";
+import type { Locale } from "@/lib/i18n/config";
 
 interface CategorySummary {
   _id?: string;
@@ -120,6 +121,7 @@ export interface ProductPageData {
 
 interface ProductPageClientProps {
   product: ProductPageData;
+  locale?: Locale;
 }
 
 const relatedSeriesDescriptions: Record<RelatedSeriesLabel, string> = {
@@ -129,8 +131,16 @@ const relatedSeriesDescriptions: Record<RelatedSeriesLabel, string> = {
   "Non Insulated": "Base copper terminal series for low-cost assemblies or separate insulation processes.",
 };
 
-function RelatedSeriesSection({ items }: { items: RelatedSeriesItem[] }) {
+function RelatedSeriesSection({
+  items,
+  locale,
+}: {
+  items: RelatedSeriesItem[];
+  locale?: Locale;
+}) {
   if (items.length === 0) return null;
+
+  const urlOptions = locale ? { locale } : undefined;
 
   return (
     <section id="related-series" className="py-6 md:py-10 border-b border-border">
@@ -151,7 +161,7 @@ function RelatedSeriesSection({ items }: { items: RelatedSeriesItem[] }) {
           {items.map((item, index) => (
             <Link
               key={item._id}
-              href={familyUrl(item.slug)}
+              href={familyUrl(item.slug, urlOptions)}
               className="group relative min-h-[190px] overflow-hidden rounded-sm border border-border bg-white p-4 transition-colors hover:border-primary dark:bg-slate-900"
             >
               {item.image && (
@@ -190,7 +200,8 @@ function RelatedSeriesSection({ items }: { items: RelatedSeriesItem[] }) {
   );
 }
 
-export default function ProductPageClient({ product }: ProductPageClientProps) {
+export default function ProductPageClient({ product, locale }: ProductPageClientProps) {
+  const urlOptions = locale ? { locale } : undefined;
   const {
     heroTitle,
     heroSummary,
@@ -200,12 +211,15 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
     showDownloads,
     showFaq,
     showInquiry,
-  } = resolveProductPageViewModel(product);
+  } = resolveProductPageViewModel(product, urlOptions);
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl() },
-    { label: product.category?.name || "Category", href: categoryUrl(product.category?.slug || "") },
+    { label: "Categories", href: categoriesUrl(urlOptions) },
+    {
+      label: product.category?.name || "Category",
+      href: categoryUrl(product.category?.slug || "", urlOptions),
+    },
     ...(product.family
-      ? [{ label: product.family.name, href: familyUrl(product.family.slug) }]
+      ? [{ label: product.family.name, href: familyUrl(product.family.slug, urlOptions) }]
       : []),
     { label: product.shortTitle || product.title },
   ];
@@ -242,7 +256,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
     <>
       <div className="hidden border-b border-border bg-muted md:block">
         <div className="container">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb items={breadcrumbItems} locale={locale} />
         </div>
       </div>
 
@@ -450,7 +464,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
         </section>
       )}
 
-      {hasRelatedSeries && <RelatedSeriesSection items={relatedSeries} />}
+      {hasRelatedSeries && <RelatedSeriesSection items={relatedSeries} locale={locale} />}
 
 
 
@@ -481,6 +495,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
                   shortTitle={relatedProduct.shortTitle}
                   mainImage={relatedProduct.mainImage}
                   summary={relatedProduct.summary}
+                  locale={locale}
                 />
               ))}
             </div>

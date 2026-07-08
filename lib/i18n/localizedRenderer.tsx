@@ -44,11 +44,17 @@ export type LocalizedRouteRenderState = {
 export type LocalizedRendererContext = {
   locale: Locale;
   route: LocalizedRouteMatch;
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 export type LocalizedRouteRenderer = (context: LocalizedRendererContext) => Promise<ReactNode>;
 
 const LOCALIZED_RENDERERS: Partial<Record<LocalizedRouteKind, LocalizedRouteRenderer>> = {};
+const STATIC_LOCALIZED_RENDERER_KINDS: ReadonlySet<LocalizedRouteKind> = new Set([
+  "category",
+  "family",
+  "product",
+]);
 
 export function registerLocalizedRouteRenderer(
   kind: LocalizedRouteKind,
@@ -64,11 +70,16 @@ export function registerLocalizedRouteRenderer(
 }
 
 export function hasLocalizedRouteRenderer(kind: LocalizedRouteKind) {
-  return Boolean(LOCALIZED_RENDERERS[kind]);
+  return Boolean(LOCALIZED_RENDERERS[kind]) || STATIC_LOCALIZED_RENDERER_KINDS.has(kind);
 }
 
 export function getConfiguredLocalizedRouteKinds() {
-  return Object.keys(LOCALIZED_RENDERERS) as LocalizedRouteKind[];
+  return Array.from(
+    new Set([
+      ...Object.keys(LOCALIZED_RENDERERS),
+      ...STATIC_LOCALIZED_RENDERER_KINDS,
+    ])
+  ) as LocalizedRouteKind[];
 }
 
 function getLocalizedRouteTitle(state: LocalizedRouteRenderState) {
@@ -182,7 +193,7 @@ export async function resolveLocalizedRouteRenderState({
     reasons.push("translation_not_published");
   }
 
-  if (!getRouteRenderer(route)) {
+  if (!hasLocalizedRouteRenderer(route.kind)) {
     reasons.push("renderer_not_configured");
   }
 
@@ -236,9 +247,11 @@ export async function generateLocalizedRouteMetadata({
 export async function renderLocalizedRoutePage({
   locale,
   path,
+  searchParams,
 }: {
   locale: Locale;
   path: string;
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const state = await resolveLocalizedRouteRenderState({ locale, path });
 
@@ -254,5 +267,6 @@ export async function renderLocalizedRoutePage({
   return renderer({
     locale,
     route: state.route,
+    searchParams,
   });
 }

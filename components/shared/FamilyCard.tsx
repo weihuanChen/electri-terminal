@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { familyUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import type { Locale } from "@/lib/i18n/config";
 
 interface FamilyCardProps {
   slug: string;
@@ -10,6 +11,7 @@ interface FamilyCardProps {
   summary?: string;
   heroImage?: string;
   highlights?: string[];
+  locale?: Locale;
 }
 
 export default function FamilyCard({
@@ -18,10 +20,11 @@ export default function FamilyCard({
   summary,
   heroImage,
   highlights,
+  locale,
 }: FamilyCardProps) {
   return (
     <Link
-      href={familyUrl(slug)}
+      href={familyUrl(slug, locale ? { locale } : undefined)}
       className="card group block h-full overflow-hidden"
     >
       <div className="relative h-48 overflow-hidden bg-muted sm:h-56">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { homeUrl } from "@/lib/routes";
+import type { Locale } from "@/lib/i18n/config";
 
 interface BreadcrumbItem {
     label: string;
@@ -9,16 +10,17 @@ interface BreadcrumbItem {
 interface BreadcrumbProps {
     items: BreadcrumbItem[];
     showHome?: boolean;
+    locale?: Locale;
 }
 
-export default function Breadcrumb({ items, showHome = true }: BreadcrumbProps) {
+export default function Breadcrumb({ items, showHome = true, locale }: BreadcrumbProps) {
     return (
         <nav className="flex items-center text-xs text-gray-600 py-3" aria-label="Breadcrumb">
             {/* Home */}
             {showHome && (
                 <>
                     <Link
-                        href={homeUrl()}
+                        href={homeUrl(locale ? { locale } : undefined)}
                         className="hover:text-gray-900 transition-colors"
                         aria-label="Home"
                     >

@@ -1,7 +1,13 @@
 export type BasicFaqRecord = {
+  type?: string;
   title: string;
   content?: string;
   excerpt?: string;
+};
+
+export type EmbeddedFaqRecord = {
+  question?: string;
+  answer?: string;
 };
 
 export type ResolvedFaqItem = {
@@ -30,9 +36,19 @@ export type SeoOverride = {
 
 export function resolveFaqItems(records?: BasicFaqRecord[]) {
   return (records || [])
+    .filter((faq) => faq.type === undefined || faq.type === "faq")
     .map((faq) => ({
-      question: faq.title,
-      answer: faq.content || faq.excerpt || "",
+      question: faq.title?.trim() || "",
+      answer: faq.content?.trim() || faq.excerpt?.trim() || "",
+    }))
+    .filter((faq) => faq.question && faq.answer);
+}
+
+export function resolveEmbeddedFaqItems(records?: EmbeddedFaqRecord[]) {
+  return (records || [])
+    .map((faq) => ({
+      question: faq.question?.trim() || "",
+      answer: faq.answer?.trim() || "",
     }))
     .filter((faq) => faq.question && faq.answer);
 }

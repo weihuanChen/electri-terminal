@@ -3,6 +3,8 @@ import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, CTABanner } from "@/
 import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
 import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import type { Locale } from "@/lib/i18n/config";
+import { resolveLocalizedPath } from "@/lib/i18n/urlResolver";
 import CategoryContentTabs, { CategoryFilterSidebar } from "./CategoryPageControls";
 import Link from "next/link";
 import { ArrowRight, FileText, Download } from "lucide-react";
@@ -103,6 +105,7 @@ interface CategoryPageClientProps {
   content: CategoryPageContent;
   contentView: CategoryContentView;
   activeFilters: CategoryFilterState;
+  locale?: Locale;
 }
 
 function resolveSeriesHint(name: string) {
@@ -139,7 +142,8 @@ function normalizeComparable(value: string) {
 
 function resolveQuickSelectionItems(
   typesOverview: CategoryTypeOverviewItem[],
-  families: CategoryFamily[]
+  families: CategoryFamily[],
+  locale?: Locale
 ) {
   if (typesOverview.length === 0) {
     return [];
@@ -151,7 +155,9 @@ function resolveQuickSelectionItems(
         label: item.name,
         description:
           item.description?.trim() || "Open this type and browse matching series.",
-        href: item.link,
+        href: locale && item.link.startsWith("/")
+          ? resolveLocalizedPath(item.link, locale)
+          : item.link,
       };
     }
 
@@ -164,7 +170,9 @@ function resolveQuickSelectionItems(
       label: item.name,
       description:
         item.description?.trim() || "Open this type and browse matching series.",
-      href: matchedFamily ? familyUrl(matchedFamily.slug) : "#series-section",
+      href: matchedFamily
+        ? familyUrl(matchedFamily.slug, locale ? { locale } : undefined)
+        : "#series-section",
     };
   });
 }
@@ -214,9 +222,11 @@ export default function CategoryPageClient({
   content,
   contentView,
   activeFilters,
+  locale,
 }: CategoryPageClientProps) {
+  const urlOptions = locale ? { locale } : undefined;
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl() },
+    { label: "Categories", href: categoriesUrl(urlOptions) },
     { label: category.name },
   ];
   const {
@@ -238,13 +248,14 @@ export default function CategoryPageClient({
     showDownloads,
     primaryCTA,
     secondaryCTA,
-  } = resolveCategoryPageViewModel(category, content, contentView);
+  } = resolveCategoryPageViewModel(category, content, contentView, urlOptions);
   const isRingTerminals = category.slug === "ring-terminals";
   const isSubcategory = Boolean(category.parentId);
   const useEnhancedHero = isRingTerminals || isSubcategory;
   const quickSelectionItems = resolveQuickSelectionItems(
     typesOverview,
-    content.families
+    content.families,
+    locale
   );
   const productsToRender = contentView === "all" ? visibleProducts.slice(0, 8) : visibleProducts;
   const cleanAboutIntroParagraphs = sanitizeAboutTextList([
@@ -282,7 +293,7 @@ export default function CategoryPageClient({
     <>
       <div className="bg-muted border-b border-border">
         <div className="container">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb items={breadcrumbItems} locale={locale} />
         </div>
       </div>
 
@@ -378,7 +389,7 @@ export default function CategoryPageClient({
             <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary mb-6">Subcategories</h2>
             <div className="flex flex-wrap gap-3">
               <Link
-                href={categoryUrl(category.slug)}
+                href={categoryUrl(category.slug, urlOptions)}
                 className="inline-flex items-center rounded-sm border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
               >
                 All {category.name}
@@ -386,7 +397,7 @@ export default function CategoryPageClient({
               {category.children.map((child) => (
                 <Link
                   key={child._id}
-                  href={categoryUrl(child.slug)}
+                  href={categoryUrl(child.slug, urlOptions)}
                   className="inline-flex items-center rounded-sm border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
                 >
                   {child.name}
@@ -475,6 +486,7 @@ export default function CategoryPageClient({
                         }
                         heroImage={family.heroImage}
                         highlights={family.highlights}
+                        locale={locale}
                       />
                     ))}
                   </div>
@@ -498,6 +510,7 @@ export default function CategoryPageClient({
                         mainImage={product.mainImage}
                         summary={product.summary}
                         isFeatured={product.isFeatured}
+                        locale={locale}
                       />
                     ))}
                   </div>

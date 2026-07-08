@@ -7,6 +7,7 @@ import {
   type CTAConfig,
 } from "@/lib/pageResolvers";
 import { categoriesUrl, categoryUrl, familyUrl, productUrl } from "@/lib/routes";
+import type { UrlResolverOptions } from "@/lib/i18n/urlResolver";
 
 type ProductVariantRecord = {
   itemNo?: string;
@@ -104,7 +105,10 @@ export function resolveProductFaqItems(product: Pick<ProductLike, "faqs">) {
   return resolveFaqItems(product.faqs);
 }
 
-export function resolveProductPageViewModel(product: ProductLike) {
+export function resolveProductPageViewModel(
+  product: ProductLike,
+  urlOptions?: UrlResolverOptions
+) {
   return {
     heroTitle: product.shortTitle || product.title,
     heroSummary: product.summary,
@@ -116,7 +120,7 @@ export function resolveProductPageViewModel(product: ProductLike) {
     secondaryCTA: product.family
       ? {
           label: "View Series",
-          href: familyUrl(product.family.slug),
+          href: familyUrl(product.family.slug, urlOptions),
         }
       : undefined,
     faqItems: resolveProductFaqItems(product),
@@ -127,19 +131,28 @@ export function resolveProductPageViewModel(product: ProductLike) {
   };
 }
 
-export function buildProductStructuredData(product: ProductLike, slug: string) {
+export function buildProductStructuredData(
+  product: ProductLike,
+  slug: string,
+  urlOptions?: UrlResolverOptions
+) {
   const faqItems = resolveProductFaqItems(product);
 
   return [
     makeBreadcrumbSchema([
-      { name: "Categories", path: categoriesUrl() },
+      { name: "Categories", path: categoriesUrl(urlOptions) },
       ...(product.category?.slug
-        ? [{ name: product.category.name || "Category", path: categoryUrl(product.category.slug) }]
+        ? [
+            {
+              name: product.category.name || "Category",
+              path: categoryUrl(product.category.slug, urlOptions),
+            },
+          ]
         : []),
       ...(product.family?.slug
-        ? [{ name: product.family.name, path: familyUrl(product.family.slug) }]
+        ? [{ name: product.family.name, path: familyUrl(product.family.slug, urlOptions) }]
         : []),
-      { name: product.shortTitle || product.title, path: productUrl(slug) },
+      { name: product.shortTitle || product.title, path: productUrl(slug, urlOptions) },
     ]),
     makeProductSchema({
       slug,
@@ -155,7 +168,7 @@ export function buildProductStructuredData(product: ProductLike, slug: string) {
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({
-            path: productUrl(slug),
+            path: productUrl(slug, urlOptions),
             items: faqItems,
           }),
         ]

@@ -329,7 +329,7 @@ export function CategoryForm({ category, categories = [], families = [] }: Categ
     };
 
     const seoBoost = {
-      ...(embeddedFaqItems?.length ? { faqMode: "mixed" as const, embeddedFaqItems } : {}),
+      ...(embeddedFaqItems?.length ? { faqMode: "embedded" as const, embeddedFaqItems } : {}),
     };
 
     const display = {

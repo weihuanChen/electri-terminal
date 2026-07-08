@@ -13,7 +13,7 @@ import {
   makeItemListSchema,
 } from "@/lib/schema";
 import {
-  resolveFaqItems,
+  resolveEmbeddedFaqItems,
   resolveMetadataEntity,
   resolveMetadataDescription,
   resolveMetadataRobots,
@@ -28,6 +28,7 @@ import {
   productUrl,
   requestQuoteUrl,
 } from "@/lib/routes";
+import type { UrlResolverOptions } from "@/lib/i18n/urlResolver";
 
 type CategoryFilterOption = {
   value: string;
@@ -232,31 +233,15 @@ export function resolveCategoryMetadataRobots(
   return undefined;
 }
 
-export function resolveCategoryFaqItems(category: Pick<CategoryLike, "faqs" | "pageConfig">) {
-  const faqMode = category.pageConfig?.seoBoost?.faqMode || "relation";
-  const relationFaqItems = resolveFaqItems(category.faqs);
-  const embeddedFaqItems = (category.pageConfig?.seoBoost?.embeddedFaqItems || [])
-    .map((item) => ({
-      question: item.question?.trim() || "",
-      answer: item.answer?.trim() || "",
-    }))
-    .filter((item) => item.question && item.answer);
-
-  if (faqMode === "embedded") {
-    return embeddedFaqItems;
-  }
-
-  if (faqMode === "mixed") {
-    return [...relationFaqItems, ...embeddedFaqItems];
-  }
-
-  return relationFaqItems;
+export function resolveCategoryFaqItems(category: Pick<CategoryLike, "pageConfig">) {
+  return resolveEmbeddedFaqItems(category.pageConfig?.seoBoost?.embeddedFaqItems);
 }
 
 export function resolveCategoryPageViewModel(
   category: CategoryLike,
   content: CategoryContentLike,
-  contentView: CategoryContentView
+  contentView: CategoryContentView,
+  urlOptions?: UrlResolverOptions
 ) {
   const pageContent = category.pageConfig?.content;
   const visibleFamilies = contentView === "products" ? [] : content.families;
@@ -283,11 +268,11 @@ export function resolveCategoryPageViewModel(
     showDownloads: (category.resources || []).length > 0,
     primaryCTA: {
       label: "Contact Us",
-      href: contactUrl(),
+      href: contactUrl(urlOptions),
     } satisfies CTAConfig,
     secondaryCTA: {
       label: "Request Quote",
-      href: requestQuoteUrl(),
+      href: requestQuoteUrl(urlOptions),
     } satisfies CTAConfig,
   };
 }
@@ -295,14 +280,15 @@ export function resolveCategoryPageViewModel(
 export function buildCategoryStructuredData(
   category: CategoryLike,
   content: CategoryContentLike,
-  slug: string
+  slug: string,
+  urlOptions?: UrlResolverOptions
 ) {
   const faqItems = resolveCategoryFaqItems(category);
 
   return [
     makeBreadcrumbSchema([
-      { name: "Categories", path: categoriesUrl() },
-      { name: category.name, path: categoryUrl(slug) },
+      { name: "Categories", path: categoriesUrl(urlOptions) },
+      { name: category.name, path: categoryUrl(slug, urlOptions) },
     ]),
     makeCollectionPageSchema({
       name: category.name,
@@ -313,13 +299,13 @@ export function buildCategoryStructuredData(
         category.pageConfig?.content?.heroIntro ||
         category.description ||
         category.shortDescription,
-      path: categoryUrl(slug),
+      path: categoryUrl(slug, urlOptions),
     }),
     ...((category.pageConfig?.content?.featuredFamilies || []).length > 0
       ? [
           makeItemListSchema({
             name: `${category.name} Featured Families`,
-            path: categoryUrl(slug),
+            path: categoryUrl(slug, urlOptions),
             items: (category.pageConfig?.content?.featuredFamilies || []).map((item) => ({
               name: item.name,
               url: item.link,
@@ -331,10 +317,10 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Families`,
-            path: categoryUrl(slug),
+            path: categoryUrl(slug, urlOptions),
             items: content.families.map((family) => ({
               name: family.name,
-              url: familyUrl(family.slug),
+              url: familyUrl(family.slug, urlOptions),
             })),
           }),
         ]
@@ -343,10 +329,10 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Products`,
-            path: categoryUrl(slug),
+            path: categoryUrl(slug, urlOptions),
             items: content.products.map((product) => ({
               name: product.shortTitle || product.title,
-              url: productUrl(product.slug),
+              url: productUrl(product.slug, urlOptions),
             })),
           }),
         ]
@@ -354,7 +340,7 @@ export function buildCategoryStructuredData(
     ...(faqItems.length > 0
       ? [
           makeFAQPageSchema({
-            path: categoryUrl(slug),
+            path: categoryUrl(slug, urlOptions),
             items: faqItems,
           }),
         ]
@@ -363,7 +349,7 @@ export function buildCategoryStructuredData(
       ? [
           makeItemListSchema({
             name: `${category.name} Downloads`,
-            path: categoryUrl(slug),
+            path: categoryUrl(slug, urlOptions),
             items: (category.resources || []).map((resource) => ({
               name: resource.title,
               url: resource.fileUrl,

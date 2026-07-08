@@ -5,6 +5,7 @@ import {
   makeItemListSchema,
 } from "@/lib/schema";
 import {
+  resolveEmbeddedFaqItems,
   resolveMetadataDescription,
   resolveMetadataEntity,
   resolveMetadataRobots,
@@ -20,6 +21,7 @@ import {
   productUrl,
   requestQuoteUrl,
 } from "@/lib/routes";
+import type { UrlResolverOptions } from "@/lib/i18n/urlResolver";
 
 type EmbeddedFaqItem = {
   question: string;
@@ -269,17 +271,13 @@ export function resolveFamilyPrimaryImageAlt(family: FamilyPageLike | null) {
 }
 
 export function resolveFamilyFaqItems(family: FamilyPageLike) {
-  return (family.pageConfig?.seoBoost?.embeddedFaqItems || [])
-    .map((faq) => ({
-      question: asNonEmptyString(faq.question),
-      answer: asNonEmptyString(faq.answer),
-    }))
-    .filter((faq): faq is { question: string; answer: string } =>
-      Boolean(faq.question && faq.answer)
-    );
+  return resolveEmbeddedFaqItems(family.pageConfig?.seoBoost?.embeddedFaqItems);
 }
 
-export function resolveFamilyPageViewModel(family: FamilyPageLike) {
+export function resolveFamilyPageViewModel(
+  family: FamilyPageLike,
+  urlOptions?: UrlResolverOptions
+) {
   const pageContent = family.pageConfig?.content;
   const pageConversion = family.pageConfig?.conversion;
   const pageDisplay = family.pageConfig?.display;
@@ -311,11 +309,11 @@ export function resolveFamilyPageViewModel(family: FamilyPageLike) {
     longformMarkdown: asNonEmptyString(family.pageConfig?.longform?.markdown),
     primaryCTA: {
       label: pageConversion?.ctaPrimaryLabel || "Request Quote",
-      href: pageConversion?.ctaPrimaryHref || requestQuoteUrl(),
+      href: pageConversion?.ctaPrimaryHref || requestQuoteUrl(urlOptions),
     } satisfies CTAConfig,
     secondaryCTA: {
       label: pageConversion?.ctaSecondaryLabel || "Contact Sales",
-      href: pageConversion?.ctaSecondaryHref || contactUrl(),
+      href: pageConversion?.ctaSecondaryHref || contactUrl(urlOptions),
     } satisfies CTAConfig,
     showOverview: pageDisplay?.showOverview !== false,
     showFeatures: pageDisplay?.showFeatures !== false,
@@ -358,8 +356,12 @@ export function resolveFamilyMetadataRobots(family: FamilyPageLike | null) {
   return resolveMetadataRobots(family?.pageConfig?.seo?.noindex);
 }
 
-export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) {
-  const resolved = resolveFamilyPageViewModel(family);
+export function buildFamilyStructuredData(
+  family: FamilyPageLike,
+  slug: string,
+  urlOptions?: UrlResolverOptions
+) {
+  const resolved = resolveFamilyPageViewModel(family, urlOptions);
   const structuredDescription =
     resolved.heroIntro ||
     resolved.overviewIntro ||
@@ -371,25 +373,30 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
 
   return [
     makeBreadcrumbSchema([
-      { name: "Categories", path: categoriesUrl() },
+      { name: "Categories", path: categoriesUrl(urlOptions) },
       ...(family.category?.slug
-        ? [{ name: family.category.name || "Category", path: categoryUrl(family.category.slug) }]
+        ? [
+            {
+              name: family.category.name || "Category",
+              path: categoryUrl(family.category.slug, urlOptions),
+            },
+          ]
         : []),
-      { name: family.name, path: familyUrl(slug) },
+      { name: family.name, path: familyUrl(slug, urlOptions) },
     ]),
     makeCollectionPageSchema({
       name: family.name,
       description: structuredDescription,
-      path: familyUrl(slug),
+      path: familyUrl(slug, urlOptions),
     }),
     ...((family.products || []).length > 0
       ? [
           makeItemListSchema({
             name: `${family.name} Available Products`,
-            path: familyUrl(slug),
+            path: familyUrl(slug, urlOptions),
             items: (family.products || []).map((product) => ({
               name: product.shortTitle || product.title,
-              url: productUrl(product.slug),
+              url: productUrl(product.slug, urlOptions),
             })),
           }),
         ]
@@ -397,7 +404,7 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
     ...(resolved.faqItems.length > 0
       ? [
           makeFAQPageSchema({
-            path: familyUrl(slug),
+            path: familyUrl(slug, urlOptions),
             items: resolved.faqItems,
           }),
         ]
@@ -406,7 +413,7 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
       ? [
           makeItemListSchema({
             name: `${family.name} Downloads`,
-            path: familyUrl(slug),
+            path: familyUrl(slug, urlOptions),
             items: (family.resources || []).map((resource) => ({
               name: resource.title,
               url: resource.fileUrl,
@@ -418,10 +425,10 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
       ? [
           makeItemListSchema({
             name: `${family.name} Related Articles`,
-            path: familyUrl(slug),
+            path: familyUrl(slug, urlOptions),
             items: relatedArticles.map((article) => ({
               name: article.title,
-              url: articleUrl(article.slug),
+              url: articleUrl(article.slug, urlOptions),
             })),
           }),
         ]
@@ -430,10 +437,10 @@ export function buildFamilyStructuredData(family: FamilyPageLike, slug: string) 
       ? [
           makeItemListSchema({
             name: `${family.name} Related Families`,
-            path: familyUrl(slug),
+            path: familyUrl(slug, urlOptions),
             items: relatedFamilies.map((item) => ({
               name: item.name,
-              url: familyUrl(item.slug),
+              url: familyUrl(item.slug, urlOptions),
             })),
           }),
         ]

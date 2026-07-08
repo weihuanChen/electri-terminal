@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { categoryUrl } from "@/lib/routes";
 import { shouldUseUnoptimizedImage } from "@/lib/images";
+import type { Locale } from "@/lib/i18n/config";
 
 interface CategoryCardProps {
   name: string;
@@ -13,6 +14,7 @@ interface CategoryCardProps {
   productCount?: number;
   showProductCount?: boolean;
   descriptionLines?: 1 | 2;
+  locale?: Locale;
 }
 
 function isIconImageSource(icon?: string) {
@@ -30,13 +32,14 @@ export default function CategoryCard({
   productCount,
   showProductCount = false,
   descriptionLines = 2,
+  locale,
 }: CategoryCardProps) {
   const iconImageSource = isIconImageSource(icon) ? icon?.trim() : undefined;
   const descriptionClampClass = descriptionLines === 1 ? "line-clamp-1" : "line-clamp-2";
 
   return (
     <Link
-      href={categoryUrl(slug)}
+      href={categoryUrl(slug, locale ? { locale } : undefined)}
       className="group flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary transition-all duration-300 rounded-sm overflow-hidden"
     >
       {/* Full-bleed photo area */}

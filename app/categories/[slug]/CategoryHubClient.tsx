@@ -5,6 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { Breadcrumb, CategoryCard, CTABanner } from "@/components/shared";
 import { categoriesUrl, contactUrl, familyUrl, requestQuoteUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import type { Locale } from "@/lib/i18n/config";
+import { resolveLocalizedPath } from "@/lib/i18n/urlResolver";
 
 interface HubChildCategory {
   _id: string;
@@ -78,6 +80,7 @@ interface HubFamilyFallback {
 interface CategoryHubClientProps {
   category: HubCategory;
   fallbackFamilies: HubFamilyFallback[];
+  locale?: Locale;
 }
 
 type FeaturedCard = {
@@ -112,9 +115,11 @@ function getFeaturedKeywordPriority(name: string, href: string) {
 export default function CategoryHubClient({
   category,
   fallbackFamilies,
+  locale,
 }: CategoryHubClientProps) {
+  const urlOptions = locale ? { locale } : undefined;
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl() },
+    { label: "Categories", href: categoriesUrl(urlOptions) },
     { label: category.name },
   ];
 
@@ -139,8 +144,8 @@ export default function CategoryHubClient({
 
   const fallbackFeatured = [...fallbackFamilies]
     .sort((left, right) => {
-      const leftHref = familyUrl(left.slug);
-      const rightHref = familyUrl(right.slug);
+      const leftHref = familyUrl(left.slug, urlOptions);
+      const rightHref = familyUrl(right.slug, urlOptions);
       const priorityDelta =
         getFeaturedKeywordPriority(left.name, leftHref) -
         getFeaturedKeywordPriority(right.name, rightHref);
@@ -155,10 +160,18 @@ export default function CategoryHubClient({
       name: family.name,
       description: family.summary,
       image: family.heroImage,
-      href: familyUrl(family.slug),
+      href: familyUrl(family.slug, urlOptions),
     }));
 
-  const featuredCards = configuredFeatured.length > 0 ? configuredFeatured : fallbackFeatured;
+  const featuredCards = configuredFeatured.length > 0
+    ? configuredFeatured.map((item) => ({
+        ...item,
+        href:
+          locale && item.href.startsWith("/")
+            ? resolveLocalizedPath(item.href, locale)
+            : item.href,
+      }))
+    : fallbackFeatured;
   const heroOverviewIntro = category.pageConfig?.content?.overview?.intro?.trim();
   const heroIntroFallback =
     category.pageConfig?.content?.heroIntro?.trim() ||
@@ -265,7 +278,7 @@ export default function CategoryHubClient({
     <>
       <div className="bg-muted border-b border-border">
         <div className="container">
-          <Breadcrumb items={breadcrumbItems} />
+          <Breadcrumb items={breadcrumbItems} locale={locale} />
         </div>
       </div>
 
@@ -296,7 +309,7 @@ export default function CategoryHubClient({
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <Link
-                  href={requestQuoteUrl()}
+                  href={requestQuoteUrl(urlOptions)}
                   className="inline-flex items-center rounded-sm border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
                 >
                   Request Quote
@@ -379,6 +392,7 @@ export default function CategoryHubClient({
                   image={child.image}
                   icon={child.icon}
                   descriptionLines={1}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -549,11 +563,11 @@ export default function CategoryHubClient({
         variant="primary"
         primaryCTA={{
           label: "Request Quote",
-          href: requestQuoteUrl(),
+          href: requestQuoteUrl(urlOptions),
         }}
         secondaryCTA={{
           label: "Contact Team",
-          href: contactUrl(),
+          href: contactUrl(urlOptions),
         }}
       />
     </>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { productUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
+import type { Locale } from "@/lib/i18n/config";
 
 interface ProductCardProps {
   slug: string;
@@ -10,6 +11,7 @@ interface ProductCardProps {
   mainImage?: string;
   summary?: string;
   isFeatured?: boolean;
+  locale?: Locale;
 }
 
 export default function ProductCard({
@@ -19,11 +21,12 @@ export default function ProductCard({
   mainImage,
   summary,
   isFeatured = false,
+  locale,
 }: ProductCardProps) {
   const displayName = shortTitle || title;
 
   return (
-    <Link href={productUrl(slug)} className="card group block h-full">
+    <Link href={productUrl(slug, locale ? { locale } : undefined)} className="card group block h-full">
       <div className="relative h-44 overflow-hidden bg-muted sm:h-48">
         {mainImage ? (
           <Image
