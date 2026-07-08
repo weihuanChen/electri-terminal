@@ -205,79 +205,112 @@ export async function actionAdmin<T>(
 }
 
 export async function loadAdminData(): Promise<AdminData> {
-  try {
-    const [
-      categories,
-      families,
-      products,
-      articles,
-      authors,
-      inquiries,
-      users,
-      importJobs,
-      attributeTemplates,
-      assets,
-    ] =
-      await Promise.all([
-        queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
-          limit: 100,
-        }),
-        queryAdmin<Doc<"productFamilies">[]>(
-          "queries/modules/products:listProductFamilies",
-          { limit: 100 }
-        ),
-        queryAdmin<Doc<"products">[]>("queries/modules/products:listProducts", {
-          limit: 100,
-        }),
-        queryAdmin<Doc<"articles">[]>("queries/modules/articles:listArticles", {
-          limit: 100,
-        }),
-        queryAdmin<AdminAuthor[]>("queries/modules/authors:listAuthors", {
-          limit: 300,
-        }),
-        queryAdmin<Doc<"inquiries">[]>("queries/modules/inquiries:listInquiries", {
-          limit: 100,
-        }),
-        queryAdmin<Doc<"users">[]>("queries/modules/users:listUsers", {
-          limit: 100,
-        }),
-        queryAdmin<Doc<"importJobs">[]>("queries/modules/imports:listImportJobs", {
-          limit: 50,
-        }),
-        queryAdmin<AdminAttributeTemplateSummary[]>(
-          "queries/modules/attributeTemplates:listAttributeTemplates"
-        ),
-        queryAdmin<AdminAssetWithRelations[]>("queries/modules/relations:listAssetsWithRelations"),
-      ]);
+  const errors: string[] = [];
 
-    return {
-      categories,
-      families,
-      products,
-      articles,
-      authors,
-      inquiries,
-      users,
-      importJobs,
-      attributeTemplates,
-      assets,
-      loadError: undefined,
-    };
-  } catch (error) {
-    return {
-      categories: [],
-      families: [],
-      products: [],
-      articles: [],
-      authors: [],
-      inquiries: [],
-      users: [],
-      importJobs: [],
-      attributeTemplates: [],
-      assets: [],
-      loadError: getReadableErrorMessage(error),
-    };
+  async function loadSection<T>(label: string, loader: Promise<T>, fallback: T) {
+    try {
+      return await loader;
+    } catch (error) {
+      errors.push(`${label}: ${getReadableErrorMessage(error)}`);
+      return fallback;
+    }
   }
+
+  const [
+    categories,
+    families,
+    products,
+    articles,
+    authors,
+    inquiries,
+    users,
+    importJobs,
+    attributeTemplates,
+    assets,
+  ] = await Promise.all([
+    loadSection(
+      "categories",
+      queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "families",
+      queryAdmin<Doc<"productFamilies">[]>("queries/modules/products:listProductFamilies", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "products",
+      queryAdmin<Doc<"products">[]>("queries/modules/products:listProducts", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "articles",
+      queryAdmin<Doc<"articles">[]>("queries/modules/articles:listArticles", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "authors",
+      queryAdmin<AdminAuthor[]>("queries/modules/authors:listAuthors", {
+        limit: 300,
+      }),
+      []
+    ),
+    loadSection(
+      "inquiries",
+      queryAdmin<Doc<"inquiries">[]>("queries/modules/inquiries:listInquiries", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "users",
+      queryAdmin<Doc<"users">[]>("queries/modules/users:listUsers", {
+        limit: 100,
+      }),
+      []
+    ),
+    loadSection(
+      "importJobs",
+      queryAdmin<Doc<"importJobs">[]>("queries/modules/imports:listImportJobs", {
+        limit: 50,
+      }),
+      []
+    ),
+    loadSection(
+      "attributeTemplates",
+      queryAdmin<AdminAttributeTemplateSummary[]>(
+        "queries/modules/attributeTemplates:listAttributeTemplates"
+      ),
+      []
+    ),
+    loadSection(
+      "assets",
+      queryAdmin<AdminAssetWithRelations[]>("queries/modules/relations:listAssetsWithRelations"),
+      []
+    ),
+  ]);
+
+  return {
+    categories,
+    families,
+    products,
+    articles,
+    authors,
+    inquiries,
+    users,
+    importJobs,
+    attributeTemplates,
+    assets,
+    loadError: errors.length > 0 ? errors.join("; ") : undefined,
+  };
 }
 
 export function getAdminConvexClient() {
