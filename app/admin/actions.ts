@@ -72,6 +72,18 @@ function jsonArray<T>(formData: FormData, key: string, fallback: T[] = []) {
   }
 }
 
+function optionalJsonObject(formData: FormData, key: string) {
+  const raw = str(formData, key);
+  if (!raw) return undefined;
+
+  const parsed = JSON.parse(raw) as unknown;
+  if (!isPlainObject(parsed)) {
+    throw new Error(`${key}_must_be_json_object`);
+  }
+
+  return parsed;
+}
+
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "unknown_error";
 }
@@ -1666,6 +1678,94 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
   revalidatePath("/admin/settings");
   revalidatePath("/admin/settings/languages");
   redirect(`/admin/settings/languages?locale=${localeValue}&success=language_workflow_updated`);
+}
+
+export async function saveCategoryLocalizationDraftAction(formData: FormData) {
+  await requireAdmin();
+
+  const sourceId = str(formData, "sourceId");
+  const sourceSlug = str(formData, "sourceSlug");
+  const locale = str(formData, "locale");
+  const returnTo = str(formData, "returnTo");
+  const localizedSlug = sourceSlug || undefined;
+
+  if (!sourceId) {
+    redirectLocalizationAction(returnTo, { error: "source_id_required" });
+  }
+
+  if (!isLocale(locale) || locale === DEFAULT_LOCALE) {
+    redirectLocalizationAction(returnTo, { error: "invalid_locale" });
+  }
+
+  let pageConfigPatch: Record<string, unknown> | undefined;
+  try {
+    pageConfigPatch = optionalJsonObject(formData, "pageConfigJson");
+  } catch (error: unknown) {
+    redirectLocalizationAction(returnTo, {
+      error: errorMessage(error),
+    });
+  }
+
+  const title = optionalStr(formData, "title");
+  const description = optionalStr(formData, "description");
+  const shortDescription = optionalStr(formData, "shortDescription");
+  const summary = optionalStr(formData, "summary");
+  const localizedFields: Record<string, unknown> = {};
+
+  if (title) localizedFields.name = title;
+  if (description) localizedFields.description = description;
+  if (shortDescription) localizedFields.shortDescription = shortDescription;
+  if (summary) localizedFields.summary = summary;
+  if (pageConfigPatch) localizedFields.pageConfig = pageConfigPatch;
+
+  const client = getAdminConvexClient();
+  let savedId: string | undefined;
+  let saveError: unknown;
+
+  try {
+    savedId = (await client.mutation(
+      "mutations/admin/localizations:upsertLocalizationDraft",
+      {
+        entityType: "category",
+        sourceId,
+        locale,
+        localizedSlug,
+        title,
+        seoTitle: optionalStr(formData, "seoTitle"),
+        seoDescription: optionalStr(formData, "seoDescription"),
+        localizedFields,
+        translationMethod: "manual",
+        translatedBy: optionalStr(formData, "translatedBy") ?? "admin",
+        owner: optionalStr(formData, "owner"),
+        reviewRequired: boolFromForm(formData, "reviewRequired"),
+        requiredForRelease: boolFromForm(formData, "requiredForRelease"),
+        reviewNotes: optionalStr(formData, "reviewNotes"),
+        workflowNotes: optionalStr(formData, "workflowNotes"),
+      }
+    )) as string;
+  } catch (error: unknown) {
+    saveError = error;
+  }
+
+  if (saveError) {
+    redirectLocalizationAction(returnTo, {
+      error: errorMessage(saveError),
+      selected: savedId,
+    });
+  }
+
+  revalidatePath("/admin/localizations");
+  revalidatePath("/admin/localizations/categories");
+  revalidatePath(`/admin/localizations/categories/${sourceId}`);
+  if (sourceSlug) {
+    revalidatePath(`/categories/${sourceSlug}`);
+    revalidatePath(`/${locale}/categories/${sourceSlug}`);
+  }
+
+  redirectLocalizationAction(returnTo, {
+    success: "category_localization_saved",
+    selected: savedId,
+  });
 }
 
 export async function moveLocalizationStatusAction(formData: FormData) {

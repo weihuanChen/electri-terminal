@@ -19,6 +19,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   LogOut,
@@ -30,6 +31,10 @@ interface NavItem {
   href: string;
   icon: React.ElementType;
   badge?: number;
+  children?: Array<{
+    label: string;
+    href: string;
+  }>;
 }
 
 const navItems: NavItem[] = [
@@ -40,7 +45,15 @@ const navItems: NavItem[] = [
   { label: "Assets", href: "/admin/assets", icon: FileStack },
   { label: "Templates", href: "/admin/attribute-templates", icon: SlidersHorizontal },
   { label: "Articles", href: "/admin/articles", icon: FileText },
-  { label: "Localizations", href: "/admin/localizations", icon: Languages },
+  {
+    label: "Localizations",
+    href: "/admin/localizations",
+    icon: Languages,
+    children: [
+      { label: "Overview", href: "/admin/localizations" },
+      { label: "Categories", href: "/admin/localizations/categories" },
+    ],
+  },
   { label: "Authors", href: "/admin/authors", icon: UserRound },
   { label: "Relations", href: "/admin/relations", icon: Link2 },
   { label: "Inquiries", href: "/admin/inquiries", icon: MessageSquare },
@@ -57,6 +70,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    "/admin/localizations": pathname.startsWith("/admin/localizations"),
+  });
 
   return (
     <>
@@ -112,35 +128,91 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-12rem)]">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const hasChildren = Boolean(item.children?.length);
+            const isActive = hasChildren
+              ? pathname === item.href || pathname.startsWith(`${item.href}/`)
+              : pathname === item.href;
+            const isOpen = Boolean(openGroups[item.href]);
 
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
-                  ${isActive
-                    ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
-                    : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  }
-                  ${collapsed ? "justify-center" : ""}
-                `}
-                title={collapsed ? item.label : undefined}
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                {!collapsed && (
-                  <>
+              <div key={item.href}>
+                {hasChildren && !collapsed ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenGroups((current) => ({
+                        ...current,
+                        [item.href]: !current[item.href],
+                      }))
+                    }
+                    className={`
+                      flex w-full items-center gap-3 px-3 py-2.5 rounded-lg transition-all
+                      ${isActive
+                        ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
+                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      }
+                    `}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
                     <span className="font-medium text-sm">{item.label}</span>
-                    {item.badge && (
-                      <span className="ml-auto bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                        {item.badge}
-                      </span>
+                    <ChevronDown
+                      className={`ml-auto h-4 w-4 transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`
+                      flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
+                      ${isActive
+                        ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
+                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      }
+                      ${collapsed ? "justify-center" : ""}
+                    `}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
+                    {!collapsed && (
+                      <>
+                        <span className="font-medium text-sm">{item.label}</span>
+                        {item.badge && (
+                          <span className="ml-auto bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                            {item.badge}
+                          </span>
+                        )}
+                      </>
                     )}
-                  </>
+                  </Link>
                 )}
-              </Link>
+                {hasChildren && !collapsed && isOpen && (
+                  <div className="ml-8 mt-1 space-y-1 border-l border-zinc-200 pl-3 dark:border-zinc-800">
+                    {item.children?.map((child) => {
+                      const childActive =
+                        pathname === child.href || pathname.startsWith(`${child.href}/`);
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`
+                            block rounded-md px-3 py-2 text-sm transition-colors
+                            ${childActive
+                              ? "bg-zinc-100 font-semibold text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
+                              : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                            }
+                          `}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
