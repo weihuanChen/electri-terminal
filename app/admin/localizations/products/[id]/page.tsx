@@ -4,7 +4,7 @@ import { ArrowLeft, ExternalLink, Save, ShieldCheck } from "lucide-react";
 
 import type { Doc } from "@/convex/_generated/dataModel";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getCategory, queryAdmin } from "@/lib/convex-admin";
+import { getProductAdminDetail, queryAdmin } from "@/lib/convex-admin";
 import {
   DEFAULT_LOCALE,
   LANGUAGE_CONFIGS,
@@ -16,7 +16,7 @@ import {
 } from "@/lib/i18n";
 import {
   moveLocalizationStatusAction,
-  saveCategoryLocalizationDraftAction,
+  saveProductLocalizationDraftAction,
   unpublishLocalizationAction,
 } from "@/app/admin/actions";
 import { SourceCopyButton } from "@/app/admin/localizations/components/SourceCopyButton";
@@ -79,41 +79,13 @@ function getFieldText(fields: Record<string, unknown>, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-function getFieldObject(fields: Record<string, unknown>, key: string) {
+function getFieldArray(fields: Record<string, unknown>, key: string) {
   const value = fields[key];
-  return value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
-}
-
-function getConfigSection(pageConfig: unknown, key: string) {
-  if (!pageConfig || typeof pageConfig !== "object" || Array.isArray(pageConfig)) {
-    return undefined;
-  }
-
-  const value = (pageConfig as Record<string, unknown>)[key];
-  return value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
-}
-
-function getLongformMarkdown(pageConfig: unknown) {
-  const longform = getConfigSection(pageConfig, "longform");
-  const markdown = longform ? (longform as Record<string, unknown>).markdown : undefined;
-  return typeof markdown === "string" ? markdown : "";
-}
-
-function getPageConfigRest(pageConfig: unknown) {
-  if (!pageConfig || typeof pageConfig !== "object" || Array.isArray(pageConfig)) {
-    return undefined;
-  }
-
-  const rest = { ...(pageConfig as Record<string, unknown>) };
-  delete rest.content;
-  delete rest.longform;
-  delete rest.seoBoost;
-
-  return Object.keys(rest).length > 0 ? rest : undefined;
+  return Array.isArray(value) ? value : undefined;
 }
 
 function jsonEditorValue(value: unknown) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return "";
+  if (!value || typeof value !== "object") return "";
   return JSON.stringify(value, null, 2);
 }
 
@@ -139,8 +111,8 @@ function getNextStatuses(status: LocalizationStatus) {
 
 function statusText(value: string) {
   switch (value) {
-    case "category_localization_saved":
-      return "Category localization draft saved.";
+    case "product_localization_saved":
+      return "Product localization draft saved.";
     case "localization_status_updated":
       return "Localization status updated.";
     case "localization_unpublished":
@@ -150,7 +122,7 @@ function statusText(value: string) {
   }
 }
 
-export default async function CategoryLocalizationEditPage({
+export default async function ProductLocalizationEditPage({
   params,
   searchParams,
 }: {
@@ -170,45 +142,39 @@ export default async function CategoryLocalizationEditPage({
       ? requestedLocale
       : targetLocales[0];
 
-  const [category, localization] = await Promise.all([
-    getCategory(id),
+  const [detail, localization] = await Promise.all([
+    getProductAdminDetail(id),
     queryAdmin<LocalizationRecord | null>(
       "queries/modules/localizations:getLocalizationByEntityLocale",
       {
-        entityType: "category",
+        entityType: "product",
         sourceId: id,
         locale: selectedLocale,
       }
     ),
   ]);
 
-  if (!category) {
+  if (!detail?.product) {
     notFound();
   }
 
+  const product = detail.product;
   const fields = getFields(localization);
-  const returnTo = `/admin/localizations/categories/${category._id}?locale=${selectedLocale}`;
+  const returnTo = `/admin/localizations/products/${product._id}?locale=${selectedLocale}`;
   const status = localization?.status ?? "missing";
   const nextStatuses = getNextStatuses(status);
   const isPublished = localization?.status === "published";
-  const pageConfigPatch = getFieldObject(fields, "pageConfig");
-  const pageConfigContentPatch = getConfigSection(pageConfigPatch, "content");
-  const pageConfigLongformMarkdown = getLongformMarkdown(pageConfigPatch);
-  const pageConfigSeoBoostPatch = getConfigSection(pageConfigPatch, "seoBoost");
-  const pageConfigRestPatch = getPageConfigRest(pageConfigPatch);
-  const inheritedLocalizedSlug = category.slug;
-  const targetPath = `/${selectedLocale}/categories/${inheritedLocalizedSlug}`;
-  const draftFormId = "category-localization-draft-form";
+  const featureBulletsPatch = getFieldArray(fields, "featureBullets");
+  const targetPath = `/${selectedLocale}/products/${product.slug}`;
+  const draftFormId = "product-localization-draft-form";
   const sourceCopyValues = {
-    title: category.name,
-    description: category.description || "",
-    shortDescription: category.shortDescription || "",
-    seoTitle: category.seoTitle || "",
-    seoDescription: category.seoDescription || "",
-    pageConfigContentJson: jsonEditorValue(category.pageConfig?.content),
-    longformMarkdown: getLongformMarkdown(category.pageConfig),
-    seoBoostJson: jsonEditorValue(category.pageConfig?.seoBoost),
-    pageConfigJson: jsonEditorValue(getPageConfigRest(category.pageConfig)),
+    title: product.title,
+    shortTitle: product.shortTitle || "",
+    summary: product.summary || "",
+    content: product.content || "",
+    seoTitle: product.seoTitle || "",
+    seoDescription: product.seoDescription || "",
+    featureBulletsJson: jsonEditorValue(product.featureBullets),
   };
 
   return (
@@ -217,18 +183,18 @@ export default async function CategoryLocalizationEditPage({
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-4">
             <Link
-              href={`/admin/localizations/categories?locale=${selectedLocale}`}
+              href={`/admin/localizations/products?locale=${selectedLocale}`}
               className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <ArrowLeft className="h-4 w-4" />
-              Categories
+              Products
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                {category.name}
+                {product.title}
               </h1>
               <p className="text-zinc-600 dark:text-zinc-400">
-                Editing {LANGUAGE_CONFIGS[selectedLocale].displayName} category localization.
+                Editing {LANGUAGE_CONFIGS[selectedLocale].displayName} product localization.
               </p>
             </div>
           </div>
@@ -236,7 +202,7 @@ export default async function CategoryLocalizationEditPage({
             {targetLocales.map((locale) => (
               <Link
                 key={locale}
-                href={`/admin/localizations/categories/${category._id}?locale=${locale}`}
+                href={`/admin/localizations/products/${product._id}?locale=${locale}`}
                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
                   locale === selectedLocale
                     ? "border-slate-900 bg-slate-900 text-white"
@@ -323,39 +289,57 @@ export default async function CategoryLocalizationEditPage({
           <section className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <div className="border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
               <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
-                Source category
+                Source product
               </h2>
               <p className="text-sm text-zinc-500">Read-only English source fields.</p>
             </div>
             <div className="space-y-4 p-5 text-sm">
               <div>
-                <p className="text-xs font-semibold uppercase text-zinc-500">Name</p>
+                <p className="text-xs font-semibold uppercase text-zinc-500">Title</p>
                 <p className="mt-1 font-semibold text-zinc-950 dark:text-zinc-50">
-                  {category.name}
+                  {product.title}
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-zinc-500">SKU / model</p>
+                  <p className="mt-1 text-zinc-700 dark:text-zinc-300">
+                    {product.skuCode} · {product.model}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase text-zinc-500">Slug</p>
+                  <p className="mt-1 text-zinc-700 dark:text-zinc-300">{product.slug}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase text-zinc-500">Context</p>
+                <p className="mt-1 text-zinc-700 dark:text-zinc-300">
+                  {detail.category?.name || "Unknown category"} · {detail.family?.name || "Unknown family"}
                 </p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-zinc-500">Slug</p>
-                <p className="mt-1 text-zinc-700 dark:text-zinc-300">{category.slug}</p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase text-zinc-500">Description</p>
+                <p className="text-xs font-semibold uppercase text-zinc-500">Short title</p>
                 <p className="mt-1 whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
-                  {category.description || "-"}
+                  {product.shortTitle || "-"}
                 </p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-zinc-500">
-                  Short description
-                </p>
+                <p className="text-xs font-semibold uppercase text-zinc-500">Summary</p>
                 <p className="mt-1 whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
-                  {category.shortDescription || "-"}
+                  {product.summary || "-"}
                 </p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-zinc-500">Page config</p>
-                <pre className="mt-2 max-h-80 overflow-auto rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
-                  {jsonEditorValue(category.pageConfig) || "{}"}
+                <p className="text-xs font-semibold uppercase text-zinc-500">Content</p>
+                <p className="mt-1 whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
+                  {product.content || "-"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase text-zinc-500">Feature bullets</p>
+                <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                  {jsonEditorValue(product.featureBullets) || "[]"}
                 </pre>
               </div>
             </div>
@@ -363,11 +347,11 @@ export default async function CategoryLocalizationEditPage({
 
           <form
             id={draftFormId}
-            action={saveCategoryLocalizationDraftAction}
+            action={saveProductLocalizationDraftAction}
             className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
-            <input type="hidden" name="sourceId" value={category._id} />
-            <input type="hidden" name="sourceSlug" value={category.slug} />
+            <input type="hidden" name="sourceId" value={product._id} />
+            <input type="hidden" name="sourceSlug" value={product.slug} />
             <input type="hidden" name="locale" value={selectedLocale} />
             <input type="hidden" name="returnTo" value={returnTo} />
             <div className="flex flex-col gap-3 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
@@ -399,56 +383,67 @@ export default async function CategoryLocalizationEditPage({
                 </label>
                 <label className="block">
                   <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Localized name
+                    Localized title
                   </span>
                   <input
                     name="title"
-                    defaultValue={localization?.title ?? getFieldText(fields, "name")}
+                    defaultValue={localization?.title ?? getFieldText(fields, "title")}
                     className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder={category.name}
+                    placeholder={product.title}
                   />
                 </label>
               </div>
 
               <label className="block">
                 <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  Description
+                  Short title
                 </span>
-                <textarea
-                  name="description"
-                  defaultValue={getFieldText(fields, "description")}
-                  rows={4}
+                <input
+                  name="shortTitle"
+                  defaultValue={getFieldText(fields, "shortTitle")}
                   className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                  placeholder={category.description || ""}
+                  placeholder={product.shortTitle || ""}
                 />
               </label>
 
-              <div className="grid gap-4 lg:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Short description
-                  </span>
-                  <textarea
-                    name="shortDescription"
-                    defaultValue={getFieldText(fields, "shortDescription")}
-                    rows={3}
-                    className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder={category.shortDescription || ""}
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Summary
-                  </span>
-                  <textarea
-                    name="summary"
-                    defaultValue={getFieldText(fields, "summary")}
-                    rows={3}
-                    className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder="Short category page summary"
-                  />
-                </label>
-              </div>
+              <label className="block">
+                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Summary
+                </span>
+                <textarea
+                  name="summary"
+                  defaultValue={getFieldText(fields, "summary")}
+                  rows={3}
+                  className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
+                  placeholder={product.summary || ""}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Content
+                </span>
+                <textarea
+                  name="content"
+                  defaultValue={getFieldText(fields, "content")}
+                  rows={6}
+                  className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
+                  placeholder={product.content || ""}
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  Feature bullets JSON
+                </span>
+                <textarea
+                  name="featureBulletsJson"
+                  defaultValue={jsonEditorValue(featureBulletsPatch)}
+                  rows={5}
+                  className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-xs outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
+                  placeholder={`[\n  "Localized feature bullet"\n]`}
+                />
+              </label>
 
               <div className="grid gap-4 lg:grid-cols-2">
                 <label className="block">
@@ -459,7 +454,7 @@ export default async function CategoryLocalizationEditPage({
                     name="seoTitle"
                     defaultValue={localization?.seoTitle ?? ""}
                     className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder={category.seoTitle || ""}
+                    placeholder={product.seoTitle || ""}
                   />
                 </label>
                 <label className="block">
@@ -471,63 +466,10 @@ export default async function CategoryLocalizationEditPage({
                     defaultValue={localization?.seoDescription ?? ""}
                     rows={4}
                     className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder={category.seoDescription || ""}
+                    placeholder={product.seoDescription || ""}
                   />
                 </label>
               </div>
-
-              <label className="block">
-                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  Page content JSON
-                </span>
-                <textarea
-                  name="pageConfigContentJson"
-                  defaultValue={jsonEditorValue(pageConfigContentPatch)}
-                  rows={12}
-                  className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-xs outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                  placeholder={`{\n  "summary": "...",\n  "heroIntro": "..."\n}`}
-                />
-              </label>
-
-              <div className="grid gap-4 lg:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    Longform markdown
-                  </span>
-                  <textarea
-                    name="longformMarkdown"
-                    defaultValue={pageConfigLongformMarkdown}
-                    rows={10}
-                    className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-xs outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder="## Localized longform"
-                  />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                    SEO boost JSON
-                  </span>
-                  <textarea
-                    name="seoBoostJson"
-                    defaultValue={jsonEditorValue(pageConfigSeoBoostPatch)}
-                    rows={10}
-                    className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-xs outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                    placeholder={`{\n  "faqMode": "embedded",\n  "embeddedFaqItems": []\n}`}
-                  />
-                </label>
-              </div>
-
-              <label className="block">
-                <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  Other page config JSON
-                </span>
-                <textarea
-                  name="pageConfigJson"
-                  defaultValue={jsonEditorValue(pageConfigRestPatch)}
-                  rows={6}
-                  className="mt-2 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 font-mono text-xs outline-none focus:border-slate-500 dark:border-zinc-700 dark:bg-zinc-950"
-                  placeholder={`{\n  "display": {\n    "showFaq": false\n  }\n}`}
-                />
-              </label>
 
               <div className="grid gap-4 lg:grid-cols-2">
                 <label className="block">

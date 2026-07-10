@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, FolderKanban, Globe2, Languages } from "lucide-react";
+import { ArrowRight, Globe2, Languages, Layers } from "lucide-react";
 
 import type { Doc } from "@/convex/_generated/dataModel";
 import { requireAdmin } from "@/lib/admin-auth";
@@ -87,7 +87,7 @@ function formatDate(timestamp?: number) {
   });
 }
 
-export default async function CategoryLocalizationsPage({
+export default async function FamilyLocalizationsPage({
   searchParams,
 }: {
   searchParams?: Promise<SearchParams>;
@@ -102,13 +102,13 @@ export default async function CategoryLocalizationsPage({
       ? requestedLocale
       : targetLocales[0];
 
-  const [categories, localizations] = await Promise.all([
-    queryAdmin<Doc<"categories">[]>("queries/modules/categories:listCategories", {
+  const [families, localizations] = await Promise.all([
+    queryAdmin<Doc<"productFamilies">[]>("queries/modules/products:listProductFamilies", {
       limit: 200,
     }),
     queryAdmin<LocalizationRecord[]>("queries/modules/localizations:listLocalizations", {
       locale: selectedLocale,
-      entityType: "category",
+      entityType: "family",
       limit: 500,
     }),
   ]);
@@ -122,8 +122,8 @@ export default async function CategoryLocalizationsPage({
   const reviewCount = localizations.filter((localization) =>
     ["machine_ready", "review_required"].includes(localization.status)
   ).length;
-  const missingCount = categories.filter(
-    (category) => !localizationsBySourceId.has(String(category._id))
+  const missingCount = families.filter(
+    (family) => !localizationsBySourceId.has(String(family._id))
   ).length;
 
   return (
@@ -131,15 +131,15 @@ export default async function CategoryLocalizationsPage({
       <div className="space-y-6">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-cyan-100 p-2 text-cyan-700">
-              <FolderKanban className="h-5 w-5" />
+            <div className="rounded-lg bg-indigo-100 p-2 text-indigo-700">
+              <Layers className="h-5 w-5" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Category Localizations
+                Family Localizations
               </h1>
               <p className="text-zinc-600 dark:text-zinc-400">
-                Edit L2 category translations separately from the global governance view.
+                Edit product family translations as focused L2 records.
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export default async function CategoryLocalizationsPage({
             {targetLocales.map((locale) => (
               <Link
                 key={locale}
-                href={`/admin/localizations/categories?locale=${locale}`}
+                href={`/admin/localizations/families?locale=${locale}`}
                 className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
                   locale === selectedLocale
                     ? "border-slate-900 bg-slate-900 text-white"
@@ -164,10 +164,10 @@ export default async function CategoryLocalizationsPage({
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-              Source categories
+              Source families
             </p>
             <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              {categories.length}
+              {families.length}
             </p>
           </div>
           <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -198,10 +198,10 @@ export default async function CategoryLocalizationsPage({
           <div className="flex flex-col gap-2 border-b border-zinc-200 bg-zinc-50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
-                Categories
+                Families
               </h2>
               <p className="text-sm text-zinc-500">
-                Locale: {selectedLocale.toUpperCase()} · Edit one category translation at a time.
+                Locale: {selectedLocale.toUpperCase()} · Edit one family translation at a time.
               </p>
             </div>
             <Link
@@ -235,21 +235,21 @@ export default async function CategoryLocalizationsPage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                {categories.map((category) => {
-                  const localization = localizationsBySourceId.get(String(category._id));
+                {families.map((family) => {
+                  const localization = localizationsBySourceId.get(String(family._id));
                   const status = localization?.status ?? "missing";
 
                   return (
                     <tr
-                      key={category._id}
+                      key={family._id}
                       className="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
                     >
                       <td className="px-6 py-4">
                         <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                          {category.name}
+                          {family.name}
                         </p>
                         <p className="mt-1 text-xs text-zinc-500">
-                          /categories/{category.slug} · {category.status}
+                          /families/{family.slug} · {family.status}
                         </p>
                       </td>
                       <td className="max-w-sm px-6 py-4">
@@ -257,7 +257,7 @@ export default async function CategoryLocalizationsPage({
                           {getLocalizedPreview(localization)}
                         </p>
                         <p className="mt-1 truncate text-xs text-zinc-500">
-                          /{selectedLocale}/categories/{category.slug}
+                          /{selectedLocale}/families/{family.slug}
                         </p>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -268,7 +268,7 @@ export default async function CategoryLocalizationsPage({
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-right">
                         <Link
-                          href={`/admin/localizations/categories/${category._id}?locale=${selectedLocale}`}
+                          href={`/admin/localizations/families/${family._id}?locale=${selectedLocale}`}
                           className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
                         >
                           Edit

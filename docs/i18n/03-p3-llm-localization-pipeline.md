@@ -182,6 +182,72 @@ Recommended batch order:
 
 This order reduces inconsistency because products can reuse category/family terminology.
 
+### 6.5 Two-pass field generation
+
+L2 catalog localization should use progressive field generation instead of generating all fields in one prompt.
+
+The admin copy controls intentionally mirror this split:
+
+1. Base content pass:
+   - localized title/name;
+   - short title;
+   - description and short description;
+   - summary;
+   - content;
+   - SEO title and SEO description;
+   - highlights or feature bullets.
+2. Page configuration pass:
+   - `pageConfig.content`;
+   - `pageConfig.seo`;
+   - `pageConfig.seoBoost`;
+   - FAQ blocks;
+   - conversion blocks;
+   - display and linking hints.
+
+The second pass must receive the accepted output from the first pass as context. This lets long-form page blocks build on the same terminology, SEO angle, and buyer intent instead of producing a disconnected rewrite.
+
+Recommended L2 prompt shape:
+
+1. Ask the model to generate only base fields using the source entity, glossary, protected terms, and locale rules.
+2. Validate base fields and optionally review high-value records.
+3. Ask the model to generate only `pageConfig` using the validated base fields plus the original source `pageConfig`.
+4. Validate structural JSON, internal links, FAQ ownership, and protected terms.
+5. Save both outputs into the same localization draft, preserving field-level provenance.
+
+This two-pass approach is especially important for category and family pages, where `pageConfig` often contains deeper SEO sections, FAQs, application copy, and selection guidance.
+
+### 6.6 Terminology frequency constraints
+
+LLM prompts should support locale-specific term budgets, not only simple glossary substitutions.
+
+For each high-value source concept, define:
+
+- primary term;
+- secondary term;
+- intent or usage note;
+- preferred fields;
+- maximum repetition guidance;
+- forbidden overuse patterns.
+
+Example for Russian Ring Terminals:
+
+- `кольцевая клемма`
+  - usage note: closer to connector/terminal intent and more common in Google-style search demand;
+  - prompt guidance: use as the primary term in title, H1-equivalent fields, SEO title, and early summary copy.
+- `кольцевой наконечник`
+  - usage note: closer to crimp lug / wire terminal intent and common in industrial procurement language;
+  - prompt guidance: use as a secondary variant in body copy, buying-guide sections, and application/selection contexts.
+
+Prompt rules should prevent keyword stuffing. For example:
+
+- do not repeat the primary term in every sentence;
+- keep the SEO title focused on one primary phrase;
+- allow the SEO description to include a secondary variant only when it reads naturally;
+- in long `pageConfig` sections, alternate primary and secondary variants by context rather than by mechanical rotation;
+- never replace protected model, SKU, standard, or unit strings to satisfy term frequency targets.
+
+Term frequency constraints should be stored with the locale glossary or prompt configuration so they can be reused across category, family, and product batches.
+
 ---
 
 ## 7. P3.3 L3 Articles, Applications, and Guides

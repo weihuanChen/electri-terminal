@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { getAdminConvexClient } from "@/lib/convex-admin";
+
 import {
   type Locale,
   canRenderPrefixedLocale,
   getLanguageConfig,
 } from "./config";
+import {
+  resolveLanguageWorkflow,
+  type StoredLanguageWorkflow,
+} from "./languageWorkflow";
 import {
   type LocalizedRouteKind,
   type LocalizedRouteMatch,
@@ -151,6 +157,27 @@ function uniqueReasons(reasons: LocalizedRouteBlockReason[]) {
   return Array.from(new Set(reasons));
 }
 
+async function canRenderLocaleRoute(locale: Locale) {
+  if (canRenderPrefixedLocale(locale)) {
+    return true;
+  }
+
+  try {
+    const workflows = (await getAdminConvexClient().query(
+      "frontend:getLanguageWorkflowSettings",
+      {}
+    )) as StoredLanguageWorkflow[];
+    const workflow = resolveLanguageWorkflow(
+      locale,
+      workflows.find((item) => item.locale === locale)
+    );
+
+    return workflow.previewEnabled || workflow.status === "published";
+  } catch {
+    return false;
+  }
+}
+
 export async function resolveLocalizedRouteRenderState({
   locale,
   path,
@@ -161,7 +188,7 @@ export async function resolveLocalizedRouteRenderState({
   const reasons: LocalizedRouteBlockReason[] = [];
   const route = matchLocalizedRoute(locale, path);
 
-  if (!canRenderPrefixedLocale(locale)) {
+  if (!(await canRenderLocaleRoute(locale))) {
     reasons.push("language_not_renderable");
   }
 

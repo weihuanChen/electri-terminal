@@ -3,7 +3,7 @@ import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, CTABanner } from "@/
 import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
 import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
-import type { Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { resolveLocalizedPath } from "@/lib/i18n/urlResolver";
 import CategoryContentTabs, { CategoryFilterSidebar } from "./CategoryPageControls";
 import Link from "next/link";
@@ -250,6 +250,7 @@ export default function CategoryPageClient({
     secondaryCTA,
   } = resolveCategoryPageViewModel(category, content, contentView, urlOptions);
   const isRingTerminals = category.slug === "ring-terminals";
+  const isLocalizedRoute = Boolean(locale && locale !== DEFAULT_LOCALE);
   const isSubcategory = Boolean(category.parentId);
   const useEnhancedHero = isRingTerminals || isSubcategory;
   const quickSelectionItems = resolveQuickSelectionItems(
@@ -274,7 +275,9 @@ export default function CategoryPageClient({
   const cleanSelectionGuideParagraphs = sanitizeAboutTextList([selectionGuideIntro]);
   const cleanSelectionGuideSteps = sanitizeAboutTextList(selectionGuideSteps);
   const heroIntroText = isRingTerminals
-    ? "Ring terminals provide secure wire-to-stud electrical connections for industrial and automotive applications."
+    ? isLocalizedRoute
+      ? heroDescription || heroShortDescription || overviewIntro || "Find the right series, filters, and products for this category."
+      : "Ring terminals provide secure wire-to-stud electrical connections for industrial and automotive applications."
     : heroDescription || heroShortDescription || "Find the right series, filters, and products for this category.";
   const ringTerminalsHeroImage =
     "https://assets.electriterminal.com/factory/yellow-crimp-spade-connectors-detail.webp";
@@ -285,9 +288,12 @@ export default function CategoryPageClient({
     : category.image?.trim() || defaultHeroVisualImage;
   const heroEyebrow = isRingTerminals ? "Industrial Copper Terminations" : "Industrial Terminal Solutions";
   const heroPrimaryActionLabel = isRingTerminals ? "Browse Ring Terminal Types" : "Browse Product Series";
-  const heroHighlights = isRingTerminals
-    ? ["High conductivity copper", "Controlled crimp geometry", "Batch-level quality checks"]
-    : ["Engineering-grade materials", "Stable production process", "Consistent quality control"];
+  const heroHighlights =
+    isLocalizedRoute && overviewKeyPoints.length > 0
+      ? overviewKeyPoints.slice(0, 3)
+      : isRingTerminals
+        ? ["High conductivity copper", "Controlled crimp geometry", "Batch-level quality checks"]
+        : ["Engineering-grade materials", "Stable production process", "Consistent quality control"];
 
   return (
     <>

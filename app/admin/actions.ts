@@ -88,6 +88,62 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "unknown_error";
 }
 
+function getErrorRecord(error: unknown) {
+  return error && typeof error === "object" ? (error as Record<string, unknown>) : {};
+}
+
+function getErrorCause(error: unknown) {
+  return getErrorRecord(error).cause;
+}
+
+function getDetailedErrorMessage(error: unknown) {
+  const message = errorMessage(error);
+  const cause = getErrorCause(error);
+  const causeRecord = getErrorRecord(cause);
+  const causeDetails = [
+    causeRecord.code,
+    causeRecord.hostname ?? causeRecord.host,
+    causeRecord.port,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return causeDetails ? `${message} (${causeDetails})` : message;
+}
+
+function isRetryableConvexNetworkError(error: unknown) {
+  const cause = getErrorCause(error);
+  const details = `${getDetailedErrorMessage(error)} ${errorMessage(cause)}`.toLowerCase();
+
+  return [
+    "fetch failed",
+    "failed to fetch",
+    "network",
+    "timeout",
+    "timed out",
+    "econnreset",
+    "enotfound",
+    "eai_again",
+    "etimedout",
+    "und_err",
+    "terminated",
+    "temporarily unavailable",
+    "service unavailable",
+    "too many requests",
+    "rate limit",
+  ].some((token) => details.includes(token));
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function localizationMutationError(name: string, error: unknown) {
+  return new Error(
+    `Convex localization mutation failed: ${name}. ${getDetailedErrorMessage(error)}. Check NEXT_PUBLIC_CONVEX_URL, network, and Convex deploy status.`
+  );
+}
+
 type ActionResult =
   | { ok: true }
   | { ok: false; error: string };
@@ -1680,7 +1736,81 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
   redirect(`/admin/settings/languages?locale=${localeValue}&success=language_workflow_updated`);
 }
 
-export async function saveCategoryLocalizationDraftAction(formData: FormData) {
+type CatalogLocalizationEntityType = Extract<
+  Doc<"localizations">["entityType"],
+  "category" | "family" | "product"
+>;
+
+type CatalogLocalizationSaveOptions = {
+  entityType: CatalogLocalizationEntityType;
+  adminPathSegment: "categories" | "families" | "products";
+  publicPathSegment: "categories" | "families" | "products";
+  success: string;
+  buildLocalizedFields: (
+    formData: FormData,
+    pageConfigPatch?: Record<string, unknown>
+  ) => Record<string, unknown>;
+};
+
+function optionalJsonStringArray(formData: FormData, key: string) {
+  const raw = str(formData, key);
+  if (!raw) return undefined;
+
+  const parsed = JSON.parse(raw) as unknown;
+  if (!Array.isArray(parsed)) {
+    throw new Error(`${key}_must_be_json_array`);
+  }
+
+  const items = parsed
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean);
+
+  return items.length > 0 ? items : undefined;
+}
+
+function setPageConfigSection(
+  pageConfigPatch: Record<string, unknown>,
+  key: string,
+  value: Record<string, unknown> | undefined
+) {
+  if (value && Object.keys(value).length > 0) {
+    pageConfigPatch[key] = value;
+  }
+}
+
+function optionalPageConfigPatch(formData: FormData) {
+  const pageConfigPatch = formData.has("pageConfigJson")
+    ? optionalJsonObject(formData, "pageConfigJson")
+    : undefined;
+  const mergedPatch: Record<string, unknown> = pageConfigPatch
+    ? { ...pageConfigPatch }
+    : {};
+
+  if (formData.has("pageConfigContentJson")) {
+    setPageConfigSection(
+      mergedPatch,
+      "content",
+      optionalJsonObject(formData, "pageConfigContentJson")
+    );
+  }
+
+  if (formData.has("longformMarkdown")) {
+    mergedPatch.longform = {
+      markdown: String(formData.get("longformMarkdown") ?? ""),
+    };
+  }
+
+  if (formData.has("seoBoostJson")) {
+    setPageConfigSection(mergedPatch, "seoBoost", optionalJsonObject(formData, "seoBoostJson"));
+  }
+
+  return Object.keys(mergedPatch).length > 0 ? mergedPatch : undefined;
+}
+
+async function saveCatalogLocalizationDraft(
+  formData: FormData,
+  options: CatalogLocalizationSaveOptions
+) {
   await requireAdmin();
 
   const sourceId = str(formData, "sourceId");
@@ -1699,7 +1829,7 @@ export async function saveCategoryLocalizationDraftAction(formData: FormData) {
 
   let pageConfigPatch: Record<string, unknown> | undefined;
   try {
-    pageConfigPatch = optionalJsonObject(formData, "pageConfigJson");
+    pageConfigPatch = optionalPageConfigPatch(formData);
   } catch (error: unknown) {
     redirectLocalizationAction(returnTo, {
       error: errorMessage(error),
@@ -1707,16 +1837,14 @@ export async function saveCategoryLocalizationDraftAction(formData: FormData) {
   }
 
   const title = optionalStr(formData, "title");
-  const description = optionalStr(formData, "description");
-  const shortDescription = optionalStr(formData, "shortDescription");
-  const summary = optionalStr(formData, "summary");
-  const localizedFields: Record<string, unknown> = {};
-
-  if (title) localizedFields.name = title;
-  if (description) localizedFields.description = description;
-  if (shortDescription) localizedFields.shortDescription = shortDescription;
-  if (summary) localizedFields.summary = summary;
-  if (pageConfigPatch) localizedFields.pageConfig = pageConfigPatch;
+  let localizedFields: Record<string, unknown> = {};
+  try {
+    localizedFields = options.buildLocalizedFields(formData, pageConfigPatch);
+  } catch (error: unknown) {
+    redirectLocalizationAction(returnTo, {
+      error: errorMessage(error),
+    });
+  }
 
   const client = getAdminConvexClient();
   let savedId: string | undefined;
@@ -1726,7 +1854,7 @@ export async function saveCategoryLocalizationDraftAction(formData: FormData) {
     savedId = (await client.mutation(
       "mutations/admin/localizations:upsertLocalizationDraft",
       {
-        entityType: "category",
+        entityType: options.entityType,
         sourceId,
         locale,
         localizedSlug,
@@ -1755,17 +1883,139 @@ export async function saveCategoryLocalizationDraftAction(formData: FormData) {
   }
 
   revalidatePath("/admin/localizations");
-  revalidatePath("/admin/localizations/categories");
-  revalidatePath(`/admin/localizations/categories/${sourceId}`);
+  revalidatePath(`/admin/localizations/${options.adminPathSegment}`);
+  revalidatePath(`/admin/localizations/${options.adminPathSegment}/${sourceId}`);
   if (sourceSlug) {
-    revalidatePath(`/categories/${sourceSlug}`);
-    revalidatePath(`/${locale}/categories/${sourceSlug}`);
+    revalidatePath(`/${options.publicPathSegment}/${sourceSlug}`);
+    revalidatePath(`/${locale}/${options.publicPathSegment}/${sourceSlug}`);
   }
 
   redirectLocalizationAction(returnTo, {
-    success: "category_localization_saved",
+    success: options.success,
     selected: savedId,
   });
+}
+
+export async function saveCategoryLocalizationDraftAction(formData: FormData) {
+  await saveCatalogLocalizationDraft(formData, {
+    entityType: "category",
+    adminPathSegment: "categories",
+    publicPathSegment: "categories",
+    success: "category_localization_saved",
+    buildLocalizedFields: (formData, pageConfigPatch) => {
+      const title = optionalStr(formData, "title");
+      const description = optionalStr(formData, "description");
+      const shortDescription = optionalStr(formData, "shortDescription");
+      const summary = optionalStr(formData, "summary");
+      const localizedFields: Record<string, unknown> = {};
+
+      if (title) localizedFields.name = title;
+      if (description) localizedFields.description = description;
+      if (shortDescription) localizedFields.shortDescription = shortDescription;
+      if (summary) localizedFields.summary = summary;
+      if (pageConfigPatch) localizedFields.pageConfig = pageConfigPatch;
+
+      return localizedFields;
+    },
+  });
+}
+
+export async function saveFamilyLocalizationDraftAction(formData: FormData) {
+  await saveCatalogLocalizationDraft(formData, {
+    entityType: "family",
+    adminPathSegment: "families",
+    publicPathSegment: "families",
+    success: "family_localization_saved",
+    buildLocalizedFields: (formData, pageConfigPatch) => {
+      const title = optionalStr(formData, "title");
+      const summary = optionalStr(formData, "summary");
+      const content = optionalStr(formData, "content");
+      const highlights = optionalJsonStringArray(formData, "highlightsJson");
+      const localizedFields: Record<string, unknown> = {};
+
+      if (title) localizedFields.name = title;
+      if (summary) localizedFields.summary = summary;
+      if (content) localizedFields.content = content;
+      if (highlights) localizedFields.highlights = highlights;
+      if (pageConfigPatch) localizedFields.pageConfig = pageConfigPatch;
+
+      return localizedFields;
+    },
+  });
+}
+
+export async function saveProductLocalizationDraftAction(formData: FormData) {
+  await saveCatalogLocalizationDraft(formData, {
+    entityType: "product",
+    adminPathSegment: "products",
+    publicPathSegment: "products",
+    success: "product_localization_saved",
+    buildLocalizedFields: (formData) => {
+      const title = optionalStr(formData, "title");
+      const shortTitle = optionalStr(formData, "shortTitle");
+      const summary = optionalStr(formData, "summary");
+      const content = optionalStr(formData, "content");
+      const featureBullets = optionalJsonStringArray(formData, "featureBulletsJson");
+      const localizedFields: Record<string, unknown> = {};
+
+      if (title) localizedFields.title = title;
+      if (shortTitle) localizedFields.shortTitle = shortTitle;
+      if (summary) localizedFields.summary = summary;
+      if (content) localizedFields.content = content;
+      if (featureBullets) localizedFields.featureBullets = featureBullets;
+
+      return localizedFields;
+    },
+  });
+}
+
+async function isLocalizationStatusConfirmed(
+  id: Id<"localizations">,
+  status: Exclude<LocalizationStatus, "missing">
+) {
+  try {
+    const localization = (await getAdminConvexClient().query(
+      "queries/modules/localizations:getLocalizationById",
+      { id }
+    )) as Pick<Doc<"localizations">, "status"> | null;
+
+    return localization?.status === status;
+  } catch {
+    return false;
+  }
+}
+
+async function runLocalizationStatusMutation(
+  name: string,
+  args: Record<string, unknown>,
+  successStatus: Exclude<LocalizationStatus, "missing">
+) {
+  const id = args.id as Id<"localizations">;
+
+  try {
+    await getAdminConvexClient().mutation(name, args);
+    return;
+  } catch (error: unknown) {
+    if (await isLocalizationStatusConfirmed(id, successStatus)) {
+      return;
+    }
+
+    if (!isRetryableConvexNetworkError(error)) {
+      throw localizationMutationError(name, error);
+    }
+
+    await wait(650);
+
+    try {
+      await getAdminConvexClient().mutation(name, args);
+    } catch (retryError: unknown) {
+      if (await isLocalizationStatusConfirmed(id, successStatus)) {
+        return;
+      }
+
+      throw localizationMutationError(name, retryError);
+    }
+  }
 }
 
 export async function moveLocalizationStatusAction(formData: FormData) {
@@ -1787,16 +2037,19 @@ export async function moveLocalizationStatusAction(formData: FormData) {
   }
 
   const nextStatus = nextStatusValue as Exclude<LocalizationStatus, "missing">;
-  const client = getAdminConvexClient();
   let saveError: unknown;
 
   try {
-    await client.mutation("mutations/admin/localizations:moveLocalizationStatus", {
-      id,
-      status: nextStatus,
-      actor: optionalStr(formData, "actor") ?? "admin",
-      note: optionalStr(formData, "note"),
-    });
+    await runLocalizationStatusMutation(
+      "mutations/admin/localizations:moveLocalizationStatus",
+      {
+        id,
+        status: nextStatus,
+        actor: optionalStr(formData, "actor") ?? "admin",
+        note: optionalStr(formData, "note"),
+      },
+      nextStatus
+    );
   } catch (error: unknown) {
     saveError = error;
   }
@@ -1825,15 +2078,18 @@ export async function unpublishLocalizationAction(formData: FormData) {
     redirectLocalizationAction(returnTo, { error: "localization_id_required" });
   }
 
-  const client = getAdminConvexClient();
   let saveError: unknown;
 
   try {
-    await client.mutation("mutations/admin/localizations:unpublishLocalization", {
-      id,
-      actor: optionalStr(formData, "actor") ?? "admin",
-      note: optionalStr(formData, "note"),
-    });
+    await runLocalizationStatusMutation(
+      "mutations/admin/localizations:unpublishLocalization",
+      {
+        id,
+        actor: optionalStr(formData, "actor") ?? "admin",
+        note: optionalStr(formData, "note"),
+      },
+      "approved"
+    );
   } catch (error: unknown) {
     saveError = error;
   }

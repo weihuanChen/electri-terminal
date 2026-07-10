@@ -52,6 +52,8 @@ const navItems: NavItem[] = [
     children: [
       { label: "Overview", href: "/admin/localizations" },
       { label: "Categories", href: "/admin/localizations/categories" },
+      { label: "Families", href: "/admin/localizations/families" },
+      { label: "Products", href: "/admin/localizations/products" },
     ],
   },
   { label: "Authors", href: "/admin/authors", icon: UserRound },
