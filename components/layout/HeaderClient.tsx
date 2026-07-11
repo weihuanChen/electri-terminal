@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   ArrowRight,
   ChevronDown,
@@ -25,6 +26,7 @@ import {
   searchUrl,
   selectionGuideUrl,
 } from "@/lib/routes";
+import type { Locale } from "@/lib/i18n/config";
 
 interface HeaderCategory {
   name: string;
@@ -33,6 +35,7 @@ interface HeaderCategory {
 }
 
 interface HeaderClientProps {
+  locale: Locale;
   productCategories: HeaderCategory[];
   socialLink?: {
     platform: string;
@@ -47,47 +50,29 @@ interface NavItem {
   children?: HeaderCategory[];
 }
 
-const STATIC_NAV_ITEMS: NavItem[] = [
-  {
-    name: "Categories",
-    href: categoriesUrl(),
-  },
-  {
-    name: "Selection Guide",
-    href: selectionGuideUrl(),
-  },
-  {
-    name: "Manufacturing",
-    href: manufacturingUrl(),
-  },
-  {
-    name: "Quality",
-    href: qualityCertificationsUrl(),
-  },
-  {
-    name: "Blog",
-    href: blogUrl(),
-  },
-  {
-    name: "Contact",
-    href: contactUrl(),
-  },
-];
-
 export default function HeaderClient({
+  locale,
   productCategories,
   socialLink = null,
 }: HeaderClientProps) {
+  const common = useTranslations("common");
+  const navigation = useTranslations("navigation");
+  const urlOptions = { locale };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const navItems: NavItem[] = [
     {
-      name: "Products",
-      href: productsUrl(),
+      name: common("products"),
+      href: productsUrl(urlOptions),
       children: productCategories,
     },
-    ...STATIC_NAV_ITEMS,
+    { name: common("categories"), href: categoriesUrl(urlOptions) },
+    { name: navigation("selectionGuide"), href: selectionGuideUrl(urlOptions) },
+    { name: navigation("manufacturing"), href: manufacturingUrl(urlOptions) },
+    { name: navigation("quality"), href: qualityCertificationsUrl(urlOptions) },
+    { name: common("blog"), href: blogUrl(urlOptions) },
+    { name: common("contact"), href: contactUrl(urlOptions) },
   ];
 
   const handleDropdownToggle = (itemName: string) => {
@@ -109,7 +94,7 @@ export default function HeaderClient({
     >
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex h-[72px] items-center justify-between">
-          <Link href={homeUrl()} className="flex items-center space-x-2">
+          <Link href={homeUrl(urlOptions)} className="flex items-center space-x-2">
             <Image
               src="/electri-terminal-logo-white.svg"
               alt="Electri Terminal"
@@ -163,11 +148,11 @@ export default function HeaderClient({
                               className="group inline-flex items-center gap-2 text-sm font-bold text-slate-950 hover:text-orange-600 transition-colors"
                               onClick={() => setActiveDropdown(null)}
                             >
-                              Explore All Products
+                              {navigation("exploreAllProducts")}
                               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </Link>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-slate-200 px-2.5 py-1 rounded-none">
-                              Categories
+                              {common("categories")}
                             </span>
                           </div>
 
@@ -233,7 +218,7 @@ export default function HeaderClient({
                                         className="mt-4 group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-500 hover:text-orange-600 transition-colors"
                                         onClick={() => setActiveDropdown(null)}
                                       >
-                                        Browse category
+                                        {navigation("browseCategory")}
                                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                                       </Link>
                                     )}
@@ -260,19 +245,19 @@ export default function HeaderClient({
 
           <div className="flex items-center space-x-2">
             <Link
-              href={searchUrl()}
+              href={searchUrl(undefined, urlOptions)}
               className="p-2 text-slate-300 hover:text-orange-500 transition-colors"
-              aria-label="Search"
+              aria-label={common("search")}
             >
               <Search className="h-4 w-4" />
             </Link>
 
             <button
               className="hidden sm:flex p-2 text-slate-300 hover:text-orange-500 transition-colors items-center space-x-1"
-              aria-label="Language switcher"
+              aria-label={common("languageSwitcher")}
             >
               <Globe className="h-4 w-4" />
-              <span className="text-xs font-medium">EN</span>
+              <span className="text-xs font-medium">{locale.toUpperCase()}</span>
             </button>
 
             {socialLink && (
@@ -289,16 +274,16 @@ export default function HeaderClient({
             )}
 
             <Link
-              href={requestQuoteUrl()}
+              href={requestQuoteUrl(urlOptions)}
               className="hidden sm:inline-flex btn btn-primary btn-sm"
             >
-              Request Quote
+              {navigation("requestQuote")}
             </Link>
 
             <button
               className="lg:hidden p-2 text-slate-300 hover:text-white"
               onClick={() => setIsMenuOpen((open) => !open)}
-              aria-label="Toggle menu"
+              aria-label={common("toggleMenu")}
             >
               {isMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -354,7 +339,7 @@ export default function HeaderClient({
                             className="block px-3 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:text-orange-500"
                             onClick={closeMenu}
                           >
-                            Product Directory
+                            {navigation("productDirectory")}
                           </Link>
 
                           {item.children.map((category) => (

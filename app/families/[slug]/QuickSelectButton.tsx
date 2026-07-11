@@ -1,10 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type QuickSelectButtonProps = {
   targetId: string;
 };
 
 export default function QuickSelectButton({ targetId }: QuickSelectButtonProps) {
+  const t = useTranslations("catalog");
   const handleClick = () => {
     const target = document.getElementById(targetId);
 
@@ -23,7 +26,7 @@ export default function QuickSelectButton({ targetId }: QuickSelectButtonProps) 
       aria-controls={targetId}
       onClick={handleClick}
     >
-      Quick Select
+      {t("quickSelect")}
     </button>
   );
 }

@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 import { FAMILY_REDIRECTS } from "./lib/familyRedirects";
 import { PRODUCT_REDIRECTS } from "./lib/productRedirects";
 
 const URL_MIGRATION_STATUS_CODE = 301 as const;
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -72,4 +74,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Linkedin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import {
   getEnabledSocialMediaLinks,
   getSocialMediaDisplayLabel,
@@ -17,6 +18,7 @@ import {
   searchUrl,
 } from "@/lib/routes";
 import { getPublicContactSettings } from "@/lib/publicData";
+import { getRequestLocale } from "@/lib/i18n/requestLocale";
 
 interface FooterLink {
   name: string;
@@ -29,46 +31,55 @@ interface FooterSection {
   links: FooterLink[];
 }
 
-const BASE_FOOTER_SECTIONS: FooterSection[] = [
-  {
-    title: "Company",
-    links: [
-      { name: "Home", href: homeUrl() },
-      { name: "Products", href: productsUrl() },
-      { name: "Categories", href: categoriesUrl() },
-      { name: "Blog", href: blogUrl() },
-    ],
-  },
-  {
-    title: "Products",
-    links: [
-      { name: "Ring Terminals", href: categoryUrl("ring-terminals") },
-      { name: "Fork Terminals", href: categoryUrl("fork-terminals") },
-      { name: "Spade Terminals", href: categoryUrl("spade-terminals") },
-      { name: "Quick Disconnect Terminals", href: categoryUrl("quick-disconnect-terminals") },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { name: "Contact Support", href: contactUrl() },
-      { name: "Submit RFQ", href: requestQuoteUrl() },
-      { name: "Search Products", href: searchUrl() },
-    ],
-  },
-];
-
 function isInternalLink(href: string) {
   return href.startsWith("/");
 }
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
-  const contactSettings = await getPublicContactSettings();
+  const [contactSettings, locale, common, footer] = await Promise.all([
+    getPublicContactSettings(),
+    getRequestLocale(),
+    getTranslations("common"),
+    getTranslations("footer"),
+  ]);
+  const urlOptions = { locale };
   const socialLinks = getEnabledSocialMediaLinks(contactSettings);
 
+  const baseFooterSections: FooterSection[] = [
+    {
+      title: footer("company"),
+      links: [
+        { name: common("home"), href: homeUrl(urlOptions) },
+        { name: common("products"), href: productsUrl(urlOptions) },
+        { name: common("categories"), href: categoriesUrl(urlOptions) },
+        { name: common("blog"), href: blogUrl(urlOptions) },
+      ],
+    },
+    {
+      title: common("products"),
+      links: [
+        { name: footer("ringTerminals"), href: categoryUrl("ring-terminals", urlOptions) },
+        { name: footer("forkTerminals"), href: categoryUrl("fork-terminals", urlOptions) },
+        { name: footer("spadeTerminals"), href: categoryUrl("spade-terminals", urlOptions) },
+        {
+          name: footer("quickDisconnectTerminals"),
+          href: categoryUrl("quick-disconnect-terminals", urlOptions),
+        },
+      ],
+    },
+    {
+      title: footer("support"),
+      links: [
+        { name: footer("contactSupport"), href: contactUrl(urlOptions) },
+        { name: footer("submitRfq"), href: requestQuoteUrl(urlOptions) },
+        { name: footer("searchProducts"), href: searchUrl(undefined, urlOptions) },
+      ],
+    },
+  ];
+
   const contactLinks: FooterLink[] = [
-    { name: "Contact Form", href: contactUrl() },
+    { name: footer("contactForm"), href: contactUrl(urlOptions) },
     ...(contactSettings.email.enabled && contactSettings.email.value
       ? [
           {
@@ -99,9 +110,9 @@ export default async function Footer() {
   ];
 
   const footerSections = [
-    ...BASE_FOOTER_SECTIONS,
+    ...baseFooterSections,
     {
-      title: "Contact",
+      title: common("contact"),
       links: contactLinks,
     },
   ];
@@ -167,8 +178,7 @@ export default async function Footer() {
                 </span>
               </div>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Professional electrical components for industrial applications.
-                Custom product documentation and certificates are available upon request.
+                {footer("description")}
               </p>
               {socialLinks.length > 0 && (
                 <div className="mt-5 flex flex-wrap gap-3">
@@ -195,7 +205,7 @@ export default async function Footer() {
             {addressLines.length > 0 && (
               <div className="text-sm text-slate-300">
                 <p className="mb-1">
-                  <span className="font-medium text-slate-100">Address:</span>
+                  <span className="font-medium text-slate-100">{common("address")}:</span>
                 </p>
                 {addressLines.map((line, index) => (
                   <p key={`${line}-${index}`}>{line}</p>
@@ -207,32 +217,34 @@ export default async function Footer() {
 
         <div className="py-6 border-t" style={{ borderColor: "var(--surface-dark-800)" }}>
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-slate-400">© {currentYear} Electri Terminal. All rights reserved.</p>
+            <p className="text-sm text-slate-400">
+              © {currentYear} Electri Terminal. {footer("rightsReserved")}
+            </p>
 
             <div className="flex space-x-6">
               <Link
-                href={resourcesUrl()}
+                href={resourcesUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
-                Documentation Requests
+                {footer("documentationRequests")}
               </Link>
               <Link
-                href={privacyPolicyUrl()}
+                href={privacyPolicyUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
-                Privacy Policy
+                {footer("privacyPolicy")}
               </Link>
               <Link
-                href={contactUrl()}
+                href={contactUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
-                Contact
+                {common("contact")}
               </Link>
               <Link
-                href={requestQuoteUrl()}
+                href={requestQuoteUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
-                RFQ
+                {footer("rfq")}
               </Link>
             </div>
           </div>

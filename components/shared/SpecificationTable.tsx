@@ -1,4 +1,5 @@
 import { formatAttributeValue, type AttributeUnitKey } from "@/lib/productPresentation";
+import { useTranslations } from "next-intl";
 
 interface SpecGroup {
   groupName?: string;
@@ -19,10 +20,11 @@ interface SpecificationTableProps {
 export default function SpecificationTable({
   specifications,
 }: SpecificationTableProps) {
+  const t = useTranslations("catalog");
   return (
     <div className="card overflow-hidden">
       <div className="border-b border-border bg-muted px-4 py-3 md:px-6 md:py-4">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-secondary">Specifications</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-secondary">{t("specifications")}</h3>
       </div>
 
       <div className="divide-y divide-border">

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FileUp, X } from "lucide-react";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
 import { resourcesUrl } from "@/lib/routes";
+import { useLocale, useTranslations } from "next-intl";
+import type { Locale } from "@/lib/i18n/config";
 
 interface InquiryFormProps {
   sourceType?: "category" | "family" | "product" | "article" | "general";
@@ -18,6 +20,8 @@ export default function InquiryForm({
   sourceId,
   productName,
 }: InquiryFormProps) {
+  const locale = useLocale() as Locale;
+  const t = useTranslations("inquiry");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -59,7 +63,7 @@ export default function InquiryForm({
     e.preventDefault();
 
     if (!formData.email.trim() || !formData.message.trim()) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("requiredFields"));
       return;
     }
 
@@ -81,7 +85,7 @@ export default function InquiryForm({
 
       await submitPublicInquiry(payload);
 
-      toast.success("Thank you for your inquiry. Our team will respond as soon as possible.");
+      toast.success(t("success"));
       setFormData({
         email: "",
         company: "",
@@ -91,7 +95,7 @@ export default function InquiryForm({
     } catch (error) {
       console.error("Failed to submit inquiry:", error);
       const message =
-        error instanceof Error ? error.message : "Failed to submit inquiry. Please try again.";
+        error instanceof Error ? error.message : t("failure");
       toast.error(message);
     } finally {
       setIsSubmitting(false);
@@ -101,9 +105,9 @@ export default function InquiryForm({
   return (
     <div className="card">
       <div className="p-6 border-b border-border">
-        <h2 className="text-xl font-semibold">Request a Quote</h2>
+        <h2 className="text-xl font-semibold">{t("title")}</h2>
         <p className="text-sm text-secondary mt-1">
-          Share your requirement and attach drawings or BOM files if available.
+          {t("intro")}
         </p>
       </div>
 
@@ -111,7 +115,7 @@ export default function InquiryForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email <span className="text-red-500">*</span>
+              {t("email")} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -127,7 +131,7 @@ export default function InquiryForm({
 
           <div>
             <label htmlFor="company" className="block text-sm font-medium mb-2">
-              Company
+              {t("company")}
             </label>
             <input
               type="text"
@@ -136,14 +140,14 @@ export default function InquiryForm({
               value={formData.company}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              placeholder="Company name"
+              placeholder={t("companyPlaceholder")}
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="message" className="block text-sm font-medium mb-2">
-            Message <span className="text-red-500">*</span>
+            {t("message")} <span className="text-red-500">*</span>
           </label>
           <textarea
             id="message"
@@ -155,8 +159,8 @@ export default function InquiryForm({
             className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-vertical"
             placeholder={
               productName
-                ? `Tell us about your requirements for ${productName}...`
-                : "Tell us about your requirements..."
+                ? t("productMessagePlaceholder", { productName })
+                : t("messagePlaceholder")
             }
           />
         </div>
@@ -164,7 +168,7 @@ export default function InquiryForm({
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {(["drawing", "bom"] as const).map((field) => {
             const file = attachments[field];
-            const label = field === "drawing" ? "Attach Drawing" : "Attach BOM";
+            const label = field === "drawing" ? t("attachDrawing") : t("attachBom");
 
             return (
               <div key={field} className="rounded-sm border border-border bg-muted/40 p-3">
@@ -197,7 +201,7 @@ export default function InquiryForm({
                       type="button"
                       onClick={() => removeFile(field)}
                       className="shrink-0 text-secondary transition-colors hover:text-red-600"
-                      aria-label={`Remove ${label}`}
+                      aria-label={t("removeAttachment", { label })}
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -213,13 +217,13 @@ export default function InquiryForm({
           disabled={isSubmitting}
           className="btn btn-primary w-full"
         >
-          {isSubmitting ? "Submitting..." : "Send Inquiry"}
+          {isSubmitting ? t("submitting") : t("sendInquiry")}
         </button>
 
         <p className="text-xs text-secondary text-center">
-          By submitting this form, you agree to our{" "}
-          <Link href={resourcesUrl()} className="text-primary hover:underline">
-            Documentation Policy
+          {t("agreementPrefix")}{" "}
+          <Link href={resourcesUrl({ locale })} className="text-primary hover:underline">
+            {t("documentationPolicy")}
           </Link>
         </p>
       </form>

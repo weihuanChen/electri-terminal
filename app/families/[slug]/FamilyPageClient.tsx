@@ -17,6 +17,7 @@ import {
 import type { Locale } from "@/lib/i18n/config";
 import ExpandableHeroIntro from "./ExpandableHeroIntro";
 import QuickSelectButton from "./QuickSelectButton";
+import { useTranslations } from "next-intl";
 
 interface CategorySummary {
   _id?: string;
@@ -565,11 +566,13 @@ function resolveQuickSpecs({
 }
 
 export default function FamilyPageClient({ family, locale }: FamilyPageClientProps) {
+  const common = useTranslations("common");
+  const t = useTranslations("catalog");
   const urlOptions = locale ? { locale } : undefined;
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl(urlOptions) },
+    { label: common("categories"), href: categoriesUrl(urlOptions) },
     {
-      label: family.category?.name || "Category",
+      label: family.category?.name || common("category"),
       href: categoryUrl(family.category?.slug || "", urlOptions),
     },
     { label: family.name },
@@ -702,7 +705,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
   const downloadResources = family.resources || [];
   const hasDownloadResources = showDownloads && downloadResources.length > 0;
   const heroSecondaryCTA = hasDownloadResources
-    ? { label: "Download Documentation", href: `#${documentationSectionId}` }
+    ? { label: t("downloadDocumentation"), href: `#${documentationSectionId}` }
     : secondaryCTA;
 
   return (
@@ -719,7 +722,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
           <div className="grid grid-cols-1 gap-6 lg:gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
             <div className="flex flex-col justify-center">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Product Family
+                {common("productFamily")}
               </p>
               <h1 className="mb-5 text-3xl font-bold md:text-5xl text-slate-900 dark:text-slate-100">{family.name}</h1>
               {fullHeroIntro && (
@@ -776,14 +779,14 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
       {(quickSpecs.length > 0 || hasSelectionAndTechnical || (showApplications && applicationTags.length > 0) || certificationSupportItems.length > 0) && (
         <section className="py-8 md:py-12 bg-slate-50 border-b border-border dark:bg-slate-900/50">
           <div className="container">
-            <h2 className="mb-6 text-xl font-bold md:text-2xl">Engineering Reference</h2>
+            <h2 className="mb-6 text-xl font-bold md:text-2xl">{t("engineeringReference")}</h2>
             <div className="rounded-sm border border-border bg-white shadow-sm dark:bg-slate-900 overflow-visible flex flex-col">
               {/* Top Row: Specs & Workflow */}
               <div className="grid md:grid-cols-[35fr_65fr]">
                 {/* Left: Specs (35%) */}
                 {quickSpecs.length > 0 && (
                   <div className="p-6 lg:p-8 border-b md:border-b-0 md:border-r border-border">
-                    <h3 className="mb-6 text-sm font-bold uppercase tracking-widest text-secondary">Specifications</h3>
+                    <h3 className="mb-6 text-sm font-bold uppercase tracking-widest text-secondary">{t("specifications")}</h3>
                     <dl className="space-y-0">
                       {quickSpecs.map((spec, index) => (
                         <div key={spec.label} className="relative pl-8 pb-5 last:pb-0">
@@ -805,7 +808,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                 {showSelectionGuide && selectionStepsForRender.length > 0 && (
                   <div className="p-6 lg:p-8">
                     <div className="mb-6 flex items-center justify-between">
-                      <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">Selection Workflow</h3>
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">{t("selectionWorkflow")}</h3>
                     </div>
                     <div className="space-y-0">
                       {selectionStepsForRender.map((step, index) => {
@@ -852,7 +855,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
               {showApplications && applicationTags.length > 0 && (
                 <div className="p-4 lg:px-8 lg:py-5 border-b border-border flex flex-col md:flex-row md:items-center gap-4 lg:gap-16">
                   <h3 className="text-sm font-bold uppercase tracking-widest text-secondary whitespace-nowrap w-32 md:w-40 shrink-0">
-                    Applications
+                    {t("applications")}
                   </h3>
                   <div className="flex flex-wrap gap-2 items-center">
                     {applicationTags.map((application, index) => (
@@ -871,7 +874,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
               {certificationSupportItems.length > 0 && (
                 <div className="p-4 lg:px-8 lg:py-5 flex flex-col md:flex-row md:items-center gap-4 lg:gap-16">
                   <h3 className="text-sm font-bold uppercase tracking-widest text-secondary whitespace-nowrap w-32 md:w-40 shrink-0">
-                    Certification
+                    {t("certification")}
                   </h3>
                   <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
                     {certificationSupportItems.map((item) => (
@@ -894,8 +897,8 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
           <div className="container">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold md:text-3xl">Available Models</h2>
-                <p className="mt-2 text-secondary">Select a product to view detailed specifications</p>
+                <h2 className="text-2xl font-bold md:text-3xl">{t("availableModels")}</h2>
+                <p className="mt-2 text-secondary">{t("availableModelsHelp")}</p>
               </div>
             </div>
             <div className="rounded-md border border-border shadow-sm overflow-hidden">
@@ -911,9 +914,9 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
           <div className="container">
             <div className="mb-8">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Engineering Knowledge
+                {t("engineeringKnowledge")}
               </p>
-              <h2 className="text-2xl font-bold md:text-3xl">Engineering Overview</h2>
+              <h2 className="text-2xl font-bold md:text-3xl">{t("engineeringOverview")}</h2>
             </div>
             
             <div className="grid gap-8 lg:grid-cols-3">
@@ -924,7 +927,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                     {/* What Is It */}
                     <div className="p-6 lg:p-8">
                       <h3 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                        What Is It
+                        {t("whatIsIt")}
                       </h3>
                       <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed max-w-3xl">
                         {overviewParagraphs[0]}
@@ -937,7 +940,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                         <hr className="border-border mx-6 lg:mx-8" />
                         <div className="p-6 lg:p-8">
                           <h3 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                            Why It Matters
+                            {t("whyItMatters")}
                           </h3>
                           <div className="space-y-4">
                             {overviewParagraphs.slice(1).map((paragraph, index) => (
@@ -964,7 +967,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                 {/* Features List as a block */}
                 {showFeatures && compactFeatures.length > 0 && (
                   <div className="rounded-sm border border-border bg-white p-5 shadow-sm dark:bg-slate-900">
-                    <h3 className="mb-4 text-lg font-bold">Key Features</h3>
+                    <h3 className="mb-4 text-lg font-bold">{t("keyFeatures")}</h3>
                     {featuresIntro && (
                       <p className="mb-4 text-xs text-secondary">{featuresIntro}</p>
                     )}
@@ -984,7 +987,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                   <div className="rounded-sm border border-blue-200 bg-blue-50/50 p-5 dark:border-blue-900/50 dark:bg-blue-900/10">
                     <h3 className="mb-3 text-sm font-bold text-blue-900 dark:text-blue-200 flex items-center gap-2">
                       <FileText className="h-4 w-4" />
-                      Engineering Notes
+                      {t("engineeringNotes")}
                     </h3>
                     <ul className="space-y-3">
                       {compactTechnicalNotes.map((note, index) => (
@@ -1009,10 +1012,10 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
         <section id={documentationSectionId} className="py-8 md:py-10 bg-slate-50 border-b border-border dark:bg-slate-900/50 scroll-mt-24">
           <div className="container">
             <h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-slate-100">
-              Engineering Resources
+              {t("engineeringResources")}
             </h2>
             <p className="mb-6 text-sm text-secondary">
-              Download available catalogs, datasheets, certificates, and CAD files.
+              {t("resourceHelp")}
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

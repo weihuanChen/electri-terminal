@@ -19,6 +19,11 @@ test.describe("isolated Convex localization fixtures", () => {
     await expect(
       page.getByText("Русское описание тестовой клеммы.").first()
     ).toBeVisible();
+    await expect(page.getByText("Информация о продукте", { exact: true })).toBeVisible();
+    await expect(page.getByText("Обзор продукта", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Запросить предложение" }).first()
+    ).toBeVisible();
   });
 
   test("keeps an untranslated Russian fixture product unavailable", async ({ page }) => {

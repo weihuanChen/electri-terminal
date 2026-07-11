@@ -16,6 +16,7 @@ import {
 } from "@/lib/productPresentation";
 import { buildProductKeySpecifications } from "@/lib/productKeySpecifications";
 import type { Locale } from "@/lib/i18n/config";
+import { useTranslations } from "next-intl";
 
 interface CategorySummary {
   _id?: string;
@@ -138,6 +139,7 @@ function RelatedSeriesSection({
   items: RelatedSeriesItem[];
   locale?: Locale;
 }) {
+  const t = useTranslations("catalog");
   if (items.length === 0) return null;
 
   const urlOptions = locale ? { locale } : undefined;
@@ -148,12 +150,12 @@ function RelatedSeriesSection({
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-              Related Series
+              {t("relatedSeries")}
             </p>
-            <h2 className="text-2xl font-semibold md:text-3xl">Series Options</h2>
+            <h2 className="text-2xl font-semibold md:text-3xl">{t("seriesOptions")}</h2>
           </div>
           <p className="max-w-2xl text-sm leading-6 text-secondary md:text-right">
-            Compare nearby ring terminal series by crimp structure, insulation material, and protection level.
+            {t("seriesComparison")}
           </p>
         </div>
 
@@ -188,7 +190,7 @@ function RelatedSeriesSection({
                   {item.summary || relatedSeriesDescriptions[item.relationLabel]}
                 </p>
                 <span className="mt-auto inline-flex items-center gap-2 pt-5 text-sm font-semibold text-primary">
-                  View Series
+                  {t("viewSeries")}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
@@ -201,6 +203,8 @@ function RelatedSeriesSection({
 }
 
 export default function ProductPageClient({ product, locale }: ProductPageClientProps) {
+  const common = useTranslations("common");
+  const t = useTranslations("catalog");
   const urlOptions = locale ? { locale } : undefined;
   const {
     heroTitle,
@@ -213,9 +217,9 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
     showInquiry,
   } = resolveProductPageViewModel(product, urlOptions);
   const breadcrumbItems = [
-    { label: "Categories", href: categoriesUrl(urlOptions) },
+    { label: common("categories"), href: categoriesUrl(urlOptions) },
     {
-      label: product.category?.name || "Category",
+      label: product.category?.name || common("category"),
       href: categoryUrl(product.category?.slug || "", urlOptions),
     },
     ...(product.family
@@ -280,7 +284,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
                 </p>
               )}
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Product Detail
+                {t("productDetail")}
               </p>
               <h1 className="mb-4 text-2xl font-semibold leading-tight md:text-4xl">{heroTitle}</h1>
 
@@ -290,7 +294,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
 
               {keySpecifications.length > 0 && (
                 <div className="mb-4 border-y border-border py-4">
-                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-secondary">Key Specifications</h3>
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-secondary">{t("keySpecifications")}</h3>
                   <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                     {keySpecifications.map((item) => (
                       <div key={item.label} className="min-w-0">
@@ -315,7 +319,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
 
               {product.featureBullets && product.featureBullets.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-secondary">Features</h3>
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-secondary">{t("features")}</h3>
                   <ul className="space-y-2">
                     {product.featureBullets.map((bullet, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm leading-6">
@@ -329,18 +333,18 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a href={primaryCTA.href} className="btn btn-primary w-full justify-center sm:w-auto">
-                  {primaryCTA.label}
+                  {primaryCTA.label === "Request Quote" ? t("requestQuote") : primaryCTA.label}
                 </a>
                 {secondaryCTA && (
                   <Link href={secondaryCTA.href} className="btn btn-secondary w-full justify-center sm:w-auto">
-                    {secondaryCTA.label}
+                    {secondaryCTA.label === "View Series" ? t("viewSeries") : secondaryCTA.label}
                   </Link>
                 )}
               </div>
 
               {product.packageInfo && (
                 <div className="mt-6 rounded-sm border border-border bg-muted px-3 py-2 text-sm text-secondary">
-                  <strong>Packaging:</strong> {product.packageInfo}
+                  <strong>{t("packaging")}:</strong> {product.packageInfo}
                 </div>
               )}
             </div>
@@ -351,34 +355,34 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
               <div className="flex min-w-max gap-2">
                 {showProductOverview && (
                   <a href="#product-overview" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    Overview
+                    {t("overview")}
                   </a>
                 )}
                 {hasRelatedSeries && (
                   <a href="#related-series" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    Series
+                    {t("series")}
                   </a>
                 )}
 
                 {hasVariants && (
                   <a href="#variant-matrix" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    Variants
+                    {t("variants")}
                   </a>
                 )}
                 {hasResources && (
                   <a href="#documentation" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    Docs
+                    {t("docs")}
                   </a>
                 )}
 
                 {showFaq && (
                   <a href="#technical-faq" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    FAQ
+                    {t("faq")}
                   </a>
                 )}
                 {showInquiry && (
                   <a href="#inquiry-form" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
-                    Quote
+                    {t("quote")}
                   </a>
                 )}
               </div>
@@ -392,9 +396,9 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
           <div className="container">
             <div className="max-w-4xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Product Overview
+                {t("productOverview")}
               </p>
-              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Description</h2>
+              <h2 className="mb-4 text-2xl font-semibold md:text-3xl">{t("description")}</h2>
               <p className="text-base leading-7 text-secondary md:text-lg">
                 {descriptionText}
               </p>
@@ -408,11 +412,11 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
           <div className="container">
             <div className="max-w-7xl">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Variant Matrix
+                {t("variantMatrix")}
               </p>
-              <h2 className="mb-3 text-2xl font-semibold md:text-3xl">Specification Table</h2>
+              <h2 className="mb-3 text-2xl font-semibold md:text-3xl">{t("specificationTable")}</h2>
               <p className="text-secondary mb-5">
-                Select the exact item number from the specification rows below when requesting a quote.
+                {t("variantHelp")}
               </p>
               <VariantTable variants={product.variants || []} fields={variantFields} />
             </div>
@@ -425,10 +429,10 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
           <div className="container">
             <div className="w-full border border-border bg-white p-4 md:p-5 dark:bg-slate-900">
               <h2 className="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">
-                Engineering Resources
+                {t("engineeringResources")}
               </h2>
               <p className="mb-4 text-sm font-medium text-secondary">
-                Technical catalogs, selection guides and application documents.
+                {t("resourceHelp")}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -449,7 +453,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
                           {resource.title}
                         </span>
                         <span className="text-xs text-secondary mt-0.5">
-                          {resource.version ? `v${resource.version}` : 'Latest'} · PDF
+                          {resource.version ? `v${resource.version}` : common("latest")} · PDF
                         </span>
                       </div>
                     </div>
@@ -473,9 +477,9 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                Technical FAQ
+                {t("technicalFaq")}
               </p>
-              <h2 className="mb-5 text-2xl font-semibold md:text-3xl">Frequently Asked Questions</h2>
+              <h2 className="mb-5 text-2xl font-semibold md:text-3xl">{t("frequentlyAskedQuestions")}</h2>
               <FAQAccordion items={faqItems} />
             </div>
           </div>
@@ -485,7 +489,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
       {mockRelatedProducts.length > 0 && (
         <section className="py-6 md:py-10 bg-muted">
           <div className="container">
-            <h2 className="text-3xl font-semibold mb-5">Related Products</h2>
+            <h2 className="text-3xl font-semibold mb-5">{t("relatedProducts")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {mockRelatedProducts.map((relatedProduct) => (
                 <ProductCard
@@ -508,9 +512,9 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
           <div className="container">
             <div className="max-w-3xl mx-auto">
               <div className="mb-5 text-center">
-                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Request a Quote</h2>
+                <h2 className="mb-4 text-2xl font-semibold md:text-3xl">{t("requestQuote")}</h2>
                 <p className="text-secondary">
-                  Fill out the form below and our sales team will respond as soon as possible.
+                  {t("requestQuoteHelp")}
                 </p>
               </div>
               <InquiryForm
