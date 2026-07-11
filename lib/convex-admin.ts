@@ -130,9 +130,11 @@ let convexClient: ConvexHttpClient | undefined;
 let convexClientUrl: string | undefined;
 
 function getConvexClient() {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  const url = process.env.CONVEX_SERVER_URL || process.env.NEXT_PUBLIC_CONVEX_URL;
   if (!url) {
-    throw new Error("Missing NEXT_PUBLIC_CONVEX_URL in environment");
+    throw new Error(
+      "Missing CONVEX_SERVER_URL or NEXT_PUBLIC_CONVEX_URL in environment"
+    );
   }
   const normalizedUrl = url.replace(/\/+$/, "");
   if (!convexClient || convexClientUrl !== normalizedUrl) {
@@ -171,7 +173,7 @@ export async function queryAdmin<T>(
   } catch (error) {
     const message = getReadableErrorMessage(error);
     throw new Error(
-      `Convex query failed: ${name}. ${message}. Check NEXT_PUBLIC_CONVEX_URL and deploy status.`
+      `Convex query failed: ${name}. ${message}. Check CONVEX_SERVER_URL, NEXT_PUBLIC_CONVEX_URL, and deploy status.`
     );
   }
 }
@@ -185,7 +187,7 @@ export async function mutateAdmin<T>(
   } catch (error) {
     const message = getReadableErrorMessage(error);
     throw new Error(
-      `Convex mutation failed: ${name}. ${message}. Check NEXT_PUBLIC_CONVEX_URL and deploy status.`
+      `Convex mutation failed: ${name}. ${message}. Check CONVEX_SERVER_URL, NEXT_PUBLIC_CONVEX_URL, and deploy status.`
     );
   }
 }
@@ -199,7 +201,7 @@ export async function actionAdmin<T>(
   } catch (error) {
     const message = getReadableErrorMessage(error);
     throw new Error(
-      `Convex action failed: ${name}. ${message}. Check NEXT_PUBLIC_CONVEX_URL and deploy status.`
+      `Convex action failed: ${name}. ${message}. Check CONVEX_SERVER_URL, NEXT_PUBLIC_CONVEX_URL, and deploy status.`
     );
   }
 }

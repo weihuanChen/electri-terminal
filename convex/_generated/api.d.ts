@@ -10,6 +10,7 @@
 
 import type * as actions_r2 from "../actions/r2.js";
 import type * as admin_index from "../admin/index.js";
+import type * as e2eFixtures from "../e2eFixtures.js";
 import type * as frontend from "../frontend.js";
 import type * as http from "../http.js";
 import type * as lib_attributes from "../lib/attributes.js";
@@ -66,6 +67,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   "actions/r2": typeof actions_r2;
   "admin/index": typeof admin_index;
+  e2eFixtures: typeof e2eFixtures;
   frontend: typeof frontend;
   http: typeof http;
   "lib/attributes": typeof lib_attributes;

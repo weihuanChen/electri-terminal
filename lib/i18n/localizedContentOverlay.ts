@@ -138,6 +138,10 @@ export function applyCategoryLocalization<T extends LocalizedEntity>(
   category: T,
   localization?: LocalizationRecordV2 | null
 ): T {
+  if (!localization || localization.status !== "published") {
+    return category;
+  }
+
   const fields = getFields(localization);
   const localized = applyCommonLocalization(category, localization);
   const name = localization?.title ?? getFirstFieldText(fields, ["name", "title"]);
@@ -165,6 +169,10 @@ export function applyFamilyLocalization<T extends LocalizedEntity>(
   family: T,
   localization?: LocalizationRecordV2 | null
 ): T {
+  if (!localization || localization.status !== "published") {
+    return family;
+  }
+
   const fields = getFields(localization);
   const localized = applyCommonLocalization(family, localization);
   const name = localization?.title ?? getFirstFieldText(fields, ["name", "title"]);
@@ -183,6 +191,10 @@ export function applyProductLocalization<T extends LocalizedEntity>(
   product: T,
   localization?: LocalizationRecordV2 | null
 ): T {
+  if (!localization || localization.status !== "published") {
+    return product;
+  }
+
   const fields = getFields(localization);
   const localized = applyCommonLocalization(product, localization);
   const title = localization?.title ?? getFirstFieldText(fields, ["title", "name"]);

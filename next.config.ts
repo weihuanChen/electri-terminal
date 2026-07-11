@@ -6,9 +6,6 @@ import { PRODUCT_REDIRECTS } from "./lib/productRedirects";
 const URL_MIGRATION_STATUS_CODE = 301 as const;
 
 const nextConfig: NextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   experimental: {
     serverActions: {
       bodySizeLimit: "4mb",

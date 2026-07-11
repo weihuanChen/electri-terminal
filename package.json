@@ -2,11 +2,21 @@
   "name": "electri-pro-source",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.7.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:fixtures": "E2E_CONVEX_LOCAL=1 CONVEX_DEPLOYMENT=local:local-ngammr_bi-electri_pro_source_e2e CONVEX_SERVER_URL=http://127.0.0.1:3210 NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3210 NEXT_PUBLIC_CONVEX_SITE_URL=http://127.0.0.1:3211 playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "check:p0": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm test:e2e",
+    "check:p0:fixtures": "pnpm check:p0 && pnpm test:e2e:fixtures",
     "export:catalog-content": "node scripts/export-catalog-content.mjs",
     "export:family-product-images": "node scripts/export-family-product-images.mjs",
     "apply:copy-tasks": "node scripts/apply-copy-tasks.mjs",
@@ -42,13 +52,17 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
   }
 }
