@@ -189,6 +189,24 @@ async function getRelatedFaqs(
   entityType: "category" | "family" | "product",
   entityId: string
 ) {
+  const relations = await ctx.db
+    .query("articleEntityRelations")
+    .withIndex("by_entity", (q) =>
+      q.eq("entityType", entityType).eq("entityId", String(entityId))
+    )
+    .collect();
+
+  if (relations.length > 0) {
+    const relatedArticles = await Promise.all(
+      relations.map((relation) => ctx.db.get(relation.articleId))
+    );
+    return relatedArticles.filter(isPublishedArticle).filter((article) => article.type === "faq");
+  }
+
+  // Preserve existing data until the one-time derived-data backfill has run.
+  const hasDerivedData = await ctx.db.query("articleCards").first();
+  if (hasDerivedData) return [];
+
   const articles = await ctx.db
     .query("articles")
     .withIndex("by_type_status", (q) => q.eq("type", "faq").eq("status", "published"))
@@ -825,9 +843,9 @@ function dedupeRelatedSeriesItems(items: RelatedSeriesItem[]) {
   });
 }
 
-async function getRelatedSeriesForProduct(
+async function computeRelatedSeriesForFamily(
   ctx: QueryCtx,
-  product: Doc<"products">,
+  categoryId: Id<"categories">,
   family: Doc<"productFamilies"> | null
 ) {
   if (!family) return [];
@@ -853,7 +871,7 @@ async function getRelatedSeriesForProduct(
     return dedupeRelatedSeriesItems(manualItems).slice(0, 4);
   }
 
-  const category = await ctx.db.get(product.categoryId);
+  const category = await ctx.db.get(categoryId);
   const siblingCategories = category?.parentId
     ? await ctx.db
         .query("categories")
@@ -864,7 +882,7 @@ async function getRelatedSeriesForProduct(
     new Set(
       [
         category?.parentId,
-        product.categoryId,
+        categoryId,
         ...siblingCategories
           .filter((item) => item.status === "published")
           .map((item) => item._id),
@@ -872,32 +890,17 @@ async function getRelatedSeriesForProduct(
         .filter((id): id is Id<"categories"> => Boolean(id))
     )
   );
-  const [familyBuckets, products] = await Promise.all([
-    Promise.all(
-      candidateCategoryIds.map((categoryId) =>
-        ctx.db
-          .query("productFamilies")
-          .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-          .collect()
-      )
-    ),
-    ctx.db
-      .query("products")
-      .withIndex("by_categoryId", (q) => q.eq("categoryId", product.categoryId))
-      .collect(),
-  ]);
+  const familyBuckets = await Promise.all(
+    candidateCategoryIds.map((candidateCategoryId) =>
+      ctx.db
+        .query("productFamilies")
+        .withIndex("by_categoryId", (q) => q.eq("categoryId", candidateCategoryId))
+        .collect()
+    )
+  );
   const families = Array.from(
     new Map(familyBuckets.flat().map((item) => [item._id, item])).values()
   );
-  const publishedProductCounts = new Map<string, number>();
-
-  for (const candidateProduct of products) {
-    if (candidateProduct.status !== "published") continue;
-    publishedProductCounts.set(
-      candidateProduct.familyId,
-      (publishedProductCounts.get(candidateProduct.familyId) ?? 0) + 1
-    );
-  }
 
   const currentSearchText = getFamilySearchText(family);
   const currentIsRingSeries = currentSearchText.includes("ring terminal");
@@ -914,9 +917,8 @@ async function getRelatedSeriesForProduct(
         rule.priority +
         (preferredSlugIndex >= 0 ? 1000 - preferredSlugIndex * 25 : 0) +
         (item._id === family._id ? 120 : 0) +
-        (item.categoryId === product.categoryId ? 20 : 0) +
+        (item.categoryId === categoryId ? 20 : 0) +
         (currentIsRingSeries && searchText.includes("ring terminal") ? 50 : 0) +
-        ((publishedProductCounts.get(item._id) ?? 0) > 0 ? 10 : 0) +
         (resolveFamilyHeroImage(item) || item.summary ? 5 : 0);
 
       return {
@@ -933,6 +935,18 @@ async function getRelatedSeriesForProduct(
     )
     .slice(0, 4);
 }
+
+export const getRelatedSeriesForFamily = query({
+  args: {
+    familyId: v.id("productFamilies"),
+    categoryId: v.id("categories"),
+  },
+  handler: async (ctx, args) => {
+    const family = await ctx.db.get(args.familyId);
+    if (!family || family.status !== "published") return [];
+    return await computeRelatedSeriesForFamily(ctx, args.categoryId, family);
+  },
+});
 
 async function getCategoryFilters(ctx: QueryCtx, categoryId: Id<"categories">) {
   const [fields, products, families] = await Promise.all([
@@ -1046,12 +1060,23 @@ export const listCategoriesForPublic = query({
 
     const categories = await ctx.db
       .query("categories")
-      .withIndex("by_status_sortOrder", (q) =>
-        q.eq("status", "published")
+      .withIndex("by_status_visible_sortOrder", (q) =>
+        q.eq("status", "published").eq("isVisibleInNav", true)
       )
       .take(limit);
 
-    return categories.filter((cat) => cat.isVisibleInNav);
+    return categories.map((category) => ({
+      _id: category._id,
+      slug: category.slug,
+      name: category.name,
+      parentId: category.parentId,
+      level: category.level,
+      sortOrder: category.sortOrder,
+      isVisibleInNav: category.isVisibleInNav,
+      shortDescription: category.shortDescription,
+      description: category.description,
+      seoDescription: category.seoDescription,
+    }));
   },
 });
 
@@ -1107,14 +1132,20 @@ export const listFeaturedProducts = query({
 
     const products = await ctx.db
       .query("products")
-      .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-      .collect();
+      .withIndex("by_status_featured_sortOrder", (q) =>
+        q.eq("status", "published").eq("isFeatured", true)
+      )
+      .take(limit);
 
-    return products
-      .filter((product) => product.isFeatured)
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .slice(0, limit)
-      .map((product) => omitBrand(product));
+    return products.map((product) => ({
+      _id: product._id,
+      slug: product.slug,
+      title: product.title,
+      shortTitle: product.shortTitle,
+      summary: product.summary,
+      mainImage: product.mainImage,
+      categoryId: product.categoryId,
+    }));
   },
 });
 
@@ -1549,19 +1580,41 @@ export const listApplicationArticles = query({
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 8, 20);
 
-    const applications = await ctx.db
-      .query("articles")
+    const applicationCards = await ctx.db
+      .query("articleCards")
       .withIndex("by_type_status", (q) => q.eq("type", "application").eq("status", "published"))
       .collect();
 
-    const slicedApplications = applications
+    if (applicationCards.length === 0) {
+      const legacyApplications = await ctx.db
+        .query("articles")
+        .withIndex("by_type_status", (q) =>
+          q.eq("type", "application").eq("status", "published")
+        )
+        .collect();
+      return legacyApplications
+        .sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt))
+        .slice(0, limit)
+        .map((item) => ({
+          _id: item._id,
+          title: item.title,
+          slug: item.slug,
+          excerpt: item.excerpt,
+          coverImage: item.coverImage,
+          productCount: item.relatedProductIds?.length ?? 0,
+        }));
+    }
+
+    const slicedApplications = applicationCards
       .sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt))
       .slice(0, limit);
 
-    const applicationsWithAuthors = await attachArticleAuthors(ctx, slicedApplications);
-
-    return applicationsWithAuthors.map((item) => ({
-        ...item,
+    return slicedApplications.map((item) => ({
+        _id: item.articleId,
+        title: item.title,
+        slug: item.slug,
+        excerpt: item.excerpt,
+        coverImage: item.coverImage,
         productCount: item.relatedProductIds?.length ?? 0,
       }));
   },
@@ -1570,7 +1623,7 @@ export const listApplicationArticles = query({
 export const listSitemapContent = query({
   args: {},
   handler: async (ctx) => {
-    const [categories, families, products, articles] = await Promise.all([
+    const [categories, families, products, articleCards] = await Promise.all([
       ctx.db
         .query("categories")
         .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
@@ -1584,10 +1637,16 @@ export const listSitemapContent = query({
         .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
         .collect(),
       ctx.db
-        .query("articles")
+        .query("articleCards")
         .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
         .collect(),
     ]);
+    const articles = articleCards.length > 0
+      ? articleCards
+      : await ctx.db
+          .query("articles")
+          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+          .collect();
 
     return {
       categories: categories.map((category) => ({
@@ -1947,7 +2006,6 @@ export const getProductBySlug = query({
       .query("productVariants")
       .withIndex("by_productId_sortOrder", (q) => q.eq("productId", product._id))
       .collect();
-    const relatedSeries = await getRelatedSeriesForProduct(ctx, product, family);
 
     return {
       ...omitBrand(product),
@@ -1961,7 +2019,9 @@ export const getProductBySlug = query({
       category,
       resources: await getRelatedAssets(ctx, "product", product._id),
       faqs: await getRelatedFaqs(ctx, "product", product._id),
-      relatedSeries,
+      // Loaded through a family-scoped query so products in the same family share
+      // the same Convex query cache entry.
+      relatedSeries: [],
       specificationFields,
       variants: variants
         .filter((variant) => variant.status === "published")
@@ -2055,26 +2115,34 @@ export const listRelatedArticlesBySlug = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const targetArticle = await ctx.db
-      .query("articles")
+    const targetArticleCard = await ctx.db
+      .query("articleCards")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    if (!targetArticle) {
-      return [];
-    }
+    const useDerivedData = Boolean(targetArticleCard);
+    const targetArticle = targetArticleCard ?? await ctx.db
+      .query("articles")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!targetArticle) return [];
 
     const limit = Math.min(Math.max(args.limit ?? 3, 1), 8);
-    const allPublishedArticles = await ctx.db
-      .query("articles")
-      .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-      .collect();
+    const allPublishedArticles = useDerivedData
+      ? await ctx.db
+          .query("articleCards")
+          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+          .collect()
+      : await ctx.db
+          .query("articles")
+          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+          .collect();
 
     const targetRelations = buildArticleRelationIdSet(targetArticle);
     const targetTags = buildArticleTagSet(targetArticle);
 
     const scoredArticles = allPublishedArticles
-      .filter((article) => article._id !== targetArticle._id && article.slug !== targetArticle.slug)
+      .filter((article) => article.slug !== targetArticle.slug)
       .map((candidate) => {
         const candidateRelations = buildArticleRelationIdSet(candidate);
         const candidateTags = buildArticleTagSet(candidate);
@@ -2109,7 +2177,11 @@ export const listRelatedArticlesBySlug = query({
     const rankedArticles = scoredArticles.filter((item) => item.score > 0).map((item) => item.candidate);
     const fallbackArticles = scoredArticles.filter((item) => item.score <= 0).map((item) => item.candidate);
 
-    return await attachArticleAuthors(ctx, [...rankedArticles, ...fallbackArticles].slice(0, limit));
+    return [...rankedArticles, ...fallbackArticles].slice(0, limit).map((article) => {
+      if (!("articleId" in article)) return article;
+      const { articleId, ...card } = article;
+      return { ...card, _id: articleId };
+    });
   },
 });
 

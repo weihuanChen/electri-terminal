@@ -1,4 +1,5 @@
 import { mutation } from "../../_generated/server";
+import { syncArticleDerivedData } from "../../lib/articleDerivedData";
 import type { Id } from "../../_generated/dataModel";
 
 function now() {
@@ -838,11 +839,15 @@ export const seedMockCatalog = mutation({
 
       if (existing) {
         await ctx.db.patch(existing._id, data);
+        const updated = await ctx.db.get(existing._id);
+        if (updated) await syncArticleDerivedData(ctx, updated);
       } else {
-        await ctx.db.insert("articles", {
+        const articleId = await ctx.db.insert("articles", {
           ...data,
           createdAt: timestamp,
         });
+        const created = await ctx.db.get(articleId);
+        if (created) await syncArticleDerivedData(ctx, created);
       }
     }
 

@@ -166,6 +166,7 @@ export default defineSchema({
     .index("by_slug", ["slug"]) // enforce uniqueness in mutation
     .index("by_path", ["path"]) // enforce uniqueness in mutation
     .index("by_parentId", ["parentId"])
+    .index("by_status_visible_sortOrder", ["status", "isVisibleInNav", "sortOrder"])
     .index("by_status_sortOrder", ["status", "sortOrder"]),
 
   attributeTemplates: defineTable({
@@ -286,6 +287,7 @@ export default defineSchema({
     .index("by_familyId", ["familyId"])
     .index("by_categoryId", ["categoryId"])
     .index("by_familyId_model", ["familyId", "model"])
+    .index("by_status_featured_sortOrder", ["status", "isFeatured", "sortOrder"])
     .index("by_status_sortOrder", ["status", "sortOrder"])
     .searchIndex("search_title", {
       searchField: "title",
@@ -430,6 +432,46 @@ export default defineSchema({
       searchField: "title",
       filterFields: ["status", "type"],
     }),
+
+  // Compact public article data used for recommendations and other card lists.
+  // Keeping this separate prevents list queries from reading large article bodies.
+  articleCards: defineTable({
+    articleId: v.id("articles"),
+    type: articleType,
+    title: v.string(),
+    slug: v.string(),
+    authorId: v.optional(v.id("authors")),
+    excerpt: v.optional(v.string()),
+    coverImage: v.optional(v.string()),
+    categoryIds: v.optional(v.array(v.id("categories"))),
+    tagNames: v.optional(v.array(v.string())),
+    relatedCategoryIds: v.optional(v.array(v.id("categories"))),
+    relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
+    relatedProductIds: v.optional(v.array(v.id("products"))),
+    featured: v.optional(v.boolean()),
+    status: statusCommon,
+    publishedAt: v.optional(v.number()),
+    canonical: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_articleId", ["articleId"])
+    .index("by_slug", ["slug"])
+    .index("by_type_status", ["type", "status"])
+    .index("by_status_publishedAt", ["status", "publishedAt"]),
+
+  // Reverse lookup for entity-linked articles, primarily public FAQs.
+  articleEntityRelations: defineTable({
+    articleId: v.id("articles"),
+    entityType: v.union(
+      v.literal("category"),
+      v.literal("family"),
+      v.literal("product")
+    ),
+    entityId: v.string(),
+  })
+    .index("by_articleId", ["articleId"])
+    .index("by_entity", ["entityType", "entityId"]),
 
   inquiries: defineTable({
     type: inquiryType,

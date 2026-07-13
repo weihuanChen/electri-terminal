@@ -197,6 +197,20 @@ async function resolveRelatedSeriesFallback(product: ProductMetadataRecord) {
     return product;
   }
 
+  const familyId = product.familyId || product.family?._id;
+  const categoryId = product.categoryId || product.category?._id;
+  if (familyId && categoryId) {
+    try {
+      const relatedSeries = await queryPublicPage<RelatedSeriesItem[]>(
+        "frontend:getRelatedSeriesForFamily",
+        { familyId, categoryId }
+      );
+      return { ...product, relatedSeries };
+    } catch {
+      // Fall through to the category-content fallback during rolling deploys.
+    }
+  }
+
   const categoryIds = Array.from(
     new Set(
       [product.category?.parentId, product.categoryId || product.category?._id].filter(

@@ -5,6 +5,10 @@ import {
   withCreatedAt,
   withUpdatedAt,
 } from "../../lib/validators";
+import {
+  deleteArticleDerivedData,
+  syncArticleDerivedData,
+} from "../../lib/articleDerivedData";
 import { articleType, statusCommon } from "./shared";
 
 export const createArticle = mutation({
@@ -31,13 +35,17 @@ export const createArticle = mutation({
   handler: async (ctx, args) => {
     await assertUniqueArticleSlug(ctx, args.slug);
 
-    return await ctx.db.insert(
+    const articleId = await ctx.db.insert(
       "articles",
       withCreatedAt({
         ...args,
         status: args.status ?? "draft",
       })
     );
+    const article = await ctx.db.get(articleId);
+    if (!article) throw new Error("Created article not found");
+    await syncArticleDerivedData(ctx, article);
+    return articleId;
   },
 });
 
@@ -108,6 +116,10 @@ export const updateArticle = mutation({
       })
     );
 
+    const updated = await ctx.db.get(args.id);
+    if (!updated) throw new Error("Updated article not found");
+    await syncArticleDerivedData(ctx, updated);
+
     return args.id;
   },
 });
@@ -119,6 +131,7 @@ export const deleteArticle = mutation({
     if (!article) throw new Error("Article not found");
 
     // Articles can be deleted without dependency checks
+    await deleteArticleDerivedData(ctx, args.id);
     await ctx.db.delete(args.id);
   },
 });
@@ -144,6 +157,21 @@ export const bulkUpdateArticles = mutation({
         updateData.type = args.updates.type;
       }
       await ctx.db.patch(id, withUpdatedAt(updateData));
+      const updated = await ctx.db.get(id);
+      if (updated) {
+        await syncArticleDerivedData(ctx, updated);
+      }
     }
+  },
+});
+
+export const backfillArticleDerivedData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const articles = await ctx.db.query("articles").collect();
+    for (const article of articles) {
+      await syncArticleDerivedData(ctx, article);
+    }
+    return { synced: articles.length };
   },
 });

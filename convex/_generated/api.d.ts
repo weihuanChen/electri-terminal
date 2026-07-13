@@ -13,6 +13,7 @@ import type * as admin_index from "../admin/index.js";
 import type * as e2eFixtures from "../e2eFixtures.js";
 import type * as frontend from "../frontend.js";
 import type * as http from "../http.js";
+import type * as lib_articleDerivedData from "../lib/articleDerivedData.js";
 import type * as lib_attributes from "../lib/attributes.js";
 import type * as lib_categoryPageConfig from "../lib/categoryPageConfig.js";
 import type * as lib_familyPageConfig from "../lib/familyPageConfig.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   e2eFixtures: typeof e2eFixtures;
   frontend: typeof frontend;
   http: typeof http;
+  "lib/articleDerivedData": typeof lib_articleDerivedData;
   "lib/attributes": typeof lib_attributes;
   "lib/categoryPageConfig": typeof lib_categoryPageConfig;
   "lib/familyPageConfig": typeof lib_familyPageConfig;

@@ -413,7 +413,17 @@ async function renderLocalizedProduct({ locale, route }: LocalizedRendererContex
     notFound();
   }
 
-  const localizedProduct = localizeProductRecord(product, maps);
+  const relatedSeries = product.familyId && product.categoryId
+    ? await queryPublicPage<NonNullable<ProductPageData["relatedSeries"]>>(
+        "frontend:getRelatedSeriesForFamily",
+        { familyId: product.familyId, categoryId: product.categoryId }
+      )
+    : [];
+
+  const localizedProduct = localizeProductRecord(
+    { ...product, relatedSeries },
+    maps
+  );
   const structuredData = buildProductStructuredData(localizedProduct, route.slug, {
     locale,
   });
