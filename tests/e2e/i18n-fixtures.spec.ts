@@ -19,6 +19,15 @@ test.describe("isolated Convex localization fixtures", () => {
       "href",
       "/ru/contact#request-quote"
     );
+    const header = page.getByRole("banner");
+    const footer = page.getByRole("contentinfo");
+    await expect(header.locator('a[href="/ru"]')).toBeVisible();
+    await expect(header.locator('a[href^="/ru/contact"]')).toHaveCount(0);
+    await expect(header.locator('a[href="/ru/manufacturing"]')).toHaveCount(0);
+    await expect(header.locator('a[href="/ru/search"]')).toHaveCount(0);
+    await expect(footer.locator('a[href^="/ru/contact"]')).toHaveCount(0);
+    await expect(footer.locator('a[href="/ru/resources"]')).toHaveCount(0);
+    await expect(footer.locator('a[href="/ru/privacy-policy"]')).toHaveCount(0);
   });
 
   test("renders a published Russian product from deterministic fixtures", async ({

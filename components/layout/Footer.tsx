@@ -17,8 +17,11 @@ import {
   resourcesUrl,
   searchUrl,
 } from "@/lib/routes";
-import { getPublicContactSettings } from "@/lib/publicData";
+import { getHeaderNavigation, getPublicContactSettings, type NavigationCategoryTree } from "@/lib/publicData";
 import { getRequestLocale } from "@/lib/i18n/requestLocale";
+import { DEFAULT_LOCALE, type StaticPageKey } from "@/lib/i18n/config";
+import { getNavigationEligibilitySnapshot } from "@/lib/i18n/navigationData";
+import { canExposeStaticNavigationTarget, getPublishedNavigationCategory } from "@/lib/i18n/navigationSafety";
 
 interface FooterLink {
   name: string;
@@ -37,49 +40,69 @@ function isInternalLink(href: string) {
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
-  const [contactSettings, locale, common, footer] = await Promise.all([
+  const [contactSettings, locale, common, footer, navigationCategories] = await Promise.all([
     getPublicContactSettings(),
     getRequestLocale(),
     getTranslations("common"),
     getTranslations("footer"),
+    getHeaderNavigation(),
   ]);
+  const navigationSnapshot = await getNavigationEligibilitySnapshot(locale);
   const urlOptions = { locale };
+  const canShowPage = (key: StaticPageKey) =>
+    canExposeStaticNavigationTarget(navigationSnapshot, key);
+  const flattenCategories = (items: NavigationCategoryTree[]): NavigationCategoryTree[] =>
+    items.flatMap((item) => [item, ...flattenCategories(item.children)]);
+  const categoriesBySlug = new Map(
+    flattenCategories(navigationCategories).map((category) => [category.slug, category])
+  );
+  const localizedCategoryLink = (slug: string, fallbackName: string) => {
+    const category = categoriesBySlug.get(slug);
+    if (!category) return locale === DEFAULT_LOCALE
+      ? { name: fallbackName, href: categoryUrl(slug, urlOptions) }
+      : null;
+    const localized = getPublishedNavigationCategory(navigationSnapshot, category._id);
+    if (!localized) return null;
+    return {
+      name: localized.title || fallbackName,
+      href: categoryUrl(slug, urlOptions),
+    };
+  };
   const socialLinks = getEnabledSocialMediaLinks(contactSettings);
 
   const baseFooterSections: FooterSection[] = [
     {
       title: footer("company"),
       links: [
-        { name: common("home"), href: homeUrl(urlOptions) },
-        { name: common("products"), href: productsUrl(urlOptions) },
-        { name: common("categories"), href: categoriesUrl(urlOptions) },
-        { name: common("blog"), href: blogUrl(urlOptions) },
+        ...(canShowPage("home") ? [{ name: common("home"), href: homeUrl(urlOptions) }] : []),
+        ...(canShowPage("products") ? [{ name: common("products"), href: productsUrl(urlOptions) }] : []),
+        ...(canShowPage("categories") ? [{ name: common("categories"), href: categoriesUrl(urlOptions) }] : []),
+        ...(canShowPage("blog") ? [{ name: common("blog"), href: blogUrl(urlOptions) }] : []),
       ],
     },
     {
       title: common("products"),
       links: [
-        { name: footer("ringTerminals"), href: categoryUrl("ring-terminals", urlOptions) },
-        { name: footer("forkTerminals"), href: categoryUrl("fork-terminals", urlOptions) },
-        { name: footer("spadeTerminals"), href: categoryUrl("spade-terminals", urlOptions) },
-        {
-          name: footer("quickDisconnectTerminals"),
-          href: categoryUrl("quick-disconnect-terminals", urlOptions),
-        },
-      ],
+        localizedCategoryLink("ring-terminals", footer("ringTerminals")),
+        localizedCategoryLink("fork-terminals", footer("forkTerminals")),
+        localizedCategoryLink("spade-terminals", footer("spadeTerminals")),
+        localizedCategoryLink("quick-disconnect-terminals", footer("quickDisconnectTerminals")),
+      ].filter((link): link is FooterLink => Boolean(link)),
     },
     {
       title: footer("support"),
       links: [
-        { name: footer("contactSupport"), href: contactUrl(urlOptions) },
-        { name: footer("submitRfq"), href: requestQuoteUrl(urlOptions) },
-        { name: footer("searchProducts"), href: searchUrl(undefined, urlOptions) },
+        ...(canShowPage("contact") ? [
+          { name: footer("contactSupport"), href: contactUrl(urlOptions) },
+          { name: footer("submitRfq"), href: requestQuoteUrl(urlOptions) },
+        ] : []),
+        ...(locale === DEFAULT_LOCALE ? [{ name: footer("searchProducts"), href: searchUrl(undefined, urlOptions) }] : []),
       ],
     },
   ];
 
   const contactLinks: FooterLink[] = [
-    { name: footer("contactForm"), href: contactUrl(urlOptions) },
+    ...(canShowPage("contact") ? [{ name: footer("contactForm"), href: contactUrl(urlOptions) }] : []),
     ...(contactSettings.email.enabled && contactSettings.email.value
       ? [
           {
@@ -115,7 +138,7 @@ export default async function Footer() {
       title: common("contact"),
       links: contactLinks,
     },
-  ];
+  ].filter((section) => section.links.length > 0);
 
   const addressLines =
     contactSettings.address.enabled && contactSettings.address.lines.length > 0
@@ -222,30 +245,30 @@ export default async function Footer() {
             </p>
 
             <div className="flex space-x-6">
-              <Link
+              {canShowPage("resources") && <Link
                 href={resourcesUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 {footer("documentationRequests")}
-              </Link>
-              <Link
+              </Link>}
+              {canShowPage("privacy-policy") && <Link
                 href={privacyPolicyUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 {footer("privacyPolicy")}
-              </Link>
-              <Link
+              </Link>}
+              {canShowPage("contact") && <Link
                 href={contactUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 {common("contact")}
-              </Link>
-              <Link
+              </Link>}
+              {canShowPage("contact") && <Link
                 href={requestQuoteUrl(urlOptions)}
                 className="text-sm text-slate-400 hover:text-blue-300 transition-colors"
               >
                 {footer("rfq")}
-              </Link>
+              </Link>}
             </div>
           </div>
         </div>

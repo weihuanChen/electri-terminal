@@ -24,6 +24,9 @@ import {
   type StoredLanguageWorkflow,
   type ReadinessSource,
   isStaticPageStructuredContent,
+  auditNavigationTargets,
+  auditLocalizedInternalLinks,
+  buildNavigationEligibilitySnapshot,
 } from "@/lib/i18n";
 import { buildLocaleReleaseGscLinkIntegrityReport } from "@/lib/sitemap";
 
@@ -1699,12 +1702,13 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
   }
 
   if (nextStatus === "published" || requestedGscSubmission) {
-    const [localizations, categories, families, products] = await Promise.all([
+    const [localizations, categories, families, products, articles] = await Promise.all([
       client.query("queries/modules/localizations:listLocalizations", { locale: localeValue, limit: 500 }),
       client.query("queries/modules/categories:listCategories", { status: "published", limit: 500 }),
       client.query("queries/modules/products:listProductFamilies", { status: "published", limit: 500 }),
       client.query("queries/modules/products:listProducts", { status: "published", limit: 500 }),
-    ]) as [Doc<"localizations">[], Doc<"categories">[], Doc<"productFamilies">[], Doc<"products">[]];
+      client.query("queries/modules/articles:listArticles", { status: "published", limit: 200 }),
+    ]) as [Doc<"localizations">[], Doc<"categories">[], Doc<"productFamilies">[], Doc<"products">[], Doc<"articles">[]];
     const readinessSources: ReadinessSource[] = [
       ...STATIC_PAGE_DEFINITIONS.map((page) => ({
         entityType: "staticPage" as const,
@@ -1724,6 +1728,37 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
     });
     if (!readiness.ready) {
       redirect(`/admin/settings/languages?locale=${localeValue}&error=content_readiness_failed&blockers=${readiness.blockers.length}`);
+    }
+    const navigationSnapshot = buildNavigationEligibilitySnapshot(
+      localeValue,
+      localizations
+    );
+    const navigationIssues = auditNavigationTargets({
+      snapshot: navigationSnapshot,
+      staticPageKeys: [...LANGUAGE_CONFIGS[localeValue].requiredL1PageKeys],
+      categorySourceIds: categories
+        .filter((category) => category.isVisibleInNav)
+        .map((category) => String(category._id)),
+    });
+    if (navigationIssues.length > 0) {
+      redirect(
+        `/admin/settings/languages?locale=${localeValue}&error=navigation_gate_failed&blockers=${navigationIssues.length}`
+      );
+    }
+    const internalLinkIssues = auditLocalizedInternalLinks({
+      locale: localeValue,
+      records: localizations,
+      sources: [
+        ...categories.map((item) => ({ entityType: "category" as const, sourceId: String(item._id), slug: item.slug })),
+        ...families.map((item) => ({ entityType: "family" as const, sourceId: String(item._id), slug: item.slug })),
+        ...products.map((item) => ({ entityType: "product" as const, sourceId: String(item._id), slug: item.slug })),
+        ...articles.map((item) => ({ entityType: "article" as const, sourceId: String(item._id), slug: item.slug })),
+      ],
+    });
+    if (internalLinkIssues.length > 0) {
+      redirect(
+        `/admin/settings/languages?locale=${localeValue}&error=internal_link_gate_failed&blockers=${internalLinkIssues.length}`
+      );
     }
 
     const report = await buildLocaleReleaseGscLinkIntegrityReport(localeValue);

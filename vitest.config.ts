@@ -19,6 +19,8 @@ export default defineConfig({
         "lib/i18n/seoOutput.ts",
         "lib/i18n/gscLinkIntegrityGate.ts",
         "lib/i18n/localizedContentOverlay.ts",
+        "lib/i18n/navigationSafety.ts",
+        "lib/i18n/internalLinkSafety.ts",
         "lib/i18n/readiness.ts",
         "lib/i18n/staticPageContent.ts",
       ],

@@ -26,7 +26,7 @@ import {
   searchUrl,
   selectionGuideUrl,
 } from "@/lib/routes";
-import type { Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, type Locale, type StaticPageKey } from "@/lib/i18n/config";
 
 interface HeaderCategory {
   name: string;
@@ -36,6 +36,7 @@ interface HeaderCategory {
 
 interface HeaderClientProps {
   locale: Locale;
+  availableStaticPages: StaticPageKey[];
   productCategories: HeaderCategory[];
   socialLink?: {
     platform: string;
@@ -46,12 +47,13 @@ interface HeaderClientProps {
 
 interface NavItem {
   name: string;
-  href: string;
+  href?: string;
   children?: HeaderCategory[];
 }
 
 export default function HeaderClient({
   locale,
+  availableStaticPages,
   productCategories,
   socialLink = null,
 }: HeaderClientProps) {
@@ -60,19 +62,21 @@ export default function HeaderClient({
   const urlOptions = { locale };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const canShowPage = (key: StaticPageKey) =>
+    locale === DEFAULT_LOCALE || availableStaticPages.includes(key);
 
   const navItems: NavItem[] = [
-    {
+    ...(canShowPage("products") || productCategories.length > 0 ? [{
       name: common("products"),
-      href: productsUrl(urlOptions),
+      href: canShowPage("products") ? productsUrl(urlOptions) : undefined,
       children: productCategories,
-    },
-    { name: common("categories"), href: categoriesUrl(urlOptions) },
-    { name: navigation("selectionGuide"), href: selectionGuideUrl(urlOptions) },
-    { name: navigation("manufacturing"), href: manufacturingUrl(urlOptions) },
-    { name: navigation("quality"), href: qualityCertificationsUrl(urlOptions) },
-    { name: common("blog"), href: blogUrl(urlOptions) },
-    { name: common("contact"), href: contactUrl(urlOptions) },
+    }] : []),
+    ...(canShowPage("categories") ? [{ name: common("categories"), href: categoriesUrl(urlOptions) }] : []),
+    ...(canShowPage("selection-guide") ? [{ name: navigation("selectionGuide"), href: selectionGuideUrl(urlOptions) }] : []),
+    ...(canShowPage("manufacturing") ? [{ name: navigation("manufacturing"), href: manufacturingUrl(urlOptions) }] : []),
+    ...(canShowPage("quality-certifications") ? [{ name: navigation("quality"), href: qualityCertificationsUrl(urlOptions) }] : []),
+    ...(canShowPage("blog") ? [{ name: common("blog"), href: blogUrl(urlOptions) }] : []),
+    ...(canShowPage("contact") ? [{ name: common("contact"), href: contactUrl(urlOptions) }] : []),
   ];
 
   const handleDropdownToggle = (itemName: string) => {
@@ -94,7 +98,7 @@ export default function HeaderClient({
     >
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex h-[72px] items-center justify-between">
-          <Link href={homeUrl(urlOptions)} className="flex items-center space-x-2">
+          {canShowPage("home") ? <Link href={homeUrl(urlOptions)} className="flex items-center space-x-2">
             <Image
               src="/electri-terminal-logo-white.svg"
               alt="Electri Terminal"
@@ -105,7 +109,10 @@ export default function HeaderClient({
             <span className="hidden text-base font-semibold text-slate-100 sm:block">
               Electri Terminal
             </span>
-          </Link>
+          </Link> : <div className="flex items-center space-x-2">
+            <Image src="/electri-terminal-logo-white.svg" alt="Electri Terminal" width={128} height={71} className="h-8 w-auto" />
+            <span className="hidden text-base font-semibold text-slate-100 sm:block">Electri Terminal</span>
+          </div>}
 
           <nav className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
@@ -143,14 +150,14 @@ export default function HeaderClient({
                           <div 
                             className="flex items-center justify-between bg-slate-100 px-8 py-4 border-b border-slate-200"
                           >
-                            <Link
+                            {item.href && <Link
                               href={item.href}
                               className="group inline-flex items-center gap-2 text-sm font-bold text-slate-950 hover:text-orange-600 transition-colors"
                               onClick={() => setActiveDropdown(null)}
                             >
                               {navigation("exploreAllProducts")}
                               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </Link>
+                            </Link>}
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-slate-200 px-2.5 py-1 rounded-none">
                               {common("categories")}
                             </span>
@@ -232,25 +239,25 @@ export default function HeaderClient({
                     )}
                   </>
                 ) : (
-                  <Link
+                  item.href ? <Link
                     href={item.href}
                     className="block px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-orange-500"
                   >
                     {item.name}
-                  </Link>
+                  </Link> : null
                 )}
               </div>
             ))}
           </nav>
 
           <div className="flex items-center space-x-2">
-            <Link
+            {locale === DEFAULT_LOCALE && <Link
               href={searchUrl(undefined, urlOptions)}
               className="p-2 text-slate-300 hover:text-orange-500 transition-colors"
               aria-label={common("search")}
             >
               <Search className="h-4 w-4" />
-            </Link>
+            </Link>}
 
             <button
               className="hidden sm:flex p-2 text-slate-300 hover:text-orange-500 transition-colors items-center space-x-1"
@@ -273,12 +280,12 @@ export default function HeaderClient({
               </a>
             )}
 
-            <Link
+            {canShowPage("contact") && <Link
               href={requestQuoteUrl(urlOptions)}
               className="hidden sm:inline-flex btn btn-primary btn-sm"
             >
               {navigation("requestQuote")}
-            </Link>
+            </Link>}
 
             <button
               className="lg:hidden p-2 text-slate-300 hover:text-white"
@@ -334,13 +341,13 @@ export default function HeaderClient({
                       </button>
                       {activeDropdown === item.name && (
                         <div className="mt-1 space-y-3 border-l border-slate-700 pl-3">
-                          <Link
+                          {item.href && <Link
                             href={item.href}
                             className="block px-3 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:text-orange-500"
                             onClick={closeMenu}
                           >
                             {navigation("productDirectory")}
-                          </Link>
+                          </Link>}
 
                           {item.children.map((category) => (
                             <div key={category.href} className="space-y-1">
@@ -372,13 +379,13 @@ export default function HeaderClient({
                       )}
                     </>
                   ) : (
-                    <Link
+                    item.href ? <Link
                       href={item.href}
                       className="block px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-800 hover:text-orange-500"
                       onClick={closeMenu}
                     >
                       {item.name}
-                    </Link>
+                    </Link> : null
                   )}
                 </div>
               ))}
