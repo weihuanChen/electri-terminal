@@ -51,6 +51,7 @@ const navItems: NavItem[] = [
     icon: Languages,
     children: [
       { label: "Overview", href: "/admin/localizations" },
+      { label: "L1 Static Pages", href: "/admin/localizations/static-pages" },
       { label: "Categories", href: "/admin/localizations/categories" },
       { label: "Families", href: "/admin/localizations/families" },
       { label: "Products", href: "/admin/localizations/products" },
@@ -194,7 +195,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                   <div className="ml-8 mt-1 space-y-1 border-l border-zinc-200 pl-3 dark:border-zinc-800">
                     {item.children?.map((child) => {
                       const childActive =
-                        pathname === child.href || pathname.startsWith(`${child.href}/`);
+                        child.href === item.href
+                          ? pathname === child.href
+                          : pathname === child.href || pathname.startsWith(`${child.href}/`);
                       return (
                         <Link
                           key={child.href}

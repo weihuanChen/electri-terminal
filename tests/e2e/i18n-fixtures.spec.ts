@@ -6,6 +6,21 @@ test.describe("isolated Convex localization fixtures", () => {
     "Runs only against the isolated local Convex backend."
   );
 
+  test("renders a published structured Russian homepage", async ({ page }) => {
+    const response = await page.goto("/ru");
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+    await expect(page).toHaveTitle("Тестовая главная страница | Electri Terminal");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Надежные промышленные соединения" })
+    ).toBeVisible();
+    await expect(page.getByText("Русский текст главной страницы.")).toBeVisible();
+    await expect(page.locator("#hero").getByRole("link", { name: "Связаться с нами" })).toHaveAttribute(
+      "href",
+      "/ru/contact#request-quote"
+    );
+  });
+
   test("renders a published Russian product from deterministic fixtures", async ({
     page,
   }) => {
@@ -19,10 +34,10 @@ test.describe("isolated Convex localization fixtures", () => {
     await expect(
       page.getByText("Русское описание тестовой клеммы.").first()
     ).toBeVisible();
-    await expect(page.getByText("Информация о продукте", { exact: true })).toBeVisible();
-    await expect(page.getByText("Обзор продукта", { exact: true })).toBeVisible();
+    await expect(page.getByText("Описание изделия", { exact: true })).toBeVisible();
+    await expect(page.getByText("Обзор изделия", { exact: true })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Запросить предложение" }).first()
+      page.getByRole("link", { name: "Запросить коммерческое предложение" }).first()
     ).toBeVisible();
   });
 

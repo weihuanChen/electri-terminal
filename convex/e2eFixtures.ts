@@ -7,7 +7,7 @@ const MISSING_PRODUCT_SLUG = "e2e-missing-translation-terminal";
 
 async function deleteLocalizationsForSource(
   ctx: MutationCtx,
-  entityType: "category" | "family" | "product",
+  entityType: "staticPage" | "category" | "family" | "product",
   sourceId: string
 ) {
   const records = await ctx.db
@@ -58,6 +58,7 @@ export const seed = mutation({
     }
 
     const now = 1_700_000_000_000;
+    await deleteLocalizationsForSource(ctx, "staticPage", "home");
     const categoryId = await ctx.db.insert("categories", {
       name: "E2E Terminal Components",
       slug: FIXTURE_CATEGORY_SLUG,
@@ -126,6 +127,34 @@ export const seed = mutation({
     };
     await ctx.db.insert("localizations", {
       ...commonLocalization,
+      entityType: "staticPage",
+      sourceId: "home",
+      title: "Тестовая главная страница",
+      seoTitle: "Тестовая главная страница | Electri Terminal",
+      seoDescription: "Детерминированная русская главная страница.",
+      localizedFields: {
+        headline: "Надежные промышленные соединения",
+        intro: "Русский текст главной страницы.",
+        content: {
+          schemaVersion: 1,
+          pageKey: "home",
+          sourcePath: "/",
+          blocks: [
+            {
+              id: "hero",
+              type: "section",
+              headings: [{ level: 1, text: "Надежные промышленные соединения" }],
+              paragraphs: ["Русский текст главной страницы."],
+              lists: [],
+              ctas: [{ label: "Связаться с нами", href: "/contact#request-quote" }],
+              children: [],
+            },
+          ],
+        },
+      },
+    });
+    await ctx.db.insert("localizations", {
+      ...commonLocalization,
       entityType: "category",
       sourceId: String(categoryId),
       title: "Компоненты E2E",
@@ -189,6 +218,7 @@ export const seed = mutation({
     }
 
     return {
+      homepageSeeded: true,
       categorySlug: FIXTURE_CATEGORY_SLUG,
       familySlug: FIXTURE_FAMILY_SLUG,
       publishedProductSlug: PUBLISHED_PRODUCT_SLUG,

@@ -15,10 +15,11 @@ import {
 } from "@/lib/contactConfig";
 import { getHomePageData } from "@/lib/publicData";
 import { contactUrl, productsUrl, requestQuoteUrl } from "@/lib/routes";
+import { getTranslations } from "next-intl/server";
 
 export default async function HomePageClient() {
-  const { categories, featuredProducts, applications, contactSettings } =
-    await getHomePageData();
+  const [{ categories, featuredProducts, applications, contactSettings }, common] =
+    await Promise.all([getHomePageData(), getTranslations("common")]);
 
   const primaryRingCategorySlugs = [
     "ring-terminals",
@@ -113,7 +114,7 @@ export default async function HomePageClient() {
   const contactLinks = [
     contactSettings.email.enabled && contactSettings.email.value
       ? {
-          label: "Email",
+          label: common("email"),
           value: contactSettings.email.value,
           href: `mailto:${contactSettings.email.value}`,
         }

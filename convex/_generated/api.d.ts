@@ -17,6 +17,7 @@ import type * as lib_attributes from "../lib/attributes.js";
 import type * as lib_categoryPageConfig from "../lib/categoryPageConfig.js";
 import type * as lib_familyPageConfig from "../lib/familyPageConfig.js";
 import type * as lib_localization from "../lib/localization.js";
+import type * as lib_localizationStale from "../lib/localizationStale.js";
 import type * as lib_siteSettings from "../lib/siteSettings.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as mutations from "../mutations.js";
@@ -74,6 +75,7 @@ declare const fullApi: ApiFromModules<{
   "lib/categoryPageConfig": typeof lib_categoryPageConfig;
   "lib/familyPageConfig": typeof lib_familyPageConfig;
   "lib/localization": typeof lib_localization;
+  "lib/localizationStale": typeof lib_localizationStale;
   "lib/siteSettings": typeof lib_siteSettings;
   "lib/validators": typeof lib_validators;
   mutations: typeof mutations;

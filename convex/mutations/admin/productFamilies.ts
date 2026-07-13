@@ -9,6 +9,7 @@ import {
   withUpdatedAt,
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
+import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
 
 const visualMediaType = v.union(
   v.literal("product"),
@@ -443,6 +444,15 @@ export const updateProductFamily = mutation({
         ...(args.pageConfig !== undefined ? { pageConfig: args.pageConfig } : {}),
       })
     );
+
+    await markChangedSourceLocalizationsStale({
+      ctx,
+      entityType: "family",
+      sourceId: String(args.id),
+      current,
+      updates: args,
+      translatableFieldKeys: ["name", "summary", "content", "highlights", "manualHeroImageAlt", "seoTitle", "seoDescription", "pageConfig"],
+    });
 
     return args.id;
   },

@@ -60,6 +60,7 @@ const STATIC_LOCALIZED_RENDERER_KINDS: ReadonlySet<LocalizedRouteKind> = new Set
   "category",
   "family",
   "product",
+  "staticPage",
 ]);
 
 export function registerLocalizedRouteRenderer(

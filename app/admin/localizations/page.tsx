@@ -17,6 +17,7 @@ import { queryAdmin } from "@/lib/convex-admin";
 import {
   DEFAULT_LOCALE,
   LANGUAGE_CONFIGS,
+  buildLocaleReadinessReport,
   LOCALIZATION_STATUS_TRANSITIONS,
   LOCALIZATION_STATUSES,
   STATIC_PAGE_DEFINITIONS,
@@ -27,6 +28,7 @@ import {
   type Locale,
   type LocalizationStatus,
   type StaticPageKey,
+  type ReadinessSource,
 } from "@/lib/i18n";
 import { DashboardLayout } from "../components/DashboardLayout";
 import {
@@ -567,6 +569,21 @@ export default async function LocalizationsPage({
   const coverageSummaries = targetLocales.map((locale) =>
     buildCoverageSummary(locale, sourceEntities, localizationByIdentity)
   );
+  const readinessSources: ReadinessSource[] = sourceEntities.map((source) => ({
+    entityType: source.entityType,
+    sourceId: source.sourceId,
+    label: source.label,
+    pageClass: source.className,
+    requiredForRelease:
+      source.className === "L2" ||
+      (source.entityType === "staticPage" &&
+        (LANGUAGE_CONFIGS.ru.requiredL1PageKeys as readonly StaticPageKey[]).includes(
+          source.sourceId as StaticPageKey
+        )),
+  }));
+  const readinessReports = targetLocales.map((locale) =>
+    buildLocaleReadinessReport({ locale, sources: readinessSources, localizations })
+  );
   const primaryCoverage = coverageSummaries[0];
   const publishedCount = localizations.filter(
     (localization) => localization.status === "published"
@@ -672,6 +689,44 @@ export default async function LocalizationsPage({
             <p className="mt-2 text-3xl font-bold text-rose-600">{staleCount}</p>
           </div>
         </div>
+
+        <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">发布就绪度</h2>
+              <p className="text-sm text-zinc-500">L1 必需页面与全部公开 L2 目录必须发布且无 blocker。</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {readinessReports.map((report) => (
+              <div key={report.locale} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-zinc-950 dark:text-zinc-50">
+                      {LANGUAGE_CONFIGS[report.locale].displayName}
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      Required {report.required.published}/{report.required.total} · L1 {report.totals.L1.published}/{report.totals.L1.total} · L2 {report.totals.L2.published}/{report.totals.L2.total}
+                    </p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${report.ready ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}>
+                    {report.ready ? "READY" : `${report.blockers.length} BLOCKERS`}
+                  </span>
+                </div>
+                {!report.ready && (
+                  <div className="mt-3 max-h-48 divide-y divide-zinc-100 overflow-auto rounded-md bg-zinc-50 px-3 dark:divide-zinc-800 dark:bg-zinc-950">
+                    {report.blockers.slice(0, 25).map((blocker) => (
+                      <div key={`${blocker.entityType}:${blocker.sourceId}`} className="flex items-center justify-between gap-3 py-2 text-xs">
+                        <span className="font-medium text-zinc-800 dark:text-zinc-200">{blocker.pageClass} · {blocker.label}</span>
+                        <span className="text-rose-600">{blocker.code} ({blocker.status})</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">

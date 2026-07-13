@@ -12,6 +12,7 @@ import FamilyPageClient, {
 import ProductPageClient, {
   type ProductPageData,
 } from "@/app/products/[slug]/ProductPageClient";
+import LocalizedStaticPage from "@/components/i18n/LocalizedStaticPage";
 import {
   buildCategoryStructuredData,
   resolveCategoryActiveFilters,
@@ -36,6 +37,7 @@ import {
   hasPublishedLocalization,
 } from "@/lib/i18n/localizedContentOverlay";
 import type { LocalizationRecordV2 } from "@/lib/i18n/localizationModel";
+import { isStaticPageStructuredContent } from "@/lib/i18n/staticPageContent";
 import {
   type LocalizedRendererContext,
   registerLocalizedRouteRenderer,
@@ -73,6 +75,22 @@ type L2LocalizationMaps = {
   product: Map<string, LocalizationRecordV2>;
   article: Map<string, LocalizationRecordV2>;
 };
+
+async function renderLocalizedStaticPage({ locale, route }: LocalizedRendererContext) {
+  if (route.kind !== "staticPage") notFound();
+  const localization = await queryPublicPage<LocalizationRecordV2 | null>(
+    "queries/modules/localizations:getLocalizationByEntityLocale",
+    { entityType: "staticPage", sourceId: route.pageKey, locale }
+  );
+  const content = localization?.localizedFields?.content;
+  if (localization?.status !== "published" || !isStaticPageStructuredContent(content)) {
+    notFound();
+  }
+  if (content.pageKey !== route.pageKey || content.sourcePath !== route.path) {
+    notFound();
+  }
+  return <LocalizedStaticPage content={content} locale={locale} />;
+}
 
 async function listPublishedLocalizations(
   locale: Locale,
@@ -411,3 +429,4 @@ async function renderLocalizedProduct({ locale, route }: LocalizedRendererContex
 registerLocalizedRouteRenderer("category", renderLocalizedCategory);
 registerLocalizedRouteRenderer("family", renderLocalizedFamily);
 registerLocalizedRouteRenderer("product", renderLocalizedProduct);
+registerLocalizedRouteRenderer("staticPage", renderLocalizedStaticPage);

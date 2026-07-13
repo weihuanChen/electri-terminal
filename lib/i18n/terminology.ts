@@ -16,7 +16,7 @@ export const TERMINOLOGY = {
     context: "Heading for structured technical attributes.",
   },
   requestQuote: {
-    preferred: { en: "Request a Quote", ru: "Запросить предложение" },
+    preferred: { en: "Request a Quote", ru: "Запросить коммерческое предложение" },
     context: "Primary commercial call to action.",
   },
   terminalBlock: {

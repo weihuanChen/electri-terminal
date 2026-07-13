@@ -132,6 +132,22 @@ function assertTransition(
   }
 }
 
+function assertPublishable(current: Doc<"localizations">) {
+  const fields = current.localizedFields ?? {};
+  const missingFields = (current.requiredFieldKeys ?? []).filter((key) => {
+    const value = key === "title" || key === "seoTitle" || key === "seoDescription"
+      ? current[key]
+      : fields[key];
+    return typeof value !== "string" || value.trim().length === 0;
+  });
+  if (missingFields.length > 0) {
+    throw new Error(`localization_required_fields_missing:${missingFields.join(",")}`);
+  }
+  if (current.validationIssues?.some((issue) => issue.severity === "blocker" && !issue.resolvedAt)) {
+    throw new Error("localization_has_unresolved_blockers");
+  }
+}
+
 async function getLocalizationByIdentity(
   ctx: MutationCtx,
   args: {
@@ -273,7 +289,13 @@ export const moveLocalizationStatus = mutation({
         );
         break;
       case "approved":
-        assertTransition(current, ["draft", "machine_ready", "review_required"], "approved");
+        assertTransition(
+          current,
+          current.entityType === "staticPage"
+            ? ["review_required"]
+            : ["draft", "machine_ready", "review_required"],
+          "approved"
+        );
         await ctx.db.patch(
           args.id,
           withUpdatedAt({
@@ -287,6 +309,7 @@ export const moveLocalizationStatus = mutation({
         break;
       case "published":
         assertTransition(current, ["approved"], "published");
+        assertPublishable(current);
         await ctx.db.patch(
           args.id,
           withUpdatedAt({

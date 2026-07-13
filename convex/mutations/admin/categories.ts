@@ -9,6 +9,7 @@ import {
   withUpdatedAt,
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
+import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
 
 export const createCategory = mutation({
   args: {
@@ -141,6 +142,15 @@ export const updateCategory = mutation({
         ...(hierarchyChanged ? { level, path } : {}),
       })
     );
+
+    await markChangedSourceLocalizationsStale({
+      ctx,
+      entityType: "category",
+      sourceId: String(args.id),
+      current,
+      updates: args,
+      translatableFieldKeys: ["name", "description", "shortDescription", "seoTitle", "seoDescription", "pageConfig"],
+    });
 
     return args.id;
   },

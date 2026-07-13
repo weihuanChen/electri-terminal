@@ -12,6 +12,9 @@ import {
 import { getAdminConvexClient } from "@/lib/convex-admin";
 import {
   DEFAULT_LOCALE,
+  LANGUAGE_CONFIGS,
+  STATIC_PAGE_DEFINITIONS,
+  buildLocaleReadinessReport,
   type LocaleStatus,
   type LocalizationStatus,
   getAllowedLanguageStatusTransitions,
@@ -19,6 +22,8 @@ import {
   isLocale,
   resolveLanguageWorkflow,
   type StoredLanguageWorkflow,
+  type ReadinessSource,
+  isStaticPageStructuredContent,
 } from "@/lib/i18n";
 import { buildLocaleReleaseGscLinkIntegrityReport } from "@/lib/sitemap";
 
@@ -1694,6 +1699,33 @@ export async function updateLanguageWorkflowAction(formData: FormData) {
   }
 
   if (nextStatus === "published" || requestedGscSubmission) {
+    const [localizations, categories, families, products] = await Promise.all([
+      client.query("queries/modules/localizations:listLocalizations", { locale: localeValue, limit: 500 }),
+      client.query("queries/modules/categories:listCategories", { status: "published", limit: 500 }),
+      client.query("queries/modules/products:listProductFamilies", { status: "published", limit: 500 }),
+      client.query("queries/modules/products:listProducts", { status: "published", limit: 500 }),
+    ]) as [Doc<"localizations">[], Doc<"categories">[], Doc<"productFamilies">[], Doc<"products">[]];
+    const readinessSources: ReadinessSource[] = [
+      ...STATIC_PAGE_DEFINITIONS.map((page) => ({
+        entityType: "staticPage" as const,
+        sourceId: page.key,
+        label: page.key,
+        pageClass: "L1" as const,
+        requiredForRelease: (LANGUAGE_CONFIGS[localeValue].requiredL1PageKeys as readonly string[]).includes(page.key),
+      })),
+      ...categories.map((item) => ({ entityType: "category" as const, sourceId: String(item._id), label: item.name, pageClass: "L2" as const, requiredForRelease: true })),
+      ...families.map((item) => ({ entityType: "family" as const, sourceId: String(item._id), label: item.name, pageClass: "L2" as const, requiredForRelease: true })),
+      ...products.map((item) => ({ entityType: "product" as const, sourceId: String(item._id), label: item.title, pageClass: "L2" as const, requiredForRelease: true })),
+    ];
+    const readiness = buildLocaleReadinessReport({
+      locale: localeValue,
+      sources: readinessSources,
+      localizations,
+    });
+    if (!readiness.ready) {
+      redirect(`/admin/settings/languages?locale=${localeValue}&error=content_readiness_failed&blockers=${readiness.blockers.length}`);
+    }
+
     const report = await buildLocaleReleaseGscLinkIntegrityReport(localeValue);
     gateReport = {
       reportId: report.reportId,
@@ -1967,6 +1999,66 @@ export async function saveProductLocalizationDraftAction(formData: FormData) {
       return localizedFields;
     },
   });
+}
+
+export async function saveStaticPageLocalizationDraftAction(formData: FormData) {
+  await requireAdmin();
+  const sourceId = str(formData, "sourceId");
+  const locale = str(formData, "locale");
+  const returnTo = str(formData, "returnTo");
+  if (!sourceId) redirectLocalizationAction(returnTo, { error: "source_id_required" });
+  if (!isLocale(locale) || locale === DEFAULT_LOCALE) {
+    redirectLocalizationAction(returnTo, { error: "invalid_locale" });
+  }
+
+  const localizedFields: Record<string, unknown> = {};
+  for (const key of ["headline", "intro", "primaryCta", "secondaryCta"]) {
+    const value = optionalStr(formData, key);
+    if (value) localizedFields[key] = value;
+  }
+  if (formData.has("contentJson")) {
+    try {
+      const content = optionalJsonObject(formData, "contentJson");
+      if (content && !isStaticPageStructuredContent(content)) {
+        redirectLocalizationAction(returnTo, { error: "invalid_static_page_content_schema" });
+      }
+      if (content) localizedFields.content = content;
+    } catch (error: unknown) {
+      redirectLocalizationAction(returnTo, { error: errorMessage(error) });
+    }
+  }
+
+  let savedId: string | undefined;
+  try {
+    savedId = (await getAdminConvexClient().mutation(
+      "mutations/admin/localizations:upsertLocalizationDraft",
+      {
+        entityType: "staticPage",
+        sourceId,
+        locale,
+        title: optionalStr(formData, "title"),
+        seoTitle: optionalStr(formData, "seoTitle"),
+        seoDescription: optionalStr(formData, "seoDescription"),
+        localizedFields,
+        requiredFieldKeys: ["title", "headline", "intro", "seoTitle", "seoDescription"],
+        translationMethod: "manual",
+        translatedBy: optionalStr(formData, "translatedBy") ?? "admin",
+        owner: optionalStr(formData, "owner"),
+        reviewRequired: true,
+        requiredForRelease: boolFromForm(formData, "requiredForRelease"),
+        reviewNotes: optionalStr(formData, "reviewNotes"),
+        workflowNotes: optionalStr(formData, "workflowNotes"),
+      }
+    )) as string;
+  } catch (error: unknown) {
+    redirectLocalizationAction(returnTo, { error: errorMessage(error), selected: savedId });
+  }
+
+  revalidatePath("/admin/localizations");
+  revalidatePath("/admin/localizations/static-pages");
+  revalidatePath(`/admin/localizations/static-pages/${sourceId}`);
+  revalidatePath(`/${locale}/${sourceId === "home" ? "" : sourceId}`);
+  redirectLocalizationAction(returnTo, { success: "static_page_localization_saved", selected: savedId });
 }
 
 async function isLocalizationStatusConfirmed(

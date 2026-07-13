@@ -7,6 +7,7 @@ const seedFixtures = makeFunctionReference<
   "mutation",
   Record<string, never>,
   {
+    homepageSeeded: boolean;
     publishedProductSlug: string;
   }
 >("e2eFixtures:seed");
@@ -24,13 +25,16 @@ export default async function globalSetup() {
 
   const client = new ConvexHttpClient("http://127.0.0.1:3210");
   const deadline = Date.now() + 60_000;
-  let fixtures: { publishedProductSlug: string } | undefined;
+  let fixtures: { homepageSeeded: boolean; publishedProductSlug: string } | undefined;
   let lastError: unknown;
 
   while (Date.now() < deadline) {
     try {
-      fixtures = await client.mutation(seedFixtures, {});
-      break;
+      const candidate = await client.mutation(seedFixtures, {});
+      if (candidate.homepageSeeded === true) {
+        fixtures = candidate;
+        break;
+      }
     } catch (error) {
       lastError = error;
       await new Promise((resolve) => setTimeout(resolve, 500));

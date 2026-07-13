@@ -10,6 +10,7 @@ import {
   withUpdatedAt,
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
+import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
 
 const visualMediaType = v.union(
   v.literal("product"),
@@ -175,6 +176,15 @@ export const updateProduct = mutation({
         ...(args.canonical !== undefined ? { canonical: args.canonical } : {}),
       })
     );
+
+    await markChangedSourceLocalizationsStale({
+      ctx,
+      entityType: "product",
+      sourceId: String(args.id),
+      current,
+      updates: args,
+      translatableFieldKeys: ["title", "shortTitle", "summary", "content", "featureBullets", "seoTitle", "seoDescription"],
+    });
 
     return args.id;
   },

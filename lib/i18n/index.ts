@@ -3,6 +3,8 @@ export * from "./gscLinkIntegrityGate";
 export * from "./languageWorkflow";
 export * from "./localizedContentOverlay";
 export * from "./localizationModel";
+export * from "./readiness";
+export * from "./staticPageContent";
 export * from "./localizedRenderer";
 export * from "./localizedRoutes";
 export * from "./routing";
