@@ -7,6 +7,8 @@ import * as catalog from "./catalog";
 import * as imports from "./imports";
 import * as inquiries from "./inquiries";
 import * as localizations from "./localizations";
+import * as localizationFoundation from "./localizationFoundation";
+import * as intentHierarchy from "./intentHierarchy";
 import * as navigation from "./navigation";
 import * as productFamilies from "./productFamilies";
 import * as products from "./products";
@@ -25,6 +27,8 @@ export {
   imports,
   inquiries,
   localizations,
+  localizationFoundation,
+  intentHierarchy,
   navigation,
   productFamilies,
   products,
@@ -43,6 +47,8 @@ export * from "./categories";
 export * from "./imports";
 export * from "./inquiries";
 export * from "./localizations";
+export * from "./localizationFoundation";
+export * from "./intentHierarchy";
 export * from "./navigation";
 export * from "./productFamilies";
 export * from "./products";

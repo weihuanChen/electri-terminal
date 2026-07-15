@@ -6,6 +6,8 @@ import * as categories from "./categories";
 import * as imports from "./imports";
 import * as inquiries from "./inquiries";
 import * as localizations from "./localizations";
+import * as localizationFoundation from "./localizationFoundation";
+import * as intentHierarchy from "./intentHierarchy";
 import * as navigation from "./navigation";
 import * as products from "./products";
 import * as relations from "./relations";
@@ -20,6 +22,8 @@ export {
   imports,
   inquiries,
   localizations,
+  localizationFoundation,
+  intentHierarchy,
   navigation,
   products,
   relations,
@@ -34,6 +38,8 @@ export * from "./categories";
 export * from "./imports";
 export * from "./inquiries";
 export * from "./localizations";
+export * from "./localizationFoundation";
+export * from "./intentHierarchy";
 export * from "./navigation";
 export * from "./products";
 export * from "./relations";

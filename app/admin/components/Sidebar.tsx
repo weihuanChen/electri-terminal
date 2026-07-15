@@ -24,6 +24,8 @@ import {
   X,
   LogOut,
   User,
+  FlaskConical,
+  GitBranch,
 } from "lucide-react";
 
 interface NavItem {
@@ -43,18 +45,49 @@ const navItems: NavItem[] = [
   { label: "Families", href: "/admin/families", icon: Layers },
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Assets", href: "/admin/assets", icon: FileStack },
-  { label: "Templates", href: "/admin/attribute-templates", icon: SlidersHorizontal },
+  {
+    label: "Templates",
+    href: "/admin/attribute-templates",
+    icon: SlidersHorizontal,
+  },
   { label: "Articles", href: "/admin/articles", icon: FileText },
+  {
+    label: "Intent Management",
+    href: "/admin/intents",
+    icon: GitBranch,
+    children: [
+      { label: "Overview", href: "/admin/intents" },
+      {
+        label: "Families & Products",
+        href: "/admin/intents/families-products",
+      },
+      { label: "L1 Static Pages", href: "/admin/intents/static-pages" },
+      { label: "Categories", href: "/admin/intents/categories" },
+      { label: "Articles (L3)", href: "/admin/intents/articles" },
+    ],
+  },
   {
     label: "Localizations",
     href: "/admin/localizations",
     icon: Languages,
     children: [
       { label: "Overview", href: "/admin/localizations" },
+      { label: "Localization Strategy", href: "/admin/localizations/strategy" },
       { label: "L1 Static Pages", href: "/admin/localizations/static-pages" },
       { label: "Categories", href: "/admin/localizations/categories" },
       { label: "Families", href: "/admin/localizations/families" },
       { label: "Products", href: "/admin/localizations/products" },
+    ],
+  },
+  {
+    label: "Prompt Lab",
+    href: "/admin/prompt-lab",
+    icon: FlaskConical,
+    children: [
+      { label: "Workbench", href: "/admin/prompt-lab" },
+      { label: "History", href: "/admin/prompt-lab/history" },
+      { label: "Presets & Specs", href: "/admin/prompt-lab/presets" },
+      { label: "Providers", href: "/admin/prompt-lab/providers" },
     ],
   },
   { label: "Authors", href: "/admin/authors", icon: UserRound },
@@ -74,7 +107,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    "/admin/intents": pathname.startsWith("/admin/intents"),
     "/admin/localizations": pathname.startsWith("/admin/localizations"),
+    "/admin/prompt-lab": pathname.startsWith("/admin/prompt-lab"),
   });
 
   return (
@@ -113,8 +148,12 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                 <span className="text-white font-bold text-sm">EP</span>
               </div>
               <div>
-                <h1 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Electri Pro</h1>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Admin Panel</p>
+                <h1 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">
+                  Electri Pro
+                </h1>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Admin Panel
+                </p>
               </div>
             </div>
           )}
@@ -150,9 +189,10 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                     }
                     className={`
                       flex w-full items-center gap-3 px-3 py-2.5 rounded-lg transition-all
-                      ${isActive
-                        ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
-                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      ${
+                        isActive
+                          ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                       }
                     `}
                   >
@@ -170,9 +210,10 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`
                       flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
-                      ${isActive
-                        ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
-                        : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      ${
+                        isActive
+                          ? "bg-slate-900 dark:bg-slate-800 text-white shadow-sm"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                       }
                       ${collapsed ? "justify-center" : ""}
                     `}
@@ -181,7 +222,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                     <Icon className="h-5 w-5 shrink-0" />
                     {!collapsed && (
                       <>
-                        <span className="font-medium text-sm">{item.label}</span>
+                        <span className="font-medium text-sm">
+                          {item.label}
+                        </span>
                         {item.badge && (
                           <span className="ml-auto bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
                             {item.badge}
@@ -197,7 +240,8 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                       const childActive =
                         child.href === item.href
                           ? pathname === child.href
-                          : pathname === child.href || pathname.startsWith(`${child.href}/`);
+                          : pathname === child.href ||
+                            pathname.startsWith(`${child.href}/`);
                       return (
                         <Link
                           key={child.href}
@@ -205,9 +249,10 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                           onClick={() => setMobileMenuOpen(false)}
                           className={`
                             block rounded-md px-3 py-2 text-sm transition-colors
-                            ${childActive
-                              ? "bg-zinc-100 font-semibold text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
-                              : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                            ${
+                              childActive
+                                ? "bg-zinc-100 font-semibold text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
+                                : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                             }
                           `}
                         >
@@ -240,8 +285,12 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                   A
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">Admin</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">admin@electripro.com</p>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                    Admin
+                  </p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                    admin@electripro.com
+                  </p>
                 </div>
               </button>
 
@@ -254,7 +303,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                     className="flex items-center gap-3 px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                   >
                     <User className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
-                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Profile Settings</span>
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      Profile Settings
+                    </span>
                   </Link>
                   <form action="/api/auth/logout" method="POST">
                     <button
@@ -262,7 +313,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                       className="flex items-center gap-3 w-full px-4 py-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-left"
                     >
                       <LogOut className="h-4 w-4 text-zinc-600 dark:text-zinc-400" />
-                      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Logout</span>
+                      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        Logout
+                      </span>
                     </button>
                   </form>
                 </div>

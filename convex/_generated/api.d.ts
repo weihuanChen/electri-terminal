@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as actions_llmLab from "../actions/llmLab.js";
 import type * as actions_r2 from "../actions/r2.js";
 import type * as admin_index from "../admin/index.js";
 import type * as e2eFixtures from "../e2eFixtures.js";
@@ -18,9 +19,11 @@ import type * as lib_attributes from "../lib/attributes.js";
 import type * as lib_categoryPageConfig from "../lib/categoryPageConfig.js";
 import type * as lib_familyPageConfig from "../lib/familyPageConfig.js";
 import type * as lib_localization from "../lib/localization.js";
+import type * as lib_localizationFoundation from "../lib/localizationFoundation.js";
 import type * as lib_localizationStale from "../lib/localizationStale.js";
 import type * as lib_siteSettings from "../lib/siteSettings.js";
 import type * as lib_validators from "../lib/validators.js";
+import type * as llmLab from "../llmLab.js";
 import type * as mutations from "../mutations.js";
 import type * as mutations_admin from "../mutations/admin.js";
 import type * as mutations_admin_articles from "../mutations/admin/articles.js";
@@ -32,6 +35,8 @@ import type * as mutations_admin_categories from "../mutations/admin/categories.
 import type * as mutations_admin_imports from "../mutations/admin/imports.js";
 import type * as mutations_admin_index from "../mutations/admin/index.js";
 import type * as mutations_admin_inquiries from "../mutations/admin/inquiries.js";
+import type * as mutations_admin_intentHierarchy from "../mutations/admin/intentHierarchy.js";
+import type * as mutations_admin_localizationFoundation from "../mutations/admin/localizationFoundation.js";
 import type * as mutations_admin_localizations from "../mutations/admin/localizations.js";
 import type * as mutations_admin_navigation from "../mutations/admin/navigation.js";
 import type * as mutations_admin_productFamilies from "../mutations/admin/productFamilies.js";
@@ -52,6 +57,8 @@ import type * as queries_modules_categories from "../queries/modules/categories.
 import type * as queries_modules_imports from "../queries/modules/imports.js";
 import type * as queries_modules_index from "../queries/modules/index.js";
 import type * as queries_modules_inquiries from "../queries/modules/inquiries.js";
+import type * as queries_modules_intentHierarchy from "../queries/modules/intentHierarchy.js";
+import type * as queries_modules_localizationFoundation from "../queries/modules/localizationFoundation.js";
 import type * as queries_modules_localizations from "../queries/modules/localizations.js";
 import type * as queries_modules_navigation from "../queries/modules/navigation.js";
 import type * as queries_modules_products from "../queries/modules/products.js";
@@ -67,6 +74,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "actions/llmLab": typeof actions_llmLab;
   "actions/r2": typeof actions_r2;
   "admin/index": typeof admin_index;
   e2eFixtures: typeof e2eFixtures;
@@ -77,9 +85,11 @@ declare const fullApi: ApiFromModules<{
   "lib/categoryPageConfig": typeof lib_categoryPageConfig;
   "lib/familyPageConfig": typeof lib_familyPageConfig;
   "lib/localization": typeof lib_localization;
+  "lib/localizationFoundation": typeof lib_localizationFoundation;
   "lib/localizationStale": typeof lib_localizationStale;
   "lib/siteSettings": typeof lib_siteSettings;
   "lib/validators": typeof lib_validators;
+  llmLab: typeof llmLab;
   mutations: typeof mutations;
   "mutations/admin": typeof mutations_admin;
   "mutations/admin/articles": typeof mutations_admin_articles;
@@ -91,6 +101,8 @@ declare const fullApi: ApiFromModules<{
   "mutations/admin/imports": typeof mutations_admin_imports;
   "mutations/admin/index": typeof mutations_admin_index;
   "mutations/admin/inquiries": typeof mutations_admin_inquiries;
+  "mutations/admin/intentHierarchy": typeof mutations_admin_intentHierarchy;
+  "mutations/admin/localizationFoundation": typeof mutations_admin_localizationFoundation;
   "mutations/admin/localizations": typeof mutations_admin_localizations;
   "mutations/admin/navigation": typeof mutations_admin_navigation;
   "mutations/admin/productFamilies": typeof mutations_admin_productFamilies;
@@ -111,6 +123,8 @@ declare const fullApi: ApiFromModules<{
   "queries/modules/imports": typeof queries_modules_imports;
   "queries/modules/index": typeof queries_modules_index;
   "queries/modules/inquiries": typeof queries_modules_inquiries;
+  "queries/modules/intentHierarchy": typeof queries_modules_intentHierarchy;
+  "queries/modules/localizationFoundation": typeof queries_modules_localizationFoundation;
   "queries/modules/localizations": typeof queries_modules_localizations;
   "queries/modules/navigation": typeof queries_modules_navigation;
   "queries/modules/products": typeof queries_modules_products;
