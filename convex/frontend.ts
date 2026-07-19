@@ -1692,6 +1692,142 @@ export const listSitemapContent = query({
   },
 });
 
+// Compact, published-only content used to build the curated /llms.txt index.
+// Keep full article and product bodies out of this response so the route stays
+// inexpensive even as the catalog grows.
+export const listLlmsTxtContent = query({
+  args: {},
+  handler: async (ctx) => {
+    const [categories, families, products, articleCards] = await Promise.all([
+      ctx.db
+        .query("categories")
+        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+        .collect(),
+      ctx.db
+        .query("productFamilies")
+        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+        .collect(),
+      ctx.db
+        .query("products")
+        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+        .collect(),
+      ctx.db
+        .query("articleCards")
+        .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+        .collect(),
+    ]);
+    const articles = articleCards.length > 0
+      ? articleCards
+      : await ctx.db
+          .query("articles")
+          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+          .collect();
+
+    const familyCountByCategoryId = new Map<string, number>();
+    const productCountByCategoryId = new Map<string, number>();
+    const productCountByFamilyId = new Map<string, number>();
+
+    for (const family of families) {
+      const categoryId = String(family.categoryId);
+      familyCountByCategoryId.set(
+        categoryId,
+        (familyCountByCategoryId.get(categoryId) ?? 0) + 1
+      );
+    }
+
+    for (const product of products) {
+      const categoryId = String(product.categoryId);
+      const familyId = String(product.familyId);
+      productCountByCategoryId.set(
+        categoryId,
+        (productCountByCategoryId.get(categoryId) ?? 0) + 1
+      );
+      productCountByFamilyId.set(
+        familyId,
+        (productCountByFamilyId.get(familyId) ?? 0) + 1
+      );
+    }
+
+    return {
+      categories: categories.map((category) => ({
+        id: String(category._id),
+        slug: category.slug,
+        title: category.name,
+        description:
+          category.seoDescription ||
+          category.shortDescription ||
+          category.description,
+        canonical: category.canonical,
+        level: category.level,
+        isVisibleInNav: category.isVisibleInNav,
+        sortOrder: category.sortOrder,
+        relatedCount:
+          (familyCountByCategoryId.get(String(category._id)) ?? 0) +
+          (productCountByCategoryId.get(String(category._id)) ?? 0),
+        contentSignalCount:
+          Number(Boolean(category.pageConfig)) +
+          Number(Boolean(category.description || category.shortDescription)),
+        updatedAt: category.updatedAt,
+      })),
+      families: families.map((family) => ({
+        id: String(family._id),
+        categoryId: String(family.categoryId),
+        slug: family.slug,
+        title: family.name,
+        description: family.seoDescription || family.summary,
+        canonical: family.canonical,
+        sortOrder: family.sortOrder,
+        relatedCount: productCountByFamilyId.get(String(family._id)) ?? 0,
+        contentSignalCount:
+          Number(Boolean(family.pageConfig)) +
+          Number(Boolean(family.content)) +
+          Number(Boolean(family.highlights?.length)),
+        updatedAt: family.updatedAt,
+      })),
+      products: products
+        .filter((product) => product.isFeatured)
+        .map((product) => ({
+          id: String(product._id),
+          categoryId: String(product.categoryId),
+          familyId: String(product.familyId),
+          slug: product.slug,
+          title: product.title,
+          description: product.seoDescription || product.summary,
+          canonical: product.canonical,
+          sortOrder: product.sortOrder,
+          isFeatured: product.isFeatured,
+          contentSignalCount:
+            Number(Boolean(product.content)) +
+            Number(Boolean(product.featureBullets?.length)) +
+            Number(Boolean(product.attributes)),
+          updatedAt: product.updatedAt,
+        })),
+      articles: articles.map((article) => ({
+        id: "articleId" in article ? String(article.articleId) : String(article._id),
+        slug: article.slug,
+        title: article.title,
+        description:
+          "seoDescription" in article
+            ? article.seoDescription || article.excerpt
+            : article.excerpt,
+        canonical: article.canonical,
+        articleType: article.type,
+        featured: article.featured ?? false,
+        relatedCount:
+          (article.relatedCategoryIds?.length ?? 0) +
+          (article.relatedFamilyIds?.length ?? 0) +
+          (article.relatedProductIds?.length ?? 0),
+        contentSignalCount:
+          Number(Boolean(article.excerpt)) +
+          Number(Boolean(article.coverImage)) +
+          Number(Boolean(article.tagNames?.length)),
+        publishedAt: article.publishedAt,
+        updatedAt: article.updatedAt,
+      })),
+    };
+  },
+});
+
 export const listPublicResources = query({
   args: {
     type: v.optional(
