@@ -38,6 +38,15 @@ export type StudSizeRow = {
   holeSizeInch: string;
 };
 
+export type SelectionGuideReference = {
+  id: number;
+  organization: string;
+  title: string;
+  url: string;
+  sourceType: "Standard" | "Certification guidance" | "Manufacturer reference";
+  supports: string;
+};
+
 export const selectionGuideImages = {
   namingDiagramTerminal:
     "https://assets.electriterminal.com/factory/ring-terminal-naming-convention-diagram.webp",
@@ -385,3 +394,103 @@ export const readMoreItems = [
     body: "Stud and hole mismatch can reduce fastening stability and increase contact risk during operation.",
   },
 ] as const;
+
+export const selectionGuideReferences: SelectionGuideReference[] = [
+  {
+    id: 1,
+    organization: "IEC",
+    title: "IEC 60352-2:2024 — Crimped connections",
+    url: "https://webstore.iec.ch/en/publication/68899",
+    sourceType: "Standard",
+    supports:
+      "General requirements, test methods, and practical guidance for uninsulated and pre-insulated crimped connections within the standard's stated conductor range.",
+  },
+  {
+    id: 2,
+    organization: "UL Solutions",
+    title: "Connector Certification Services",
+    url: "https://www.ul.com/services/connector-certification-services",
+    sourceType: "Certification guidance",
+    supports:
+      "Applicable UL and IEC certification families for wire connectors, quick-connect terminals, and terminal blocks.",
+  },
+  {
+    id: 3,
+    organization: "DIN Media",
+    title: "DIN 46234:1980-03 — Uninsulated ring terminal ends for copper conductors",
+    url: "https://www.dinmedia.de/en/standard/din-46234/832047",
+    sourceType: "Standard",
+    supports: "Terminology and dimensional standard context for uninsulated ring terminal ends.",
+  },
+  {
+    id: 4,
+    organization: "DIN Media",
+    title: "DIN 46237:1970-07 — Insulated crimp-type cable sockets for copper conductors",
+    url: "https://www.dinmedia.de/de/norm/din-46237/564222",
+    sourceType: "Standard",
+    supports: "Standard context for insulated solderless crimp terminals for copper conductors.",
+  },
+  {
+    id: 5,
+    organization: "ASTM International",
+    title: "ASTM B258-18(2026) — AWG nominal diameters and cross-sectional areas",
+    url: "https://store.astm.org/standards/b258",
+    sourceType: "Standard",
+    supports:
+      "Nominal diameters, cross-sectional areas, and calculation rules for solid round AWG conductor sizes.",
+  },
+  {
+    id: 6,
+    organization: "IEC",
+    title: "IEC 60228:2023 — Conductors of insulated cables",
+    url: "https://webstore.iec.ch/en/publication/71891",
+    sourceType: "Standard",
+    supports:
+      "Metric nominal conductor cross-sections and conductor classes; useful context when comparing metric and AWG designations.",
+  },
+  {
+    id: 7,
+    organization: "ISO",
+    title: "ISO 273:1979 — Clearance holes for bolts and screws",
+    url: "https://www.iso.org/standard/4183.html",
+    sourceType: "Standard",
+    supports:
+      "General-purpose fine, medium, and coarse clearance-hole series for metric bolts and screws.",
+  },
+  {
+    id: 8,
+    organization: "TE Connectivity",
+    title: "The Simple Guide to Crimping",
+    url: "https://www.te.com/content/dam/te-com/documents/appliances/global/guide-to-crimping.pdf",
+    sourceType: "Manufacturer reference",
+    supports:
+      "A comparable manufacturer system showing terminal color identification by wire range and matched crimp tooling.",
+  },
+  {
+    id: 9,
+    organization: "ABB",
+    title: "Spec-Kon vinyl-insulated DIN ring terminals — technical data sheet",
+    url: "https://library.e.abb.com/public/c8232635be064eb690fbeba2fe203412/TDS000210_RevC.pdf",
+    sourceType: "Manufacturer reference",
+    supports:
+      "A comparable vinyl-insulated terminal family rated to 75°C, with color coding tied to product wire-size ranges.",
+  },
+  {
+    id: 10,
+    organization: "TE Connectivity",
+    title: "PIDG ring tongue terminals",
+    url: "https://www.te.com/en/product-CAT-P592-R472A.html",
+    sourceType: "Manufacturer reference",
+    supports:
+      "Comparable ring-terminal examples mapping AWG/mm² ranges, stud sizes, insulation support, and temperatures up to 105°C.",
+  },
+  {
+    id: 11,
+    organization: "IEC",
+    title: "IEC 60287-3-1:2017 — Cable current-rating operating conditions",
+    url: "https://webstore.iec.ch/en/publication/33164",
+    sourceType: "Standard",
+    supports:
+      "Why current-carrying capacity is conditional on operating and installation conditions rather than conductor size alone.",
+  },
+];

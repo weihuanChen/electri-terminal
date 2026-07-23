@@ -13,6 +13,7 @@ import {
   readMoreItems,
   selectionGuideFaqItems,
   selectionGuideImages,
+  selectionGuideReferences,
   studSizeRows,
   terminalTypeRows,
 } from "@/lib/selectionGuideData";
@@ -34,6 +35,11 @@ const sectionLinks = [
     title: "AWG + mm2 Guide",
     description: "Compare cable diameters and convert AWG to mm2.",
   },
+  {
+    href: "#references",
+    title: "Sources",
+    description: "Review standards and manufacturer references.",
+  },
 ] as const;
 
 const quickLogic = [
@@ -50,6 +56,23 @@ const quickLogic = [
     text: "Check stud size and required hole diameter to prevent mounting mismatch.",
   },
 ] as const;
+
+function ReferenceLink({ id }: { id: number }) {
+  const reference = selectionGuideReferences.find((item) => item.id === id);
+  if (!reference) return null;
+
+  return (
+    <a
+      href={reference.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-semibold text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+      aria-label={`${reference.organization}: ${reference.title}`}
+    >
+      [{reference.id}]
+    </a>
+  );
+}
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -312,6 +335,13 @@ export default function SelectionGuidePage() {
                 </table>
               </div>
 
+              <p className="rounded-sm border border-border bg-muted px-4 py-3 text-sm leading-6 text-secondary">
+                The type codes and example dimensions in this table are Electri Terminal factory
+                references, not universal designation codes. General product terminology and crimp
+                connection context can be cross-checked against IEC 60352-2 <ReferenceLink id={1} />,
+                DIN 46234 <ReferenceLink id={3} />, and DIN 46237 <ReferenceLink id={4} />.
+              </p>
+
               <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
                   <ImagePreview
@@ -389,6 +419,14 @@ export default function SelectionGuidePage() {
                   </tbody>
                 </table>
               </div>
+
+              <p className="rounded-sm border border-border bg-muted px-4 py-3 text-sm leading-6 text-secondary">
+                Temperature ratings are product-family ratings and must be verified on the target
+                datasheet. Comparable published examples include ABB vinyl-insulated terminals at
+                75°C <ReferenceLink id={9} /> and TE PIDG terminal families up to 105°C{" "}
+                <ReferenceLink id={10} />; these references support the material-and-temperature
+                context but do not certify Electri Terminal item numbers.
+              </p>
 
               <section aria-labelledby="b1-5-visual-insulation" className="space-y-4">
                 <header className="space-y-2">
@@ -486,6 +524,18 @@ export default function SelectionGuidePage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="rounded-sm border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-100">
+                <p>
+                  <strong>Engineering-data note:</strong> the color ranges and maximum-current
+                  values above come from Electri Terminal factory selection data. Color is a
+                  product-family identifier rather than a universal ampacity standard; comparable
+                  manufacturer systems also map colors to particular wire ranges and tooling{" "}
+                  <ReferenceLink id={8} /> <ReferenceLink id={9} />. Current capacity must be
+                  confirmed for the exact terminal, conductor, crimp, ambient temperature, and
+                  installation conditions <ReferenceLink id={11} />.
+                </p>
               </div>
 
               <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
@@ -592,6 +642,14 @@ export default function SelectionGuidePage() {
                 </table>
               </div>
 
+              <p className="rounded-sm border border-border bg-muted px-4 py-3 text-sm leading-6 text-secondary">
+                The listed stud-to-hole mappings are Electri Terminal product-fit references.
+                ISO 273 defines general-purpose clearance-hole series for metric fasteners{" "}
+                <ReferenceLink id={7} />, while finished terminal dimensions still need to be
+                checked against the selected item drawing. TE&apos;s published ring-terminal range is
+                one comparable example of product-specific stud mapping <ReferenceLink id={10} />.
+              </p>
+
               <figure className="overflow-hidden rounded-sm border border-border bg-white p-2 dark:bg-slate-900">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[2px]">
                   <ImagePreview
@@ -660,8 +718,74 @@ export default function SelectionGuidePage() {
               <div className="rounded-sm border border-border bg-muted p-4 text-sm text-secondary">
                 Use guide logic: first compare physical cable cross-section, then map to AWG/mm2
                 equivalent values, and finally validate current rating and application standards in
-                your project specification.
+                your project specification. ASTM B258 defines nominal AWG dimensions and areas{" "}
+                <ReferenceLink id={5} />, while IEC 60228 defines metric conductor sizes and classes{" "}
+                <ReferenceLink id={6} />. Treat AWG/mm2 entries as selection comparisons rather than
+                exact interchangeable product sizes.
               </div>
+            </section>
+
+            <section id="references" className="scroll-mt-28 space-y-5" aria-labelledby="references-title">
+              <header className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                  Sources &amp; Engineering Basis
+                </p>
+                <h2
+                  id="references-title"
+                  className="text-2xl font-semibold text-slate-900 md:text-3xl dark:text-slate-100"
+                >
+                  References
+                </h2>
+                <p className="text-sm leading-6 text-secondary md:text-base">
+                  Standards support the general engineering method. Exact codes, dimensions,
+                  temperatures, colors, and reference currents remain manufacturer- or
+                  product-specific unless an individual certified datasheet states otherwise.
+                </p>
+              </header>
+
+              <blockquote
+                cite="https://webstore.iec.ch/en/publication/68899"
+                className="rounded-sm border-l-4 border-primary bg-primary/5 px-5 py-4 text-sm leading-6 text-secondary"
+              >
+                <p>“Information on the materials and data from industrial experience is included.”</p>
+                <footer className="mt-2 not-italic">
+                  — IEC 60352-2:2024 scope summary <ReferenceLink id={1} />
+                </footer>
+              </blockquote>
+
+              <ol className="space-y-3">
+                {selectionGuideReferences.map((reference) => (
+                  <li
+                    key={reference.id}
+                    id={`reference-${reference.id}`}
+                    className="rounded-sm border border-border bg-white p-4 text-sm dark:bg-slate-900"
+                  >
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <p className="font-semibold leading-6 text-foreground">
+                        {reference.id}. {reference.organization}.{" "}
+                        <a
+                          href={reference.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+                        >
+                          {reference.title}
+                        </a>
+                      </p>
+                      <span className="w-fit shrink-0 rounded-sm bg-muted px-2 py-1 text-xs font-medium text-secondary">
+                        {reference.sourceType}
+                      </span>
+                    </div>
+                    <p className="mt-2 leading-6 text-secondary">{reference.supports}</p>
+                  </li>
+                ))}
+              </ol>
+
+              <p className="rounded-sm border border-sky-200 bg-sky-50 p-4 text-sm leading-6 text-sky-950 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-100">
+                Last source review: July 23, 2026. Standards may require purchase for full text;
+                links above point to the issuing organization&apos;s public record or to an original
+                manufacturer document.
+              </p>
             </section>
 
             <section className="space-y-4">
