@@ -7,9 +7,11 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { BookOpenCheck } from "lucide-react";
 
 import MermaidChart from "./MermaidChart";
 import ImagePreview from "./ImagePreview";
+import { extractAuthoritativeReferences } from "@/lib/markdownAuthoritativeReferences";
 
 interface MarkdownRendererProps {
   content: string;
@@ -78,7 +80,10 @@ const MERMAID_BLOCK_START = new RegExp(
 );
 
 function stripEditorMarkers(markdown: string) {
-  return markdown.replace(/<!--\s*\/?(?:INTERNAL_LINK|PARA|FAQ):[\s\S]*?-->/gi, "");
+  return markdown.replace(
+    /<!--\s*(?:\/?(?:INTERNAL_LINK|PARA|FAQ):[\s\S]*?|AUTHORITATIVE_REFERENCES:(?:START|END))\s*-->/gi,
+    ""
+  );
 }
 
 function looksLikeMermaidBlock(block: string) {
@@ -189,37 +194,40 @@ function isImageOnlyAstNode(node: MarkdownAstNode | undefined): boolean {
 }
 
 export default function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
-  const normalizedContent = normalizeMermaidBlocks(stripEditorMarkers(content));
+  const authoritativeReferences = extractAuthoritativeReferences(content);
+  const contentSegments = authoritativeReferences
+    ? [authoritativeReferences.before, authoritativeReferences.after].filter(Boolean)
+    : [content];
 
-  return (
-    <div className={["markdown-body", className].filter(Boolean).join(" ")}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[
-          rehypeKatex,
-          rehypeSlug,
-          [rehypeAutolinkHeadings, { behavior: "wrap" }],
-        ]}
-        components={{
-          p({ node, children }) {
-            const childNodes = Children.toArray(children).filter((child) => !isWhitespaceTextNode(child));
-            const onlyImageNodes =
-              childNodes.length > 0 &&
-              (childNodes.every((child) => isMarkdownImageElement(child)) ||
-                ((node as MarkdownAstNode | undefined)?.children?.length ?? 0) > 0 &&
-                  (node as MarkdownAstNode).children!.every((child) => isImageOnlyAstNode(child)));
-            const hasBlockChildren = childNodes.some((child) => containsRenderedBlockElement(child));
+  const renderMarkdown = (markdown: string, key: string) => (
+    <ReactMarkdown
+      key={key}
+      remarkPlugins={[remarkGfm, remarkMath]}
+      rehypePlugins={[
+        rehypeKatex,
+        rehypeSlug,
+        [rehypeAutolinkHeadings, { behavior: "wrap" }],
+      ]}
+      components={{
+        p({ node, children }) {
+          const childNodes = Children.toArray(children).filter((child) => !isWhitespaceTextNode(child));
+          const onlyImageNodes =
+            childNodes.length > 0 &&
+            (childNodes.every((child) => isMarkdownImageElement(child)) ||
+              ((node as MarkdownAstNode | undefined)?.children?.length ?? 0) > 0 &&
+                (node as MarkdownAstNode).children!.every((child) => isImageOnlyAstNode(child)));
+          const hasBlockChildren = childNodes.some((child) => containsRenderedBlockElement(child));
 
-            if (onlyImageNodes) {
-              return <>{children}</>;
-            }
+          if (onlyImageNodes) {
+            return <>{children}</>;
+          }
 
-            if (hasBlockChildren) {
-              return <div className="markdown-paragraph">{children}</div>;
-            }
+          if (hasBlockChildren) {
+            return <div className="markdown-paragraph">{children}</div>;
+          }
 
-            return <p>{children}</p>;
-          },
+          return <p>{children}</p>;
+        },
           code({ className: codeClassName, children, ...props }) {
             return (
               <code className={codeClassName} {...props}>
@@ -301,10 +309,39 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
               </figure>
             );
           },
-        }}
-      >
-        {normalizedContent}
-      </ReactMarkdown>
+      }}
+    >
+      {normalizeMermaidBlocks(stripEditorMarkers(markdown))}
+    </ReactMarkdown>
+  );
+
+  return (
+    <div className={["markdown-body", className].filter(Boolean).join(" ")}>
+      {contentSegments.map((segment, index) => renderMarkdown(segment, `content-${index}`))}
+
+      {authoritativeReferences && (
+        <section
+          className="markdown-authoritative-references"
+          aria-labelledby="authoritative-references-title"
+          data-markdown-block
+        >
+          <header className="markdown-authoritative-references__header">
+            <span className="markdown-authoritative-references__icon" aria-hidden="true">
+              <BookOpenCheck />
+            </span>
+            <div>
+              <p className="markdown-authoritative-references__eyebrow">Technical source notes</p>
+              <h2 id="authoritative-references-title">Authoritative References</h2>
+              <p className="markdown-authoritative-references__intro">
+                Primary manuals and technical guidance used to support this article.
+              </p>
+            </div>
+          </header>
+          <div className="markdown-authoritative-references__list">
+            {renderMarkdown(authoritativeReferences.references, "authoritative-references")}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

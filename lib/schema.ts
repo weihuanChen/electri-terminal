@@ -8,6 +8,10 @@ import {
   productsUrl,
   searchUrl,
 } from "@/lib/routes";
+import type {
+  ArticleCitation,
+  ArticleQuotation,
+} from "@/lib/articleCitations";
 
 type BreadcrumbItem = {
   name: string;
@@ -234,6 +238,8 @@ export function makeArticleSchema({
   publishedAt,
   updatedAt,
   authorName,
+  citations,
+  quotations,
 }: {
   slug: string;
   title: string;
@@ -242,8 +248,33 @@ export function makeArticleSchema({
   publishedAt?: number;
   updatedAt?: number;
   authorName?: string;
+  citations?: ArticleCitation[];
+  quotations?: ArticleQuotation[];
 }) {
   const normalizedImage = normalizeSchemaImage(image);
+  const citationSchemas = (citations ?? []).map((citation) => ({
+    "@type": "CreativeWork",
+    name: citation.title,
+    url: citation.url,
+    publisher: {
+      "@type": "Organization",
+      name: citation.publisher,
+    },
+    datePublished: citation.publishedAt
+      ? new Date(citation.publishedAt).toISOString()
+      : undefined,
+    identifier: citation.standardNumber || citation.id,
+    version: citation.standardEdition,
+  }));
+  const citationUrlById = new Map(
+    (citations ?? []).map((citation) => [citation.id, citation.url])
+  );
+  const quotationSchemas = (quotations ?? []).map((quotation) => ({
+    "@type": "Quotation",
+    text: quotation.text,
+    creditText: quotation.attribution,
+    isBasedOn: citationUrlById.get(quotation.citationId),
+  }));
 
   return {
     "@context": "https://schema.org",
@@ -263,6 +294,8 @@ export function makeArticleSchema({
     },
     datePublished: publishedAt ? new Date(publishedAt).toISOString() : undefined,
     dateModified: updatedAt ? new Date(updatedAt).toISOString() : undefined,
+    citation: citationSchemas.length > 0 ? citationSchemas : undefined,
+    hasPart: quotationSchemas.length > 0 ? quotationSchemas : undefined,
   };
 }
 

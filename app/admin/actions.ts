@@ -29,6 +29,10 @@ import {
   buildNavigationEligibilitySnapshot,
 } from "@/lib/i18n";
 import { buildLocaleReleaseGscLinkIntegrityReport } from "@/lib/sitemap";
+import {
+  parseArticleCitations,
+  parseArticleQuotations,
+} from "@/lib/articleCitations";
 
 function str(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -483,6 +487,13 @@ export async function createArticleAction(formData: FormData): Promise<ActionRes
 
   try {
     const client = getAdminConvexClient();
+    const citations = parseArticleCitations(
+      jsonArray<unknown>(formData, "citations")
+    );
+    const quotations = parseArticleQuotations(
+      jsonArray<unknown>(formData, "quotations"),
+      citations
+    );
     await mutationWithExtraFieldFallback(client, "mutations/admin/articles:createArticle", {
       type,
       title,
@@ -491,6 +502,8 @@ export async function createArticleAction(formData: FormData): Promise<ActionRes
       excerpt: optionalStr(formData, "excerpt"),
       coverImage: optionalStr(formData, "coverImage"),
       content: optionalStr(formData, "content"),
+      citations,
+      quotations,
       categoryIds: jsonArray<Id<"categories">>(formData, "categoryIds"),
       tagNames: jsonArray<string>(formData, "tagNames"),
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
@@ -988,6 +1001,13 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
 
   try {
     const client = getAdminConvexClient();
+    const citations = parseArticleCitations(
+      jsonArray<unknown>(formData, "citations")
+    );
+    const quotations = parseArticleQuotations(
+      jsonArray<unknown>(formData, "quotations"),
+      citations
+    );
     const currentArticle = (await client.query("queries/modules/articles:getArticleById", {
       id,
     })) as Pick<Doc<"articles">, "slug"> | null;
@@ -1001,6 +1021,8 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
       excerpt: optionalStr(formData, "excerpt"),
       coverImage: optionalStr(formData, "coverImage"),
       content: optionalStr(formData, "content"),
+      citations,
+      quotations,
       categoryIds: jsonArray<Id<"categories">>(formData, "categoryIds"),
       tagNames: jsonArray<string>(formData, "tagNames"),
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),

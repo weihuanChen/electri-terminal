@@ -13,6 +13,13 @@ import {
   selectionGuideUrl,
 } from "@/lib/routes";
 import GithubSlugger from "github-slugger";
+import type {
+  ArticleCitation,
+  ArticleCitationSourceType,
+  ArticleQuotation,
+} from "@/lib/articleCitations";
+import { renderCitationMarkers } from "@/lib/articleCitations";
+import { stripAuthoritativeReferences } from "@/lib/markdownAuthoritativeReferences";
 
 interface RelatedProduct {
   _id: string;
@@ -50,6 +57,8 @@ export interface ArticlePageData {
   author?: ArticleAuthor | null;
   excerpt?: string;
   content?: string;
+  citations?: ArticleCitation[];
+  quotations?: ArticleQuotation[];
   coverImage?: string;
   createdAt: number;
   publishedAt?: number;
@@ -110,6 +119,15 @@ const ARTICLE_TYPE_LABEL: Record<RelatedArticle["type"], string> = {
   guide: "Guide",
   faq: "FAQ",
   application: "Application",
+};
+
+const CITATION_SOURCE_LABEL: Record<ArticleCitationSourceType, string> = {
+  standard: "Standard",
+  paper: "Research paper",
+  regulator: "Regulator / certification body",
+  datasheet: "Manufacturer datasheet",
+  "internal-test": "Internal test",
+  webpage: "Web source",
 };
 
 const SECTION_PRODUCT_CONFIG: Record<SectionProductKey, SectionProductConfig> = {
@@ -571,10 +589,16 @@ function buildFallbackRelatedProducts(article: ArticlePageData): RelatedProduct[
 
 export default function ArticlePageClient({ article, slug, relatedArticles }: ArticlePageClientProps) {
   const isWireTerminalGuide = slug === "wire-terminal-types-guide";
-  const normalizedContent = article.content
+  const citations = article.citations ?? [];
+  const contentWithCitationMarkers = article.content
+    ? renderCitationMarkers(article.content, article.citations ?? [])
+    : undefined;
+  const normalizedContent = contentWithCitationMarkers
     ? isWireTerminalGuide
-      ? compactMarkdownParagraphs(article.content)
-      : article.content
+      ? compactMarkdownParagraphs(contentWithCitationMarkers)
+      : citations.length > 0
+        ? stripAuthoritativeReferences(contentWithCitationMarkers)
+        : contentWithCitationMarkers
     : undefined;
 
   const breadcrumbItems = [
@@ -633,6 +657,10 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
   const authorTitle = article.author?.title || "Editorial Team";
   const shouldShowAuthorBio = Boolean(
     article.author && (article.author.description || article.author.avatar || article.author.title)
+  );
+  const quotations = article.quotations ?? [];
+  const citationsById = new Map(
+    citations.map((citation) => [citation.id, citation])
   );
   const usedSectionKeys = new Set<SectionProductKey>();
   const sectionRenderData = markdownSections.map((section) => {
@@ -968,6 +996,152 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                   </div>
                 )}
               </div>
+
+              {quotations.length > 0 && (
+                <section
+                  id="verified-quotations"
+                  className="mt-12 space-y-4 border-t border-border pt-8"
+                  aria-labelledby="verified-quotations-title"
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">
+                      Verified source excerpts
+                    </p>
+                    <h2
+                      id="verified-quotations-title"
+                      className="mt-2 text-2xl font-semibold text-foreground"
+                    >
+                      Quotations
+                    </h2>
+                  </div>
+                  {quotations.map((quotation, index) => {
+                    const citation = citationsById.get(quotation.citationId);
+                    const citationIndex = citation
+                      ? citations.findIndex((item) => item.id === citation.id)
+                      : -1;
+                    return (
+                      <blockquote
+                        key={`${quotation.citationId}-${index}`}
+                        cite={citation?.url}
+                        className="rounded-sm border-l-4 border-primary bg-primary/5 px-5 py-4 text-secondary"
+                      >
+                        <p className="text-base italic leading-7 text-foreground">
+                          “{quotation.text}”
+                        </p>
+                        <footer className="mt-3 text-sm not-italic text-secondary">
+                          — {quotation.attribution}
+                          {citation && citationIndex >= 0 && (
+                            <>
+                              {", "}
+                              <a
+                                href={citation.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+                              >
+                                source [{citationIndex + 1}]
+                              </a>
+                            </>
+                          )}
+                        </footer>
+                      </blockquote>
+                    );
+                  })}
+                </section>
+              )}
+
+              {citations.length > 0 && (
+                <section
+                  id="references"
+                  className="mt-12 border-t border-border pt-8"
+                  aria-labelledby="article-references-title"
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">
+                      Sources
+                    </p>
+                    <h2
+                      id="article-references-title"
+                      className="mt-2 text-2xl font-semibold text-foreground"
+                    >
+                      References
+                    </h2>
+                    <p className="mt-2 text-sm leading-6 text-secondary">
+                      External sources support the referenced technical context. Product-specific
+                      values must still be verified against the applicable item datasheet.
+                    </p>
+                  </div>
+
+                  <ol className="mt-5 space-y-3">
+                    {citations.map((citation, index) => (
+                      <li
+                        key={citation.id}
+                        id={`reference-${citation.id}`}
+                        className="rounded-sm border border-border bg-muted/50 p-4 text-sm"
+                      >
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <p className="min-w-0 font-medium leading-6 text-foreground">
+                            <span className="mr-1 text-secondary">{index + 1}.</span>
+                            {citation.publisher}.{" "}
+                            <cite className="not-italic">
+                              <a
+                                href={citation.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+                              >
+                                {citation.title}
+                              </a>
+                            </cite>
+                          </p>
+                          <span className="w-fit shrink-0 rounded-sm bg-background px-2 py-1 text-xs font-medium text-secondary">
+                            {CITATION_SOURCE_LABEL[citation.sourceType]}
+                          </span>
+                        </div>
+
+                        {(citation.standardNumber ||
+                          citation.standardEdition ||
+                          citation.locator ||
+                          citation.publishedAt ||
+                          citation.accessedAt) && (
+                          <dl className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-secondary">
+                            {citation.standardNumber && (
+                              <div className="flex gap-1">
+                                <dt className="font-medium">Standard:</dt>
+                                <dd>{citation.standardNumber}</dd>
+                              </div>
+                            )}
+                            {citation.standardEdition && (
+                              <div className="flex gap-1">
+                                <dt className="font-medium">Edition:</dt>
+                                <dd>{citation.standardEdition}</dd>
+                              </div>
+                            )}
+                            {citation.locator && (
+                              <div className="flex gap-1">
+                                <dt className="font-medium">Locator:</dt>
+                                <dd>{citation.locator}</dd>
+                              </div>
+                            )}
+                            {citation.publishedAt && (
+                              <div className="flex gap-1">
+                                <dt className="font-medium">Published:</dt>
+                                <dd>{formatDate(citation.publishedAt)}</dd>
+                              </div>
+                            )}
+                            {citation.accessedAt && (
+                              <div className="flex gap-1">
+                                <dt className="font-medium">Accessed:</dt>
+                                <dd>{formatDate(citation.accessedAt)}</dd>
+                              </div>
+                            )}
+                          </dl>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
             </div>
 
             {tocItems.length > 0 && (

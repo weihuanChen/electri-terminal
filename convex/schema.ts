@@ -39,6 +39,10 @@ import {
   contactSettingsValidator,
   languageWorkflowSettingsValidator,
 } from "./lib/siteSettings";
+import {
+  articleCitationValidator,
+  articleQuotationValidator,
+} from "./lib/articleCitations";
 
 const statusCommon = v.union(
   v.literal("draft"),
@@ -921,6 +925,8 @@ export default defineSchema({
     excerpt: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     content: v.optional(v.string()),
+    citations: v.optional(v.array(articleCitationValidator)),
+    quotations: v.optional(v.array(articleQuotationValidator)),
     categoryIds: v.optional(v.array(v.id("categories"))),
     tagNames: v.optional(v.array(v.string())),
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),

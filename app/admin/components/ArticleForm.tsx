@@ -10,6 +10,13 @@ import {
 import { AdminImageField } from "./ui/AdminImageField";
 import { buildPublicAssetUrl, shouldBypassNextImageOptimization } from "@/lib/images";
 import { MediaAssetPickerModal } from "./MediaAssetPickerModal";
+import { ArticleCitationFields } from "./ArticleCitationFields";
+import {
+  parseArticleCitations,
+  parseArticleQuotations,
+  type ArticleCitation,
+  type ArticleQuotation,
+} from "@/lib/articleCitations";
 
 interface Article {
   _id: string;
@@ -20,6 +27,8 @@ interface Article {
   excerpt?: string;
   coverImage?: string;
   content?: string;
+  citations?: ArticleCitation[];
+  quotations?: ArticleQuotation[];
   categoryIds?: string[];
   tagNames?: string[];
   relatedCategoryIds?: string[];
@@ -152,6 +161,8 @@ export function ArticleForm({
     excerpt: article?.excerpt || "",
     coverImage: article?.coverImage || "",
     content: article?.content || "",
+    citations: article?.citations || [],
+    quotations: article?.quotations || [],
     categoryIds: article?.categoryIds || [],
     tagNames: article?.tagNames?.join("\n") || "",
     relatedCategoryIds: article?.relatedCategoryIds || [],
@@ -241,6 +252,10 @@ export function ArticleForm({
       if (formData.excerpt) formDataToSend.append("excerpt", formData.excerpt);
       if (formData.coverImage) formDataToSend.append("coverImage", formData.coverImage);
       if (formData.content) formDataToSend.append("content", formData.content);
+      const citations = parseArticleCitations(formData.citations);
+      const quotations = parseArticleQuotations(formData.quotations, citations);
+      formDataToSend.append("citations", JSON.stringify(citations));
+      formDataToSend.append("quotations", JSON.stringify(quotations));
 
       // Array fields
       if (formData.categoryIds.length > 0) {
@@ -512,10 +527,23 @@ export function ArticleForm({
             <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
               示例: 表格使用 GFM; 图表使用 <code className="mx-1">```mermaid</code>; 行内公式用
               <code className="mx-1">$E=mc^2$</code>，块公式用 <code className="mx-1">$$...$$</code>。
+              正文引用使用 <code className="mx-1">[[cite:source-1]]</code>，其中 ID
+              必须与下方结构化来源一致。
             </p>
           </div>
         </div>
       </div>
+
+      <ArticleCitationFields
+        citations={formData.citations}
+        quotations={formData.quotations}
+        onCitationsChange={(citations) =>
+          setFormData((current) => ({ ...current, citations }))
+        }
+        onQuotationsChange={(quotations) =>
+          setFormData((current) => ({ ...current, quotations }))
+        }
+      />
 
       {/* Relationships */}
       <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">

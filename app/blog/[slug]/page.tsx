@@ -79,6 +79,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       publishedAt: article.publishedAt || article.createdAt,
       updatedAt: article.updatedAt,
       authorName: article.author?.name,
+      citations: article.citations,
+      quotations: article.quotations,
     }),
     ...(article.type === "faq" && articleFaqAnswer
       ? [
