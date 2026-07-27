@@ -14,6 +14,8 @@ interface ApplicationGridProps {
   title?: string;
   subtitle?: string;
   showViewAll?: boolean;
+  viewAllText?: string;
+  viewAllHref?: string;
 }
 
 export default function ApplicationGrid({
@@ -21,6 +23,8 @@ export default function ApplicationGrid({
   title = "Industry Applications",
   subtitle = "Our products serve diverse industries with reliable electrical connections and protection solutions",
   showViewAll = false,
+  viewAllText = "View All",
+  viewAllHref = "#",
 }: ApplicationGridProps) {
   if (!applications || applications.length === 0) {
     return null;
@@ -33,6 +37,8 @@ export default function ApplicationGrid({
           title={title}
           subtitle={subtitle}
           showViewAll={showViewAll}
+          viewAllText={viewAllText}
+          viewAllHref={viewAllHref}
           align="center"
         />
 

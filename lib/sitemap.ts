@@ -85,6 +85,7 @@ const STATIC_PAGE_ENTRY_CONFIGS: Array<
   { key: "categories", changeFrequency: "weekly", priority: 0.9 },
   { key: "products", changeFrequency: "weekly", priority: 0.9 },
   { key: "manufacturing", changeFrequency: "weekly", priority: 0.8 },
+  { key: "solutions", changeFrequency: "weekly", priority: 0.8 },
   { key: "selection-guide", changeFrequency: "weekly", priority: 0.8 },
   { key: "resources", changeFrequency: "weekly", priority: 0.8 },
   { key: "blog", changeFrequency: "weekly", priority: 0.8 },

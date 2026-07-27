@@ -14,7 +14,7 @@ import {
   toSingleLineAddress,
 } from "@/lib/contactConfig";
 import { getHomePageData } from "@/lib/publicData";
-import { contactUrl, productsUrl, requestQuoteUrl } from "@/lib/routes";
+import { contactUrl, productsUrl, requestQuoteUrl, solutionsUrl } from "@/lib/routes";
 import { getTranslations } from "next-intl/server";
 
 export default async function HomePageClient() {
@@ -198,7 +198,9 @@ export default async function HomePageClient() {
           applications={applicationCards}
           title="Applications"
           subtitle="Control cabinets, automotive wiring, power distribution, and industrial equipment."
-          showViewAll={false}
+          showViewAll={true}
+          viewAllHref={solutionsUrl()}
+          viewAllText="View All Applications"
         />
       )}
 

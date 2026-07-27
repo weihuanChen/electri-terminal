@@ -52,6 +52,7 @@ const STATIC_PATH_TO_PAGE_KEY: ReadonlyMap<string, StaticPageKey> = new Map(
     "categories",
     "products",
     "manufacturing",
+    "solutions",
     "selection-guide",
     "resources",
     "quality-certifications",

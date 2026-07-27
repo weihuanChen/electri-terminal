@@ -8,6 +8,7 @@ import { DashboardLayout } from "../../components/DashboardLayout";
 type SearchParams = Record<string, string | string[] | undefined>;
 const labels: Record<string, string> = {
   home: "Homepage", categories: "Categories hub", products: "Products hub", manufacturing: "Manufacturing",
+  solutions: "Solutions",
   "selection-guide": "Selection guide", resources: "Resources", "quality-certifications": "Quality certifications",
   blog: "Blog hub", contact: "Contact", "privacy-policy": "Privacy policy",
 };
