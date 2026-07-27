@@ -127,6 +127,12 @@ export default async function HomePageClient() {
           external: true,
         }
       : null,
+    contactSettings.wechat?.enabled && contactSettings.wechat.value
+      ? {
+          label: "WeChat",
+          value: contactSettings.wechat.value,
+        }
+      : null,
     contactSettings.phone.enabled && contactSettings.phone.value
       ? {
           label: "Phone",

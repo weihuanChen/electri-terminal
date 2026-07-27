@@ -130,6 +130,42 @@ export default async function GeneralSettingsPage({
           </div>
 
           <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+              WeChat 微信
+            </h2>
+            <div className="mt-4 space-y-4">
+              <label className="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <input
+                  type="checkbox"
+                  name="wechatEnabled"
+                  defaultChecked={settings.wechat?.enabled ?? false}
+                  className="h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+                />
+                启用 WeChat 微信
+              </label>
+              <div>
+                <label
+                  htmlFor="wechatValue"
+                  className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  微信号
+                </label>
+                <input
+                  id="wechatValue"
+                  type="text"
+                  name="wechatValue"
+                  defaultValue={settings.wechat?.value ?? ""}
+                  placeholder="请输入微信号"
+                  className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
+                />
+              </div>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                启用后，微信号会展示在网站的联系方式区域。
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Phone</h2>
             <div className="mt-4 space-y-4">
               <label className="flex items-center gap-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">

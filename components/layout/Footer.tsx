@@ -125,6 +125,14 @@ export default async function Footer() {
           },
         ]
       : []),
+    ...(contactSettings.wechat?.enabled && contactSettings.wechat.value
+      ? [
+          {
+            name: `WeChat: ${contactSettings.wechat.value}`,
+            href: contactUrl(urlOptions),
+          },
+        ]
+      : []),
     ...(contactSettings.phone.enabled && contactSettings.phone.value
       ? [
           {

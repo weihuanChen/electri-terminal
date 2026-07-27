@@ -27,6 +27,7 @@ export interface PublicSocialMediaChannel {
 export interface PublicContactSettings {
   email: PublicContactChannel;
   whatsapp: PublicWhatsAppChannel;
+  wechat: PublicContactChannel;
   phone: PublicContactChannel;
   address: PublicAddressChannel;
   socialMedia: PublicSocialMediaChannel;
@@ -41,6 +42,10 @@ export const DEFAULT_PUBLIC_CONTACT_SETTINGS: PublicContactSettings = {
     enabled: true,
     value: "+1 555 123 4567",
     href: "https://wa.me/15551234567",
+  },
+  wechat: {
+    enabled: false,
+    value: "",
   },
   phone: {
     enabled: false,
@@ -66,6 +71,7 @@ export function normalizePublicContactSettings(
 ): PublicContactSettings {
   const email = settings?.email;
   const whatsapp = settings?.whatsapp;
+  const wechat = settings?.wechat;
   const phone = settings?.phone;
   const address = settings?.address;
   const socialMedia = settings?.socialMedia;
@@ -85,6 +91,13 @@ export function normalizePublicContactSettings(
           : DEFAULT_PUBLIC_CONTACT_SETTINGS.whatsapp.enabled,
       value: (whatsapp?.value || DEFAULT_PUBLIC_CONTACT_SETTINGS.whatsapp.value).trim(),
       href: whatsapp?.href?.trim() || DEFAULT_PUBLIC_CONTACT_SETTINGS.whatsapp.href,
+    },
+    wechat: {
+      enabled:
+        typeof wechat?.enabled === "boolean"
+          ? wechat.enabled
+          : DEFAULT_PUBLIC_CONTACT_SETTINGS.wechat.enabled,
+      value: (wechat?.value || DEFAULT_PUBLIC_CONTACT_SETTINGS.wechat.value).trim(),
     },
     phone: {
       enabled:

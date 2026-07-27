@@ -187,6 +187,7 @@ export const seed = mutation({
     const contact = settings?.contact ?? {
       email: { enabled: true, value: "e2e@example.com" },
       whatsapp: { enabled: false, value: "" },
+      wechat: { enabled: false, value: "" },
       phone: { enabled: false, value: "" },
       address: { enabled: false, lines: [] },
       socialMedia: { enabled: false, items: [] },
