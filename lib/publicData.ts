@@ -96,6 +96,9 @@ export interface HomePageCategory {
   _id: string;
   slug: string;
   name: string;
+  description?: string;
+  image?: string;
+  icon?: string;
 }
 
 export interface HomePageFeaturedProduct {
@@ -187,6 +190,6 @@ export const getHomePageData = unstable_cache(
       contactSettings: normalizePublicContactSettings(rawSettings),
     };
   },
-  ["home-page-data-v1"],
+  ["home-page-data-v2"],
   { revalidate: 3600 },
 );

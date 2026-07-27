@@ -17,6 +17,17 @@ import { getHomePageData } from "@/lib/publicData";
 import { contactUrl, productsUrl, requestQuoteUrl, solutionsUrl } from "@/lib/routes";
 import { getTranslations } from "next-intl/server";
 
+const homepageCategoryFallbackImages: Record<string, string> = {
+  "ring-terminals":
+    "https://assets.electriterminal.com/families/v3/product-family/ring-terminals-product-family.webp",
+  "fork-terminals":
+    "https://assets.electriterminal.com/families/v3/product-family/fork-terminals-product-family.webp",
+  "spade-terminals":
+    "https://assets.electriterminal.com/products/v3/webp/spade-terminals-categories.webp",
+  "pin-terminals":
+    "https://assets.electriterminal.com/products/v3/webp/pin-terminal-categories.webp",
+};
+
 export default async function HomePageClient() {
   const [{ categories, featuredProducts, applications, contactSettings }, common] =
     await Promise.all([getHomePageData(), getTranslations("common")]);
@@ -56,7 +67,12 @@ export default async function HomePageClient() {
     uniqueCategoryMap.set(category._id, category);
   });
 
-  const homepageFocusCategories = Array.from(uniqueCategoryMap.values()).slice(0, 4);
+  const homepageFocusCategories = Array.from(uniqueCategoryMap.values())
+    .slice(0, 4)
+    .map((category) => ({
+      ...category,
+      image: category.image || homepageCategoryFallbackImages[category.slug],
+    }));
   const focusCategoryIdSet = new Set(homepageFocusCategories.map((category) => category._id));
 
   const ringFeaturedProducts = featuredProducts
