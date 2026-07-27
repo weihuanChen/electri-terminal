@@ -15,6 +15,7 @@ import {
   productsUrl,
   requestQuoteUrl,
   resourcesUrl,
+  solutionsUrl,
   searchUrl,
 } from "@/lib/routes";
 import { getHeaderNavigation, getPublicContactSettings, type NavigationCategoryTree } from "@/lib/publicData";
@@ -40,11 +41,12 @@ function isInternalLink(href: string) {
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
-  const [contactSettings, locale, common, footer, navigationCategories] = await Promise.all([
+  const [contactSettings, locale, common, footer, navigation, navigationCategories] = await Promise.all([
     getPublicContactSettings(),
     getRequestLocale(),
     getTranslations("common"),
     getTranslations("footer"),
+    getTranslations("navigation"),
     getHeaderNavigation(),
   ]);
   const navigationSnapshot = await getNavigationEligibilitySnapshot(locale);
@@ -76,6 +78,7 @@ export default async function Footer() {
       links: [
         ...(canShowPage("home") ? [{ name: common("home"), href: homeUrl(urlOptions) }] : []),
         ...(canShowPage("products") ? [{ name: common("products"), href: productsUrl(urlOptions) }] : []),
+        ...(canShowPage("solutions") ? [{ name: navigation("solutions"), href: solutionsUrl(urlOptions) }] : []),
         ...(canShowPage("categories") ? [{ name: common("categories"), href: categoriesUrl(urlOptions) }] : []),
         ...(canShowPage("blog") ? [{ name: common("blog"), href: blogUrl(urlOptions) }] : []),
       ],
@@ -119,6 +122,14 @@ export default async function Footer() {
             name: contactSettings.whatsapp.value,
             href: contactSettings.whatsapp.href,
             external: true,
+          },
+        ]
+      : []),
+    ...(contactSettings.wechat?.enabled && contactSettings.wechat.value
+      ? [
+          {
+            name: `WeChat: ${contactSettings.wechat.value}`,
+            href: contactUrl(urlOptions),
           },
         ]
       : []),

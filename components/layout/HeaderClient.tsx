@@ -25,6 +25,7 @@ import {
   requestQuoteUrl,
   searchUrl,
   selectionGuideUrl,
+  solutionsUrl,
 } from "@/lib/routes";
 import { DEFAULT_LOCALE, type Locale, type StaticPageKey } from "@/lib/i18n/config";
 
@@ -72,6 +73,7 @@ export default function HeaderClient({
       children: productCategories,
     }] : []),
     ...(canShowPage("categories") ? [{ name: common("categories"), href: categoriesUrl(urlOptions) }] : []),
+    ...(canShowPage("solutions") ? [{ name: navigation("solutions"), href: solutionsUrl(urlOptions) }] : []),
     ...(canShowPage("selection-guide") ? [{ name: navigation("selectionGuide"), href: selectionGuideUrl(urlOptions) }] : []),
     ...(canShowPage("manufacturing") ? [{ name: navigation("manufacturing"), href: manufacturingUrl(urlOptions) }] : []),
     ...(canShowPage("quality-certifications") ? [{ name: navigation("quality"), href: qualityCertificationsUrl(urlOptions) }] : []),

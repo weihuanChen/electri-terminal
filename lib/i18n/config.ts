@@ -18,6 +18,7 @@ export type StaticPageKey =
   | "categories"
   | "products"
   | "manufacturing"
+  | "solutions"
   | "selection-guide"
   | "resources"
   | "quality-certifications"
@@ -81,6 +82,12 @@ export const STATIC_PAGE_DEFINITIONS = [
     path: "/manufacturing",
     pageClass: "L1",
     requiredForLanguageLaunch: true,
+  },
+  {
+    key: "solutions",
+    path: "/solutions",
+    pageClass: "L1",
+    requiredForLanguageLaunch: false,
   },
   {
     key: "selection-guide",

@@ -14,7 +14,7 @@ import {
   toSingleLineAddress,
 } from "@/lib/contactConfig";
 import { getHomePageData } from "@/lib/publicData";
-import { contactUrl, productsUrl, requestQuoteUrl } from "@/lib/routes";
+import { contactUrl, productsUrl, requestQuoteUrl, solutionsUrl } from "@/lib/routes";
 import { getTranslations } from "next-intl/server";
 
 export default async function HomePageClient() {
@@ -127,6 +127,12 @@ export default async function HomePageClient() {
           external: true,
         }
       : null,
+    contactSettings.wechat?.enabled && contactSettings.wechat.value
+      ? {
+          label: "WeChat",
+          value: contactSettings.wechat.value,
+        }
+      : null,
     contactSettings.phone.enabled && contactSettings.phone.value
       ? {
           label: "Phone",
@@ -198,7 +204,9 @@ export default async function HomePageClient() {
           applications={applicationCards}
           title="Applications"
           subtitle="Control cabinets, automotive wiring, power distribution, and industrial equipment."
-          showViewAll={false}
+          showViewAll={true}
+          viewAllHref={solutionsUrl()}
+          viewAllText="View All Applications"
         />
       )}
 

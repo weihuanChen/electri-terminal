@@ -66,6 +66,10 @@ export function manufacturingUrl(options?: UrlResolverOptions) {
   return staticPageUrl("manufacturing", options);
 }
 
+export function solutionsUrl(options?: UrlResolverOptions) {
+  return staticPageUrl("solutions", options);
+}
+
 export function selectionGuideUrl(options?: UrlResolverOptions) {
   return staticPageUrl("selection-guide", options);
 }

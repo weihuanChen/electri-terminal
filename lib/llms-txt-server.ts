@@ -90,6 +90,15 @@ const STATIC_CANDIDATES: StaticCandidateDefinition[] = [
     sortOrder: 2,
   },
   {
+    key: "solutions",
+    title: "Industrial Terminal Solutions by Application",
+    description:
+      "Application-focused copper terminal solutions for machine tools, motors, railway, marine, control systems, and export markets.",
+    section: "core",
+    baseScore: 92,
+    sortOrder: 2,
+  },
+  {
     key: "quality-certifications",
     title: "Quality and Certifications",
     description:

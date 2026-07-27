@@ -95,6 +95,7 @@ const STATIC_PAGE_LABELS = {
   categories: "Categories hub",
   products: "Products hub",
   manufacturing: "Manufacturing",
+  solutions: "Solutions",
   "selection-guide": "Selection guide",
   resources: "Resources",
   "quality-certifications": "Quality certifications",

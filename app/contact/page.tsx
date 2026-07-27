@@ -311,6 +311,14 @@ export default function ContactPage() {
           external: true,
         }
       : null,
+    contactSettings.wechat?.enabled && contactSettings.wechat.value
+      ? {
+          key: "wechat",
+          icon: MessageCircle,
+          title: "WeChat",
+          lines: [contactSettings.wechat.value],
+        }
+      : null,
     contactSettings.phone.enabled && contactSettings.phone.value
       ? {
           key: "phone",

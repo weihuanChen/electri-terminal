@@ -17,6 +17,7 @@ const labels: Record<string, string> = {
   home: "Homepage",
   contact: "Contact",
   manufacturing: "Manufacturing",
+  solutions: "Solutions",
   "selection-guide": "Selection Guide",
   resources: "Resources",
   "quality-certifications": "Quality & Certifications",

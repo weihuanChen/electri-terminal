@@ -24,6 +24,12 @@ export const contactSettingsValidator = v.object({
     value: v.string(),
     href: v.optional(v.string()),
   }),
+  wechat: v.optional(
+    v.object({
+      enabled: v.boolean(),
+      value: v.string(),
+    })
+  ),
   phone: v.object({
     enabled: v.boolean(),
     value: v.string(),
@@ -83,6 +89,10 @@ type ContactSettings = {
     value: string;
     href?: string;
   };
+  wechat?: {
+    enabled: boolean;
+    value: string;
+  };
   phone: {
     enabled: boolean;
     value: string;
@@ -130,6 +140,10 @@ export const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
     enabled: true,
     value: "+1 555 123 4567",
     href: "https://wa.me/15551234567",
+  },
+  wechat: {
+    enabled: false,
+    value: "",
   },
   phone: {
     enabled: false,
@@ -227,6 +241,10 @@ export function normalizeContactSettings(
       enabled: Boolean(base.whatsapp.enabled),
       value: (base.whatsapp.value || DEFAULT_CONTACT_SETTINGS.whatsapp.value).trim(),
       href: resolvedWhatsAppHref || DEFAULT_CONTACT_SETTINGS.whatsapp.href,
+    },
+    wechat: {
+      enabled: Boolean(base.wechat?.enabled),
+      value: (base.wechat?.value || DEFAULT_CONTACT_SETTINGS.wechat?.value || "").trim(),
     },
     phone: {
       enabled: Boolean(base.phone.enabled),

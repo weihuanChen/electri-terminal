@@ -1606,6 +1606,10 @@ export async function updateContactSettingsAction(formData: FormData) {
       value: str(formData, "whatsappValue"),
       href: optionalStr(formData, "whatsappHref"),
     },
+    wechat: {
+      enabled: boolFromForm(formData, "wechatEnabled"),
+      value: str(formData, "wechatValue"),
+    },
     phone: {
       enabled: boolFromForm(formData, "phoneEnabled"),
       value: str(formData, "phoneValue"),
