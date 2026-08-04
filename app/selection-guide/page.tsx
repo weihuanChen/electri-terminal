@@ -21,6 +21,8 @@ import {
 const pageTitle = "Terminal Type, Insulation & Stud Size Selection Guide";
 const pageDescription =
   "Use this engineering reference to match terminal type, insulation code, wire size ranges, and stud dimensions for faster and more reliable terminal selection.";
+const chromeExtensionUrl =
+  "https://chromewebstore.google.com/detail/dfdocgenkkgomcccpgeldinfgkkgckgm?utm_source=item-share-cb";
 
 const sectionLinks = [
   { href: "#section-a", title: "Terminal Type", description: "Decode model families and type codes." },
@@ -834,18 +836,68 @@ export default function SelectionGuidePage() {
           </article>
 
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-3 rounded-sm border border-border bg-white p-4 dark:bg-slate-900">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
-                On This Page
-              </p>
-              {sectionLinks.map((item) => (
-                <a key={item.href} href={item.href} className="sidebar-nav-item rounded-sm border-l-0">
-                  {item.title}
-                </a>
-              ))}
-              <Link href={productsUrl()} className="btn btn-outline mt-2 w-full text-center">
-                Browse Products
-              </Link>
+            <div className="sticky top-24 space-y-3">
+              <div className="space-y-3 rounded-sm border border-border bg-white p-4 dark:bg-slate-900">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
+                  On This Page
+                </p>
+                {sectionLinks.map((item) => (
+                  <a key={item.href} href={item.href} className="sidebar-nav-item rounded-sm border-l-0">
+                    {item.title}
+                  </a>
+                ))}
+                <Link href={productsUrl()} className="btn btn-outline mt-2 w-full text-center">
+                  Browse Products
+                </Link>
+              </div>
+
+              <a
+                href={chromeExtensionUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get Electri Terminal Calculator from the Chrome Web Store"
+                className="group block overflow-hidden rounded-sm border border-slate-700 bg-[#10151C] p-4 text-white shadow-sm transition hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white shadow-sm">
+                    <svg viewBox="0 0 48 48" aria-hidden="true" className="size-7">
+                      <path fill="#FFC107" d="M43.6 20H24l-6-10.4A18 18 0 0 1 43.6 20Z" />
+                      <path fill="#F44336" d="M18 9.6 27.8 27 16 47.3A24 24 0 0 1 18 9.6Z" />
+                      <path fill="#4CAF50" d="M16 47.3 25.8 30H46a24 24 0 0 1-30 17.3Z" />
+                      <circle cx="24" cy="24" r="9" fill="#1976D2" />
+                      <circle cx="24" cy="24" r="5.5" fill="#90CAF9" />
+                    </svg>
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-blue-300">
+                      Chrome Extension
+                    </span>
+                    <span className="mt-1 block text-sm font-semibold leading-5 text-white">
+                      Electri Terminal Calculator
+                    </span>
+                  </span>
+                </div>
+                <span className="mt-3 block text-xs leading-5 text-slate-300">
+                  Check AWG/mm², stud and hole sizes, terminal types, and insulation codes as you browse.
+                </span>
+                <span className="mt-3 flex items-center justify-between border-t border-slate-700 pt-3 text-xs font-semibold text-blue-300">
+                  Add to Chrome
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    aria-hidden="true"
+                    className="size-4 transition-transform group-hover:translate-x-0.5"
+                  >
+                    <path
+                      d="M6 14 14 6m-6 0h6v6"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </a>
             </div>
           </aside>
         </div>
