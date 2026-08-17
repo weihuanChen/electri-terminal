@@ -29,6 +29,7 @@ describe("localized content overlay", () => {
         localizedFields: {
           summary: "Русское описание",
           featureBullets: [" Первый пункт ", "", 42],
+          selectionTip: "Выберите соседнюю серию для более высокого тока.",
         },
       })
     );
@@ -41,6 +42,7 @@ describe("localized content overlay", () => {
       summary: "Русское описание",
       seoTitle: "Русский SEO",
       featureBullets: ["Первый пункт"],
+      selectionTip: "Выберите соседнюю серию для более высокого тока.",
     });
   });
 

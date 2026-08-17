@@ -448,6 +448,11 @@ export async function createProductAction(formData: FormData) {
       content: optionalStr(formData, "content"),
       attributes: formData.has("attributes") ? JSON.parse(str(formData, "attributes")) : undefined,
       featureBullets: formData.has("featureBullets") ? JSON.parse(str(formData, "featureBullets")) : undefined,
+      selectionTip: optionalStr(formData, "selectionTip"),
+      selectionRelatedProductIds: jsonArray<Id<"products">>(
+        formData,
+        "selectionRelatedProductIds"
+      ),
       mainImage: optionalStr(formData, "mainImage"),
       gallery: formData.has("gallery") ? JSON.parse(str(formData, "gallery")) : undefined,
       mediaItems: formData.has("mediaItems") ? JSON.parse(str(formData, "mediaItems")) : undefined,
@@ -678,6 +683,11 @@ export async function updateProductAction(formData: FormData) {
       content: optionalStr(formData, "content"),
       attributes: formData.has("attributes") ? JSON.parse(str(formData, "attributes")) : undefined,
       featureBullets: formData.has("featureBullets") ? JSON.parse(str(formData, "featureBullets")) : undefined,
+      selectionTip: str(formData, "selectionTip"),
+      selectionRelatedProductIds: jsonArray<Id<"products">>(
+        formData,
+        "selectionRelatedProductIds"
+      ),
       mainImage: optionalStr(formData, "mainImage"),
       gallery: formData.has("gallery") ? JSON.parse(str(formData, "gallery")) : undefined,
       mediaItems: formData.has("mediaItems") ? JSON.parse(str(formData, "mediaItems")) : undefined,
@@ -2049,6 +2059,7 @@ export async function saveProductLocalizationDraftAction(formData: FormData) {
       const summary = optionalStr(formData, "summary");
       const content = optionalStr(formData, "content");
       const featureBullets = optionalJsonStringArray(formData, "featureBulletsJson");
+      const selectionTip = optionalStr(formData, "selectionTip");
       const localizedFields: Record<string, unknown> = {};
 
       if (title) localizedFields.title = title;
@@ -2056,6 +2067,7 @@ export async function saveProductLocalizationDraftAction(formData: FormData) {
       if (summary) localizedFields.summary = summary;
       if (content) localizedFields.content = content;
       if (featureBullets) localizedFields.featureBullets = featureBullets;
+      if (selectionTip) localizedFields.selectionTip = selectionTip;
 
       return localizedFields;
     },

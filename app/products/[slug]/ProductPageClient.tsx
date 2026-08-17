@@ -17,6 +17,9 @@ import {
 import { buildProductKeySpecifications } from "@/lib/productKeySpecifications";
 import type { Locale } from "@/lib/i18n/config";
 import { useTranslations } from "next-intl";
+import ProductSelectionTip, {
+  type SelectionRelatedProduct,
+} from "./ProductSelectionTip";
 
 interface CategorySummary {
   _id?: string;
@@ -110,6 +113,8 @@ export interface ProductPageData {
   gallery?: string[];
   mediaItems?: VisualMediaItem[];
   featureBullets?: string[];
+  selectionTip?: string;
+  selectionRelatedProducts?: SelectionRelatedProduct[];
   attributes?: Record<string, unknown>;
   resources?: DownloadResource[];
   faqs?: FaqItem[];
@@ -267,13 +272,20 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
       <section className="py-6 md:py-10 bg-muted border-y border-border">
         <div className="container">
           <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
-            <div className="rounded-sm border border-border bg-white p-2 sm:p-4 md:p-5">
-              <ImageGallery
-                images={visualMediaItems.map((item) => ({
-                  url: item.url,
-                  alt: item.alt,
-                }))}
-                alt={product.shortTitle || product.title}
+            <div className="space-y-3">
+              <div className="rounded-sm border border-border bg-white p-2 sm:p-4 md:p-5">
+                <ImageGallery
+                  images={visualMediaItems.map((item) => ({
+                    url: item.url,
+                    alt: item.alt,
+                  }))}
+                  alt={product.shortTitle || product.title}
+                />
+              </div>
+              <ProductSelectionTip
+                tip={product.selectionTip}
+                products={product.selectionRelatedProducts}
+                locale={locale}
               />
             </div>
 

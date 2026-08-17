@@ -316,6 +316,8 @@ export default defineSchema({
     content: v.optional(v.string()),
     attributes: v.optional(v.record(v.string(), v.any())),
     featureBullets: v.optional(v.array(v.string())),
+    selectionTip: v.optional(v.string()),
+    selectionRelatedProductIds: v.optional(v.array(v.id("products"))),
     mainImage: v.optional(v.string()),
     gallery: v.optional(v.array(v.string())),
     mediaItems: v.optional(v.array(visualMediaItem)),

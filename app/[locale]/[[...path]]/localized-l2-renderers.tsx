@@ -393,6 +393,11 @@ function localizeProductRecord(product: ProductRecord, maps: L2LocalizationMaps)
       maps.family,
       applyFamilyLocalization
     ),
+    selectionRelatedProducts: applyCollectionLocalizations(
+      product.selectionRelatedProducts,
+      maps.product,
+      applyProductLocalization
+    ),
     faqs: [],
   };
 }

@@ -84,7 +84,8 @@
     "keyFeatures": "Key Features",
     "engineeringNotes": "Engineering Notes",
     "downloadDocumentation": "Download Documentation",
-    "quickSelect": "Quick Select"
+    "quickSelect": "Quick Select",
+    "selectionTip": "Selection Tip"
   },
   "inquiry": {
     "title": "Request a Quote",

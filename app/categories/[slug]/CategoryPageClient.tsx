@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Breadcrumb, FamilyCard, ProductCard, FAQAccordion, CTABanner } from "@/components/shared";
 import { resolveCategoryPageViewModel } from "@/lib/categoryPage";
-import { categoriesUrl, categoryUrl, familyUrl } from "@/lib/routes";
+import { categoriesUrl, categoryUrl, familyUrl, productUrl } from "@/lib/routes";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { resolveLocalizedPath } from "@/lib/i18n/urlResolver";
@@ -136,6 +136,39 @@ type QuickSelectionItem = {
   href: string;
 };
 
+const RING_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "PVC-Insulated Ring Terminals",
+    description: "For general wiring with PVC insulation and standard conductor sizes.",
+    slug: "vinyl-insulated-ring-terminals-g01",
+  },
+  {
+    label: "Non-Insulated Ring Terminals",
+    description: "Bare copper terminals for direct crimp connections and general-purpose wiring.",
+    slug: "non-insulated-ring-terminals-g01",
+  },
+  {
+    label: "Heavy-Duty Ring Terminals",
+    description: "For industrial loads up to 215A and conductors up to 1/0 AWG.",
+    slug: "non-insulated-ring-terminals-g03",
+  },
+  {
+    label: "High-Current Ring Terminals",
+    description: "For large conductors up to 4/0 AWG and current requirements up to 300A.",
+    slug: "non-insulated-ring-terminals-g04",
+  },
+] as const;
+
+function resolveRingTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return RING_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
 function normalizeComparable(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -253,11 +286,10 @@ export default function CategoryPageClient({
   const isLocalizedRoute = Boolean(locale && locale !== DEFAULT_LOCALE);
   const isSubcategory = Boolean(category.parentId);
   const useEnhancedHero = isRingTerminals || isSubcategory;
-  const quickSelectionItems = resolveQuickSelectionItems(
-    typesOverview,
-    content.families,
-    locale
-  );
+  const quickSelectionItems =
+    isRingTerminals && !isLocalizedRoute
+      ? resolveRingTerminalProductSelections(locale)
+      : resolveQuickSelectionItems(typesOverview, content.families, locale);
   const productsToRender = contentView === "all" ? visibleProducts.slice(0, 8) : visibleProducts;
   const cleanAboutIntroParagraphs = sanitizeAboutTextList([
     heroDescription,

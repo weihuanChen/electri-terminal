@@ -26,6 +26,7 @@ export type SourceCopyValues = {
   pageConfigJson?: string;
   highlightsJson?: string;
   featureBulletsJson?: string;
+  selectionTip?: string;
 };
 
 type SourceCopyField = keyof SourceCopyValues;
@@ -41,6 +42,7 @@ const CONTENT_FORM_FIELDS = [
   "seoDescription",
   "highlightsJson",
   "featureBulletsJson",
+  "selectionTip",
 ] as const satisfies readonly SourceCopyField[];
 
 const PAGE_CONFIG_FORM_FIELDS = ["pageConfigJson"] as const satisfies readonly SourceCopyField[];

@@ -5,7 +5,7 @@ import { ProductForm } from "../../components/ProductForm";
 
 export default async function CreateProductPage() {
   await requireAdmin();
-  const { categories, families, attributeTemplates } = await loadAdminData();
+  const { categories, families, products, attributeTemplates } = await loadAdminData();
 
   return (
     <DashboardLayout>
@@ -17,6 +17,7 @@ export default async function CreateProductPage() {
         <ProductForm
           categories={categories}
           families={families}
+          products={products}
           attributeTemplates={attributeTemplates}
         />
       </div>

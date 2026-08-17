@@ -31,6 +31,8 @@ interface Product {
   content?: string;
   attributes?: Record<string, unknown>;
   featureBullets?: string[];
+  selectionTip?: string;
+  selectionRelatedProductIds?: string[];
   mainImage?: string;
   gallery?: string[];
   mediaItems?: VisualMediaItem[];
@@ -57,6 +59,15 @@ interface Family {
   name: string;
   categoryId: string;
   attributes?: Record<string, AttributeValue>;
+}
+
+interface ProductOption {
+  _id: string;
+  title: string;
+  shortTitle?: string;
+  slug: string;
+  familyId: string;
+  status: "draft" | "published" | "archived";
 }
 
 type AttributeFieldType =
@@ -106,6 +117,7 @@ interface ProductFormProps {
   product?: Product;
   categories?: Category[];
   families?: Family[];
+  products?: ProductOption[];
   attributeTemplates?: AttributeTemplate[];
 }
 
@@ -347,6 +359,7 @@ export function ProductForm({
   product,
   categories = [],
   families = [],
+  products = [],
   attributeTemplates = [],
 }: ProductFormProps) {
   const router = useRouter();
@@ -368,6 +381,7 @@ export function ProductForm({
     summary: product?.summary || "",
     content: product?.content || "",
     featureBullets: product?.featureBullets?.join("\n") || "",
+    selectionTip: product?.selectionTip || "",
     status: product?.status || "draft",
     isFeatured: product?.isFeatured || false,
     moq: product?.moq || 0,
@@ -386,11 +400,24 @@ export function ProductForm({
   const [mediaState, setMediaState] = useState<MediaFormState>(
     getInitialMediaState(product)
   );
+  const [selectionRelatedProductIds, setSelectionRelatedProductIds] = useState<string[]>(
+    product?.selectionRelatedProductIds?.slice(0, 2) || []
+  );
 
   // Filter families by selected category
   const filteredFamilies = families.filter(
     (f) => !formData.categoryId || f.categoryId === formData.categoryId
   );
+  const selectionProductOptions = products
+    .filter(
+      (item) =>
+        item.familyId === formData.familyId &&
+        item._id !== product?._id &&
+        item.status !== "archived"
+    )
+    .sort((left, right) =>
+      (left.shortTitle || left.title).localeCompare(right.shortTitle || right.title)
+    );
   const selectedFamily = useMemo(
     () => families.find((family) => family._id === formData.familyId),
     [families, formData.familyId]
@@ -463,6 +490,10 @@ export function ProductForm({
       formDataToSend.append("mediaItems", JSON.stringify(mediaItems));
       formDataToSend.append("mainImage", productImageUrls[0] || "");
       formDataToSend.append("gallery", JSON.stringify(productImageUrls.slice(1)));
+      formDataToSend.append(
+        "selectionRelatedProductIds",
+        JSON.stringify(selectionRelatedProductIds)
+      );
 
       if (isEdit && product) {
         formDataToSend.append("id", product._id);
@@ -595,6 +626,7 @@ export function ProductForm({
               value={formData.categoryId}
               onChange={(e) => {
                 setFormData({ ...formData, categoryId: e.target.value, familyId: "" });
+                setSelectionRelatedProductIds([]);
               }}
               className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
             >
@@ -614,7 +646,10 @@ export function ProductForm({
             <select
               required
               value={formData.familyId}
-              onChange={(e) => setFormData({ ...formData, familyId: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, familyId: e.target.value });
+                setSelectionRelatedProductIds([]);
+              }}
               className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-sm"
               disabled={!formData.categoryId}
             >
@@ -696,6 +731,100 @@ export function ProductForm({
               placeholder="Push-in quick wiring&#10;High vibration resistance"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Selection Guidance */}
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">选型提示</h2>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            用一段短文本说明与相近型号的边界，并关联最多 2 个同系列产品。
+          </p>
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <div className="mb-2 flex items-center justify-between gap-4">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Tips 短文本
+              </label>
+              <span className="text-xs tabular-nums text-zinc-500">
+                {formData.selectionTip.length}/320
+              </span>
+            </div>
+            <textarea
+              value={formData.selectionTip}
+              onChange={(event) =>
+                setFormData({ ...formData, selectionTip: event.target.value })
+              }
+              rows={3}
+              maxLength={320}
+              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700"
+              placeholder="说明该产品适合的范围，以及何时应选择关联型号。"
+            />
+          </div>
+
+          <fieldset>
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <legend className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                同系列相关产品
+              </legend>
+              <span className="text-xs tabular-nums text-zinc-500">
+                已选 {selectionRelatedProductIds.length}/2
+              </span>
+            </div>
+
+            {!formData.familyId ? (
+              <p className="rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm text-zinc-500 dark:border-zinc-700">
+                请先选择产品系列。
+              </p>
+            ) : selectionProductOptions.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-sm text-zinc-500 dark:border-zinc-700">
+                当前系列没有其他可关联产品。
+              </p>
+            ) : (
+              <div className="grid gap-2 md:grid-cols-2">
+                {selectionProductOptions.map((item) => {
+                  const isSelected = selectionRelatedProductIds.includes(item._id);
+                  const isDisabled = !isSelected && selectionRelatedProductIds.length >= 2;
+
+                  return (
+                    <label
+                      key={item._id}
+                      className={`flex min-h-14 items-start gap-3 rounded-lg border px-3 py-3 transition-colors ${
+                        isSelected
+                          ? "border-sky-400 bg-sky-50 dark:border-sky-700 dark:bg-sky-950/30"
+                          : "border-zinc-200 dark:border-zinc-800"
+                      } ${isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:border-zinc-400"}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        onChange={() =>
+                          setSelectionRelatedProductIds((current) =>
+                            isSelected
+                              ? current.filter((id) => id !== item._id)
+                              : [...current, item._id].slice(0, 2)
+                          )
+                        }
+                        className="mt-0.5 h-4 w-4 rounded border-zinc-300"
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                          {item.shortTitle || item.title}
+                        </span>
+                        <span className="mt-1 block truncate font-mono text-xs text-zinc-500">
+                          {item.slug}
+                        </span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </fieldset>
         </div>
       </div>
 

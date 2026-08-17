@@ -16,7 +16,7 @@ export default async function EditProductPage({
   await requireAdmin();
   const { id } = await params;
   const detail = await getProductAdminDetail(id);
-  const { categories, families, attributeTemplates } = await loadAdminData();
+  const { categories, families, products, attributeTemplates } = await loadAdminData();
 
   if (!detail) {
     notFound();
@@ -45,6 +45,7 @@ export default async function EditProductPage({
           product={detail.product}
           categories={categories}
           families={families}
+          products={products}
           attributeTemplates={attributeTemplates}
         />
 

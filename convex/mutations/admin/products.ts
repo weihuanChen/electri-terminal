@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { mutation, type MutationCtx } from "../../_generated/server";
+import type { Id } from "../../_generated/dataModel";
 import { validateAttributesAgainstCategory } from "../../lib/attributes";
 import {
   assertFamilyMatchesCategory,
@@ -26,6 +27,46 @@ const visualMediaItem = v.object({
   sortOrder: v.optional(v.number()),
 });
 
+const MAX_SELECTION_TIP_LENGTH = 320;
+const MAX_SELECTION_RELATED_PRODUCTS = 2;
+
+async function validateSelectionGuidance(
+  ctx: MutationCtx,
+  args: {
+    productId?: Id<"products">;
+    familyId: Id<"productFamilies">;
+    selectionTip?: string;
+    selectionRelatedProductIds?: Id<"products">[];
+  }
+) {
+  if ((args.selectionTip?.length ?? 0) > MAX_SELECTION_TIP_LENGTH) {
+    throw new Error(`Selection tip must be ${MAX_SELECTION_TIP_LENGTH} characters or fewer`);
+  }
+
+  if (args.selectionRelatedProductIds === undefined) return;
+
+  const uniqueIds = new Set(args.selectionRelatedProductIds);
+  if (uniqueIds.size !== args.selectionRelatedProductIds.length) {
+    throw new Error("Selection related products must be unique");
+  }
+  if (uniqueIds.size > MAX_SELECTION_RELATED_PRODUCTS) {
+    throw new Error(`Select at most ${MAX_SELECTION_RELATED_PRODUCTS} related products`);
+  }
+  if (args.productId && uniqueIds.has(args.productId)) {
+    throw new Error("A product cannot link to itself as selection guidance");
+  }
+
+  for (const relatedProductId of args.selectionRelatedProductIds) {
+    const relatedProduct = await ctx.db.get(relatedProductId);
+    if (!relatedProduct) {
+      throw new Error("Selection related product not found");
+    }
+    if (relatedProduct.familyId !== args.familyId) {
+      throw new Error("Selection related products must belong to the same family");
+    }
+  }
+}
+
 export const createProduct = mutation({
   args: {
     productKey: v.optional(v.string()),
@@ -43,6 +84,8 @@ export const createProduct = mutation({
     content: v.optional(v.string()),
     attributes: v.optional(v.record(v.string(), v.any())),
     featureBullets: v.optional(v.array(v.string())),
+    selectionTip: v.optional(v.string()),
+    selectionRelatedProductIds: v.optional(v.array(v.id("products"))),
     mainImage: v.optional(v.string()),
     gallery: v.optional(v.array(v.string())),
     mediaItems: v.optional(v.array(visualMediaItem)),
@@ -66,6 +109,11 @@ export const createProduct = mutation({
     await assertUniqueProductSlug(ctx, args.slug);
     await assertFamilyMatchesCategory(ctx, args.familyId, args.categoryId);
     await validateAttributesAgainstCategory(ctx, args.categoryId, args.attributes);
+    await validateSelectionGuidance(ctx, {
+      familyId: args.familyId,
+      selectionTip: args.selectionTip,
+      selectionRelatedProductIds: args.selectionRelatedProductIds,
+    });
 
     return await ctx.db.insert(
       "products",
@@ -97,6 +145,8 @@ export const updateProduct = mutation({
     content: v.optional(v.string()),
     attributes: v.optional(v.record(v.string(), v.any())),
     featureBullets: v.optional(v.array(v.string())),
+    selectionTip: v.optional(v.string()),
+    selectionRelatedProductIds: v.optional(v.array(v.id("products"))),
     mainImage: v.optional(v.string()),
     gallery: v.optional(v.array(v.string())),
     mediaItems: v.optional(v.array(visualMediaItem)),
@@ -133,6 +183,14 @@ export const updateProduct = mutation({
 
     await assertFamilyMatchesCategory(ctx, nextFamilyId, nextCategoryId);
     await validateAttributesAgainstCategory(ctx, nextCategoryId, args.attributes);
+    await validateSelectionGuidance(ctx, {
+      productId: args.id,
+      familyId: nextFamilyId,
+      selectionTip: args.selectionTip,
+      selectionRelatedProductIds:
+        args.selectionRelatedProductIds ??
+        (args.familyId !== undefined ? current.selectionRelatedProductIds : undefined),
+    });
 
     await ctx.db.patch(
       args.id,
@@ -155,6 +213,10 @@ export const updateProduct = mutation({
         ...(args.attributes !== undefined ? { attributes: args.attributes } : {}),
         ...(args.featureBullets !== undefined
           ? { featureBullets: args.featureBullets }
+          : {}),
+        ...(args.selectionTip !== undefined ? { selectionTip: args.selectionTip } : {}),
+        ...(args.selectionRelatedProductIds !== undefined
+          ? { selectionRelatedProductIds: args.selectionRelatedProductIds }
           : {}),
         ...(args.mainImage !== undefined ? { mainImage: args.mainImage } : {}),
         ...(args.gallery !== undefined ? { gallery: args.gallery } : {}),
@@ -183,7 +245,7 @@ export const updateProduct = mutation({
       sourceId: String(args.id),
       current,
       updates: args,
-      translatableFieldKeys: ["title", "shortTitle", "summary", "content", "featureBullets", "seoTitle", "seoDescription"],
+      translatableFieldKeys: ["title", "shortTitle", "summary", "content", "featureBullets", "selectionTip", "seoTitle", "seoDescription"],
     });
 
     return args.id;

@@ -15,6 +15,7 @@ type LocalizedEntity = {
   seoDescription?: string;
   pageConfig?: unknown;
   featureBullets?: string[];
+  selectionTip?: string;
   highlights?: string[];
 };
 
@@ -209,6 +210,9 @@ export function applyProductLocalization<T extends LocalizedEntity>(
     ...(getFieldText(fields, "summary") ? { summary: getFieldText(fields, "summary") } : {}),
     ...(getFieldText(fields, "content") ? { content: getFieldText(fields, "content") } : {}),
     ...(featureBullets ? { featureBullets } : {}),
+    ...(getFieldText(fields, "selectionTip")
+      ? { selectionTip: getFieldText(fields, "selectionTip") }
+      : {}),
   } as T;
 }
 

@@ -2144,6 +2144,31 @@ export const getProductBySlug = query({
       .query("productVariants")
       .withIndex("by_productId_sortOrder", (q) => q.eq("productId", product._id))
       .collect();
+    const selectionRelatedProducts = (
+      await Promise.all(
+        (product.selectionRelatedProductIds ?? [])
+          .slice(0, 2)
+          .map((productId) => ctx.db.get(productId))
+      )
+    ).flatMap((relatedProduct) => {
+      if (
+        !relatedProduct ||
+        relatedProduct.status !== "published" ||
+        relatedProduct._id === product._id
+      ) {
+        return [];
+      }
+
+      return [
+        {
+          _id: relatedProduct._id,
+          slug: relatedProduct.slug,
+          title: relatedProduct.title,
+          shortTitle: relatedProduct.shortTitle,
+          model: relatedProduct.model,
+        },
+      ];
+    });
 
     return {
       ...omitBrand(product),
@@ -2160,6 +2185,7 @@ export const getProductBySlug = query({
       // Loaded through a family-scoped query so products in the same family share
       // the same Convex query cache entry.
       relatedSeries: [],
+      selectionRelatedProducts,
       specificationFields,
       variants: variants
         .filter((variant) => variant.status === "published")

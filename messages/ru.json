@@ -85,7 +85,8 @@
     "keyFeatures": "Ключевые особенности",
     "engineeringNotes": "Технические примечания",
     "downloadDocumentation": "Скачать документацию",
-    "quickSelect": "Быстрый подбор"
+    "quickSelect": "Быстрый подбор",
+    "selectionTip": "Совет по выбору"
   },
   "inquiry": {
     "title": "Запрос коммерческого предложения",
