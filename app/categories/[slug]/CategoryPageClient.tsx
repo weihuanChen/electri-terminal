@@ -159,10 +159,38 @@ const RING_TERMINAL_PRODUCT_SELECTIONS = [
   },
 ] as const;
 
+const SPLICE_CONNECTOR_PRODUCT_SELECTIONS = [
+  {
+    label: "Butt Splice Connectors",
+    description: "For secure end-to-end wire joining and inline conductor extensions.",
+    slug: "butt-splice-connectors-g01",
+  },
+  {
+    label: "Parallel Splice Connectors",
+    description: "For side-by-side multi-wire joining and organized branching connections.",
+    slug: "parallel-splice-connectors-g01",
+  },
+  {
+    label: "Twin-Wire Crimp Terminals",
+    description: "For terminating two conductors together in one insulated crimp connection.",
+    slug: "twin-vinyl-insulated-cord-end-terminals-g01",
+  },
+] as const;
+
 function resolveRingTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
   const urlOptions = locale ? { locale } : undefined;
 
   return RING_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveSpliceConnectorProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return SPLICE_CONNECTOR_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
     label,
     description,
     href: productUrl(slug, urlOptions),
@@ -283,13 +311,16 @@ export default function CategoryPageClient({
     secondaryCTA,
   } = resolveCategoryPageViewModel(category, content, contentView, urlOptions);
   const isRingTerminals = category.slug === "ring-terminals";
+  const isSpliceConnectors = category.slug === "splice-connectors";
   const isLocalizedRoute = Boolean(locale && locale !== DEFAULT_LOCALE);
   const isSubcategory = Boolean(category.parentId);
   const useEnhancedHero = isRingTerminals || isSubcategory;
   const quickSelectionItems =
     isRingTerminals && !isLocalizedRoute
       ? resolveRingTerminalProductSelections(locale)
-      : resolveQuickSelectionItems(typesOverview, content.families, locale);
+      : isSpliceConnectors && !isLocalizedRoute
+        ? resolveSpliceConnectorProductSelections(locale)
+        : resolveQuickSelectionItems(typesOverview, content.families, locale);
   const productsToRender = contentView === "all" ? visibleProducts.slice(0, 8) : visibleProducts;
   const cleanAboutIntroParagraphs = sanitizeAboutTextList([
     heroDescription,

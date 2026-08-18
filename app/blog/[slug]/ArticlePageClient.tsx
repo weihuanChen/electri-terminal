@@ -9,6 +9,7 @@ import {
   categoryUrl,
   contactUrl,
   productUrl,
+  productsUrl,
   requestQuoteUrl,
   selectionGuideUrl,
 } from "@/lib/routes";
@@ -468,20 +469,28 @@ function matchProductsBySection(
 function InlineRelatedProducts({
   sectionKey,
   products,
+  fillWithFallback = true,
+  viewAllHref,
+  viewAllLabel,
 }: {
   sectionKey: SectionProductKey;
   products: RelatedProduct[];
+  fillWithFallback?: boolean;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 }) {
   const config = SECTION_PRODUCT_CONFIG[sectionKey];
   const topProducts = products.slice(0, 3);
-  const fallbackProducts: RelatedProduct[] = config.fallbackProducts
-    .filter((item) => !topProducts.some((product) => product.slug === item.slug))
-    .map((item, index) => ({
-      _id: `fallback-${sectionKey}-${index}`,
-      slug: item.slug,
-      title: item.label,
-      mainImage: item.mainImage,
-    }));
+  const fallbackProducts: RelatedProduct[] = fillWithFallback
+    ? config.fallbackProducts
+        .filter((item) => !topProducts.some((product) => product.slug === item.slug))
+        .map((item, index) => ({
+          _id: `fallback-${sectionKey}-${index}`,
+          slug: item.slug,
+          title: item.label,
+          mainImage: item.mainImage,
+        }))
+    : [];
   const displayProducts = [...topProducts, ...fallbackProducts].slice(0, 3);
 
   return (
@@ -525,10 +534,10 @@ function InlineRelatedProducts({
       </div>
 
       <Link
-        href={config.viewAllHref}
+        href={viewAllHref ?? config.viewAllHref}
         className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:text-primary-dark"
       >
-        {config.viewAllLabel}
+        {viewAllLabel ?? config.viewAllLabel}
         <ArrowRight className="ml-1.5 h-4 w-4" />
       </Link>
     </div>
@@ -636,22 +645,21 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
       : firstRelatedInsertIndex;
 
   const relatedProducts = article.relatedProducts ?? [];
+  const hasCuratedRelatedProducts = relatedProducts.length > 0;
   const fallbackRelatedProducts = buildFallbackRelatedProducts(article);
   const resolvedLegacyRelatedProducts =
-    relatedProducts.length > 0 ? relatedProducts : fallbackRelatedProducts;
+    hasCuratedRelatedProducts ? relatedProducts : fallbackRelatedProducts;
   const rankedSectionKeys = rankSectionKeysByArticle(article);
   const firstRelatedSectionKey: SectionProductKey = rankedSectionKeys[0] ?? "ring";
   const secondRelatedSectionKey: SectionProductKey =
     rankedSectionKeys.find((key) => key !== firstRelatedSectionKey) ??
     (firstRelatedSectionKey === "ring" ? "spade" : "ring");
-  const firstRelatedProducts = matchProductsBySection(
-    resolvedLegacyRelatedProducts,
-    firstRelatedSectionKey
-  );
-  const secondRelatedProducts = matchProductsBySection(
-    resolvedLegacyRelatedProducts,
-    secondRelatedSectionKey
-  );
+  const firstRelatedProducts = hasCuratedRelatedProducts
+    ? relatedProducts.slice(0, 3)
+    : matchProductsBySection(resolvedLegacyRelatedProducts, firstRelatedSectionKey);
+  const secondRelatedProducts = hasCuratedRelatedProducts
+    ? relatedProducts.slice(3, 6)
+    : matchProductsBySection(resolvedLegacyRelatedProducts, secondRelatedSectionKey);
   const resolvedRelatedArticles = (relatedArticles ?? []).filter((item) => item.slug !== slug).slice(0, 3);
   const authorName = article.author?.name || "Electri Terminal Team";
   const authorTitle = article.author?.title || "Editorial Team";
@@ -917,13 +925,21 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                           <InlineRelatedProducts
                             sectionKey={firstRelatedSectionKey}
                             products={firstRelatedProducts}
+                            fillWithFallback={!hasCuratedRelatedProducts}
+                            viewAllHref={hasCuratedRelatedProducts ? productsUrl() : undefined}
+                            viewAllLabel={hasCuratedRelatedProducts ? "View All Products" : undefined}
                           />
                         )}
 
-                        {!isWireTerminalGuide && index === secondRelatedInsertIndex && (
+                        {!isWireTerminalGuide &&
+                          index === secondRelatedInsertIndex &&
+                          (!hasCuratedRelatedProducts || secondRelatedProducts.length > 0) && (
                           <InlineRelatedProducts
                             sectionKey={secondRelatedSectionKey}
                             products={secondRelatedProducts}
+                            fillWithFallback={!hasCuratedRelatedProducts}
+                            viewAllHref={hasCuratedRelatedProducts ? productsUrl() : undefined}
+                            viewAllLabel={hasCuratedRelatedProducts ? "View All Products" : undefined}
                           />
                         )}
                       </div>
@@ -940,6 +956,9 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                       <InlineRelatedProducts
                         sectionKey={firstRelatedSectionKey}
                         products={firstRelatedProducts}
+                        fillWithFallback={!hasCuratedRelatedProducts}
+                        viewAllHref={hasCuratedRelatedProducts ? productsUrl() : undefined}
+                        viewAllLabel={hasCuratedRelatedProducts ? "View All Products" : undefined}
                       />
                     )}
 
@@ -978,10 +997,14 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                       From improved efficiency to cost savings, the benefits are substantial.
                     </p>
 
-                    {!isWireTerminalGuide && (
+                    {!isWireTerminalGuide &&
+                      (!hasCuratedRelatedProducts || secondRelatedProducts.length > 0) && (
                       <InlineRelatedProducts
                         sectionKey={secondRelatedSectionKey}
                         products={secondRelatedProducts}
+                        fillWithFallback={!hasCuratedRelatedProducts}
+                        viewAllHref={hasCuratedRelatedProducts ? productsUrl() : undefined}
+                        viewAllLabel={hasCuratedRelatedProducts ? "View All Products" : undefined}
                       />
                     )}
 

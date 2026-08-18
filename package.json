@@ -21,6 +21,12 @@
     "export:family-product-images": "node scripts/export-family-product-images.mjs",
     "apply:copy-tasks": "node scripts/apply-copy-tasks.mjs",
     "migrate:family-page-content": "node scripts/migrate-family-page-content.mjs",
+    "migrate:angled-blade-singleton-intent": "node scripts/migrate-angled-blade-singleton-intent.mjs",
+    "migrate:first-five-v2-intents": "node scripts/migrate-first-five-v2-intents.mjs",
+    "seed:first-five-family-intents": "node scripts/seed-first-five-family-intents.mjs",
+    "seed:next-ten-family-intents": "node scripts/seed-next-ten-family-intent-templates.mjs",
+    "seed:final-nine-family-intents": "node scripts/seed-final-nine-family-intents.mjs",
+    "seed:remaining-nineteen-family-intents": "node scripts/seed-remaining-nineteen-family-intents.mjs",
     "backfill:variant-explanations": "node scripts/backfill-variant-explanations.mjs"
   },
   "dependencies": {

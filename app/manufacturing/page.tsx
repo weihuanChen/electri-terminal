@@ -115,6 +115,20 @@ const productionEnvironment = [
       "https://assets.electriterminal.com/factory/terminal-production-quality-inspection-weighing.webp",
     imageAlt: "Terminal production quality inspection and weighing process",
   },
+  {
+    title: "Factory Exterior",
+    caption:
+      "The factory site brings machining, forming, inspection, and order handling together within one production facility.",
+    imageSrc: "/images/manufacturing/factory-exterior.webp",
+    imageAlt: "Exterior view of the Electri Terminal manufacturing facility",
+  },
+  {
+    title: "Outbound Shipment",
+    caption:
+      "Packed production batches are loaded for dispatch after final quantity, labeling, and packaging checks.",
+    imageSrc: "/images/manufacturing/outbound-shipment-loading.webp",
+    imageAlt: "Packed cartons loaded into a truck for outbound shipment",
+  },
 ];
 
 const capabilityHighlights = [
@@ -323,10 +337,21 @@ export default function ManufacturingPage() {
             titleClassName="!text-slate-900 dark:!text-slate-50"
             descriptionClassName="!text-slate-700 dark:!text-slate-300"
           />
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {productionEnvironment.map((item) => (
-              <ProductionImageCard key={item.title} {...item} />
-            ))}
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-6">
+            {productionEnvironment.map((item, index) => {
+              const isBottomRow = index >= 3;
+
+              return (
+                <ProductionImageCard
+                  key={item.title}
+                  {...item}
+                  className={isBottomRow ? "xl:col-span-3" : "xl:col-span-2"}
+                  imageClassName={item.title === "Outbound Shipment" ? "object-[center_48%]" : ""}
+                  imageContainerClassName={isBottomRow ? "h-72 md:h-80 xl:h-[360px]" : "h-56"}
+                  sizes={isBottomRow ? "(max-width: 767px) 100vw, 50vw" : undefined}
+                />
+              );
+            })}
           </div>
         </div>
       </section>

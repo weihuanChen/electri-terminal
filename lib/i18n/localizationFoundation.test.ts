@@ -10,6 +10,7 @@ import {
   normalizeFoundationKey,
   normalizeLocale,
   requiresManualIntentReview,
+  resolveProductPageCanonicalIntent,
   stableLocalizationValue,
 } from "@/convex/lib/localizationFoundation";
 
@@ -134,6 +135,44 @@ describe("localization foundation contracts", () => {
         verifiedClaims: [],
       }),
     ).not.toThrow();
+  });
+
+  it("materializes v2 product intents with product-page entity scope", () => {
+    const intent = {
+      schemaVersion: 2 as const,
+      pageRole: "industrial_product_selection",
+      entityScope: "product_group",
+      primaryGoal: "Help buyers select the appropriate product",
+      buyerStage: ["evaluation"],
+      primaryAudience: ["electrical_engineer"],
+      conversionIntent: { primaryAction: "request_quote" },
+      mustCommunicate: [
+        {
+          key: "product_definition",
+          intent: "Define the shared product group",
+          inheritanceMode: "shared" as const,
+          evidenceRequirement: "approved_group_or_page_evidence",
+        },
+      ],
+      sectionIntents: [
+        {
+          sectionKey: "overview",
+          purpose: "Define the product group",
+          inheritanceMode: "shared" as const,
+          requiredEvidenceClass: "group_definition",
+        },
+      ],
+      prohibitedClaims: [],
+      primaryConceptIds: [],
+      secondaryConceptIds: [],
+      verifiedClaims: [],
+    };
+
+    expect(resolveProductPageCanonicalIntent(intent)).toMatchObject({
+      entityScope: "product_page",
+    });
+    expect(intent.entityScope).toBe("product_group");
+    expect(resolveProductPageCanonicalIntent(baseIntent)).toBe(baseIntent);
   });
 
   it("accepts a minimal valid canonical intent contract", () => {

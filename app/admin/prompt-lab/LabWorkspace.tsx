@@ -17,6 +17,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { LabDashboardData, LabRunData } from "@/lib/llm-lab-admin";
+import {
+  formatPromptLabRunTime,
+  formatPromptLabTokenCount,
+} from "@/lib/promptLabFormatters";
 import { retryLabResultAction, selectLabResultAction, startLabRunAction } from "./actions";
 
 type Props = {
@@ -28,11 +32,6 @@ type Props = {
 
 const COMPLETE_STATUSES = new Set(["completed", "partial", "failed"]);
 const DIFF_FIELDS = ["title", "headline", "intro", "primaryCta", "secondaryCta", "seoTitle", "seoDescription"];
-
-function formatTime(timestamp?: number) {
-  if (!timestamp) return "—";
-  return new Intl.DateTimeFormat("en", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" }).format(timestamp);
-}
 
 function badge(status: string) {
   if (status === "completed") return "border-emerald-200 bg-emerald-50 text-emerald-700";
@@ -51,7 +50,7 @@ function ResultCard({ result, run }: { result: Doc<"llmLabResults">; run: Doc<"l
           <div><p className="text-[10px] font-bold uppercase tracking-[.22em] text-zinc-500">{result.providerName}</p><h3 className="mt-1 font-mono text-sm font-semibold text-zinc-900">{result.modelDisplayName}</h3></div>
           <span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${badge(result.status)}`}>{result.status}</span>
         </div>
-        <div className="mt-3 flex gap-4 font-mono text-[10px] text-zinc-500"><span>{result.latencyMs ? `${(result.latencyMs / 1000).toFixed(1)}s` : "waiting"}</span><span>{result.totalTokens ? `${result.totalTokens.toLocaleString()} tok` : "— tok"}</span><span>{result.finishReason ?? "—"}</span></div>
+        <div className="mt-3 flex gap-4 font-mono text-[10px] text-zinc-500"><span>{result.latencyMs ? `${(result.latencyMs / 1000).toFixed(1)}s` : "waiting"}</span><span>{result.totalTokens ? `${formatPromptLabTokenCount(result.totalTokens)} tok` : "— tok"}</span><span>{result.finishReason ?? "—"}</span></div>
       </header>
       <div className="flex border-b border-zinc-200 bg-zinc-50 p-1">
         {(["structured", "raw", "validation"] as const).map((item) => <button key={item} type="button" onClick={() => setView(item)} className={`flex-1 rounded-lg px-2 py-2 text-[10px] font-bold uppercase tracking-wider ${view === item ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200" : "text-zinc-500 hover:text-zinc-800"}`}>{item}</button>)}
@@ -133,7 +132,7 @@ export function LabWorkspace({ dashboard, initialRun, configuredProviderIds, not
       </aside>
       <main className="min-w-0 p-5 lg:p-6">
         {!runData ? <div className="grid min-h-[650px] place-items-center rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60"><div className="max-w-sm text-center"><div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-zinc-200 bg-white shadow-sm"><Code2 className="h-6 w-6 text-zinc-400"/></div><h2 className="mt-5 text-lg font-semibold">Ready for a controlled run</h2><p className="mt-2 text-sm leading-6 text-zinc-500">Load a versioned spec, select equivalent model targets, and compare schema-validated output side by side.</p></div></div> : <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-mono text-[10px] uppercase tracking-[.2em] text-zinc-600">Run {String(runData.run._id).slice(-8)}</p><h2 className="mt-1 text-lg font-semibold">{String((runData.run.presetSnapshot as { name?: string }).name ?? "Prompt comparison")}</h2></div><div className="flex items-center gap-3 font-mono text-[10px] text-zinc-500"><Clock3 className="h-3.5 w-3.5"/>{formatTime(runData.run.createdAt)}{!COMPLETE_STATUSES.has(runData.run.status) ? <><RotateCw className="ml-2 h-3.5 w-3.5 animate-spin text-cyan-600"/>polling</> : null}</div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="font-mono text-[10px] uppercase tracking-[.2em] text-zinc-600">Run {String(runData.run._id).slice(-8)}</p><h2 className="mt-1 text-lg font-semibold">{String((runData.run.presetSnapshot as { name?: string }).name ?? "Prompt comparison")}</h2></div><div className="flex items-center gap-3 font-mono text-[10px] text-zinc-500"><Clock3 className="h-3.5 w-3.5"/>{formatPromptLabRunTime(runData.run.createdAt)}{!COMPLETE_STATUSES.has(runData.run.status) ? <><RotateCw className="ml-2 h-3.5 w-3.5 animate-spin text-cyan-600"/>polling</> : null}</div></div>
           {runData.results.some((result) => result.status === "completed") ? <details className="rounded-2xl border border-zinc-200 bg-white shadow-sm"><summary className="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-[.16em] text-zinc-600">Field difference matrix</summary><div className="overflow-auto border-t border-zinc-200"><table className="min-w-full text-left"><thead className="bg-zinc-50"><tr><th className="sticky left-0 bg-zinc-50 p-3 font-mono text-[10px] text-zinc-500">FIELD</th>{runData.results.map((result) => <th key={result._id} className="min-w-64 p-3 font-mono text-[10px] text-zinc-600">{result.modelDisplayName}</th>)}</tr></thead><tbody>{diffRows.map((row) => <tr key={row.field} className="border-t border-zinc-100"><th className="sticky left-0 bg-white p-3 font-mono text-[10px] text-cyan-700">{row.field}</th>{row.values.map((item, index) => <td key={index} className="max-w-sm p-3 align-top text-[11px] leading-5 text-zinc-600">{item}</td>)}</tr>)}</tbody></table></div></details> : null}
           <div className="flex gap-4 overflow-x-auto pb-3">{runData.results.map((result) => <ResultCard key={result._id} result={result} run={runData.run}/>)}</div>
         </div>}

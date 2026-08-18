@@ -308,6 +308,16 @@ function compactBullet(value: string) {
   return normalizeText(value).replace(/^[•\-]\s*/, "").replace(/[.;]\s*$/, "");
 }
 
+function compactSelectionStep(value: string, maxWords = 6) {
+  const normalized = compactBullet(value).replace(/^\d+[.)]\s*/, "");
+  const summary = normalized.split(/:\s+|\s+-\s+/)[0] || normalized;
+  const words = summary.split(" ").filter(Boolean);
+
+  return words.length > maxWords
+    ? `${words.slice(0, maxWords).join(" ")}...`
+    : summary;
+}
+
 function includesAny(sourceText: string, tokens: string[]) {
   return tokens.some((token) => sourceText.includes(token));
 }
@@ -812,8 +822,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                     </div>
                     <div className="space-y-0">
                       {selectionStepsForRender.map((step, index) => {
-                        const shortStep = step.split(':')[0].split('. ')[0].split(' - ')[0];
-                        const finalStep = shortStep.split(' ').length > 6 ? shortStep.split(' ').slice(0, 6).join(' ') + '...' : shortStep;
+                        const finalStep = compactSelectionStep(step);
                         return (
                           <div
                             key={`${step}-${index}`}

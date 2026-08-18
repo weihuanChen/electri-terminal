@@ -24,6 +24,10 @@ interface ProductionImageCardProps {
   caption: string;
   imageSrc: string;
   imageAlt: string;
+  className?: string;
+  imageClassName?: string;
+  imageContainerClassName?: string;
+  sizes?: string;
 }
 
 interface CapabilityCardProps {
@@ -88,17 +92,28 @@ export function ProcessStepCard({
   );
 }
 
-export function ProductionImageCard({ title, caption, imageSrc, imageAlt }: ProductionImageCardProps) {
+export function ProductionImageCard({
+  title,
+  caption,
+  imageSrc,
+  imageAlt,
+  className = "",
+  imageClassName = "",
+  imageContainerClassName = "h-56",
+  sizes = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw",
+}: ProductionImageCardProps) {
   return (
-    <article className="group card overflow-hidden">
-      <div className="relative h-56 w-full bg-slate-200 dark:bg-slate-800 transition-colors duration-300">
+    <article className={`group card min-w-0 overflow-hidden ${className}`}>
+      <div
+        className={`relative w-full bg-slate-200 dark:bg-slate-800 transition-colors duration-300 ${imageContainerClassName}`}
+      >
         <ImagePreview
           src={imageSrc}
           alt={imageAlt}
           loading="lazy"
-          sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
+          sizes={sizes}
           unoptimized
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className={`object-cover transition-transform duration-500 group-hover:scale-[1.03] ${imageClassName}`}
         />
       </div>
       <div className="space-y-2 p-5">

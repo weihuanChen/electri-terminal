@@ -13,6 +13,7 @@ import {
   intentMembershipCriterionValidator,
   intentPatchOperationValidator,
   normalizeFoundationKey,
+  resolveProductPageCanonicalIntent,
   type CanonicalIntentPayload,
   type IntentPatchOperation,
 } from "../../lib/localizationFoundation";
@@ -976,6 +977,7 @@ export const materializeProductCanonicalIntent = mutation({
         deltaRevision.patchOperations as IntentPatchOperation[],
       );
     }
+    resolved = resolveProductPageCanonicalIntent(resolved);
     assertCanonicalIntentContract(resolved);
     let identity = await ctx.db
       .query("canonicalIntents")

@@ -580,6 +580,16 @@ export type CanonicalIntentV2Payload = CanonicalIntentSharedFields & {
 export type CanonicalIntentPayload =
   CanonicalIntentV1Payload | CanonicalIntentV2Payload;
 
+export function resolveProductPageCanonicalIntent(
+  intent: CanonicalIntentPayload,
+): CanonicalIntentPayload {
+  if (intent.schemaVersion !== 2) return intent;
+  return {
+    ...intent,
+    entityScope: "product_page",
+  };
+}
+
 const KEYED_INTENT_TARGETS = new Set<IntentPatchOperation["target"]>([
   "mustCommunicate",
   "verifiedClaims",

@@ -6,6 +6,7 @@ describe("localized route matching", () => {
   it.each([
     ["/", "staticPage", "home"],
     ["/contact", "staticPage", "contact"],
+    ["/solutions", "staticPage", "solutions"],
     ["/categories/connectors", "category", "connectors"],
     ["/families/uk", "family", "uk"],
     ["/products/uk-2-5", "product", "uk-2-5"],
