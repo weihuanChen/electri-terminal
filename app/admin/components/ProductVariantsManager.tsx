@@ -277,6 +277,7 @@ function VariantEditorCard({
   onVariantDraftChange?: (draft: VariantBatchSaveItem) => void;
 }) {
   const isCreate = !variant;
+  const [isOpen, setIsOpen] = useState(isCreate);
   const [attributes, setAttributes] = useState<Record<string, AttributeValue>>(
     getInitialAttributes(variant, fields)
   );
@@ -332,7 +333,8 @@ function VariantEditorCard({
 
   return (
     <details
-      open={isCreate}
+      open={isOpen}
+      onToggle={(event) => setIsOpen(event.currentTarget.open)}
       className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
     >
       <summary className="cursor-pointer list-none px-5 py-4">
@@ -351,7 +353,7 @@ function VariantEditorCard({
         </div>
       </summary>
 
-      <div className="border-t border-zinc-200 dark:border-zinc-800 px-5 py-5">
+      {isOpen ? <div className="border-t border-zinc-200 dark:border-zinc-800 px-5 py-5">
         <form action={action} className="space-y-6">
           {!isCreate ? <input type="hidden" name="id" value={variant._id} /> : null}
           <input type="hidden" name="productId" value={productId} />
@@ -673,7 +675,7 @@ function VariantEditorCard({
             </button>
           </div>
         </form>
-      </div>
+      </div> : null}
     </details>
   );
 }

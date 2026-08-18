@@ -93,9 +93,15 @@ interface FamilyOption {
   status: "draft" | "published" | "archived";
 }
 
+interface CategoryOption {
+  _id: string;
+  name: string;
+  path: string;
+}
+
 interface CategoryFormProps {
   category?: Category;
-  categories?: Category[];
+  categories?: CategoryOption[];
   families?: FamilyOption[];
 }
 

@@ -1,11 +1,11 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData } from "@/lib/convex-admin";
+import { getCategoryFormOptions } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import { CategoryForm } from "../../components/CategoryForm";
 
 export default async function CreateCategoryPage() {
   await requireAdmin();
-  const { categories, families } = await loadAdminData();
+  const { categories, families } = await getCategoryFormOptions();
 
   return (
     <DashboardLayout>

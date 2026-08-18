@@ -112,6 +112,45 @@ export interface AdminProductDetail {
   variants: AdminProductVariantSummary[];
 }
 
+export interface CategoryFormOptions {
+  categories: Array<{
+    _id: string;
+    name: string;
+    path: string;
+  }>;
+  families: Array<{
+    _id: string;
+    name: string;
+    slug: string;
+    summary?: string;
+    heroImage?: string;
+    sortOrder: number;
+    status: "draft" | "published" | "archived";
+  }>;
+}
+
+export interface ProductFormOptions {
+  categories: Array<{ _id: string; name: string }>;
+  families: Array<{
+    _id: string;
+    name: string;
+    categoryId: string;
+    attributes?: Record<
+      string,
+      string | number | boolean | string[] | [number, number]
+    >;
+  }>;
+  products: Array<{
+    _id: string;
+    title: string;
+    shortTitle?: string;
+    slug: string;
+    familyId: string;
+    status: "draft" | "published" | "archived";
+  }>;
+  attributeTemplates: AdminAttributeTemplateSummary[];
+}
+
 export interface AdminData {
   categories: Doc<"categories">[];
   families: Doc<"productFamilies">[];
@@ -323,6 +362,12 @@ export async function getCategory(id: string) {
   return queryAdmin<Doc<"categories">>("queries/modules/categories:getCategoryById", { id });
 }
 
+export async function getCategoryFormOptions() {
+  return queryAdmin<CategoryFormOptions>(
+    "queries/modules/categories:getCategoryFormOptions"
+  );
+}
+
 export async function getProduct(id: string) {
   return queryAdmin<Doc<"products">>("queries/modules/products:getProductById", { id });
 }
@@ -332,6 +377,10 @@ export async function getProductAdminDetail(id: string) {
     "queries/modules/products:getProductAdminDetailById",
     { id }
   );
+}
+
+export async function getProductFormOptions() {
+  return queryAdmin<ProductFormOptions>("queries/modules/products:getProductFormOptions");
 }
 
 export async function getImportJobRows(id: string) {

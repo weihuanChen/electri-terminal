@@ -1,11 +1,12 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData } from "@/lib/convex-admin";
+import { getProductFormOptions } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import { ProductForm } from "../../components/ProductForm";
 
 export default async function CreateProductPage() {
   await requireAdmin();
-  const { categories, families, products, attributeTemplates } = await loadAdminData();
+  const { categories, families, products, attributeTemplates } =
+    await getProductFormOptions();
 
   return (
     <DashboardLayout>

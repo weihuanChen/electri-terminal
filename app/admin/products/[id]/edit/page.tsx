@@ -1,7 +1,6 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData, getProductAdminDetail } from "@/lib/convex-admin";
+import { getProductAdminDetail, getProductFormOptions } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../../components/DashboardLayout";
-import { ProductDetailSections } from "../../../components/ProductDetailSections";
 import { ProductForm } from "../../../components/ProductForm";
 import { ProductVariantsManager } from "../../../components/ProductVariantsManager";
 import { notFound } from "next/navigation";
@@ -15,8 +14,10 @@ export default async function EditProductPage({
 }) {
   await requireAdmin();
   const { id } = await params;
-  const detail = await getProductAdminDetail(id);
-  const { categories, families, products, attributeTemplates } = await loadAdminData();
+  const [detail, { categories, families, products, attributeTemplates }] = await Promise.all([
+    getProductAdminDetail(id),
+    getProductFormOptions(),
+  ]);
 
   if (!detail) {
     notFound();
@@ -38,8 +39,6 @@ export default async function EditProductPage({
             <p className="text-zinc-600 dark:text-zinc-400">修改产品信息，并核对当前 schema 与 variants</p>
           </div>
         </div>
-
-        <ProductDetailSections detail={detail} mode="edit" />
 
         <ProductForm
           product={detail.product}

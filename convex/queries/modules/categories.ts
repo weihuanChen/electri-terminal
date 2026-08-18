@@ -37,6 +37,37 @@ export const listCategories = query({
   },
 });
 
+export const getCategoryFormOptions = query({
+  args: {},
+  handler: async (ctx) => {
+    const [categories, families] = await Promise.all([
+      ctx.db.query("categories").take(200),
+      ctx.db.query("productFamilies").take(200),
+    ]);
+
+    return {
+      categories: categories
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+        .map((category) => ({
+          _id: category._id,
+          name: category.name,
+          path: category.path,
+        })),
+      families: families
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+        .map((family) => ({
+          _id: family._id,
+          name: family.name,
+          slug: family.slug,
+          summary: family.summary,
+          heroImage: family.heroImage,
+          sortOrder: family.sortOrder,
+          status: family.status,
+        })),
+    };
+  },
+});
+
 export const exportCategoriesForContent = query({
   args: {
     status: v.optional(statusCommon),

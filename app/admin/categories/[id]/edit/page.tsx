@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { loadAdminData, getCategory } from "@/lib/convex-admin";
+import { getCategory, getCategoryFormOptions } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../../components/DashboardLayout";
 import { CategoryForm } from "../../../components/CategoryForm";
 import { notFound } from "next/navigation";
@@ -12,9 +12,9 @@ export default async function EditCategoryPage({
   await requireAdmin();
   const { id } = await params;
 
-  const [category, adminData] = await Promise.all([
+  const [category, formOptions] = await Promise.all([
     getCategory(id),
-    loadAdminData(),
+    getCategoryFormOptions(),
   ]);
 
   if (!category) {
@@ -31,8 +31,8 @@ export default async function EditCategoryPage({
 
         <CategoryForm
           category={category}
-          categories={adminData.categories}
-          families={adminData.families}
+          categories={formOptions.categories}
+          families={formOptions.families}
         />
       </div>
     </DashboardLayout>
