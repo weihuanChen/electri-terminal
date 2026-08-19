@@ -177,6 +177,148 @@ const SPLICE_CONNECTOR_PRODUCT_SELECTIONS = [
   },
 ] as const;
 
+const PIN_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Vinyl-Insulated Pin Terminals",
+    description: "For protected, color-coded wire termination in control panels and terminal blocks.",
+    slug: "vinyl-insulated-pin-terminals-g01",
+  },
+  {
+    label: "Non-Insulated Pin Terminals",
+    description: "For direct metal connections across a broad conductor range up to 95 mm².",
+    slug: "non-insulated-pin-terminals-g01",
+  },
+  {
+    label: "Plug-In Needle Terminals",
+    description: "For narrow, direct insertion into compact terminal blocks and connection points.",
+    slug: "plug-in-needle-terminals-g01",
+  },
+] as const;
+
+const BLADE_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Flat Non-Insulated Blade Terminals",
+    description: "For straight male blade and tab-style wire connections with direct metal contact.",
+    slug: "non-insulated-blade-terminals-g01",
+  },
+  {
+    label: "Nylon-Insulated Blade Terminals",
+    description: "For protected, color-coded blade connections in control panels and equipment wiring.",
+    slug: "nylon-insulated-blade-terminals-g01",
+  },
+  {
+    label: "90° Bent Blade Terminals",
+    description: "For offset wire-end routing where straight blade access is limited by installation space.",
+    slug: "90-degree-non-insulated-blade-terminals-g01",
+  },
+] as const;
+
+const FORK_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Standard Non-Insulated Fork Terminals",
+    description: "For serviceable screw and stud connections with conductors from 0.2 to 10 mm².",
+    slug: "non-insulated-fork-terminals-g01",
+  },
+  {
+    label: "Medium-Range Non-Insulated Fork Terminals",
+    description: "For conductors up to 25 mm² and offset routing in space-constrained installations.",
+    slug: "non-insulated-fork-terminals-g02",
+  },
+  {
+    label: "Heat Shrink Fork Terminals",
+    description: "For insulated wire-end coverage with quick fork-style access to screws and studs.",
+    slug: "shb-heat-shrink-fork-terminals-g01",
+  },
+] as const;
+
+const COPPER_LUG_PRODUCT_SELECTIONS = [
+  {
+    label: "Standard Copper Cable Lugs",
+    description: "For general battery, cable, and power connections across a broad conductor range.",
+    slug: "sc-dtga-copper-lugs-g02",
+  },
+  {
+    label: "Marine Copper Lugs",
+    description: "For battery and power cable connections in marine and corrosion-exposed installations.",
+    slug: "dtgy-marine-copper-lugs-g01",
+  },
+  {
+    label: "90° Copper Lugs",
+    description: "For right-angle battery and power cable routing where straight lugs do not fit.",
+    slug: "90-degree-gph-copper-lugs-g01",
+  },
+] as const;
+
+const CORD_END_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Insulated Wire Ferrules",
+    description: "For color-coded stranded-wire termination in terminal blocks and control panels.",
+    slug: "vinyl-insulated-cord-end-terminals-g01",
+  },
+  {
+    label: "Non-Insulated Wire Ferrules",
+    description: "For compact direct crimp termination where a separate collar is not required.",
+    slug: "non-insulated-cord-end-terminals-g01",
+  },
+  {
+    label: "Twin Wire Ferrules",
+    description: "For terminating two conductors together in one insulated terminal block connection.",
+    slug: "twin-vinyl-insulated-cord-end-terminals-g01",
+  },
+] as const;
+
+const TERMINAL_SLEEVE_PRODUCT_SELECTIONS = [
+  {
+    label: "PVC Insulated Terminal Sleeves",
+    description: "For color-coded insulation, strain relief, and protection over compatible terminal connections.",
+    slug: "pvc-insulated-terminal-sleeves-g01",
+  },
+] as const;
+
+const SPADE_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Vinyl-Insulated Spade Terminals",
+    description: "For color-coded open-fork connections under screws and studs in general wiring.",
+    slug: "vinyl-insulated-spade-terminals-g01",
+  },
+  {
+    label: "Easy Entry Insulated Spade Terminals",
+    description: "For faster conductor insertion in control panels and repeated production assembly.",
+    slug: "easy-entry-insulated-spade-terminals-g01",
+  },
+  {
+    label: "Nylon-Insulated Spade Terminals",
+    description: "For durable open-fork connections requiring tougher insulation in equipment wiring.",
+    slug: "nylon-insulated-spade-terminals-g01",
+  },
+] as const;
+
+const QUICK_DISCONNECT_PRODUCT_SELECTIONS = [
+  {
+    label: "Vinyl-Insulated Female Quick Disconnects",
+    description: "For general push-on connections to compatible male blade and tab terminals.",
+    slug: "vinyl-insulated-female-quick-disconnects-g01",
+  },
+  {
+    label: "Fully Insulated Female Quick Disconnects",
+    description: "For push-on connections requiring complete receptacle coverage and contact protection.",
+    slug: "vinyl-fully-insulated-female-quick-disconnects-g01",
+  },
+  {
+    label: "Heat Shrink Female Quick Disconnects",
+    description: "For insulated push-on connections needing added strain relief and environmental protection.",
+    slug: "fdh-heat-shrink-female-terminals-g01",
+  },
+] as const;
+
+const FLAG_TERMINAL_PRODUCT_SELECTIONS = [
+  {
+    label: "Heavy-Duty Non-Insulated Flag Terminals",
+    description: "For right-angle wire routing in compact screw and stud connections across 0.5 to 95 mm².",
+    slug: "non-insulated-flag-terminals-g01",
+  },
+] as const;
+
 function resolveRingTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
   const urlOptions = locale ? { locale } : undefined;
 
@@ -191,6 +333,96 @@ function resolveSpliceConnectorProductSelections(locale?: Locale): QuickSelectio
   const urlOptions = locale ? { locale } : undefined;
 
   return SPLICE_CONNECTOR_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolvePinTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return PIN_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveBladeTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return BLADE_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveForkTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return FORK_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveCopperLugProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return COPPER_LUG_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveCordEndTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return CORD_END_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveTerminalSleeveProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return TERMINAL_SLEEVE_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveSpadeTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return SPADE_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveQuickDisconnectProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return QUICK_DISCONNECT_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
+    label,
+    description,
+    href: productUrl(slug, urlOptions),
+  }));
+}
+
+function resolveFlagTerminalProductSelections(locale?: Locale): QuickSelectionItem[] {
+  const urlOptions = locale ? { locale } : undefined;
+
+  return FLAG_TERMINAL_PRODUCT_SELECTIONS.map(({ label, description, slug }) => ({
     label,
     description,
     href: productUrl(slug, urlOptions),
@@ -312,6 +544,15 @@ export default function CategoryPageClient({
   } = resolveCategoryPageViewModel(category, content, contentView, urlOptions);
   const isRingTerminals = category.slug === "ring-terminals";
   const isSpliceConnectors = category.slug === "splice-connectors";
+  const isPinTerminals = category.slug === "pin-terminals";
+  const isBladeTerminals = category.slug === "blade-terminals";
+  const isForkTerminals = category.slug === "fork-terminals";
+  const isCopperLugs = category.slug === "copper-lugs";
+  const isCordEndTerminals = category.slug === "cord-end-terminals";
+  const isTerminalSleeves = category.slug === "terminal-sleeves-accessories";
+  const isSpadeTerminals = category.slug === "spade-terminals";
+  const isQuickDisconnectTerminals = category.slug === "quick-disconnect-terminals";
+  const isFlagTerminals = category.slug === "flag-terminals";
   const isLocalizedRoute = Boolean(locale && locale !== DEFAULT_LOCALE);
   const isSubcategory = Boolean(category.parentId);
   const useEnhancedHero = isRingTerminals || isSubcategory;
@@ -320,7 +561,25 @@ export default function CategoryPageClient({
       ? resolveRingTerminalProductSelections(locale)
       : isSpliceConnectors && !isLocalizedRoute
         ? resolveSpliceConnectorProductSelections(locale)
-        : resolveQuickSelectionItems(typesOverview, content.families, locale);
+        : isPinTerminals && !isLocalizedRoute
+          ? resolvePinTerminalProductSelections(locale)
+          : isBladeTerminals && !isLocalizedRoute
+            ? resolveBladeTerminalProductSelections(locale)
+            : isForkTerminals && !isLocalizedRoute
+              ? resolveForkTerminalProductSelections(locale)
+              : isCopperLugs && !isLocalizedRoute
+                ? resolveCopperLugProductSelections(locale)
+                : isCordEndTerminals && !isLocalizedRoute
+                  ? resolveCordEndTerminalProductSelections(locale)
+                  : isTerminalSleeves && !isLocalizedRoute
+                    ? resolveTerminalSleeveProductSelections(locale)
+                    : isSpadeTerminals && !isLocalizedRoute
+                      ? resolveSpadeTerminalProductSelections(locale)
+                      : isQuickDisconnectTerminals && !isLocalizedRoute
+                        ? resolveQuickDisconnectProductSelections(locale)
+                        : isFlagTerminals && !isLocalizedRoute
+                          ? resolveFlagTerminalProductSelections(locale)
+                          : resolveQuickSelectionItems(typesOverview, content.families, locale);
   const productsToRender = contentView === "all" ? visibleProducts.slice(0, 8) : visibleProducts;
   const cleanAboutIntroParagraphs = sanitizeAboutTextList([
     heroDescription,
