@@ -22,6 +22,7 @@ interface SKU {
 interface SKUTableProps {
   skus: SKU[];
   locale?: Locale;
+  familyName?: string;
   displayColumns?: Array<{
     key: string;
     label: string;
@@ -34,6 +35,7 @@ type SortOrder = "asc" | "desc" | null;
 export default function SKUTable({
   skus,
   locale,
+  familyName,
   displayColumns,
 }: SKUTableProps) {
   const [sortColumn, setSortColumn] = useState<string>("skuCode");
@@ -209,6 +211,10 @@ export default function SKUTable({
                   <Link
                     href={productUrl(sku.slug, locale ? { locale } : undefined)}
                     className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark"
+                    data-ga-event="model_open"
+                    data-ga-param-family-name={familyName}
+                    data-ga-param-model-slug={sku.slug}
+                    data-ga-param-model-code={sku.model || sku.skuCode}
                   >
                     View <ChevronRight className="h-4 w-4" />
                   </Link>

@@ -12,6 +12,7 @@ interface FamilyCardProps {
   heroImage?: string;
   highlights?: string[];
   locale?: Locale;
+  categorySlug?: string;
 }
 
 export default function FamilyCard({
@@ -21,11 +22,15 @@ export default function FamilyCard({
   heroImage,
   highlights,
   locale,
+  categorySlug,
 }: FamilyCardProps) {
   return (
     <Link
       href={familyUrl(slug, locale ? { locale } : undefined)}
       className="card group block h-full overflow-hidden"
+      data-ga-event="family_open"
+      data-ga-param-family-slug={slug}
+      data-ga-param-category-slug={categorySlug}
     >
       <div className="relative h-48 overflow-hidden bg-muted sm:h-56">
         {heroImage ? (

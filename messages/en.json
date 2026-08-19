@@ -76,7 +76,7 @@
     "applications": "Applications",
     "certification": "Certification",
     "availableModels": "Available Models",
-    "availableModelsHelp": "Select a product to view detailed specifications",
+    "availableModelsHelp": "Compare available products, then open a model for full specifications and available drawings.",
     "engineeringKnowledge": "Engineering Knowledge",
     "engineeringOverview": "Engineering Overview",
     "whatIsIt": "What Is It",
@@ -85,6 +85,14 @@
     "engineeringNotes": "Engineering Notes",
     "downloadDocumentation": "Download Documentation",
     "quickSelect": "Quick Select",
+    "viewAvailableModels": "View Available Models",
+    "familySelectionHelp": "This page covers a product family. Compare exact products, specifications, and available drawings under Available Models.",
+    "representativeFamilyImage": "Representative family image. Available models, dimensions, and configurations may vary.",
+    "categorySelectionHelp": "Choose by application for a faster starting point, or browse product families to compare related series.",
+    "chooseByApplication": "Choose by Application",
+    "chooseByApplicationHelp": "Start with the connection, installation, or performance requirement that best matches your project.",
+    "browseProductFamilies": "Browse Product Families",
+    "familyGroupHelp": "Each family groups multiple related models. Open a family to compare specifications and available options.",
     "selectionTip": "Selection Tip"
   },
   "inquiry": {

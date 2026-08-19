@@ -8,6 +8,7 @@ import { submitPublicInquiry } from "@/lib/inquiry-client";
 import { resourcesUrl } from "@/lib/routes";
 import { useLocale, useTranslations } from "next-intl";
 import type { Locale } from "@/lib/i18n/config";
+import { trackGA4Event } from "@/lib/analytics";
 
 interface InquiryFormProps {
   sourceType?: "category" | "family" | "product" | "article" | "general";
@@ -85,6 +86,13 @@ export default function InquiryForm({
 
       await submitPublicInquiry(payload);
 
+      trackGA4Event("generate_lead", {
+        source_type: sourceType,
+        source_id: sourceId,
+        has_drawing: Boolean(attachments.drawing),
+        has_bom: Boolean(attachments.bom),
+        page_path: window.location.pathname,
+      });
       toast.success(t("success"));
       setFormData({
         email: "",

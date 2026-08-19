@@ -736,34 +736,60 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
               </p>
               <h1 className="mb-5 text-3xl font-bold md:text-5xl text-slate-900 dark:text-slate-100">{family.name}</h1>
               {fullHeroIntro && (
-                <div className="mb-6 text-lg text-slate-600 dark:text-slate-300">
+                <div className="mb-5 text-lg text-slate-600 dark:text-slate-300">
                   <ExpandableHeroIntro text={fullHeroIntro} preview={compactHeroIntro} />
                 </div>
               )}
+              {hasAvailableProducts && (
+                <p className="mb-5 max-w-xl border-l-2 border-primary/60 pl-4 text-sm leading-6 text-secondary">
+                  {t("familySelectionHelp")}
+                </p>
+              )}
               <div className="flex flex-wrap gap-3">
-                <Link href={primaryCTA.href} className="btn btn-primary">
-                  {primaryCTA.label}
-                </Link>
-                <Link href={heroSecondaryCTA.href} className="btn btn-secondary">
-                  {hasDownloadResources && <Download className="h-4 w-4 mr-2" />}
-                  {heroSecondaryCTA.label}
-                </Link>
-                {hasAvailableProducts && (
-                  <QuickSelectButton targetId="available-products" />
+                {hasAvailableProducts ? (
+                  <>
+                    <QuickSelectButton targetId="available-products" familyName={family.name} />
+                    {hasDownloadResources && (
+                      <Link
+                        href={heroSecondaryCTA.href}
+                        className="btn btn-secondary"
+                        data-ga-event="family_documentation_click"
+                        data-ga-param-family-name={family.name}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        {heroSecondaryCTA.label}
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Link href={primaryCTA.href} className="btn btn-primary">
+                      {primaryCTA.label}
+                    </Link>
+                    <Link href={heroSecondaryCTA.href} className="btn btn-secondary">
+                      {hasDownloadResources && <Download className="h-4 w-4 mr-2" />}
+                      {heroSecondaryCTA.label}
+                    </Link>
+                  </>
                 )}
               </div>
             </div>
 
             {heroImageUrl && (
-              <div className="relative min-h-[300px] overflow-hidden rounded-md border border-border bg-white shadow-sm p-4 sm:min-h-[380px]">
-                <Image
-                  src={heroImageUrl}
-                  alt={heroImageAlt}
-                  fill
-                  unoptimized={shouldBypassNextImageOptimization(heroImageUrl)}
-                  className="object-contain"
-                />
-              </div>
+              <figure>
+                <div className="relative min-h-[300px] overflow-hidden rounded-md border border-border bg-white shadow-sm p-4 sm:min-h-[380px]">
+                  <Image
+                    src={heroImageUrl}
+                    alt={heroImageAlt}
+                    fill
+                    unoptimized={shouldBypassNextImageOptimization(heroImageUrl)}
+                    className="object-contain"
+                  />
+                </div>
+                <figcaption className="mt-2 text-xs leading-5 text-secondary">
+                  {t("representativeFamilyImage")}
+                </figcaption>
+              </figure>
             )}
           </div>
         </div>
@@ -790,12 +816,12 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
         <section className="py-8 md:py-12 bg-slate-50 border-b border-border dark:bg-slate-900/50">
           <div className="container">
             <h2 className="mb-6 text-xl font-bold md:text-2xl">{t("engineeringReference")}</h2>
-            <div className="rounded-sm border border-border bg-white shadow-sm dark:bg-slate-900 overflow-visible flex flex-col">
+            <div className="flex min-w-0 flex-col overflow-visible rounded-sm border border-border bg-white shadow-sm dark:bg-slate-900">
               {/* Top Row: Specs & Workflow */}
-              <div className="grid md:grid-cols-[35fr_65fr]">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] md:grid-cols-[minmax(0,35fr)_minmax(0,65fr)]">
                 {/* Left: Specs (35%) */}
                 {quickSpecs.length > 0 && (
-                  <div className="p-6 lg:p-8 border-b md:border-b-0 md:border-r border-border">
+                  <div className="min-w-0 border-b border-border p-6 md:border-b-0 md:border-r lg:p-8">
                     <h3 className="mb-6 text-sm font-bold uppercase tracking-widest text-secondary">{t("specifications")}</h3>
                     <dl className="space-y-0">
                       {quickSpecs.map((spec, index) => (
@@ -816,7 +842,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
 
                 {/* Right: Workflow (65%) */}
                 {showSelectionGuide && selectionStepsForRender.length > 0 && (
-                  <div className="p-6 lg:p-8">
+                  <div className="min-w-0 p-6 lg:p-8">
                     <div className="mb-6 flex items-center justify-between">
                       <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">{t("selectionWorkflow")}</h3>
                     </div>
@@ -836,15 +862,15 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                             <div className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600 border-2 border-white ring-2 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-900 dark:ring-slate-700 z-10">
                               {index + 1}
                             </div>
-                            <div className="pt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                              <span className="truncate">{finalStep}</span>
+                            <div className="flex min-w-0 items-center gap-2 pt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                              <span className="min-w-0 truncate">{finalStep}</span>
                               <div className="flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600 group-hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:group-hover:bg-slate-600">
                                 ?
                               </div>
                             </div>
 
                             {/* Custom Tooltip */}
-                            <div className="pointer-events-none absolute left-10 top-7 z-50 w-max max-w-[240px] sm:max-w-[320px] md:max-w-md translate-y-1 rounded-sm border border-slate-200 bg-white px-3 py-2 text-xs font-medium leading-5 text-slate-700 opacity-0 shadow-lg transition duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200">
+                            <div className="pointer-events-none absolute left-10 top-7 z-50 w-max max-w-[240px] translate-y-1 rounded-sm border border-slate-200 bg-white px-3 py-2 text-xs font-medium leading-5 text-slate-700 opacity-0 shadow-lg transition duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100 sm:max-w-[320px] md:max-w-md dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200">
                               <div className="whitespace-normal break-words">{step}</div>
                             </div>
                           </div>
@@ -911,7 +937,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
               </div>
             </div>
             <div className="rounded-md border border-border shadow-sm overflow-hidden">
-              <SKUTable skus={availableProducts} locale={locale} />
+              <SKUTable skus={availableProducts} locale={locale} familyName={family.name} />
             </div>
           </div>
         </section>

@@ -4,24 +4,11 @@ import { Analytics } from "@vercel/analytics/react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
 import { useEffect } from "react";
-
-const GA_MEASUREMENT_ID = "G-F5M3QMLTL1";
-
-type GtagEventParams = Record<
-  string,
-  string | number | boolean | null | undefined | (() => void)
->;
-
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-    gtag?: (
-      command: "event",
-      eventName: string,
-      eventParams?: GtagEventParams,
-    ) => void;
-  }
-}
+import {
+  GA_MEASUREMENT_ID,
+  trackGA4Event,
+  type GtagEventParams,
+} from "@/lib/analytics";
 
 function isAdminPath(pathname: string | null) {
   return pathname === "/admin" || pathname?.startsWith("/admin/");
@@ -56,14 +43,35 @@ function getPdfDownloadInfo(anchor: HTMLAnchorElement) {
   };
 }
 
-function sendPdfDownloadEvent(params: GtagEventParams) {
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "pdf_download", params);
-    return;
+function getDeclaredTrackingEvent(element: Element) {
+  const trackedElement = element.closest<HTMLElement>("[data-ga-event]");
+  const eventName = trackedElement?.dataset.gaEvent;
+
+  if (!trackedElement || !eventName) {
+    return null;
   }
 
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(["event", "pdf_download", params]);
+  const params: GtagEventParams = {};
+
+  for (const attribute of trackedElement.attributes) {
+    if (!attribute.name.startsWith("data-ga-param-")) {
+      continue;
+    }
+
+    const parameterName = attribute.name.slice("data-ga-param-".length).replaceAll("-", "_");
+    params[parameterName] = attribute.value;
+  }
+
+  return { eventName, params, trackedElement };
+}
+
+function isRequestQuoteLink(anchor: HTMLAnchorElement) {
+  try {
+    const url = new URL(anchor.href, window.location.href);
+    return url.hash === "#request-quote";
+  } catch {
+    return false;
+  }
 }
 
 export default function RouteAwareAnalytics() {
@@ -78,13 +86,35 @@ export default function RouteAwareAnalytics() {
     const handleClick = (event: MouseEvent) => {
       const target = event.target;
 
-      if (!(target instanceof Element) || event.defaultPrevented) {
+      if (!(target instanceof Element)) {
         return;
       }
 
       const anchor = target.closest("a[href]");
 
+      const declaredEvent = getDeclaredTrackingEvent(target);
+      if (declaredEvent) {
+        trackGA4Event(declaredEvent.eventName, {
+          ...declaredEvent.params,
+          link_text: declaredEvent.trackedElement.textContent?.trim().slice(0, 120) || undefined,
+          link_url: anchor instanceof HTMLAnchorElement ? anchor.href : undefined,
+          page_path: window.location.pathname,
+        });
+      }
+
       if (!(anchor instanceof HTMLAnchorElement)) {
+        return;
+      }
+
+      if (!declaredEvent && isRequestQuoteLink(anchor)) {
+        trackGA4Event("rfq_start", {
+          link_text: anchor.textContent?.trim().slice(0, 120) || undefined,
+          link_url: anchor.href,
+          page_path: window.location.pathname,
+        });
+      }
+
+      if (event.defaultPrevented) {
         return;
       }
 
@@ -114,7 +144,7 @@ export default function RouteAwareAnalytics() {
         (!anchor.target || anchor.target === "_self");
 
       if (!shouldWaitForEvent) {
-        sendPdfDownloadEvent(eventParams);
+        trackGA4Event("pdf_download", eventParams);
         return;
       }
 
@@ -130,7 +160,7 @@ export default function RouteAwareAnalytics() {
         window.location.href = anchor.href;
       };
 
-      sendPdfDownloadEvent({
+      trackGA4Event("pdf_download", {
         ...eventParams,
         event_callback: continueNavigation,
         event_timeout: 800,

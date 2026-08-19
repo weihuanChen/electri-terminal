@@ -12,6 +12,7 @@ import {
   type CategoryContentView,
   type CategoryFilterState,
 } from "@/lib/categoryFilters";
+import { useTranslations } from "next-intl";
 
 interface DownloadResource {
   _id: string;
@@ -517,6 +518,7 @@ export default function CategoryPageClient({
   activeFilters,
   locale,
 }: CategoryPageClientProps) {
+  const t = useTranslations("catalog");
   const urlOptions = locale ? { locale } : undefined;
   const breadcrumbItems = [
     { label: "Categories", href: categoriesUrl(urlOptions) },
@@ -609,13 +611,7 @@ export default function CategoryPageClient({
     ? ringTerminalsHeroImage
     : category.image?.trim() || defaultHeroVisualImage;
   const heroEyebrow = isRingTerminals ? "Industrial Copper Terminations" : "Industrial Terminal Solutions";
-  const heroPrimaryActionLabel = isRingTerminals ? "Browse Ring Terminal Types" : "Browse Product Series";
-  const heroHighlights =
-    isLocalizedRoute && overviewKeyPoints.length > 0
-      ? overviewKeyPoints.slice(0, 3)
-      : isRingTerminals
-        ? ["High conductivity copper", "Controlled crimp geometry", "Batch-level quality checks"]
-        : ["Engineering-grade materials", "Stable production process", "Consistent quality control"];
+  const heroPrimaryActionLabel = isRingTerminals ? "Browse Ring Terminal Types" : t("browseProductFamilies");
 
   return (
     <>
@@ -647,30 +643,32 @@ export default function CategoryPageClient({
                 <p className="mt-4 max-w-xl text-base leading-7 text-slate-200 md:text-lg">
                   {heroIntroText}
                 </p>
+                <p className="mt-5 max-w-xl border-l-2 border-orange-300/70 pl-4 text-sm leading-6 text-slate-300">
+                  {t("categorySelectionHelp")}
+                </p>
                 <div className="mt-7 flex flex-wrap gap-3">
+                  {quickSelectionItems.length > 0 && (
+                    <Link
+                      href="#application-selector"
+                      className="btn btn-primary"
+                      data-ga-event="catalog_path_choice"
+                      data-ga-param-choice-type="choose_by_application"
+                      data-ga-param-category-slug={category.slug}
+                    >
+                      {t("chooseByApplication")}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  )}
                   <Link
                     href="#series-section"
-                    className="btn btn-primary"
+                    className={quickSelectionItems.length > 0 ? "btn btn-hero-secondary" : "btn btn-primary"}
+                    data-ga-event="catalog_path_choice"
+                    data-ga-param-choice-type="browse_product_families"
+                    data-ga-param-category-slug={category.slug}
                   >
                     {heroPrimaryActionLabel}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
-                  <Link
-                    href={secondaryCTA.href}
-                    className="inline-flex items-center rounded-sm border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
-                  >
-                    {secondaryCTA.label}
-                  </Link>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {heroHighlights.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-sm border border-slate-200/25 bg-slate-900/45 px-3 py-1.5 text-xs font-medium text-slate-200"
-                    >
-                      {item}
-                    </span>
-                  ))}
                 </div>
               </div>
 
@@ -687,14 +685,6 @@ export default function CategoryPageClient({
                     className="object-cover"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20" />
-                  <div className="absolute bottom-4 left-4 right-4 rounded-sm border border-slate-200/25 bg-slate-950/68 px-4 py-3 backdrop-blur-sm">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-orange-200">
-                      Precision Process Snapshot
-                    </p>
-                    <p className="mt-1 text-sm text-slate-100">
-                      Stable tube cutting and forming workflow for consistent termination quality.
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -706,6 +696,33 @@ export default function CategoryPageClient({
             <div className="max-w-4xl rounded-sm border border-border bg-white p-5 md:p-7 dark:bg-slate-900">
               <h1 className="mb-3 text-3xl font-semibold md:text-5xl">{category.name}</h1>
               <p className="max-w-3xl text-base text-secondary md:text-lg">{heroIntroText}</p>
+              <p className="mt-4 max-w-2xl border-l-2 border-primary/60 pl-4 text-sm leading-6 text-secondary">
+                {t("categorySelectionHelp")}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {quickSelectionItems.length > 0 && (
+                  <Link
+                    href="#application-selector"
+                    className="btn btn-primary"
+                    data-ga-event="catalog_path_choice"
+                    data-ga-param-choice-type="choose_by_application"
+                    data-ga-param-category-slug={category.slug}
+                  >
+                    {t("chooseByApplication")}
+                  </Link>
+                )}
+                {content.families.length > 0 && (
+                  <Link
+                    href="#series-section"
+                    className={quickSelectionItems.length > 0 ? "btn btn-secondary" : "btn btn-primary"}
+                    data-ga-event="catalog_path_choice"
+                    data-ga-param-choice-type="browse_product_families"
+                    data-ga-param-category-slug={category.slug}
+                  >
+                    {t("browseProductFamilies")}
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -737,20 +754,23 @@ export default function CategoryPageClient({
       )}
 
       {quickSelectionItems.length > 0 && (
-        <section className="section-compact !py-7 border-y border-border bg-[#F3F4F6] dark:bg-slate-950 md:!py-7">
+        <section id="application-selector" className="section-compact !py-7 border-y border-border bg-[#F3F4F6] scroll-mt-24 dark:bg-slate-950 md:!py-7">
           <div className="container">
             <div className="rounded-sm border border-border bg-white p-[18px] shadow-[0_2px_8px_rgba(15,23,42,0.06)] dark:bg-slate-900 dark:shadow-none md:p-5">
               <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
-                CHOOSE BY APPLICATION
+                {t("chooseByApplication")}
               </p>
               <p className="mb-4 text-base font-medium text-slate-700 dark:text-slate-100">
-                Select the right type based on your application needs
+                {t("chooseByApplicationHelp")}
               </p>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {quickSelectionItems.map((item) => (
                   <Link
                     key={`${item.label}-${item.href}`}
                     href={item.href}
+                    data-ga-event="catalog_application_select"
+                    data-ga-param-category-slug={category.slug}
+                    data-ga-param-option-label={item.label}
                     className="group rounded-sm border border-border bg-white p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#CBD5F5] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:bg-slate-900 dark:shadow-none dark:hover:border-primary"
                   >
                     <div>
@@ -801,6 +821,9 @@ export default function CategoryPageClient({
                   <h2 className="mb-6 text-2xl font-semibold md:text-3xl">
                     {isRingTerminals ? "Browse Ring Terminal Types" : "Product Series"}
                   </h2>
+                  <p className="-mt-3 mb-6 max-w-3xl text-sm leading-6 text-secondary">
+                    {t("familyGroupHelp")}
+                  </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {visibleFamilies.map((family) => (
                       <FamilyCard
@@ -815,6 +838,7 @@ export default function CategoryPageClient({
                         heroImage={family.heroImage}
                         highlights={family.highlights}
                         locale={locale}
+                        categorySlug={category.slug}
                       />
                     ))}
                   </div>

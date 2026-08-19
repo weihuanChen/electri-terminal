@@ -17,7 +17,7 @@ interface BreadcrumbProps {
 export default function Breadcrumb({ items, showHome = true, locale }: BreadcrumbProps) {
     const common = useTranslations("common");
     return (
-        <nav className="flex items-center text-xs text-gray-600 py-3" aria-label={common("breadcrumb")}>
+        <nav className="flex min-w-0 items-center overflow-hidden whitespace-nowrap py-3 text-xs text-gray-600" aria-label={common("breadcrumb")}>
             {/* Home */}
             {showHome && (
                 <>
@@ -34,17 +34,17 @@ export default function Breadcrumb({ items, showHome = true, locale }: Breadcrum
 
             {/* Breadcrumb Items */}
             {items.map((item, index) => (
-                <div key={index} className="flex items-center">
+                <div key={index} className="flex min-w-0 items-center">
                     <span className="mx-2 text-gray-400">›</span>
                     {item.href ? (
                         <Link
                             href={item.href}
-                            className="hover:text-gray-900 transition-colors truncate max-w-[200px]"
+                            className="max-w-[200px] truncate transition-colors hover:text-gray-900"
                         >
                             {item.label}
                         </Link>
                     ) : (
-                        <span className="text-gray-900 font-medium truncate max-w-[200px]">
+                        <span className="max-w-[200px] truncate font-medium text-gray-900">
                             {item.label}
                         </span>
                     )}

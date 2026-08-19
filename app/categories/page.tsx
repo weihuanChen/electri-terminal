@@ -391,8 +391,8 @@ export default function CategoriesPage() {
               Browse by Product Type
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-secondary">
-              Select a category to explore terminal types, specifications, and available series
-              options.
+              Open a category to compare product families, or use its application shortcut to
+              reach a matching product faster.
             </p>
           </div>
 
@@ -401,6 +401,9 @@ export default function CategoriesPage() {
               <Link
                 key={item.name}
                 href={item.href}
+                data-ga-event="category_open"
+                data-ga-param-navigation-level="product_type"
+                data-ga-param-category-name={item.name}
                 className="group rounded-sm border border-slate-200 bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-[0_10px_24px_rgba(30,64,175,0.12)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
               >
                 <div className="mb-3 h-1.5 w-16 rounded-full bg-gradient-to-r from-blue-500 to-orange-500" />
