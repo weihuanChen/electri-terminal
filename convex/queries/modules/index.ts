@@ -10,6 +10,7 @@ import * as localizationFoundation from "./localizationFoundation";
 import * as intentHierarchy from "./intentHierarchy";
 import * as navigation from "./navigation";
 import * as products from "./products";
+import * as recommendationGroups from "./recommendationGroups";
 import * as relations from "./relations";
 import * as users from "./users";
 
@@ -26,6 +27,7 @@ export {
   intentHierarchy,
   navigation,
   products,
+  recommendationGroups,
   relations,
   users,
 };
@@ -42,5 +44,6 @@ export * from "./localizationFoundation";
 export * from "./intentHierarchy";
 export * from "./navigation";
 export * from "./products";
+export * from "./recommendationGroups";
 export * from "./relations";
 export * from "./users";

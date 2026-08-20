@@ -11,6 +11,8 @@ import { AdminImageField } from "./ui/AdminImageField";
 import { buildPublicAssetUrl, shouldBypassNextImageOptimization } from "@/lib/images";
 import { MediaAssetPickerModal } from "./MediaAssetPickerModal";
 import { ArticleCitationFields } from "./ArticleCitationFields";
+import { RecommendationGroupPicker } from "./RecommendationGroupPicker";
+import type { AdminRecommendationGroup } from "@/lib/convex-admin";
 import {
   parseArticleCitations,
   parseArticleQuotations,
@@ -34,6 +36,7 @@ interface Article {
   relatedCategoryIds?: string[];
   relatedFamilyIds?: string[];
   relatedProductIds?: string[];
+  recommendationGroupIds?: string[];
   featured?: boolean;
   status: "draft" | "published" | "archived";
   publishedAt?: number;
@@ -62,6 +65,8 @@ interface Family {
 interface Product {
   _id: string;
   title: string;
+  slug: string;
+  model: string;
 }
 
 interface Asset {
@@ -90,6 +95,7 @@ interface ArticleFormProps {
   authors?: Author[];
   families?: Family[];
   products?: Product[];
+  recommendationGroups?: AdminRecommendationGroup[];
   assets?: Asset[];
   r2Items?: R2MetadataItem[];
 }
@@ -100,7 +106,8 @@ type RelatedArrayField =
   | "categoryIds"
   | "relatedCategoryIds"
   | "relatedFamilyIds"
-  | "relatedProductIds";
+  | "relatedProductIds"
+  | "recommendationGroupIds";
 
 const SERVER_ACTION_BODY_LIMIT_BYTES = 4 * 1024 * 1024;
 const CLIENT_BODY_HEADROOM_BYTES = 64 * 1024;
@@ -144,6 +151,7 @@ export function ArticleForm({
   authors = [],
   families = [],
   products = [],
+  recommendationGroups = [],
   assets = [],
   r2Items = [],
 }: ArticleFormProps) {
@@ -168,6 +176,7 @@ export function ArticleForm({
     relatedCategoryIds: article?.relatedCategoryIds || [],
     relatedFamilyIds: article?.relatedFamilyIds || [],
     relatedProductIds: article?.relatedProductIds || [],
+    recommendationGroupIds: article?.recommendationGroupIds || [],
     featured: article?.featured || false,
     status: article?.status || "draft",
     publishedAt: article?.publishedAt || 0,
@@ -276,6 +285,10 @@ export function ArticleForm({
       if (formData.relatedProductIds.length > 0) {
         formDataToSend.append("relatedProductIds", JSON.stringify(formData.relatedProductIds));
       }
+      formDataToSend.append(
+        "recommendationGroupIds",
+        JSON.stringify(formData.recommendationGroupIds),
+      );
 
       // Status
       formDataToSend.append("status", formData.status);
@@ -621,7 +634,23 @@ export function ArticleForm({
 
           <div>
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-              关联产品
+              推荐产品组合
+            </label>
+            <RecommendationGroupPicker
+              groups={recommendationGroups}
+              value={formData.recommendationGroupIds}
+              onChange={(recommendationGroupIds) =>
+                setFormData((current) => ({ ...current, recommendationGroupIds }))
+              }
+            />
+            <p className="mt-2 text-xs text-zinc-500">
+              组合内容由“推荐产品组合”统一维护；文章前台只读取已发布组合。
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              额外关联产品
             </label>
             <div className="space-y-2 max-h-40 overflow-y-auto border border-zinc-300 dark:border-zinc-700 rounded-lg p-3">
               {products.map((prod) => (
@@ -632,7 +661,10 @@ export function ArticleForm({
                     onChange={() => toggleArrayItem(prod._id, "relatedProductIds")}
                     className="rounded border-zinc-300 dark:border-zinc-700"
                   />
-                  <span>{prod.title}</span>
+                  <span className="min-w-0">
+                    <span className="block truncate">{prod.title}</span>
+                    <span className="block truncate text-xs text-zinc-500">{prod.model} · {prod.slug}</span>
+                  </span>
                 </label>
               ))}
             </div>

@@ -14,6 +14,22 @@ import {
   articleCitationValidator,
   articleQuotationValidator,
 } from "../../lib/articleCitations";
+import type { Id } from "../../_generated/dataModel";
+import type { MutationCtx } from "../../_generated/server";
+
+async function assertRecommendationGroupsExist(
+  ctx: MutationCtx,
+  ids: Id<"productRecommendationGroups">[] | undefined,
+) {
+  if (!ids) return;
+  if (new Set(ids.map(String)).size !== ids.length) {
+    throw new Error("article_recommendation_groups_duplicate");
+  }
+  const groups = await Promise.all(ids.map((id) => ctx.db.get(id)));
+  if (groups.some((group) => !group)) {
+    throw new Error("article_recommendation_group_not_found");
+  }
+}
 
 export const createArticle = mutation({
   args: {
@@ -31,6 +47,9 @@ export const createArticle = mutation({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    recommendationGroupIds: v.optional(
+      v.array(v.id("productRecommendationGroups")),
+    ),
     featured: v.optional(v.boolean()),
     status: v.optional(statusCommon),
     publishedAt: v.optional(v.number()),
@@ -39,7 +58,10 @@ export const createArticle = mutation({
     canonical: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await assertUniqueArticleSlug(ctx, args.slug);
+    await Promise.all([
+      assertUniqueArticleSlug(ctx, args.slug),
+      assertRecommendationGroupsExist(ctx, args.recommendationGroupIds),
+    ]);
 
     const articleId = await ctx.db.insert(
       "articles",
@@ -73,6 +95,9 @@ export const updateArticle = mutation({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    recommendationGroupIds: v.optional(
+      v.array(v.id("productRecommendationGroups")),
+    ),
     featured: v.optional(v.boolean()),
     status: v.optional(statusCommon),
     publishedAt: v.optional(v.number()),
@@ -87,6 +112,7 @@ export const updateArticle = mutation({
     if (args.slug && args.slug !== current.slug) {
       await assertUniqueArticleSlug(ctx, args.slug, args.id);
     }
+    await assertRecommendationGroupsExist(ctx, args.recommendationGroupIds);
 
     await ctx.db.patch(
       args.id,
@@ -114,6 +140,9 @@ export const updateArticle = mutation({
           : {}),
         ...(args.relatedProductIds !== undefined
           ? { relatedProductIds: args.relatedProductIds }
+          : {}),
+        ...(args.recommendationGroupIds !== undefined
+          ? { recommendationGroupIds: args.recommendationGroupIds }
           : {}),
         ...(args.featured !== undefined ? { featured: args.featured } : {}),
         ...(args.status !== undefined ? { status: args.status } : {}),

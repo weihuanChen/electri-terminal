@@ -514,6 +514,10 @@ export async function createArticleAction(formData: FormData): Promise<ActionRes
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
+      recommendationGroupIds: jsonArray<Id<"productRecommendationGroups">>(
+        formData,
+        "recommendationGroupIds",
+      ),
       featured: boolFromForm(formData, "featured"),
       status: (str(formData, "status") as "draft" | "published" | "archived") || "draft",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
@@ -1038,6 +1042,10 @@ export async function updateArticleAction(formData: FormData): Promise<ActionRes
       relatedCategoryIds: jsonArray<Id<"categories">>(formData, "relatedCategoryIds"),
       relatedFamilyIds: jsonArray<Id<"productFamilies">>(formData, "relatedFamilyIds"),
       relatedProductIds: jsonArray<Id<"products">>(formData, "relatedProductIds"),
+      recommendationGroupIds: jsonArray<Id<"productRecommendationGroups">>(
+        formData,
+        "recommendationGroupIds",
+      ),
       featured: boolFromForm(formData, "featured"),
       status: str(formData, "status") as "draft" | "published" | "archived",
       publishedAt: formData.has("publishedAt") ? num(formData, "publishedAt", 0) : undefined,
@@ -1133,6 +1141,94 @@ export async function deleteAuthorAction(formData: FormData): Promise<ActionResu
     revalidatePath("/admin/authors");
     revalidatePath("/admin/articles");
     revalidatePath("/blog");
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+export async function createRecommendationGroupAction(
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const code = str(formData, "code");
+  const name = str(formData, "name");
+  const productIds = jsonArray<Id<"products">>(formData, "productIds");
+  if (!code || !name || productIds.length === 0) {
+    return { ok: false, error: "required_fields_missing" };
+  }
+
+  try {
+    await getAdminConvexClient().mutation(
+      "mutations/admin/recommendationGroups:createRecommendationGroup",
+      {
+        code,
+        name,
+        description: optionalStr(formData, "description"),
+        productIds,
+        status:
+          (str(formData, "status") as "draft" | "published" | "archived") ||
+          "draft",
+        sortOrder: num(formData, "sortOrder", 0),
+      },
+    );
+    revalidatePath("/admin/recommendation-groups");
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+export async function updateRecommendationGroupAction(
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"productRecommendationGroups">;
+  const code = str(formData, "code");
+  const name = str(formData, "name");
+  const productIds = jsonArray<Id<"products">>(formData, "productIds");
+  if (!id || !code || !name || productIds.length === 0) {
+    return { ok: false, error: "required_fields_missing" };
+  }
+
+  try {
+    await getAdminConvexClient().mutation(
+      "mutations/admin/recommendationGroups:updateRecommendationGroup",
+      {
+        id,
+        code,
+        name,
+        description: optionalStr(formData, "description"),
+        productIds,
+        status: str(formData, "status") as "draft" | "published" | "archived",
+        sortOrder: num(formData, "sortOrder", 0),
+      },
+    );
+    revalidatePath("/admin/recommendation-groups");
+    revalidatePath(`/admin/recommendation-groups/${id}/edit`);
+    revalidatePath("/blog");
+    return { ok: true };
+  } catch (error: unknown) {
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+export async function deleteRecommendationGroupAction(
+  formData: FormData,
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  const id = str(formData, "id") as Id<"productRecommendationGroups">;
+  if (!id) return { ok: false, error: "id_required" };
+
+  try {
+    await getAdminConvexClient().mutation(
+      "mutations/admin/recommendationGroups:deleteRecommendationGroup",
+      { id },
+    );
+    revalidatePath("/admin/recommendation-groups");
     return { ok: true };
   } catch (error: unknown) {
     return { ok: false, error: errorMessage(error) };

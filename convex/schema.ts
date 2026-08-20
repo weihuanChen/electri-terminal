@@ -357,6 +357,19 @@ export default defineSchema({
       filterFields: ["status", "categoryId", "familyId"],
     }),
 
+  productRecommendationGroups: defineTable({
+    code: v.string(),
+    name: v.string(),
+    description: v.optional(v.string()),
+    productIds: v.array(v.id("products")),
+    status: statusCommon,
+    sortOrder: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_code", ["code"])
+    .index("by_status_sortOrder", ["status", "sortOrder"]),
+
   productVariants: defineTable({
     productId: v.id("products"),
     skuCode: v.string(),
@@ -934,6 +947,9 @@ export default defineSchema({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    recommendationGroupIds: v.optional(
+      v.array(v.id("productRecommendationGroups")),
+    ),
     featured: v.optional(v.boolean()),
     status: statusCommon,
     publishedAt: v.optional(v.number()),
@@ -967,6 +983,9 @@ export default defineSchema({
     relatedCategoryIds: v.optional(v.array(v.id("categories"))),
     relatedFamilyIds: v.optional(v.array(v.id("productFamilies"))),
     relatedProductIds: v.optional(v.array(v.id("products"))),
+    recommendationGroupIds: v.optional(
+      v.array(v.id("productRecommendationGroups")),
+    ),
     featured: v.optional(v.boolean()),
     status: statusCommon,
     publishedAt: v.optional(v.number()),

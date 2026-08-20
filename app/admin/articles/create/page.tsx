@@ -1,11 +1,11 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { actionAdmin, loadAdminData } from "@/lib/convex-admin";
+import { actionAdmin, listRecommendationGroups, loadAdminData } from "@/lib/convex-admin";
 import { DashboardLayout } from "../../components/DashboardLayout";
 import { ArticleForm } from "../../components/ArticleForm";
 
 export default async function CreateArticlePage() {
   await requireAdmin();
-  const [{ categories, authors, families, products, assets }, r2Data] = await Promise.all([
+  const [{ categories, authors, families, products, assets }, r2Data, recommendationGroups] = await Promise.all([
     loadAdminData(),
     actionAdmin<{
       items: Array<{
@@ -17,6 +17,7 @@ export default async function CreateArticlePage() {
       pageSize: 500,
       maxItems: 5000,
     }).catch(() => ({ items: [] })),
+    listRecommendationGroups(),
   ]);
 
   return (
@@ -31,6 +32,7 @@ export default async function CreateArticlePage() {
           authors={authors}
           families={families}
           products={products}
+          recommendationGroups={recommendationGroups}
           assets={assets}
           r2Items={r2Data.items}
         />

@@ -8,6 +8,7 @@ import {
   FolderKanban,
   Layers,
   Package,
+  PackageCheck,
   FileStack,
   FileText,
   Languages,
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
   { label: "Categories", href: "/admin/categories", icon: FolderKanban },
   { label: "Families", href: "/admin/families", icon: Layers },
   { label: "Products", href: "/admin/products", icon: Package },
+  { label: "推荐产品组合", href: "/admin/recommendation-groups", icon: PackageCheck },
   { label: "Assets", href: "/admin/assets", icon: FileStack },
   {
     label: "Templates",

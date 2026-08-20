@@ -77,6 +77,38 @@ export interface AdminAuthor {
   updatedAt?: number;
 }
 
+export interface AdminRecommendationGroup {
+  _id: string;
+  code: string;
+  name: string;
+  description?: string;
+  productIds: string[];
+  status: "draft" | "published" | "archived";
+  sortOrder: number;
+  usageCount?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
+export interface RecommendationGroupFormOptions {
+  families: Array<{
+    _id: string;
+    name: string;
+    slug: string;
+  }>;
+  products: Array<{
+    _id: string;
+    familyId: string;
+    title: string;
+    shortTitle?: string;
+    slug: string;
+    model: string;
+    skuCode: string;
+    status: "draft" | "published" | "archived";
+    mainImage?: string;
+  }>;
+}
+
 export interface AdminFaqWithRelations {
   _id: string;
   title: string;
@@ -396,6 +428,25 @@ export async function getArticle(id: string) {
 
 export async function getAuthor(id: string) {
   return queryAdmin<AdminAuthor | null>("queries/modules/authors:getAuthorById", { id });
+}
+
+export async function listRecommendationGroups() {
+  return queryAdmin<AdminRecommendationGroup[]>(
+    "queries/modules/recommendationGroups:listRecommendationGroups",
+  );
+}
+
+export async function getRecommendationGroup(id: string) {
+  return queryAdmin<AdminRecommendationGroup | null>(
+    "queries/modules/recommendationGroups:getRecommendationGroupById",
+    { id },
+  );
+}
+
+export async function getRecommendationGroupFormOptions() {
+  return queryAdmin<RecommendationGroupFormOptions>(
+    "queries/modules/recommendationGroups:getRecommendationGroupFormOptions",
+  );
 }
 
 export async function getProductFamily(id: string) {

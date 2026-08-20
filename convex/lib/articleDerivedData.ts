@@ -15,6 +15,7 @@ function compactArticle(article: Doc<"articles">) {
     relatedCategoryIds: article.relatedCategoryIds,
     relatedFamilyIds: article.relatedFamilyIds,
     relatedProductIds: article.relatedProductIds,
+    recommendationGroupIds: article.recommendationGroupIds,
     featured: article.featured,
     status: article.status,
     publishedAt: article.publishedAt,

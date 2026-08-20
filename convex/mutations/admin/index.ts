@@ -13,6 +13,7 @@ import * as navigation from "./navigation";
 import * as productFamilies from "./productFamilies";
 import * as products from "./products";
 import * as productVariants from "./productVariants";
+import * as recommendationGroups from "./recommendationGroups";
 import * as relations from "./relations";
 import * as siteSettings from "./siteSettings";
 import * as seed from "./seed";
@@ -33,6 +34,7 @@ export {
   productFamilies,
   products,
   productVariants,
+  recommendationGroups,
   relations,
   siteSettings,
   seed,
@@ -53,6 +55,7 @@ export * from "./navigation";
 export * from "./productFamilies";
 export * from "./products";
 export * from "./productVariants";
+export * from "./recommendationGroups";
 export * from "./relations";
 export * from "./siteSettings";
 export * from "./seed";

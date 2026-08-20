@@ -10,6 +10,7 @@ import {
   SITE_SETTINGS_GLOBAL_KEY,
 } from "./lib/siteSettings";
 import { r2 } from "./r2Assets";
+import { resolveRecommendationProductIds } from "../lib/recommendationGroups";
 
 type VisualMediaType = "product" | "dimension" | "packaging" | "application";
 
@@ -2213,14 +2214,10 @@ export const getArticleBySlug = query({
 
     if (!article) return null;
 
-    const [author, relatedProducts, relatedFamilies] = await Promise.all([
+    const [author, recommendationGroups, relatedFamilies] = await Promise.all([
       getArticleAuthor(ctx, article),
-      article.relatedProductIds
-        ? (
-            await Promise.all(article.relatedProductIds.map((productId) => ctx.db.get(productId)))
-          )
-            .filter((product): product is Doc<"products"> => Boolean(product))
-            .map((product) => omitBrand(product))
+      article.recommendationGroupIds
+        ? Promise.all(article.recommendationGroupIds.map((groupId) => ctx.db.get(groupId)))
         : [],
       article.relatedFamilyIds
         ? (
@@ -2230,6 +2227,19 @@ export const getArticleBySlug = query({
             .map((family) => omitBrand(family))
         : [],
     ]);
+
+    const resolvedProductIds = resolveRecommendationProductIds(
+      recommendationGroups,
+      article.relatedProductIds ?? [],
+    );
+    const relatedProducts = (
+      await Promise.all(resolvedProductIds.map((productId) => ctx.db.get(productId)))
+    )
+      .filter(
+        (product): product is Doc<"products"> =>
+          Boolean(product && product.status === "published"),
+      )
+      .map((product) => omitBrand(product));
 
     return {
       ...article,

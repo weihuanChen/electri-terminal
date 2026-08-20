@@ -43,6 +43,7 @@ import type * as mutations_admin_navigation from "../mutations/admin/navigation.
 import type * as mutations_admin_productFamilies from "../mutations/admin/productFamilies.js";
 import type * as mutations_admin_productVariants from "../mutations/admin/productVariants.js";
 import type * as mutations_admin_products from "../mutations/admin/products.js";
+import type * as mutations_admin_recommendationGroups from "../mutations/admin/recommendationGroups.js";
 import type * as mutations_admin_relations from "../mutations/admin/relations.js";
 import type * as mutations_admin_seed from "../mutations/admin/seed.js";
 import type * as mutations_admin_shared from "../mutations/admin/shared.js";
@@ -63,6 +64,7 @@ import type * as queries_modules_localizationFoundation from "../queries/modules
 import type * as queries_modules_localizations from "../queries/modules/localizations.js";
 import type * as queries_modules_navigation from "../queries/modules/navigation.js";
 import type * as queries_modules_products from "../queries/modules/products.js";
+import type * as queries_modules_recommendationGroups from "../queries/modules/recommendationGroups.js";
 import type * as queries_modules_relations from "../queries/modules/relations.js";
 import type * as queries_modules_shared from "../queries/modules/shared.js";
 import type * as queries_modules_users from "../queries/modules/users.js";
@@ -110,6 +112,7 @@ declare const fullApi: ApiFromModules<{
   "mutations/admin/productFamilies": typeof mutations_admin_productFamilies;
   "mutations/admin/productVariants": typeof mutations_admin_productVariants;
   "mutations/admin/products": typeof mutations_admin_products;
+  "mutations/admin/recommendationGroups": typeof mutations_admin_recommendationGroups;
   "mutations/admin/relations": typeof mutations_admin_relations;
   "mutations/admin/seed": typeof mutations_admin_seed;
   "mutations/admin/shared": typeof mutations_admin_shared;
@@ -130,6 +133,7 @@ declare const fullApi: ApiFromModules<{
   "queries/modules/localizations": typeof queries_modules_localizations;
   "queries/modules/navigation": typeof queries_modules_navigation;
   "queries/modules/products": typeof queries_modules_products;
+  "queries/modules/recommendationGroups": typeof queries_modules_recommendationGroups;
   "queries/modules/relations": typeof queries_modules_relations;
   "queries/modules/shared": typeof queries_modules_shared;
   "queries/modules/users": typeof queries_modules_users;

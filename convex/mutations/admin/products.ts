@@ -258,8 +258,20 @@ export const deleteProduct = mutation({
     const product = await ctx.db.get(args.id);
     if (!product) throw new Error("Product not found");
 
-    // Products can be deleted without dependency checks
-    // since they are leaf nodes in the hierarchy
+    const recommendationGroups = await ctx.db
+      .query("productRecommendationGroups")
+      .collect();
+    const linkedGroups = recommendationGroups.filter((group) =>
+      group.productIds.includes(args.id),
+    );
+    if (linkedGroups.length > 0) {
+      throw new Error(
+        `product_used_by_recommendation_groups:${linkedGroups
+          .map((group) => group.code)
+          .join(",")}`,
+      );
+    }
+
     await ctx.db.delete(args.id);
   },
 });
