@@ -13,7 +13,7 @@ interface CategoryCardProps {
   icon?: string;
   productCount?: number;
   showProductCount?: boolean;
-  descriptionLines?: 1 | 2;
+  descriptionLines?: 1 | 2 | 3 | 4 | 5;
   locale?: Locale;
 }
 
@@ -35,7 +35,14 @@ export default function CategoryCard({
   locale,
 }: CategoryCardProps) {
   const iconImageSource = isIconImageSource(icon) ? icon?.trim() : undefined;
-  const descriptionClampClass = descriptionLines === 1 ? "line-clamp-1" : "line-clamp-2";
+  const descriptionClampClass = {
+    1: "line-clamp-1",
+    2: "line-clamp-2",
+    3: "line-clamp-3",
+    4: "line-clamp-4",
+    5: "line-clamp-5",
+  }[descriptionLines];
+  const contentHeightClass = descriptionLines > 2 ? "min-h-[250px]" : "min-h-[170px]";
 
   return (
     <Link
@@ -76,7 +83,7 @@ export default function CategoryCard({
       </div>
 
       {/* Content area */}
-      <div className="flex min-h-[170px] flex-grow flex-col p-5 sm:p-6">
+      <div className={`flex flex-grow flex-col p-5 sm:p-6 ${contentHeightClass}`}>
         <div className="flex justify-between items-start mb-3">
           <h3 className="min-h-[3.25rem] pr-4 text-lg font-bold text-slate-900 transition-colors group-hover:text-primary dark:text-white sm:min-h-[3.5rem] sm:text-xl line-clamp-2">
             {name}

@@ -71,6 +71,7 @@ export default async function HomePageClient() {
     .slice(0, 4)
     .map((category) => ({
       ...category,
+      description: category.overviewIntro,
       image: category.image || homepageCategoryFallbackImages[category.slug],
     }));
   const focusCategoryIdSet = new Set(homepageFocusCategories.map((category) => category._id));
@@ -195,6 +196,7 @@ export default async function HomePageClient() {
           subtitle="Designed for different materials, insulation types, and application needs."
           showViewAll={false}
           columns={4}
+          descriptionLines={5}
         />
       )}
 

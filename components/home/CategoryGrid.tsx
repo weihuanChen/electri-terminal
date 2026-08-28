@@ -18,6 +18,7 @@ interface CategoryGridProps {
   showViewAll?: boolean;
   viewAllHref?: string;
   columns?: 4 | 6 | 8;
+  descriptionLines?: 1 | 2 | 3 | 4 | 5;
 }
 
 export default function CategoryGrid({
@@ -27,6 +28,7 @@ export default function CategoryGrid({
   showViewAll = true,
   viewAllHref = "/categories",
   columns = 6,
+  descriptionLines = 2,
 }: CategoryGridProps) {
   const gridCols = {
     4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
@@ -56,6 +58,7 @@ export default function CategoryGrid({
               icon={category.icon}
               productCount={category.productCount}
               showProductCount
+              descriptionLines={descriptionLines}
             />
           ))}
         </div>

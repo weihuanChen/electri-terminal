@@ -1076,6 +1076,7 @@ export const listCategoriesForPublic = query({
       isVisibleInNav: category.isVisibleInNav,
       shortDescription: category.shortDescription,
       description: category.description,
+      overviewIntro: category.pageConfig?.content?.overview?.intro,
       image: category.image,
       icon: category.icon,
       seoDescription: category.seoDescription,

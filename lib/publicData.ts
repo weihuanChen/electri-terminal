@@ -97,6 +97,7 @@ export interface HomePageCategory {
   slug: string;
   name: string;
   description?: string;
+  overviewIntro?: string;
   image?: string;
   icon?: string;
 }
@@ -190,6 +191,6 @@ export const getHomePageData = unstable_cache(
       contactSettings: normalizePublicContactSettings(rawSettings),
     };
   },
-  ["home-page-data-v2"],
+  ["home-page-data-v4"],
   { revalidate: 3600 },
 );
