@@ -18,7 +18,7 @@ export default function IndustryOverviewCard({ industry }: IndustryOverviewCardP
         className="relative aspect-[16/10] bg-[#EEF2F6] dark:bg-slate-800"
       >
         <Image
-          src={`/images/solutions/${industry.slug}-engineer.webp`}
+          src={industry.imageSrc}
           alt={industry.imageAlt}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

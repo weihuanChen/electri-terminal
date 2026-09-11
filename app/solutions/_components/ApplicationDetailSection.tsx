@@ -62,7 +62,7 @@ export default function ApplicationDetailSection({
             className="relative aspect-[4/3] overflow-hidden rounded-sm border border-slate-200 dark:border-slate-700 bg-[#EEF2F6] dark:bg-slate-900"
           >
             <Image
-              src={`/images/solutions/${industry.slug}-engineer.webp`}
+              src={industry.imageSrc}
               alt={industry.imageAlt}
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"

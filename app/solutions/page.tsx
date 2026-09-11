@@ -35,6 +35,8 @@ import {
   solutionsFaqTitle,
   solutionsHeroDescription,
   solutionsHeroEyebrow,
+  solutionsHeroImage,
+  solutionsHeroImageAlt,
   solutionsHeroTitle,
   solutionsMetadataDescription,
   solutionsMetadataTitle,
@@ -53,11 +55,18 @@ export const metadata: Metadata = {
     title: solutionsMetadataTitle,
     description: solutionsMetadataDescription,
     url: pagePath,
+    images: [
+      {
+        url: solutionsHeroImage,
+        alt: solutionsHeroImageAlt,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: solutionsMetadataTitle,
     description: solutionsMetadataDescription,
+    images: [solutionsHeroImage],
   },
 };
 
@@ -128,17 +137,16 @@ export default function SolutionsPage() {
             </div>
 
             <div
-              className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-slate-900 md:h-[440px]"
+              className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-white md:h-[440px]"
             >
               <Image
-                src="/images/solutions/solutions-hero.webp"
-                alt="Industrial electrical control cabinet with copper terminal connections"
+                src={solutionsHeroImage}
+                alt={solutionsHeroImageAlt}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
+                className="object-contain object-center p-4 md:p-6"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-slate-950/10" />
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ export type SolutionIndustry = {
   bullets: string[];
   categorySlug: string;
   categoryLabel: string;
+  imageSrc: string;
   imageAlt: string;
 };
 
@@ -38,6 +39,11 @@ export const solutionsMetadataTitle =
 
 export const solutionsMetadataDescription =
   "Application-focused copper terminal solutions for machine tools, motors, railway, marine, and control systems. 99.9% pure copper, matte tin plating, and silver-soldered barrels for Germany, France, US, and Japan export projects.";
+
+export const solutionsHeroImage = "/images/solutions/hero-product-family-v2.webp";
+
+export const solutionsHeroImageAlt =
+  "Product family of insulated copper ring, fork, spade, and disconnect terminals";
 
 export const materialSectionTitle = "Material & Surface Treatment";
 
@@ -83,7 +89,8 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "ring-terminals",
     categoryLabel: "Browse Ring Terminals",
-    imageAlt: "Engineer inspecting copper ring terminals in a machine tool control cabinet",
+    imageSrc: "/images/solutions/machine-tools-v2.webp",
+    imageAlt: "CNC machine tool operator at a control panel for industrial wiring applications",
   },
   {
     slug: "textile-machinery",
@@ -100,7 +107,8 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "spade-terminals",
     categoryLabel: "Browse Spade Terminals",
-    imageAlt: "Engineer inspecting insulated terminals in a textile machinery control panel",
+    imageSrc: "/images/solutions/textile-machinery-v2.webp",
+    imageAlt: "Automated textile winding machinery with control panel for continuous production",
   },
   {
     slug: "electric-motors",
@@ -117,7 +125,8 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "fork-terminals",
     categoryLabel: "Browse Fork Terminals",
-    imageAlt: "Engineer checking electric motor lead and ground terminal connections",
+    imageSrc: "/images/solutions/electric-motors-v2.webp",
+    imageAlt: "Industrial electric motor and drive assembly for motor lead terminal applications",
   },
   {
     slug: "railway",
@@ -134,6 +143,7 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "ring-terminals",
     categoryLabel: "Browse Ring Terminals",
+    imageSrc: "/images/solutions/railway-engineer.webp",
     imageAlt: "Railway engineer inspecting electrical control wiring and ring terminals",
   },
   {
@@ -151,7 +161,8 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "ring-terminals",
     categoryLabel: "Browse Ring Terminals",
-    imageAlt: "Marine engineer inspecting tin-plated copper terminals in a shipboard panel",
+    imageSrc: "/images/solutions/marine-ships-v2.webp",
+    imageAlt: "Shipboard electric motors and winch system for marine terminal applications",
   },
   {
     slug: "electrical-control",
@@ -168,6 +179,7 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "pin-terminals",
     categoryLabel: "Browse Pin Terminals",
+    imageSrc: "/images/solutions/electrical-control-engineer.webp",
     imageAlt: "Panel engineer reviewing pin and ring terminal wiring in a control cabinet",
   },
   {
@@ -185,7 +197,8 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "pin-terminals",
     categoryLabel: "Browse Pin Terminals",
-    imageAlt: "Instrumentation engineer calibrating equipment beside compact pin terminals",
+    imageSrc: "/images/solutions/instruments-v2.webp",
+    imageAlt: "Industrial control room instrumentation panels with process monitoring displays",
   },
   {
     slug: "computing-equipment",
@@ -202,6 +215,7 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "ring-terminals",
     categoryLabel: "Browse Ring Terminals",
+    imageSrc: "/images/solutions/computing-equipment-engineer.webp",
     imageAlt: "Engineer inspecting ring terminals and bus bars in an industrial computing rack",
   },
   {
@@ -219,6 +233,7 @@ export const solutionIndustries: SolutionIndustry[] = [
     ],
     categorySlug: "quick-disconnect-terminals",
     categoryLabel: "Browse Quick Disconnect Terminals",
+    imageSrc: "/images/solutions/home-appliances-engineer.webp",
     imageAlt: "Quality engineer inspecting insulated terminals in an appliance wiring harness",
   },
 ];
