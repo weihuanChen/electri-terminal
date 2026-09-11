@@ -1040,6 +1040,7 @@ export default defineSchema({
     productId: v.optional(v.id("products")),
     sku: v.optional(v.string()),
     quantity: v.optional(v.number()),
+    quantityUnit: v.optional(v.union(v.literal("pcs"), v.literal("packs"), v.literal("cartons"), v.literal("unknown"))),
     notes: v.optional(v.string()),
   })
     .index("by_inquiryId", ["inquiryId"])

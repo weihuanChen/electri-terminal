@@ -13,6 +13,7 @@ const sourceTypeSchema = z.enum(["category", "family", "product", "article", "ge
 const inquiryItemSchema = z.object({
   productId: z.string().trim().min(1).max(200),
   quantity: z.number().int().positive().max(1_000_000),
+  quantityUnit: z.enum(["pcs", "packs", "cartons", "unknown"]).optional(),
   notes: z.string().trim().max(500).optional(),
 });
 
@@ -147,7 +148,7 @@ function buildRfqItemsText(items: InquiryItemInput[] | undefined) {
   return items
     .map(
       (item, index) =>
-        `${index + 1}. Product: ${item.productId}; Quantity: ${item.quantity}; Notes: ${
+        `${index + 1}. Product: ${item.productId}; Quantity: ${item.quantity} ${item.quantityUnit ?? "unknown"}; Notes: ${
           item.notes && item.notes.length > 0 ? item.notes : "N/A"
         }`
     )
@@ -237,6 +238,7 @@ function normalizePayload(raw: z.infer<typeof inquiryPayloadSchema>): Normalized
     items: raw.items?.map((item) => ({
       productId: item.productId.trim(),
       quantity: item.quantity,
+      quantityUnit: item.quantityUnit,
       notes: toOptionalString(item.notes),
     })),
   };
@@ -258,6 +260,7 @@ async function saveInquiryToConvex(payload: NormalizedInquiryPayload, finalMessa
       items: payload.items?.map((item) => ({
         sku: item.productId,
         quantity: item.quantity,
+        quantityUnit: item.quantityUnit,
         notes: item.notes,
       })),
     });

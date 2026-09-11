@@ -354,6 +354,8 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
                 )}
               </div>
 
+              {(() => { const pack = product.variants?.map((v) => v.attributes?.pcs_per_pack).find((v) => typeof v === "number"); return typeof pack === "number" ? <div className="mt-2 text-sm text-secondary"><strong>Standard pack:</strong> {pack} pcs</div> : null; })()}
+
               {product.packageInfo && (
                 <div className="mt-6 rounded-sm border border-border bg-muted px-3 py-2 text-sm text-secondary">
                   <strong>{t("packaging")}:</strong> {product.packageInfo}

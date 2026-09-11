@@ -10,6 +10,7 @@ export type InquirySourceType =
 export interface InquiryItemInput {
   productId: string;
   quantity: number;
+  quantityUnit?: "pcs" | "packs" | "cartons" | "unknown";
   notes?: string;
 }
 

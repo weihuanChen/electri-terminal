@@ -36,6 +36,7 @@ interface RFQItem {
   id: string;
   productId: string;
   quantity: number;
+  quantityUnit: "pcs" | "packs" | "cartons" | "unknown";
   notes: string;
 }
 
@@ -48,7 +49,7 @@ const INITIAL_FORM_DATA = {
   message: "",
 };
 
-const INITIAL_RFQ_ITEMS: RFQItem[] = [{ id: "1", productId: "", quantity: 1, notes: "" }];
+const INITIAL_RFQ_ITEMS: RFQItem[] = [{ id: "1", productId: "", quantity: 1, quantityUnit: "unknown", notes: "" }];
 
 const rfqChecklistItems = [
   "Product Family",
@@ -206,7 +207,7 @@ export default function ContactPage() {
   const addItem = () => {
     setItems((prev) => [
       ...prev,
-      { id: Date.now().toString(), productId: "", quantity: 1, notes: "" },
+      { id: Date.now().toString(), productId: "", quantity: 1, quantityUnit: "unknown", notes: "" },
     ]);
   };
 
@@ -241,6 +242,7 @@ export default function ContactPage() {
       .map((item) => ({
         productId: item.productId.trim(),
         quantity: item.quantity,
+        quantityUnit: item.quantityUnit,
         notes: item.notes.trim(),
       }))
       .filter((item) => item.productId.length > 0);
@@ -261,6 +263,7 @@ export default function ContactPage() {
           ? validItems.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
+              quantityUnit: item.quantityUnit,
               notes: item.notes || undefined,
             }))
           : undefined,
@@ -536,7 +539,7 @@ export default function ContactPage() {
                               <label className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
                                 Quantity <span className="text-red-500">*</span>
                               </label>
-                              <input
+                              <div className="flex gap-2"><input
                                 type="number"
                                 min="1"
                                 value={item.quantity}
@@ -548,7 +551,7 @@ export default function ContactPage() {
                                   )
                                 }
                                 className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                              />
+                              /><select value={item.quantityUnit} onChange={(e) => handleItemChange(item.id, "quantityUnit", e.target.value as RFQItem["quantityUnit"])} className="w-32 border border-slate-300 bg-transparent px-2 text-sm"><option value="pcs">Pieces (pcs)</option><option value="packs">Packs</option><option value="cartons">Cartons</option><option value="unknown">Not sure</option></select></div>
                             </div>
                           </div>
 

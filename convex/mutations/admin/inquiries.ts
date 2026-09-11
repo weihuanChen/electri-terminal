@@ -28,6 +28,7 @@ export const createInquiry = mutation({
           productId: v.optional(v.id("products")),
           sku: v.optional(v.string()),
           quantity: v.optional(v.number()),
+          quantityUnit: v.optional(v.union(v.literal("pcs"), v.literal("packs"), v.literal("cartons"), v.literal("unknown"))),
           notes: v.optional(v.string()),
         })
       )
@@ -64,6 +65,7 @@ export const createInquiry = mutation({
         productId: item.productId,
         sku: item.sku,
         quantity: item.quantity,
+        quantityUnit: item.quantityUnit,
         notes: item.notes,
       });
     }
