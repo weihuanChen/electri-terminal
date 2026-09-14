@@ -36,3 +36,16 @@ export function trackGA4Event(eventName: string, params: GtagEventParams = {}) {
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(["event", eventName, eventParams]);
 }
+
+export function getPageType(pathname: string): string {
+  if (pathname === "/") return "home";
+  if (pathname.startsWith("/blog")) return "blog";
+  if (pathname.startsWith("/selection-guide")) return "selection_guide";
+  if (pathname.startsWith("/categories")) return "category";
+  if (pathname.startsWith("/families")) return "family";
+  if (pathname.startsWith("/products")) return "product";
+  if (pathname.startsWith("/manufacturing")) return "manufacturing";
+  if (pathname.startsWith("/quality-certifications")) return "certification";
+  if (pathname.startsWith("/contact")) return "contact";
+  return "other";
+}

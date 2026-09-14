@@ -6,6 +6,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import {
   GA_MEASUREMENT_ID,
+  getPageType,
   trackGA4Event,
   type GtagEventParams,
 } from "@/lib/analytics";
@@ -65,18 +66,50 @@ function getDeclaredTrackingEvent(element: Element) {
   return { eventName, params, trackedElement };
 }
 
-function isRequestQuoteLink(anchor: HTMLAnchorElement) {
-  try {
-    const url = new URL(anchor.href, window.location.href);
-    return url.hash === "#request-quote";
-  } catch {
-    return false;
-  }
-}
-
 export default function RouteAwareAnalytics() {
   const pathname = usePathname();
   const isAdmin = isAdminPath(pathname);
+
+  useEffect(() => {
+    if (isAdmin || !pathname) return;
+    const baseParams = { page_path: pathname, page_type: getPageType(pathname) };
+    let engaged = false;
+    let deepEngaged = false;
+    const startedAt = Date.now();
+    const emitEngagement = () => {
+      const elapsed = Date.now() - startedAt;
+      const progress = (window.scrollY + window.innerHeight) / Math.max(document.documentElement.scrollHeight, 1);
+      if (!engaged && (elapsed >= 30_000 || progress >= 0.5)) {
+        engaged = true;
+        trackGA4Event("content_engaged", baseParams);
+      }
+      if (!deepEngaged && elapsed >= 60_000 && progress >= 0.75) {
+        deepEngaged = true;
+        trackGA4Event("content_deep_engaged", baseParams);
+      }
+    };
+    const timer = window.setInterval(emitEngagement, 5_000);
+    window.addEventListener("scroll", emitEngagement, { passive: true });
+    emitEngagement();
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("scroll", emitEngagement);
+    };
+  }, [isAdmin, pathname]);
+
+  useEffect(() => {
+    if (isAdmin) return;
+    let started = false;
+    const handleFocus = (event: FocusEvent) => {
+      if (started || !(event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)) return;
+      const form = event.target.closest("form");
+      if (!form || !form.querySelector('[name="email"]') || !form.querySelector('[name="message"]')) return;
+      started = true;
+      trackGA4Event("rfq_start", { page_path: window.location.pathname, page_type: getPageType(window.location.pathname) });
+    };
+    document.addEventListener("focusin", handleFocus);
+    return () => document.removeEventListener("focusin", handleFocus);
+  }, [isAdmin, pathname]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -96,6 +129,7 @@ export default function RouteAwareAnalytics() {
       if (declaredEvent) {
         trackGA4Event(declaredEvent.eventName, {
           ...declaredEvent.params,
+          page_type: getPageType(window.location.pathname),
           link_text: declaredEvent.trackedElement.textContent?.trim().slice(0, 120) || undefined,
           link_url: anchor instanceof HTMLAnchorElement ? anchor.href : undefined,
           page_path: window.location.pathname,
@@ -106,11 +140,18 @@ export default function RouteAwareAnalytics() {
         return;
       }
 
-      if (!declaredEvent && isRequestQuoteLink(anchor)) {
-        trackGA4Event("rfq_start", {
-          link_text: anchor.textContent?.trim().slice(0, 120) || undefined,
-          link_url: anchor.href,
+      const href = anchor.href.toLowerCase();
+      if (href.startsWith("mailto:")) {
+        trackGA4Event("email_click", {
           page_path: window.location.pathname,
+          page_type: getPageType(window.location.pathname),
+          link_text: anchor.textContent?.trim().slice(0, 120) || undefined,
+        });
+      } else if (href.startsWith("https://wa.me/") || href.startsWith("whatsapp:")) {
+        trackGA4Event("whatsapp_click", {
+          page_path: window.location.pathname,
+          page_type: getPageType(window.location.pathname),
+          link_text: anchor.textContent?.trim().slice(0, 120) || undefined,
         });
       }
 
@@ -144,7 +185,7 @@ export default function RouteAwareAnalytics() {
         (!anchor.target || anchor.target === "_self");
 
       if (!shouldWaitForEvent) {
-        trackGA4Event("pdf_download", eventParams);
+        trackGA4Event("catalog_download", { ...eventParams, page_type: getPageType(window.location.pathname) });
         return;
       }
 
@@ -160,10 +201,11 @@ export default function RouteAwareAnalytics() {
         window.location.href = anchor.href;
       };
 
-      trackGA4Event("pdf_download", {
+      trackGA4Event("catalog_download", {
         ...eventParams,
         event_callback: continueNavigation,
         event_timeout: 800,
+        page_type: getPageType(window.location.pathname),
       });
 
       window.setTimeout(continueNavigation, 900);
