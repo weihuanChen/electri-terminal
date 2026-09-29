@@ -30,7 +30,7 @@ export const backfillSitemapCards = internalMutation({
         const invalidated = args.kind === "family"
           ? ["family", "familyFacets"]
           : args.kind === "product"
-            ? ["product", "productFacets"]
+            ? ["product", "productFacets", "productList"]
             : ["category"];
         await ctx.db.patch(state._id, {
           enabled: false,
@@ -62,7 +62,7 @@ export const backfillSitemapCards = internalMutation({
         ...(state?.completedKinds ?? []),
         args.kind,
         ...(args.kind === "family" ? ["familyFacets"] : []),
-        ...(args.kind === "product" ? ["productFacets"] : []),
+        ...(args.kind === "product" ? ["productFacets", "productList"] : []),
       ])];
       const enabled = KINDS.every((kind) => completedKinds.includes(kind));
       if (state) {

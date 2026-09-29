@@ -12,7 +12,10 @@ function collectImages(
   const seen = new Set<string>();
   return [
     ...(primary ? [{ url: primary }] : []),
-    ...(mediaItems ?? []),
+    ...(mediaItems ?? []).map((item) => ({
+      url: item.url,
+      ...(item.alt ? { alt: item.alt } : {}),
+    })),
     ...(gallery ?? []).map((url) => ({ url })),
   ].filter((item) => {
     if (!item.url || seen.has(item.url)) return false;
@@ -45,6 +48,10 @@ export async function removeSitemapCard(ctx: MutationCtx, sourceId: string) {
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
     .unique();
   if (familyFacet) await ctx.db.delete(familyFacet._id);
+  const productList = await ctx.db.query("productListCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
+    .unique();
+  if (productList) await ctx.db.delete(productList._id);
 }
 
 export async function syncCategorySitemapCard(ctx: MutationCtx, category: Doc<"categories">) {
@@ -118,4 +125,29 @@ export async function syncProductSitemapCard(ctx: MutationCtx, product: Doc<"pro
   };
   if (facet) await ctx.db.replace(facet._id, facetData);
   else await ctx.db.insert("productFacetCards", facetData);
+
+  const listCard = {
+    sourceId: String(product._id),
+    productId: product._id,
+    familyId: product.familyId,
+    categoryId: product.categoryId,
+    status: product.status,
+    sortOrder: product.sortOrder,
+    slug: product.slug,
+    skuCode: product.skuCode,
+    model: product.model,
+    title: product.title,
+    shortTitle: product.shortTitle,
+    summary: product.summary,
+    mainImage: product.mainImage,
+    isFeatured: product.isFeatured,
+    attributes: product.attributes,
+    moq: product.moq,
+    leadTime: product.leadTime,
+  };
+  const currentList = await ctx.db.query("productListCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", listCard.sourceId))
+    .unique();
+  if (currentList) await ctx.db.replace(currentList._id, listCard);
+  else await ctx.db.insert("productListCards", listCard);
 }

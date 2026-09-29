@@ -39,7 +39,19 @@ type CategoryContentFamily = Omit<Doc<"productFamilies">, "brand"> & {
   heroImage?: string;
   mediaItems: VisualMediaItem[];
 };
-type CategoryContentProduct = Omit<Doc<"products">, "brand" | "attributes"> & {
+type CategoryContentProduct = {
+  _id: Id<"products">;
+  slug: string;
+  title: string;
+  shortTitle?: string;
+  model?: string;
+  skuCode?: string;
+  summary?: string;
+  mainImage?: string;
+  isFeatured?: boolean;
+  familyId: Id<"productFamilies">;
+  categoryId: Id<"categories">;
+  sortOrder: number;
   attributes: AttributeRecord;
   mediaItems: VisualMediaItem[];
 };
@@ -1324,6 +1336,93 @@ export const listLatestArticles = query({
   },
 });
 
+async function hasCatalogKind(ctx: QueryCtx, kind: string) {
+  const state = await ctx.db.query("sitemapCardState")
+    .withIndex("by_key", (q) => q.eq("key", "catalog"))
+    .unique();
+  return state?.completedKinds.includes(kind) ?? false;
+}
+
+function lowestBySortOrder<T extends { sortOrder: number }>(
+  items: T[],
+  idOf: (item: T) => string,
+  limit: number,
+) {
+  const byId = new Map<string, T>();
+  for (const item of items) {
+    const id = idOf(item);
+    if (!byId.has(id)) byId.set(id, item);
+  }
+  return Array.from(byId.values())
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .slice(0, limit);
+}
+
+async function publishedCategoryTreeIds(ctx: QueryCtx, rootId: Id<"categories">) {
+  const categoryIds: Array<Id<"categories">> = [rootId];
+  const seen = new Set<string>([String(rootId)]);
+  const queue: Array<Id<"categories">> = [rootId];
+
+  while (queue.length > 0) {
+    const currentId = queue.shift();
+    if (!currentId) continue;
+    const children = await ctx.db
+      .query("categories")
+      .withIndex("by_parentId", (q) => q.eq("parentId", currentId))
+      .collect();
+    for (const child of children) {
+      if (child.status !== "published" || seen.has(String(child._id))) continue;
+      seen.add(String(child._id));
+      categoryIds.push(child._id);
+      queue.push(child._id);
+    }
+  }
+
+  return categoryIds;
+}
+
+function toCategoryProduct(
+  product: {
+    _id: Id<"products">;
+    slug: string;
+    title: string;
+    shortTitle?: string;
+    model?: string;
+    skuCode?: string;
+    summary?: string;
+    mainImage?: string;
+    isFeatured?: boolean;
+    familyId: Id<"productFamilies">;
+    categoryId: Id<"categories">;
+    sortOrder: number;
+    attributes?: AttributeRecord;
+    mediaItems?: VisualMediaItem[];
+    gallery?: string[];
+  },
+  familyAttributes?: AttributeRecord,
+): CategoryContentProduct {
+  return {
+    _id: product._id,
+    slug: product.slug,
+    title: product.title,
+    shortTitle: product.shortTitle,
+    model: product.model,
+    skuCode: product.skuCode,
+    summary: product.summary,
+    mainImage: product.mainImage,
+    isFeatured: product.isFeatured,
+    familyId: product.familyId,
+    categoryId: product.categoryId,
+    sortOrder: product.sortOrder,
+    attributes: mergeAttributes(familyAttributes, product.attributes),
+    mediaItems: normalizeMediaItems({
+      mediaItems: product.mediaItems,
+      primaryUrl: product.mainImage,
+      gallery: product.gallery,
+    }),
+  };
+}
+
 export const searchSiteContent = query({
   args: {
     query: v.string(),
@@ -1332,94 +1431,24 @@ export const searchSiteContent = query({
   handler: async (ctx, args) => {
     const keyword = args.query.trim();
     const limit = Math.min(args.limit ?? 8, 20);
-
-    const [allProducts, allFamilies, allCategories, allArticles] = await Promise.all([
-      ctx.db
-        .query("products")
+    const [visibleCategories, popularFamilies, popularProducts] = await Promise.all([
+      ctx.db.query("categories")
+        .withIndex("by_status_visible_sortOrder", (q) =>
+          q.eq("status", "published").eq("isVisibleInNav", true))
+        .take(100),
+      ctx.db.query("productFamilies")
         .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("productFamilies")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("categories")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("articles")
-        .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-        .collect(),
+        .take(4),
+      ctx.db.query("products")
+        .withIndex("by_status_featured_sortOrder", (q) =>
+          q.eq("status", "published").eq("isFeatured", true))
+        .take(4),
     ]);
-
-    const buildSuggestions = (queryText: string) => {
-      const normalized = queryText.toLowerCase();
-      const suggestionCandidates = [
-        ...allProducts.flatMap((product) => [
-          { value: product.title, type: "product" as const },
-          { value: product.skuCode, type: "sku" as const },
-        ]),
-        ...allFamilies.map((family) => ({ value: family.name, type: "family" as const })),
-        ...allCategories.map((category) => ({ value: category.name, type: "category" as const })),
-        ...allArticles.map((article) => ({ value: article.title, type: "article" as const })),
-      ].filter(
-        (candidate): candidate is {
-          value: string;
-          type: "product" | "sku" | "family" | "category" | "article";
-        } =>
-          Boolean(candidate.value?.trim())
-      );
-
-      const priorityByType = {
-        sku: 0,
-        product: 1,
-        family: 2,
-        category: 3,
-        article: 4,
-      };
-
-      return Array.from(
-        new Map(
-          suggestionCandidates.map((candidate) => [
-            candidate.value.trim().toLowerCase(),
-            { value: candidate.value.trim(), type: candidate.type },
-          ])
-        ).values()
-      )
-        .filter((candidate) => candidate.value.toLowerCase().includes(normalized))
-        .sort((left, right) => {
-          const leftPriority = priorityByType[left.type];
-          const rightPriority = priorityByType[right.type];
-          if (leftPriority !== rightPriority) {
-            return leftPriority - rightPriority;
-          }
-
-          const leftStartsWith = left.value.toLowerCase().startsWith(normalized) ? 0 : 1;
-          const rightStartsWith = right.value.toLowerCase().startsWith(normalized) ? 0 : 1;
-          if (leftStartsWith !== rightStartsWith) {
-            return leftStartsWith - rightStartsWith;
-          }
-
-          if (left.value.length !== right.value.length) {
-            return left.value.length - right.value.length;
-          }
-
-          return left.value.localeCompare(right.value);
-        })
-        .map((candidate) => candidate.value)
-        .slice(0, 8);
-    };
-
-    const popularSuggestions = [
-      ...allCategories
-        .filter((category) => category.isVisibleInNav && category.level === 0)
-        .sort((left, right) => left.sortOrder - right.sortOrder)
-        .map((category) => category.name),
-      ...allFamilies.slice(0, 4).map((family) => family.name),
-      ...allProducts.filter((product) => product.isFeatured).slice(0, 4).map((product) => product.title),
-    ]
-      .filter((value): value is string => Boolean(value?.trim()))
-      .slice(0, 10);
+    const popularSuggestions = Array.from(new Set([
+      ...visibleCategories.filter((category) => category.level === 0).map((category) => category.name),
+      ...popularFamilies.map((family) => family.name),
+      ...popularProducts.map((product) => product.title),
+    ].filter((value) => value.trim()))).slice(0, 10);
 
     if (!keyword) {
       return {
@@ -1428,140 +1457,95 @@ export const searchSiteContent = query({
         categories: [],
         articles: [],
         suggestions: [],
-        popularSuggestions: Array.from(new Set(popularSuggestions)),
+        popularSuggestions,
       };
     }
 
     const normalizedKeyword = keyword.toLowerCase();
-
     const [
-      productTitleMatches,
-      productModelMatches,
-      articleTitleMatches,
-    ] =
-      await Promise.all([
-        ctx.db
-          .query("products")
-          .withSearchIndex("search_title", (q) =>
-            q.search("title", keyword).eq("status", "published")
-          )
-          .take(limit),
-        ctx.db
-          .query("products")
-          .withSearchIndex("search_model", (q) =>
-            q.search("normalizedModel", normalizedKeyword).eq("status", "published")
-          )
-          .take(limit),
-        ctx.db
-          .query("articles")
-          .withSearchIndex("search_title", (q) =>
-            q.search("title", keyword).eq("status", "published")
-          )
-          .take(limit),
-      ]);
+      titleMatches,
+      modelMatches,
+      skuMatches,
+      exactSku,
+      familyMatches,
+      categoryMatches,
+      articleMatches,
+    ] = await Promise.all([
+      ctx.db.query("products")
+        .withSearchIndex("search_title", (q) => q.search("title", keyword).eq("status", "published"))
+        .take(limit),
+      ctx.db.query("products")
+        .withSearchIndex("search_model", (q) =>
+          q.search("normalizedModel", normalizedKeyword).eq("status", "published"))
+        .take(limit),
+      ctx.db.query("products")
+        .withSearchIndex("search_sku", (q) => q.search("skuCode", keyword).eq("status", "published"))
+        .take(limit),
+      ctx.db.query("products").withIndex("by_skuCode", (q) => q.eq("skuCode", keyword)).unique(),
+      ctx.db.query("productFamilies")
+        .withSearchIndex("search_name", (q) => q.search("name", keyword).eq("status", "published"))
+        .take(limit),
+      ctx.db.query("categories")
+        .withSearchIndex("search_name", (q) => q.search("name", keyword).eq("status", "published"))
+        .take(limit),
+      ctx.db.query("articles")
+        .withSearchIndex("search_title", (q) => q.search("title", keyword).eq("status", "published"))
+        .take(limit),
+    ]);
 
-    const familyLookup = new Map(allFamilies.map((family) => [family._id, family]));
-    const categoryLookup = new Map(allCategories.map((category) => [category._id, category]));
+    const productMatches = Array.from(new Map(
+      [...titleMatches, ...modelMatches, ...skuMatches, ...(exactSku?.status === "published" ? [exactSku] : [])]
+        .map((product) => [product._id, product]),
+    ).values()).slice(0, limit);
+    const familyIds = [...new Set(productMatches.map((product) => product.familyId))];
+    const categoryIds = [...new Set([
+      ...productMatches.map((product) => product.categoryId),
+      ...familyMatches.map((family) => family.categoryId),
+    ])];
+    const [relatedFamilies, relatedCategories] = await Promise.all([
+      Promise.all(familyIds.map((familyId) => ctx.db.get(familyId))),
+      Promise.all(categoryIds.map((categoryId) => ctx.db.get(categoryId))),
+    ]);
+    const familyLookup = new Map(
+      relatedFamilies.flatMap((family) => family ? [[family._id, family] as const] : []),
+    );
+    const categoryLookup = new Map(
+      relatedCategories.flatMap((category) => category ? [[category._id, category] as const] : []),
+    );
 
-    const products = Array.from(
-      new Map(
-        [...productTitleMatches, ...productModelMatches, ...allProducts].map((product) => [
-          product._id,
-          product,
-        ])
-      ).values()
-    )
-      .filter((product) => {
-        const haystack = [
-          product.title,
-          product.shortTitle,
-          product.model,
-          product.skuCode,
-          ...(product.searchKeywords ?? []),
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(normalizedKeyword);
-      })
-      .slice(0, limit)
-      .map((product) => ({
-        _id: product._id,
-        slug: product.slug,
-        title: product.title,
-        shortTitle: product.shortTitle,
-        model: product.model,
-        skuCode: product.skuCode,
-        summary: product.summary,
-        mainImage: product.mainImage,
-        family: familyLookup.get(product.familyId)
-          ? {
-              slug: familyLookup.get(product.familyId)!.slug,
-              name: familyLookup.get(product.familyId)!.name,
-            }
-          : null,
-        category: categoryLookup.get(product.categoryId)
-          ? {
-              slug: categoryLookup.get(product.categoryId)!.slug,
-              name: categoryLookup.get(product.categoryId)!.name,
-            }
-          : null,
-      }));
-
-    const familyResults = allFamilies
-      .filter((family) => {
-        const haystack = [family.name, family.summary]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(normalizedKeyword);
-      })
-      .slice(0, limit)
-      .map((family) => ({
-        _id: family._id,
-        slug: family.slug,
-        name: family.name,
-        summary: family.summary,
-        heroImage: resolveFamilyHeroImage(family),
-        category: categoryLookup.get(family.categoryId)
-          ? {
-              slug: categoryLookup.get(family.categoryId)!.slug,
-              name: categoryLookup.get(family.categoryId)!.name,
-            }
-          : null,
-      }));
-
-    const categoryResults = allCategories
-      .filter((category) => {
-        const haystack = [category.name, category.shortDescription, category.description]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(normalizedKeyword);
-      })
-      .slice(0, 6)
-      .map((category) => ({
-        _id: category._id,
-        slug: category.slug,
-        name: category.name,
-        description: category.shortDescription || category.description,
-      }));
-
-    const articleResults = Array.from(
-      new Map(
-        [...articleTitleMatches, ...allArticles]
-          .filter((article) => {
-            const haystack = [article.title, article.excerpt, article.content]
-              .filter(Boolean)
-              .join(" ")
-              .toLowerCase();
-            return haystack.includes(normalizedKeyword);
-          })
-          .map((article) => [article._id, article])
-      ).values()
-    )
-      .slice(0, limit)
-      .map((article) => ({
+    const products = productMatches.map((product) => ({
+      _id: product._id,
+      slug: product.slug,
+      title: product.title,
+      shortTitle: product.shortTitle,
+      model: product.model,
+      skuCode: product.skuCode,
+      summary: product.summary,
+      mainImage: product.mainImage,
+      family: familyLookup.get(product.familyId)
+        ? { slug: familyLookup.get(product.familyId)!.slug, name: familyLookup.get(product.familyId)!.name }
+        : null,
+      category: categoryLookup.get(product.categoryId)
+        ? { slug: categoryLookup.get(product.categoryId)!.slug, name: categoryLookup.get(product.categoryId)!.name }
+        : null,
+    }));
+    const families = familyMatches.map((family) => ({
+      _id: family._id,
+      slug: family.slug,
+      name: family.name,
+      summary: family.summary,
+      heroImage: resolveFamilyHeroImage(family),
+      category: categoryLookup.get(family.categoryId)
+        ? { slug: categoryLookup.get(family.categoryId)!.slug, name: categoryLookup.get(family.categoryId)!.name }
+        : null,
+    }));
+    const categories = categoryMatches.map((category) => ({
+      _id: category._id,
+      slug: category.slug,
+      name: category.name,
+      description: category.shortDescription || category.description,
+    }));
+    const articles = articleMatches.map((article) => ({
       _id: article._id,
       slug: article.slug,
       title: article.title,
@@ -1570,15 +1554,16 @@ export const searchSiteContent = query({
       type: article.type,
       publishedAt: article.publishedAt,
     }));
+    const suggestions = Array.from(new Set(
+      [
+        ...products.flatMap((product) => [product.skuCode, product.title, product.shortTitle]),
+        ...families.map((family) => family.name),
+        ...categories.map((category) => category.name),
+        ...articles.map((article) => article.title),
+      ].filter((value): value is string => Boolean(value?.toLowerCase().includes(normalizedKeyword))),
+    )).slice(0, 8);
 
-    return {
-      products,
-      families: familyResults,
-      categories: categoryResults,
-      articles: articleResults,
-      suggestions: buildSuggestions(keyword),
-      popularSuggestions: Array.from(new Set(popularSuggestions)),
-    };
+    return { products, families, categories, articles, suggestions, popularSuggestions };
   },
 });
 
@@ -2095,109 +2080,69 @@ export const getCategoryContent = query({
     if (!isPublishedCategory(category)) {
       return { families: [], products: [] };
     }
-    const visitedCategoryIds = new Set<string>([args.categoryId.toString()]);
-    const categoryIdsToQuery = [args.categoryId];
-    const queue = [args.categoryId];
 
-    // Include descendants so parent category pages can show all related families/products.
-    while (queue.length > 0) {
-      const currentId = queue.shift();
-      if (!currentId) continue;
-
-      const children = await ctx.db
-        .query("categories")
-        .withIndex("by_parentId", (q) => q.eq("parentId", currentId))
-        .collect();
-
-      for (const child of children) {
-        if (child.status !== "published") continue;
-        const childIdKey = child._id.toString();
-        if (visitedCategoryIds.has(childIdKey)) continue;
-
-        visitedCategoryIds.add(childIdKey);
-        categoryIdsToQuery.push(child._id);
-        queue.push(child._id);
-      }
-    }
-
-    const result: CategoryContentResult = {
-      families: [],
-      products: [],
-    };
+    const categoryIds = await publishedCategoryTreeIds(ctx, args.categoryId);
+    const result: CategoryContentResult = { families: [], products: [] };
+    const familyAttributes = new Map<string, AttributeRecord | undefined>();
 
     if (type === "families" || type === "all") {
-      const familyBuckets = await Promise.all(
-        categoryIdsToQuery.map((categoryId) =>
-          ctx.db
-            .query("productFamilies")
-            .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-            .collect()
-        )
-      );
-
-      const familyMapById = new Map<string, (typeof familyBuckets)[number][number]>();
-      for (const family of familyBuckets.flat()) {
-        familyMapById.set(family._id.toString(), family);
-      }
-
-      result.families = Array.from(familyMapById.values())
-        .filter((f) => f.status === "published")
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .slice(0, limit)
-        .map((family) => ({
-          ...omitBrand(family),
-          heroImage: resolveFamilyHeroImage(family),
-          mediaItems: normalizeMediaItems({
-            mediaItems: family.mediaItems,
-            primaryUrl: resolveFamilyHeroImage(family),
-            gallery: family.gallery,
-          }),
-        }));
+      const familyBuckets = await Promise.all(categoryIds.map((categoryId) =>
+        ctx.db.query("productFamilies")
+          .withIndex("by_categoryId_and_status_and_sortOrder", (q) =>
+            q.eq("categoryId", categoryId).eq("status", "published"))
+          .take(limit)
+      ));
+      const families = lowestBySortOrder(familyBuckets.flat(), (family) => family._id, limit);
+      for (const family of families) familyAttributes.set(family._id, family.attributes);
+      result.families = families.map((family) => ({
+        ...omitBrand(family),
+        heroImage: resolveFamilyHeroImage(family),
+        mediaItems: normalizeMediaItems({
+          mediaItems: family.mediaItems,
+          primaryUrl: resolveFamilyHeroImage(family),
+          gallery: family.gallery,
+        }),
+      }));
     }
 
     if (type === "products" || type === "all") {
-      const familiesByCategory = await Promise.all(
-        categoryIdsToQuery.map((categoryId) =>
-          ctx.db
-            .query("productFamilies")
-            .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-            .collect()
-        )
+      const useProductListCards = await hasCatalogKind(ctx, "productList");
+      const productBuckets = await Promise.all(categoryIds.map((categoryId) =>
+        useProductListCards
+          ? ctx.db.query("productListCards")
+              .withIndex("by_categoryId_and_status_and_sortOrder", (q) =>
+                q.eq("categoryId", categoryId).eq("status", "published"))
+              .take(limit)
+          : ctx.db.query("products")
+              .withIndex("by_categoryId_and_status_and_sortOrder", (q) =>
+                q.eq("categoryId", categoryId).eq("status", "published"))
+              .take(limit)
+      ));
+      const products = lowestBySortOrder(
+        productBuckets.flat(),
+        (product) => "productId" in product ? product.productId : product._id,
+        limit,
       );
-
-      const families = familiesByCategory.flat();
-      const familyMap = new Map(families.map((family) => [family._id, family]));
-
-      const productBuckets = await Promise.all(
-        categoryIdsToQuery.map((categoryId) =>
-          ctx.db
-            .query("products")
-            .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-            .collect()
-        )
-      );
-
-      const productMapById = new Map<string, (typeof productBuckets)[number][number]>();
-      for (const product of productBuckets.flat()) {
-        productMapById.set(product._id.toString(), product);
-      }
-
-      result.products = Array.from(productMapById.values())
-        .filter((p) => p.status === "published")
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .slice(0, limit)
-        .map((product) => ({
-          ...omitBrand(product),
-          attributes: mergeAttributes(
-            familyMap.get(product.familyId)?.attributes,
-            product.attributes
-          ),
-          mediaItems: normalizeMediaItems({
-            mediaItems: product.mediaItems,
-            primaryUrl: product.mainImage,
-            gallery: product.gallery,
-          }),
+      const missingFamilyIds = [...new Set(products.map((product) => product.familyId))]
+        .filter((familyId) => !familyAttributes.has(familyId));
+      if (missingFamilyIds.length > 0) {
+        const facetsReady = await hasCatalogKind(ctx, "familyFacets");
+        await Promise.all(missingFamilyIds.map(async (familyId) => {
+          if (facetsReady) {
+            const card = await ctx.db.query("familyFacetCards")
+              .withIndex("by_sourceId", (q) => q.eq("sourceId", String(familyId)))
+              .unique();
+            familyAttributes.set(familyId, card?.attributes);
+            return;
+          }
+          const family = await ctx.db.get(familyId);
+          familyAttributes.set(familyId, family?.attributes);
         }));
+      }
+      result.products = products.map((product) => toCategoryProduct(
+        "productId" in product ? { ...product, _id: product.productId } : product,
+        familyAttributes.get(product.familyId),
+      ));
     }
 
     return result;
@@ -2218,10 +2163,20 @@ export const getFamilyWithProducts = query({
     const category = await ctx.db.get(family.categoryId);
     if (!isPublishedCategory(category)) return null;
 
-    const products = await ctx.db
-      .query("products")
-      .withIndex("by_familyId", (q) => q.eq("familyId", family._id))
-      .collect();
+    const useProductListCards = await hasCatalogKind(ctx, "productList");
+    const products = useProductListCards
+      ? await ctx.db
+          .query("productListCards")
+          .withIndex("by_familyId_and_status_and_sortOrder", (q) =>
+            q.eq("familyId", family._id).eq("status", "published")
+          )
+          .collect()
+      : await ctx.db
+          .query("products")
+          .withIndex("by_familyId_and_status_and_sortOrder", (q) =>
+            q.eq("familyId", family._id).eq("status", "published")
+          )
+          .collect();
 
     const resources = await getRelatedAssets(ctx, "family", family._id);
     const linkedRelations = await getLinkedFamilyRelations(ctx, family);
@@ -2242,16 +2197,17 @@ export const getFamilyWithProducts = query({
       faqs: await getRelatedFaqs(ctx, "family", family._id),
       ...linkedRelations,
       products: products
-        .filter((p) => p.status === "published")
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((product) => ({
-          ...omitBrand(product),
+          _id: "productId" in product ? product.productId : product._id,
+          slug: product.slug,
+          skuCode: product.skuCode,
+          model: product.model,
+          title: product.title,
+          shortTitle: product.shortTitle,
           attributes: mergeAttributes(family.attributes, product.attributes),
-          mediaItems: normalizeMediaItems({
-            mediaItems: product.mediaItems,
-            primaryUrl: product.mainImage,
-            gallery: product.gallery,
-          }),
+          moq: product.moq,
+          leadTime: product.leadTime,
         })),
     };
   },

@@ -175,32 +175,6 @@ function localizeCategoryContent(
   };
 }
 
-function mergeCategoryContentBuckets(
-  buckets: CategoryPageContent[],
-  limit: number
-): CategoryPageContent {
-  const familyMap = new Map<string, CategoryPageContent["families"][number]>();
-  const productMap = new Map<string, CategoryPageContent["products"][number]>();
-
-  for (const bucket of buckets) {
-    for (const family of bucket.families) {
-      if (!familyMap.has(family._id)) {
-        familyMap.set(family._id, family);
-      }
-    }
-    for (const product of bucket.products) {
-      if (!productMap.has(product._id)) {
-        productMap.set(product._id, product);
-      }
-    }
-  }
-
-  return {
-    families: Array.from(familyMap.values()).slice(0, limit),
-    products: Array.from(productMap.values()).slice(0, limit),
-  };
-}
-
 async function renderLocalizedCategory({
   locale,
   route,
@@ -250,25 +224,7 @@ async function renderLocalizedCategory({
       limit: 100,
     }
   );
-  const childCategoryIds = (localizedCategory.children ?? []).map((child) => child._id);
-  const childBuckets =
-    childCategoryIds.length > 0
-      ? await Promise.all(
-          childCategoryIds.map((childCategoryId) =>
-            queryPublicPage<CategoryPageContent>("frontend:getCategoryContent", {
-              categoryId: childCategoryId,
-              type: "all",
-              limit: 100,
-            })
-          )
-        )
-      : [];
-  const content = mergeCategoryContentBuckets(
-    [primaryContent, ...childBuckets].map((bucket) =>
-      localizeCategoryContent(bucket, maps)
-    ),
-    100
-  );
+  const content = localizeCategoryContent(primaryContent, maps);
   const filteredContent = resolveCategoryFilteredContent(content, activeFilters);
   const structuredData = buildCategoryStructuredData(
     localizedCategory,

@@ -36,32 +36,6 @@ type CategoryMetadataRecord = CategoryPageData & {
   image?: string;
 };
 
-function mergeCategoryContentBuckets(
-  buckets: CategoryPageContent[],
-  limit: number
-): CategoryPageContent {
-  const familyMap = new Map<string, CategoryPageContent["families"][number]>();
-  const productMap = new Map<string, CategoryPageContent["products"][number]>();
-
-  for (const bucket of buckets) {
-    for (const family of bucket.families) {
-      if (!familyMap.has(family._id)) {
-        familyMap.set(family._id, family);
-      }
-    }
-    for (const product of bucket.products) {
-      if (!productMap.has(product._id)) {
-        productMap.set(product._id, product);
-      }
-    }
-  }
-
-  return {
-    families: Array.from(familyMap.values()).slice(0, limit),
-    products: Array.from(productMap.values()).slice(0, limit),
-  };
-}
-
 async function getCategoryRecord(slug: string) {
   return await getCachedCategoryWithChildren(slug) as CategoryMetadataRecord | null;
 }
@@ -122,27 +96,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const contentView = resolveCategoryContentView(resolvedSearchParams);
   const activeFilters = resolveCategoryActiveFilters(resolvedSearchParams, category);
 
-  const primaryContent = await queryPublicPage<CategoryPageContent>("frontend:getCategoryContent", {
+  const content = await queryPublicPage<CategoryPageContent>("frontend:getCategoryContent", {
     categoryId: category._id,
     type: "all",
     limit: 100,
   });
-
-  const childCategoryIds = (category.children ?? []).map((child) => child._id);
-  const childBuckets =
-    childCategoryIds.length > 0
-      ? await Promise.all(
-          childCategoryIds.map((childCategoryId) =>
-            queryPublicPage<CategoryPageContent>("frontend:getCategoryContent", {
-              categoryId: childCategoryId,
-              type: "all",
-              limit: 100,
-            })
-          )
-        )
-      : [];
-
-  const content = mergeCategoryContentBuckets([primaryContent, ...childBuckets], 100);
 
   const filteredContent = resolveCategoryFilteredContent(content, activeFilters);
   const structuredData = buildCategoryStructuredData(category, filteredContent, slug);

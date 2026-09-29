@@ -221,7 +221,11 @@ export default defineSchema({
       "isVisibleInNav",
       "sortOrder",
     ])
-    .index("by_status_sortOrder", ["status", "sortOrder"]),
+    .index("by_status_sortOrder", ["status", "sortOrder"])
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["status"],
+    }),
 
   attributeTemplates: defineTable({
     name: v.string(),
@@ -298,7 +302,12 @@ export default defineSchema({
   })
     .index("by_slug", ["slug"]) // enforce uniqueness in mutation
     .index("by_categoryId", ["categoryId"])
-    .index("by_status_sortOrder", ["status", "sortOrder"]),
+    .index("by_categoryId_and_status_and_sortOrder", ["categoryId", "status", "sortOrder"])
+    .index("by_status_sortOrder", ["status", "sortOrder"])
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["status"],
+    }),
 
   // Compact records for sitemap generation; full catalog documents include
   // page copy, attributes, and configuration that sitemaps never use.
@@ -352,6 +361,31 @@ export default defineSchema({
     .index("by_sourceId", ["sourceId"])
     .index("by_categoryId_and_status", ["categoryId", "status"]),
 
+  // Fields the category grid and family SKU table render. Keeps those pages
+  // from reading product bodies, galleries, and SEO copy.
+  productListCards: defineTable({
+    sourceId: v.string(),
+    productId: v.id("products"),
+    familyId: v.id("productFamilies"),
+    categoryId: v.id("categories"),
+    status: statusCommon,
+    sortOrder: v.number(),
+    slug: v.string(),
+    skuCode: v.string(),
+    model: v.string(),
+    title: v.string(),
+    shortTitle: v.optional(v.string()),
+    summary: v.optional(v.string()),
+    mainImage: v.optional(v.string()),
+    isFeatured: v.boolean(),
+    attributes: v.optional(v.record(v.string(), v.any())),
+    moq: v.optional(v.number()),
+    leadTime: v.optional(v.string()),
+  })
+    .index("by_sourceId", ["sourceId"])
+    .index("by_categoryId_and_status_and_sortOrder", ["categoryId", "status", "sortOrder"])
+    .index("by_familyId_and_status_and_sortOrder", ["familyId", "status", "sortOrder"]),
+
   products: defineTable({
     productKey: v.optional(v.string()),
     seriesCode: v.optional(v.string()),
@@ -392,7 +426,9 @@ export default defineSchema({
     .index("by_skuCode", ["skuCode"]) // enforce uniqueness in mutation
     .index("by_slug", ["slug"]) // enforce uniqueness in mutation
     .index("by_familyId", ["familyId"])
+    .index("by_familyId_and_status_and_sortOrder", ["familyId", "status", "sortOrder"])
     .index("by_categoryId", ["categoryId"])
+    .index("by_categoryId_and_status_and_sortOrder", ["categoryId", "status", "sortOrder"])
     .index("by_familyId_model", ["familyId", "model"])
     .index("by_status_featured_sortOrder", [
       "status",
@@ -407,6 +443,10 @@ export default defineSchema({
     .searchIndex("search_model", {
       searchField: "normalizedModel",
       filterFields: ["status", "categoryId", "familyId"],
+    })
+    .searchIndex("search_sku", {
+      searchField: "skuCode",
+      filterFields: ["status"],
     }),
 
   productRecommendationGroups: defineTable({
