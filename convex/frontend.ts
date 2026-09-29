@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
+import { internalQuery, query } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
 import { getExpandedTemplateFieldsByCategoryId } from "./lib/attributes";
@@ -211,7 +212,10 @@ async function getRelatedFaqs(
   }
 
   // Preserve existing data until the one-time derived-data backfill has run.
-  const hasDerivedData = await ctx.db.query("articleCards").first();
+  const state = await ctx.db.query("sitemapCardState")
+    .withIndex("by_key", (q) => q.eq("key", "catalog"))
+    .unique();
+  const hasDerivedData = state?.completedKinds.includes("article") ?? false;
   if (hasDerivedData) return [];
 
   const articles = await ctx.db
@@ -913,6 +917,19 @@ export const getRelatedSeriesForFamily = query({
     familyId: v.id("productFamilies"),
     categoryId: v.id("categories"),
   },
+  returns: v.array(v.object({
+    _id: v.id("productFamilies"),
+    name: v.string(),
+    slug: v.string(),
+    summary: v.optional(v.string()),
+    image: v.optional(v.string()),
+    relationLabel: v.union(
+      v.literal("Single Crimp"),
+      v.literal("Heat Shrink"),
+      v.literal("Nylon"),
+      v.literal("Non Insulated"),
+    ),
+  })),
   handler: async (ctx, args) => {
     const family = await ctx.db.get(args.familyId);
     if (!family || family.status !== "published") return [];
@@ -921,20 +938,37 @@ export const getRelatedSeriesForFamily = query({
 });
 
 async function getCategoryFilters(ctx: QueryCtx, categoryId: Id<"categories">) {
-  const [fields, products, families] = await Promise.all([
-    getTemplateFields(ctx, categoryId),
-    ctx.db
-      .query("products")
-      .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-      .collect(),
-    ctx.db
-      .query("productFamilies")
-      .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
-      .collect(),
-  ]);
+  const state = await ctx.db.query("sitemapCardState")
+    .withIndex("by_key", (q) => q.eq("key", "catalog"))
+    .unique();
+  const fields = await getTemplateFields(ctx, categoryId);
+  const facetsReady = state?.completedKinds.includes("familyFacets") &&
+    state.completedKinds.includes("productFacets");
+  const [products, families] = facetsReady
+    ? await Promise.all([
+        ctx.db.query("productFacetCards")
+          .withIndex("by_categoryId_and_status", (q) =>
+            q.eq("categoryId", categoryId).eq("status", "published"))
+          .collect(),
+        ctx.db.query("familyFacetCards")
+          .withIndex("by_categoryId_and_status", (q) =>
+            q.eq("categoryId", categoryId).eq("status", "published"))
+          .collect(),
+      ])
+    : await Promise.all([
+        ctx.db.query("products")
+          .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
+          .collect(),
+        ctx.db.query("productFamilies")
+          .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
+          .collect(),
+      ]);
 
   const publishedProducts = products.filter((item) => item.status === "published");
-  const familyMap = new Map(families.map((family) => [family._id, family]));
+  const familyMap = new Map(families.map((family) => [
+    "familyId" in family ? family.familyId : family._id,
+    family,
+  ]));
 
   return fields
     .filter((field) => field.isFilterable)
@@ -1067,7 +1101,7 @@ export const getPublicContactSettings = query({
   },
 });
 
-export const getLanguageWorkflowSettings = query({
+export const getLanguageWorkflowSettings = internalQuery({
   args: {},
   handler: async (ctx) => {
     const settingsDoc = await ctx.db
@@ -1595,97 +1629,125 @@ export const listApplicationArticles = query({
   },
 });
 
-export const listSitemapContent = query({
-  args: {},
-  handler: async (ctx) => {
-    const cardState = await ctx.db.query("sitemapCardState")
-      .withIndex("by_key", (q) => q.eq("key", "catalog"))
-      .unique();
-    if (cardState?.enabled) {
-      const [categoryCards, familyCards, productCards, articleCards] = await Promise.all([
-        ctx.db.query("sitemapCards")
-          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "category").eq("status", "published"))
-          .collect(),
-        ctx.db.query("sitemapCards")
-          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "family").eq("status", "published"))
-          .collect(),
-        ctx.db.query("sitemapCards")
-          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "product").eq("status", "published"))
-          .collect(),
-        ctx.db.query("articleCards")
-          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-          .collect(),
-      ]);
-      const articles = articleCards.length > 0
-        ? articleCards
+const sitemapKindValidator = v.union(
+  v.literal("category"),
+  v.literal("family"),
+  v.literal("product"),
+  v.literal("article"),
+);
+
+const sitemapPageItemValidator = v.object({
+  slug: v.string(),
+  canonical: v.optional(v.string()),
+  updatedAt: v.number(),
+  image: v.optional(v.string()),
+  mediaItems: v.optional(v.array(v.object({
+    url: v.string(),
+    alt: v.optional(v.string()),
+  }))),
+  coverImage: v.optional(v.string()),
+  title: v.optional(v.string()),
+});
+
+export const listSitemapContentPage = query({
+  args: {
+    kind: sitemapKindValidator,
+    paginationOpts: paginationOptsValidator,
+  },
+  returns: v.object({
+    page: v.array(sitemapPageItemValidator),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    if (args.kind === "article") {
+      const cardState = await ctx.db.query("sitemapCardState")
+        .withIndex("by_key", (q) => q.eq("key", "catalog"))
+        .unique();
+      const hasCards = cardState?.completedKinds.includes("article") ?? false;
+      const page = hasCards
+        ? await ctx.db.query("articleCards")
+            .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+            .paginate(args.paginationOpts)
         : await ctx.db.query("articles")
             .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-            .collect();
+            .paginate(args.paginationOpts);
       return {
-        categories: categoryCards.map((card) => ({
-          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt, image: card.image,
+        page: page.page.map((article) => ({
+          slug: article.slug,
+          canonical: article.canonical,
+          updatedAt: article.updatedAt,
+          coverImage: article.coverImage,
+          title: article.title,
         })),
-        families: familyCards.map((card) => ({
-          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
-          mediaItems: card.mediaItems ?? [],
-        })),
-        products: productCards.map((card) => ({
-          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
-          mediaItems: card.mediaItems ?? [],
-        })),
-        articles: articles.map((card) => ({
-          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
-          coverImage: card.coverImage, title: card.title,
-        })),
+        isDone: page.isDone,
+        continueCursor: page.continueCursor,
       };
     }
 
-    const [categories, families, products, articleCards] = await Promise.all([
-      ctx.db
-        .query("categories")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("productFamilies")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("products")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
-      ctx.db
-        .query("articleCards")
-        .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-        .collect(),
-    ]);
-    const articles = articleCards.length > 0
-      ? articleCards
-      : await ctx.db
-          .query("articles")
-          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-          .collect();
-
-    return {
-      categories: categories.map((category) => ({
-        slug: category.slug,
-        canonical: category.canonical,
-        updatedAt: category.updatedAt,
-        image: category.image,
-      })),
-      families: families.map((family) => ({
-        slug: family.slug,
-        canonical: family.canonical,
-        updatedAt: family.updatedAt,
-        mediaItems: normalizeMediaItems({
-          mediaItems: family.mediaItems,
-          primaryUrl: resolveFamilyHeroImage(family),
-          gallery: family.gallery,
-        }).map((item) => ({
-          url: item.url,
-          alt: item.alt,
+    const state = await ctx.db.query("sitemapCardState")
+      .withIndex("by_key", (q) => q.eq("key", "catalog"))
+      .unique();
+    if (state?.enabled) {
+      const catalogKind = args.kind as "category" | "family" | "product";
+      const page = await ctx.db.query("sitemapCards")
+        .withIndex("by_entityType_and_status_and_categoryId", (q) =>
+          q.eq("entityType", catalogKind).eq("status", "published"))
+        .paginate(args.paginationOpts);
+      return {
+        page: page.page.map((card) => ({
+          slug: card.slug,
+          canonical: card.canonical,
+          updatedAt: card.updatedAt,
+          image: card.image,
+          mediaItems: card.mediaItems,
         })),
-      })),
-      products: products.map((product) => ({
+        isDone: page.isDone,
+        continueCursor: page.continueCursor,
+      };
+    }
+
+    if (args.kind === "category") {
+      const page = await ctx.db.query("categories")
+        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+        .paginate(args.paginationOpts);
+      return {
+        page: page.page.map((category) => ({
+          slug: category.slug,
+          canonical: category.canonical,
+          updatedAt: category.updatedAt,
+          image: category.image,
+        })),
+        isDone: page.isDone,
+        continueCursor: page.continueCursor,
+      };
+    }
+
+    if (args.kind === "family") {
+      const page = await ctx.db.query("productFamilies")
+        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+        .paginate(args.paginationOpts);
+      return {
+        page: page.page.map((family) => ({
+          slug: family.slug,
+          canonical: family.canonical,
+          updatedAt: family.updatedAt,
+          mediaItems: normalizeMediaItems({
+            mediaItems: family.mediaItems,
+            primaryUrl: resolveFamilyHeroImage(family),
+            gallery: family.gallery,
+          }).map(({ url, alt }) => ({ url, alt })),
+        })),
+        isDone: page.isDone,
+        continueCursor: page.continueCursor,
+      };
+    }
+
+    const page = await ctx.db.query("products")
+      .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+      .paginate(args.paginationOpts);
+    return {
+      page: page.page.map((product) => ({
         slug: product.slug,
         canonical: product.canonical,
         updatedAt: product.updatedAt,
@@ -1693,18 +1755,10 @@ export const listSitemapContent = query({
           mediaItems: product.mediaItems,
           primaryUrl: product.mainImage,
           gallery: product.gallery,
-        }).map((item) => ({
-          url: item.url,
-          alt: item.alt,
-        })),
+        }).map(({ url, alt }) => ({ url, alt })),
       })),
-      articles: articles.map((article) => ({
-        slug: article.slug,
-        canonical: article.canonical,
-        updatedAt: article.updatedAt,
-        coverImage: article.coverImage,
-        title: article.title,
-      })),
+      isDone: page.isDone,
+      continueCursor: page.continueCursor,
     };
   },
 });
@@ -1947,10 +2001,58 @@ export const getLocalizedRouteEligibility = query({
 // Metadata does not need the product-backed facet counts or related content.
 export const getCategoryMetadataBySlug = query({
   args: { slug: v.string() },
-  handler: async (ctx, args) => ctx.db
-    .query("categories")
-    .withIndex("by_slug", (q) => q.eq("slug", args.slug))
-    .unique(),
+  returns: v.union(v.null(), v.object({
+    _id: v.id("categories"),
+    slug: v.string(),
+    name: v.string(),
+    status: v.union(v.literal("draft"), v.literal("published"), v.literal("archived")),
+    description: v.optional(v.string()),
+    shortDescription: v.optional(v.string()),
+    image: v.optional(v.string()),
+    canonical: v.optional(v.string()),
+    seoTitle: v.optional(v.string()),
+    seoDescription: v.optional(v.string()),
+    updatedAt: v.number(),
+    pageConfig: v.optional(v.object({
+      seo: v.optional(v.object({
+        metaTitle: v.optional(v.string()),
+        metaDescription: v.optional(v.string()),
+        canonicalUrl: v.optional(v.string()),
+        noindex: v.optional(v.boolean()),
+        ogImage: v.optional(v.string()),
+      })),
+      content: v.optional(v.object({
+        summary: v.optional(v.string()),
+        heroIntro: v.optional(v.string()),
+      })),
+    })),
+  })),
+  handler: async (ctx, args) => {
+    const category = await ctx.db.query("categories")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!isPublishedCategory(category)) return null;
+    return {
+      _id: category._id,
+      slug: category.slug,
+      name: category.name,
+      status: category.status,
+      description: category.description,
+      shortDescription: category.shortDescription,
+      image: category.image,
+      canonical: category.canonical,
+      seoTitle: category.seoTitle,
+      seoDescription: category.seoDescription,
+      updatedAt: category.updatedAt,
+      pageConfig: category.pageConfig ? {
+        seo: category.pageConfig.seo,
+        content: category.pageConfig.content ? {
+          summary: category.pageConfig.content.summary,
+          heroIntro: category.pageConfig.content.heroIntro,
+        } : undefined,
+      } : undefined,
+    };
+  },
 });
 
 // Get category with children
@@ -1962,7 +2064,7 @@ export const getCategoryWithChildren = query({
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    if (!category) return null;
+    if (!isPublishedCategory(category)) return null;
 
     const children = await ctx.db
       .query("categories")
@@ -1989,6 +2091,10 @@ export const getCategoryContent = query({
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 20, 100);
     const type = args.type ?? "all";
+    const category = await ctx.db.get(args.categoryId);
+    if (!isPublishedCategory(category)) {
+      return { families: [], products: [] };
+    }
     const visitedCategoryIds = new Set<string>([args.categoryId.toString()]);
     const categoryIdsToQuery = [args.categoryId];
     const queue = [args.categoryId];
@@ -2107,7 +2213,10 @@ export const getFamilyWithProducts = query({
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    if (!family) return null;
+    if (!isPublishedFamily(family)) return null;
+
+    const category = await ctx.db.get(family.categoryId);
+    if (!isPublishedCategory(category)) return null;
 
     const products = await ctx.db
       .query("products")
@@ -2124,7 +2233,7 @@ export const getFamilyWithProducts = query({
         primaryUrl: resolveFamilyHeroImage(family),
         gallery: family.gallery,
       }),
-      category: await ctx.db.get(family.categoryId),
+      category,
       resources: sortFamilyResources(
         resources,
         family.pageConfig?.conversion?.downloadsMode,
@@ -2157,12 +2266,13 @@ export const getProductBySlug = query({
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    if (!product) return null;
+    if (!product || product.status !== "published") return null;
 
-    // Get family info
-    const family = await ctx.db.get(product.familyId);
-    // Get category info
-    const category = await ctx.db.get(product.categoryId);
+    const [family, category] = await Promise.all([
+      ctx.db.get(product.familyId),
+      ctx.db.get(product.categoryId),
+    ]);
+    if (!isPublishedFamily(family) || !isPublishedCategory(category)) return null;
     const specificationFields = await getTemplateFields(ctx, product.categoryId);
     const variants = await ctx.db
       .query("productVariants")
@@ -2235,9 +2345,7 @@ export const getArticleBySlug = query({
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    if (!article) return null;
-
-    if (article.status !== "published") return article;
+    if (!isPublishedArticle(article)) return null;
 
     const [author, recommendationGroups] = await Promise.all([
       getArticleAuthor(ctx, article),
@@ -2251,12 +2359,13 @@ export const getArticleBySlug = query({
       article.relatedProductIds ?? [],
     );
     const relatedProducts = (
-      await Promise.all(resolvedProductIds.slice(0, 6).map((productId) => ctx.db.get(productId)))
+      await Promise.all(resolvedProductIds.slice(0, 12).map((productId) => ctx.db.get(productId)))
     )
       .filter(
         (product): product is Doc<"products"> =>
           Boolean(product && product.status === "published"),
       )
+      .slice(0, 6)
       .map((product) => omitBrand(product));
 
     return {
@@ -2305,18 +2414,32 @@ export const listRelatedArticlesBySlug = query({
     slug: v.string(),
     limit: v.optional(v.number()),
   },
+  returns: v.array(v.object({
+    _id: v.id("articles"),
+    slug: v.string(),
+    title: v.string(),
+    type: v.union(v.literal("blog"), v.literal("guide"), v.literal("faq"), v.literal("application")),
+    excerpt: v.optional(v.string()),
+    createdAt: v.number(),
+    publishedAt: v.optional(v.number()),
+  })),
   handler: async (ctx, args) => {
     const targetArticleCard = await ctx.db
       .query("articleCards")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
 
-    const useDerivedData = Boolean(targetArticleCard);
+    const cardState = await ctx.db.query("sitemapCardState")
+      .withIndex("by_key", (q) => q.eq("key", "catalog"))
+      .unique();
+    const useDerivedData = Boolean(
+      targetArticleCard && cardState?.completedKinds.includes("article")
+    );
     const targetArticle = targetArticleCard ?? await ctx.db
       .query("articles")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .unique();
-    if (!targetArticle) return [];
+    if (!targetArticle || targetArticle.status !== "published") return [];
 
     const limit = Math.min(Math.max(args.limit ?? 3, 1), 8);
     // Rank a bounded pool of recent cards. The old full scan loaded every
@@ -2324,7 +2447,7 @@ export const listRelatedArticlesBySlug = query({
     const allPublishedArticles = useDerivedData
       ? Array.from(new Map((await Promise.all([
           ctx.db.query("articleCards")
-            .withIndex("by_type_status", (q) =>
+            .withIndex("by_type_status_publishedAt", (q) =>
               q.eq("type", targetArticle.type).eq("status", "published"))
             .order("desc").take(64),
           ctx.db.query("articleCards")
@@ -2376,11 +2499,15 @@ export const listRelatedArticlesBySlug = query({
     const rankedArticles = scoredArticles.filter((item) => item.score > 0).map((item) => item.candidate);
     const fallbackArticles = scoredArticles.filter((item) => item.score <= 0).map((item) => item.candidate);
 
-    return [...rankedArticles, ...fallbackArticles].slice(0, limit).map((article) => {
-      if (!("articleId" in article)) return article;
-      const { articleId, ...card } = article;
-      return { ...card, _id: articleId };
-    });
+    return [...rankedArticles, ...fallbackArticles].slice(0, limit).map((article) => ({
+      _id: "articleId" in article ? article.articleId : article._id,
+      slug: article.slug,
+      title: article.title,
+      type: article.type,
+      excerpt: article.excerpt,
+      createdAt: article.createdAt,
+      publishedAt: article.publishedAt,
+    }));
   },
 });
 

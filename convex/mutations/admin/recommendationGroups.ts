@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
 import type { MutationCtx } from "../../_generated/server";
 import { withCreatedAt, withUpdatedAt } from "../../lib/validators";
@@ -46,7 +46,7 @@ async function validateProducts(
   }
 }
 
-export const createRecommendationGroup = mutation({
+export const createRecommendationGroup = internalMutation({
   args: {
     code: v.string(),
     name: v.string(),
@@ -78,7 +78,7 @@ export const createRecommendationGroup = mutation({
   },
 });
 
-export const updateRecommendationGroup = mutation({
+export const updateRecommendationGroup = internalMutation({
   args: {
     id: v.id("productRecommendationGroups"),
     code: v.string(),
@@ -115,7 +115,7 @@ export const updateRecommendationGroup = mutation({
   },
 });
 
-export const deleteRecommendationGroup = mutation({
+export const deleteRecommendationGroup = internalMutation({
   args: { id: v.id("productRecommendationGroups") },
   handler: async (ctx, args) => {
     const group = await ctx.db.get(args.id);

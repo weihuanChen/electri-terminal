@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { withUpdatedAt } from "../../lib/validators";
 import { relationEntityType } from "./shared";
 
@@ -10,7 +10,7 @@ const relationValidator = v.object({
   sortOrder: v.number(),
 });
 
-export const updateAssetRelations = mutation({
+export const updateAssetRelations = internalMutation({
   args: {
     assetId: v.id("assets"),
     relations: v.array(relationValidator),
@@ -43,7 +43,7 @@ export const updateAssetRelations = mutation({
   },
 });
 
-export const updateFaqRelations = mutation({
+export const updateFaqRelations = internalMutation({
   args: {
     articleId: v.id("articles"),
     categoryIds: v.optional(v.array(v.id("categories"))),

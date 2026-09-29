@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, type MutationCtx } from "../../_generated/server";
+import { internalMutation, type MutationCtx } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
 import { validateAttributesAgainstCategory } from "../../lib/attributes";
 import {
@@ -68,7 +68,7 @@ async function validateSelectionGuidance(
   }
 }
 
-export const createProduct = mutation({
+export const createProduct = internalMutation({
   args: {
     productKey: v.optional(v.string()),
     seriesCode: v.optional(v.string()),
@@ -131,7 +131,7 @@ export const createProduct = mutation({
   },
 });
 
-export const updateProduct = mutation({
+export const updateProduct = internalMutation({
   args: {
     id: v.id("products"),
     productKey: v.optional(v.string()),
@@ -259,7 +259,7 @@ export const updateProduct = mutation({
   },
 });
 
-export const deleteProduct = mutation({
+export const deleteProduct = internalMutation({
   args: { id: v.id("products") },
   handler: async (ctx, args) => {
     const product = await ctx.db.get(args.id);
@@ -284,7 +284,7 @@ export const deleteProduct = mutation({
   },
 });
 
-export const bulkUpdateProducts = mutation({
+export const bulkUpdateProducts = internalMutation({
   args: {
     ids: v.array(v.id("products")),
     updates: v.object({

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import {
   assertPositiveQuantity,
   withCreatedAt,
@@ -7,7 +7,7 @@ import {
 } from "../../lib/validators";
 import { inquiryStatus, inquiryType, relationEntityType } from "./shared";
 
-export const createInquiry = mutation({
+export const createInquiry = internalMutation({
   args: {
     type: inquiryType,
     name: v.string(),
@@ -74,7 +74,7 @@ export const createInquiry = mutation({
   },
 });
 
-export const updateInquiry = mutation({
+export const updateInquiry = internalMutation({
   args: {
     id: v.id("inquiries"),
     status: v.optional(inquiryStatus),

@@ -324,7 +324,6 @@ export default defineSchema({
     isRingSeries: v.optional(v.boolean()),
   })
     .index("by_sourceId", ["sourceId"])
-    .index("by_entityType_and_status", ["entityType", "status"])
     .index("by_entityType_and_status_and_categoryId", ["entityType", "status", "categoryId"]),
 
   sitemapCardState: defineTable({
@@ -332,6 +331,26 @@ export default defineSchema({
     enabled: v.boolean(),
     completedKinds: v.array(v.string()),
   }).index("by_key", ["key"]),
+
+  productFacetCards: defineTable({
+    sourceId: v.string(),
+    familyId: v.id("productFamilies"),
+    categoryId: v.id("categories"),
+    status: statusCommon,
+    attributes: v.optional(v.record(v.string(), v.any())),
+  })
+    .index("by_sourceId", ["sourceId"])
+    .index("by_categoryId_and_status", ["categoryId", "status"]),
+
+  familyFacetCards: defineTable({
+    sourceId: v.string(),
+    familyId: v.id("productFamilies"),
+    categoryId: v.id("categories"),
+    status: statusCommon,
+    attributes: v.optional(v.record(v.string(), v.any())),
+  })
+    .index("by_sourceId", ["sourceId"])
+    .index("by_categoryId_and_status", ["categoryId", "status"]),
 
   products: defineTable({
     productKey: v.optional(v.string()),
@@ -995,6 +1014,9 @@ export default defineSchema({
     .index("by_slug", ["slug"]) // enforce uniqueness in mutation
     .index("by_authorId", ["authorId"])
     .index("by_type_status", ["type", "status"])
+    .index("by_publishedAt", ["publishedAt"])
+    .index("by_type_publishedAt", ["type", "publishedAt"])
+    .index("by_type_status_publishedAt", ["type", "status", "publishedAt"])
     .index("by_status_publishedAt", ["status", "publishedAt"])
     .searchIndex("search_title", {
       searchField: "title",
@@ -1030,6 +1052,7 @@ export default defineSchema({
     .index("by_articleId", ["articleId"])
     .index("by_slug", ["slug"])
     .index("by_type_status", ["type", "status"])
+    .index("by_type_status_publishedAt", ["type", "status", "publishedAt"])
     .index("by_status_publishedAt", ["status", "publishedAt"]),
 
   // Reverse lookup for entity-linked articles, primarily public FAQs.

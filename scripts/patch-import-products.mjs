@@ -214,6 +214,9 @@ const requestedProducts = skuArg
   .filter(Boolean);
 
 const client = new ConvexHttpClient(convexUrl);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 const callQuery = (name, args = {}) => client.query(name, args);
 const callMutation = (name, args = {}) => client.mutation(name, args);
 

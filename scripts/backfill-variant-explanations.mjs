@@ -205,6 +205,9 @@ if (!fs.existsSync(mapPath)) {
 const translationMap = readJson(mapPath);
 const normalizedTranslationMap = buildNormalizedMap(translationMap);
 const client = new ConvexHttpClient(convexUrl);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 
 async function main() {
   const products = await client.query("queries/modules/products:listProducts", {

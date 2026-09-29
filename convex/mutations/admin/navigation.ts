@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import {
   assertUniqueNavLocation,
   withCreatedAt,
@@ -7,7 +7,7 @@ import {
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
 
-export const createNavMenu = mutation({
+export const createNavMenu = internalMutation({
   args: {
     name: v.string(),
     location: v.string(),
@@ -27,7 +27,7 @@ export const createNavMenu = mutation({
   },
 });
 
-export const updateNavMenu = mutation({
+export const updateNavMenu = internalMutation({
   args: {
     id: v.id("navMenus"),
     name: v.optional(v.string()),

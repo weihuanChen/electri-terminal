@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { statusCommon } from "./shared";
 
-export const getCategoryBySlug = query({
+export const getCategoryBySlug = internalQuery({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -12,7 +12,7 @@ export const getCategoryBySlug = query({
   },
 });
 
-export const listCategories = query({
+export const listCategories = internalQuery({
   args: {
     status: v.optional(statusCommon),
     parentId: v.optional(v.id("categories")),
@@ -37,7 +37,7 @@ export const listCategories = query({
   },
 });
 
-export const getCategoryFormOptions = query({
+export const getCategoryFormOptions = internalQuery({
   args: {},
   handler: async (ctx) => {
     const [categories, families] = await Promise.all([
@@ -68,7 +68,7 @@ export const getCategoryFormOptions = query({
   },
 });
 
-export const exportCategoriesForContent = query({
+export const exportCategoriesForContent = internalQuery({
   args: {
     status: v.optional(statusCommon),
   },
@@ -85,7 +85,7 @@ export const exportCategoriesForContent = query({
   },
 });
 
-export const getCategoryById = query({
+export const getCategoryById = internalQuery({
   args: { id: v.id("categories") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);

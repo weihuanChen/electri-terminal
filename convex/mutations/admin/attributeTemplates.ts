@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { Id } from "../../_generated/dataModel";
-import { MutationCtx, mutation } from "../../_generated/server";
+import { MutationCtx, internalMutation } from "../../_generated/server";
 import { withCreatedAt, withUpdatedAt } from "../../lib/validators";
 import { statusCommon } from "./shared";
 
@@ -206,7 +206,7 @@ async function replaceTemplateFields(
   }
 }
 
-export const createAttributeTemplate = mutation({
+export const createAttributeTemplate = internalMutation({
   args: {
     name: v.string(),
     categoryId: v.id("categories"),
@@ -234,7 +234,7 @@ export const createAttributeTemplate = mutation({
   },
 });
 
-export const updateAttributeTemplate = mutation({
+export const updateAttributeTemplate = internalMutation({
   args: {
     id: v.id("attributeTemplates"),
     name: v.string(),
@@ -266,7 +266,7 @@ export const updateAttributeTemplate = mutation({
   },
 });
 
-export const deleteAttributeTemplate = mutation({
+export const deleteAttributeTemplate = internalMutation({
   args: {
     id: v.id("attributeTemplates"),
   },

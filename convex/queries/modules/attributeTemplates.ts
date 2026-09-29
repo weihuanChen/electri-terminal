@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { getExpandedTemplateFieldsByTemplateId } from "../../lib/attributes";
 
-export const listAttributeTemplates = query({
+export const listAttributeTemplates = internalQuery({
   args: {
     categoryId: v.optional(v.id("categories")),
   },
@@ -34,7 +34,7 @@ export const listAttributeTemplates = query({
   },
 });
 
-export const getAttributeTemplateById = query({
+export const getAttributeTemplateById = internalQuery({
   args: { id: v.id("attributeTemplates") },
   handler: async (ctx, args) => {
     const template = await ctx.db.get(args.id);

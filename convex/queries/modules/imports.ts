@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { importStatus } from "./shared";
 
-export const listImportJobs = query({
+export const listImportJobs = internalQuery({
   args: {
     status: v.optional(importStatus),
     createdBy: v.optional(v.id("users")),
@@ -22,7 +22,7 @@ export const listImportJobs = query({
   },
 });
 
-export const listImportJobRows = query({
+export const listImportJobRows = internalQuery({
   args: {
     jobId: v.id("importJobs"),
     status: v.optional(importStatus),

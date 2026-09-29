@@ -1,4 +1,4 @@
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { syncArticleDerivedData } from "../../lib/articleDerivedData";
 import {
   syncCategorySitemapCard,
@@ -19,7 +19,7 @@ function bytes(mb: number) {
   return Math.round(mb * 1024 * 1024);
 }
 
-export const seedMockCatalog = mutation({
+export const seedMockCatalog = internalMutation({
   args: {},
   handler: async (ctx) => {
     const timestamp = now();

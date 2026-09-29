@@ -247,9 +247,59 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
-const fetchSitemapContent = unstable_cache(async () => {
-  return (await getAdminConvexClient().query("frontend:listSitemapContent", {})) as SitemapContent;
-}, ["sitemap-content-v1"], { revalidate: 3600 });
+type SitemapItem = SitemapContent[keyof SitemapContent][number];
+
+async function fetchSitemapKind(kind: "category" | "family" | "product" | "article") {
+  const items: SitemapItem[] = [];
+  let cursor: string | null = null;
+
+  while (true) {
+    const result = await getAdminConvexClient().query("frontend:listSitemapContentPage", {
+      kind,
+      paginationOpts: {
+        cursor,
+        numItems: 100,
+        maximumRowsRead: 100,
+        maximumBytesRead: 2 * 1024 * 1024,
+      },
+    }) as {
+      page: SitemapItem[];
+      isDone: boolean;
+      continueCursor: string;
+    };
+    items.push(...result.page);
+    if (result.isDone) return items;
+    if (result.continueCursor === cursor) {
+      throw new Error(`Sitemap pagination made no progress for ${kind}`);
+    }
+    cursor = result.continueCursor;
+  }
+}
+
+const fetchSitemapContent = unstable_cache(async (): Promise<SitemapContent> => {
+  try {
+    const [categories, families, products, articles] = await Promise.all([
+      fetchSitemapKind("category"),
+      fetchSitemapKind("family"),
+      fetchSitemapKind("product"),
+      fetchSitemapKind("article"),
+    ]);
+    return {
+      categories: categories as SitemapContent["categories"],
+      families: families as SitemapContent["families"],
+      products: products as SitemapContent["products"],
+      articles: articles as SitemapContent["articles"],
+    };
+  } catch (error) {
+    try {
+      // During a frontend-first rollout, the previous backend still serves
+      // this query until the paginated function is deployed.
+      return await getAdminConvexClient().query("frontend:listSitemapContent", {}) as SitemapContent;
+    } catch {
+      throw error;
+    }
+  }
+}, ["sitemap-content-v2"], { revalidate: 3600 });
 
 function buildSitemapGscCandidatesFromEntries(entries: SitemapPageEntry[]) {
   return entries.map((entry) => ({

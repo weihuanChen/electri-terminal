@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { withCreatedAt, withUpdatedAt } from "../../lib/validators";
 
-export const createAuthor = mutation({
+export const createAuthor = internalMutation({
   args: {
     name: v.string(),
     title: v.optional(v.string()),
@@ -14,7 +14,7 @@ export const createAuthor = mutation({
   },
 });
 
-export const updateAuthor = mutation({
+export const updateAuthor = internalMutation({
   args: {
     id: v.id("authors"),
     name: v.optional(v.string()),
@@ -40,7 +40,7 @@ export const updateAuthor = mutation({
   },
 });
 
-export const deleteAuthor = mutation({
+export const deleteAuthor = internalMutation({
   args: { id: v.id("authors") },
   handler: async (ctx, args) => {
     const author = await ctx.db.get(args.id);

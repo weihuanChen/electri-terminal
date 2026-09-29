@@ -64,14 +64,7 @@ export const getBlogInitialData = unstable_cache(async () => {
     const initialArticles = await queryPublicPage<
       NonNullable<BlogPageClientProps["initialArticles"]>
     >("queries/modules/articles:listPublicArticleCards", { limit: 200 });
-    if (initialArticles.length > 0) return { initialArticles };
-
-    // Support deployments whose articleCards backfill has not run yet.
-    return {
-      initialArticles: await queryPublicPage<NonNullable<BlogPageClientProps["initialArticles"]>>(
-        "queries/modules/articles:listArticles", { status: "published", limit: 200 }
-      ),
-    };
+    return { initialArticles };
   } catch {
     return { initialArticles: [] };
   }

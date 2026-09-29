@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import type { Doc, Id } from "../../_generated/dataModel";
-import { mutation, type MutationCtx } from "../../_generated/server";
+import { internalMutation, type MutationCtx } from "../../_generated/server";
 import { localizationEntityTypeValidator } from "../../lib/localization";
 import {
   assertCanonicalIntentContract,
@@ -128,7 +128,7 @@ async function getNextLanguageProfileVersion(
   return (latest?.version ?? 0) + 1;
 }
 
-export const captureLocalizationSourceSnapshot = mutation({
+export const captureLocalizationSourceSnapshot = internalMutation({
   args: {
     entityType: localizationEntityTypeValidator,
     sourceId: v.string(),
@@ -161,7 +161,7 @@ export const captureLocalizationSourceSnapshot = mutation({
   },
 });
 
-export const captureCatalogSourceSnapshot = mutation({
+export const captureCatalogSourceSnapshot = internalMutation({
   args: {
     entityType: v.union(
       v.literal("category"),
@@ -337,7 +337,7 @@ export const captureCatalogSourceSnapshot = mutation({
   },
 });
 
-export const createCanonicalIntentRevision = mutation({
+export const createCanonicalIntentRevision = internalMutation({
   args: {
     sourceSnapshotId: v.id("localizationSourceSnapshots"),
     intent: canonicalIntentPayloadValidator,
@@ -390,7 +390,7 @@ export const createCanonicalIntentRevision = mutation({
   },
 });
 
-export const moveCanonicalIntentRevisionStatus = mutation({
+export const moveCanonicalIntentRevisionStatus = internalMutation({
   args: {
     revisionId: v.id("canonicalIntentRevisions"),
     status: canonicalIntentStatusValidator,
@@ -451,7 +451,7 @@ export const moveCanonicalIntentRevisionStatus = mutation({
   },
 });
 
-export const createLanguageProfileVersion = mutation({
+export const createLanguageProfileVersion = internalMutation({
   args: {
     locale: v.string(),
     market: v.string(),
@@ -520,7 +520,7 @@ export const createLanguageProfileVersion = mutation({
   },
 });
 
-export const approveLanguageProfileVersion = mutation({
+export const approveLanguageProfileVersion = internalMutation({
   args: { versionId: v.id("languageProfileVersions"), actor: v.string() },
   handler: async (ctx, args) => {
     const version = await ctx.db.get(args.versionId);
@@ -538,7 +538,7 @@ export const approveLanguageProfileVersion = mutation({
   },
 });
 
-export const activateLanguageProfileVersion = mutation({
+export const activateLanguageProfileVersion = internalMutation({
   args: { versionId: v.id("languageProfileVersions"), actor: v.string() },
   handler: async (ctx, args) => {
     requiredText(args.actor, "actor");
@@ -565,7 +565,7 @@ export const activateLanguageProfileVersion = mutation({
   },
 });
 
-export const setLanguageProfileStatus = mutation({
+export const setLanguageProfileStatus = internalMutation({
   args: {
     profileId: v.id("languageProfiles"),
     status: languageProfileStatusValidator,
@@ -584,7 +584,7 @@ export const setLanguageProfileStatus = mutation({
   },
 });
 
-export const createCanonicalConcept = mutation({
+export const createCanonicalConcept = internalMutation({
   args: {
     key: v.string(),
     kind: v.string(),
@@ -626,7 +626,7 @@ export const createCanonicalConcept = mutation({
   },
 });
 
-export const updateDraftCanonicalConcept = mutation({
+export const updateDraftCanonicalConcept = internalMutation({
   args: {
     conceptId: v.id("canonicalConcepts"),
     kind: v.string(),
@@ -660,7 +660,7 @@ export const updateDraftCanonicalConcept = mutation({
   },
 });
 
-export const moveCanonicalConceptStatus = mutation({
+export const moveCanonicalConceptStatus = internalMutation({
   args: {
     conceptId: v.id("canonicalConcepts"),
     status: v.union(v.literal("approved"), v.literal("deprecated")),
@@ -691,7 +691,7 @@ export const moveCanonicalConceptStatus = mutation({
   },
 });
 
-export const createConceptLocaleRuleVersion = mutation({
+export const createConceptLocaleRuleVersion = internalMutation({
   args: {
     conceptId: v.id("canonicalConcepts"),
     locale: v.string(),
@@ -743,7 +743,7 @@ export const createConceptLocaleRuleVersion = mutation({
   },
 });
 
-export const approveConceptLocaleRule = mutation({
+export const approveConceptLocaleRule = internalMutation({
   args: { ruleId: v.id("conceptLocaleRules"), actor: v.string() },
   handler: async (ctx, args) => {
     const rule = await ctx.db.get(args.ruleId);
@@ -777,7 +777,7 @@ export const approveConceptLocaleRule = mutation({
   },
 });
 
-export const upsertEntityConceptBinding = mutation({
+export const upsertEntityConceptBinding = internalMutation({
   args: {
     entityType: localizationEntityTypeValidator,
     sourceId: v.string(),
@@ -838,7 +838,7 @@ export const upsertEntityConceptBinding = mutation({
   },
 });
 
-export const reviewEntityConceptBinding = mutation({
+export const reviewEntityConceptBinding = internalMutation({
   args: {
     bindingId: v.id("entityConceptBindings"),
     status: conceptBindingStatusValidator,

@@ -1,12 +1,12 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import {
   getExpandedTemplateFieldsByCategoryId,
   getExpandedTemplateFieldsByTemplateId,
 } from "../../lib/attributes";
 import { statusCommon } from "./shared";
 
-export const listProductFamilies = query({
+export const listProductFamilies = internalQuery({
   args: {
     categoryId: v.optional(v.id("categories")),
     status: v.optional(statusCommon),
@@ -29,7 +29,7 @@ export const listProductFamilies = query({
   },
 });
 
-export const exportProductFamiliesForContent = query({
+export const exportProductFamiliesForContent = internalQuery({
   args: {
     status: v.optional(statusCommon),
   },
@@ -45,7 +45,7 @@ export const exportProductFamiliesForContent = query({
   },
 });
 
-export const listProducts = query({
+export const listProducts = internalQuery({
   args: {
     categoryId: v.optional(v.id("categories")),
     familyId: v.optional(v.id("productFamilies")),
@@ -90,7 +90,7 @@ export const listProducts = query({
   },
 });
 
-export const getProductFormOptions = query({
+export const getProductFormOptions = internalQuery({
   args: {},
   handler: async (ctx) => {
     const [categories, families, products, templates] = await Promise.all([
@@ -154,7 +154,7 @@ export const getProductFormOptions = query({
   },
 });
 
-export const getProductBySlug = query({
+export const getProductBySlug = internalQuery({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -164,14 +164,14 @@ export const getProductBySlug = query({
   },
 });
 
-export const getProductById = query({
+export const getProductById = internalQuery({
   args: { id: v.id("products") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
 });
 
-export const getProductAdminDetailById = query({
+export const getProductAdminDetailById = internalQuery({
   args: { id: v.id("products") },
   handler: async (ctx, args) => {
     const product = await ctx.db.get(args.id);
@@ -199,14 +199,14 @@ export const getProductAdminDetailById = query({
   },
 });
 
-export const getProductFamilyById = query({
+export const getProductFamilyById = internalQuery({
   args: { id: v.id("productFamilies") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
 });
 
-export const getProductFamilyBySlug = query({
+export const getProductFamilyBySlug = internalQuery({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db

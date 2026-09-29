@@ -11,6 +11,9 @@ if (!url) throw new Error("convex_url_required");
 
 const actor = process.env.INTENT_MIGRATION_ACTOR || "admin@admin.com";
 const client = new ConvexHttpClient(url);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 
 function stable(value) {
   if (value === undefined) return "";

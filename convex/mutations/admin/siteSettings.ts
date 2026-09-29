@@ -1,4 +1,4 @@
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { v } from "convex/values";
 import {
   DEFAULT_CONTACT_SETTINGS,
@@ -12,7 +12,7 @@ import {
 } from "../../lib/siteSettings";
 import { withCreatedAt, withUpdatedAt } from "../../lib/validators";
 
-export const upsertGlobalContactSettings = mutation({
+export const upsertGlobalContactSettings = internalMutation({
   args: {
     contact: contactSettingsValidator,
   },
@@ -45,7 +45,7 @@ export const upsertGlobalContactSettings = mutation({
   },
 });
 
-export const upsertLanguageWorkflow = mutation({
+export const upsertLanguageWorkflow = internalMutation({
   args: {
     locale: v.string(),
     status: languageWorkflowStatusValidator,

@@ -199,6 +199,7 @@ export interface AdminData {
 
 let convexClient: ConvexHttpClient | undefined;
 let convexClientUrl: string | undefined;
+let convexClientAdminKey: string | undefined;
 
 function getConvexClient() {
   const url = process.env.CONVEX_SERVER_URL || process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -208,9 +209,16 @@ function getConvexClient() {
     );
   }
   const normalizedUrl = url.replace(/\/+$/, "");
-  if (!convexClient || convexClientUrl !== normalizedUrl) {
+  const adminKey = process.env.CONVEX_ADMIN_KEY;
+  if (!convexClient || convexClientUrl !== normalizedUrl || convexClientAdminKey !== adminKey) {
     convexClientUrl = normalizedUrl;
+    convexClientAdminKey = adminKey;
     convexClient = new ConvexHttpClient(normalizedUrl);
+    if (adminKey) {
+      // Internal Convex functions are reachable only from this server process.
+      (convexClient as ConvexHttpClient & { setAdminAuth: (token: string) => void })
+        .setAdminAuth(adminKey);
+    }
   }
   return convexClient;
 }

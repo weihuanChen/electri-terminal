@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { r2 } from "../../r2Assets";
 
 async function withResolvedUrl<T extends { fileUrl?: string; objectKey?: string }>(asset: T) {
@@ -10,7 +10,7 @@ async function withResolvedUrl<T extends { fileUrl?: string; objectKey?: string 
   };
 }
 
-export const listAssets = query({
+export const listAssets = internalQuery({
   args: {
     type: v.optional(
       v.union(
@@ -38,7 +38,7 @@ export const listAssets = query({
   },
 });
 
-export const getAssetById = query({
+export const getAssetById = internalQuery({
   args: { id: v.id("assets") },
   handler: async (ctx, args) => {
     const asset = await ctx.db.get(args.id);
@@ -47,7 +47,7 @@ export const getAssetById = query({
   },
 });
 
-export const listR2Metadata = query({
+export const listR2Metadata = internalQuery({
   args: {
     pageSize: v.optional(v.number()),
     maxItems: v.optional(v.number()),

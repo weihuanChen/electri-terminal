@@ -1,8 +1,8 @@
 "use node";
 
 import { v } from "convex/values";
-import { action, internalAction } from "../_generated/server";
-import { api, internal } from "../_generated/api";
+import { internalAction } from "../_generated/server";
+import { internal } from "../_generated/api";
 import type { Id } from "../_generated/dataModel";
 import {
   assertSafeProviderUrl,
@@ -376,7 +376,7 @@ export const executeModel = internalAction({
   },
 });
 
-export const providerStatuses = action({
+export const providerStatuses = internalAction({
   args: { token: v.string() },
   handler: async (
     ctx,
@@ -385,7 +385,7 @@ export const providerStatuses = action({
     Array<{ providerId: Id<"llmProviders">; configured: boolean }>
   > => {
     assertToken(args.token);
-    const dashboard = (await ctx.runQuery(api.llmLab.listDashboard, {
+    const dashboard = (await ctx.runQuery(internal.llmLab.listDashboard, {
       token: args.token,
       runLimit: 1,
     })) as {
@@ -398,11 +398,11 @@ export const providerStatuses = action({
   },
 });
 
-export const testProvider = action({
+export const testProvider = internalAction({
   args: { token: v.string(), providerId: v.id("llmProviders") },
   handler: async (ctx, args): Promise<{ ok: true; status: number }> => {
     assertToken(args.token);
-    const dashboard = (await ctx.runQuery(api.llmLab.listDashboard, {
+    const dashboard = (await ctx.runQuery(internal.llmLab.listDashboard, {
       token: args.token,
       runLimit: 1,
     })) as {

@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 
-export const listAuthors = query({
+export const listAuthors = internalQuery({
   args: {
     limit: v.optional(v.number()),
   },
@@ -14,7 +14,7 @@ export const listAuthors = query({
   },
 });
 
-export const getAuthorById = query({
+export const getAuthorById = internalQuery({
   args: { id: v.id("authors") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);

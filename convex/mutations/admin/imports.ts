@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import {
   assertImportCounters,
   assertUniqueImportJobRow,
@@ -7,7 +7,7 @@ import {
 } from "../../lib/validators";
 import { importJobType, importStatus } from "./shared";
 
-export const createImportJob = mutation({
+export const createImportJob = internalMutation({
   args: {
     type: importJobType,
     fileUrl: v.string(),
@@ -29,7 +29,7 @@ export const createImportJob = mutation({
   },
 });
 
-export const updateImportJob = mutation({
+export const updateImportJob = internalMutation({
   args: {
     id: v.id("importJobs"),
     status: v.optional(importStatus),
@@ -59,7 +59,7 @@ export const updateImportJob = mutation({
   },
 });
 
-export const createImportJobRow = mutation({
+export const createImportJobRow = internalMutation({
   args: {
     jobId: v.id("importJobs"),
     rowNumber: v.number(),
@@ -86,7 +86,7 @@ export const createImportJobRow = mutation({
   },
 });
 
-export const updateImportJobRow = mutation({
+export const updateImportJobRow = internalMutation({
   args: {
     id: v.id("importJobRows"),
     status: v.optional(importStatus),

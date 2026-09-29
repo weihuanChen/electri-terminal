@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { QueryCtx, query } from "../../_generated/server";
+import { QueryCtx, internalQuery } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
 import { r2 } from "../../r2Assets";
 
@@ -32,7 +32,7 @@ async function resolveAssetAccessUrl(asset: { objectKey?: string; fileUrl?: stri
   return asset.fileUrl ?? null;
 }
 
-export const listAssetsWithRelations = query({
+export const listAssetsWithRelations = internalQuery({
   args: {
     publicOnly: v.optional(v.boolean()),
   },
@@ -70,7 +70,7 @@ export const listAssetsWithRelations = query({
   },
 });
 
-export const listFaqArticlesWithRelations = query({
+export const listFaqArticlesWithRelations = internalQuery({
   args: {},
   handler: async (ctx) => {
     const faqs = await ctx.db
@@ -106,7 +106,7 @@ export const listFaqArticlesWithRelations = query({
   },
 });
 
-export const getAssetByIdWithRelations = query({
+export const getAssetByIdWithRelations = internalQuery({
   args: { id: v.id("assets") },
   handler: async (ctx, args) => {
     const asset = await ctx.db.get(args.id);

@@ -3,8 +3,6 @@ import {
   internalMutation,
   internalQuery,
   type MutationCtx,
-  mutation,
-  query,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
@@ -72,7 +70,7 @@ async function updateRunStatus(ctx: MutationCtx, runId: Id<"llmLabRuns">) {
   });
 }
 
-export const seedDefaults = mutation({
+export const seedDefaults = internalMutation({
   args: { token: v.string(), actor: v.string() },
   handler: async (ctx, args) => {
     assertToken(args.token);
@@ -233,7 +231,7 @@ export const seedDefaults = mutation({
   },
 });
 
-export const ensureCanonicalPageIntentProviderPresets = mutation({
+export const ensureCanonicalPageIntentProviderPresets = internalMutation({
   args: { token: v.string(), actor: v.string() },
   handler: async (ctx, args) => {
     assertToken(args.token);
@@ -352,7 +350,7 @@ export const ensureCanonicalPageIntentProviderPresets = mutation({
   },
 });
 
-export const listDashboard = query({
+export const listDashboard = internalQuery({
   args: { token: v.string(), runLimit: v.optional(v.number()) },
   handler: async (ctx, args) => {
     assertToken(args.token);
@@ -371,7 +369,7 @@ export const listDashboard = query({
   },
 });
 
-export const getRun = query({
+export const getRun = internalQuery({
   args: { token: v.string(), runId: v.id("llmLabRuns") },
   handler: async (ctx, args) => {
     assertToken(args.token);
@@ -385,7 +383,7 @@ export const getRun = query({
   },
 });
 
-export const createProvider = mutation({
+export const createProvider = internalMutation({
   args: {
     token: v.string(),
     key: v.string(),
@@ -424,7 +422,7 @@ export const createProvider = mutation({
   },
 });
 
-export const createModel = mutation({
+export const createModel = internalMutation({
   args: {
     token: v.string(),
     providerId: v.id("llmProviders"),
@@ -474,7 +472,7 @@ export const createModel = mutation({
   },
 });
 
-export const setProviderEnabled = mutation({
+export const setProviderEnabled = internalMutation({
   args: {
     token: v.string(),
     providerId: v.id("llmProviders"),
@@ -491,7 +489,7 @@ export const setProviderEnabled = mutation({
   },
 });
 
-export const setModelEnabled = mutation({
+export const setModelEnabled = internalMutation({
   args: { token: v.string(), modelId: v.id("llmModels"), enabled: v.boolean() },
   handler: async (ctx, args) => {
     assertToken(args.token);
@@ -503,7 +501,7 @@ export const setModelEnabled = mutation({
   },
 });
 
-export const createPresetVersion = mutation({
+export const createPresetVersion = internalMutation({
   args: {
     token: v.string(),
     actor: v.string(),
@@ -599,7 +597,7 @@ export const createPresetVersion = mutation({
   },
 });
 
-export const startRun = mutation({
+export const startRun = internalMutation({
   args: {
     token: v.string(),
     actor: v.string(),
@@ -733,7 +731,7 @@ export const startRun = mutation({
   },
 });
 
-export const selectResult = mutation({
+export const selectResult = internalMutation({
   args: {
     token: v.string(),
     runId: v.id("llmLabRuns"),
@@ -757,7 +755,7 @@ export const selectResult = mutation({
   },
 });
 
-export const retryResult = mutation({
+export const retryResult = internalMutation({
   args: { token: v.string(), resultId: v.id("llmLabResults") },
   handler: async (ctx, args) => {
     assertToken(args.token);

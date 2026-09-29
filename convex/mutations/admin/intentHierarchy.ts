@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import type { Doc, Id } from "../../_generated/dataModel";
-import { mutation, type MutationCtx } from "../../_generated/server";
+import { internalMutation, type MutationCtx } from "../../_generated/server";
 import {
   applyIntentPatch,
   assertCanonicalIntentContract,
@@ -166,7 +166,7 @@ async function staleGroupsForTemplateRevision(
   }
 }
 
-export const createFamilyIntentTemplate = mutation({
+export const createFamilyIntentTemplate = internalMutation({
   args: {
     familyId: v.id("productFamilies"),
     key: v.string(),
@@ -199,7 +199,7 @@ export const createFamilyIntentTemplate = mutation({
   },
 });
 
-export const createFamilyIntentTemplateRevision = mutation({
+export const createFamilyIntentTemplateRevision = internalMutation({
   args: {
     templateId: v.id("familyIntentTemplates"),
     sourceSnapshotIds: v.array(v.id("localizationSourceSnapshots")),
@@ -253,7 +253,7 @@ export const createFamilyIntentTemplateRevision = mutation({
   },
 });
 
-export const promoteSelectedL2ResultToFamilyTemplateDraft = mutation({
+export const promoteSelectedL2ResultToFamilyTemplateDraft = internalMutation({
   args: {
     templateId: v.id("familyIntentTemplates"),
     runId: v.id("llmLabRuns"),
@@ -439,7 +439,7 @@ export const promoteSelectedL2ResultToFamilyTemplateDraft = mutation({
   },
 });
 
-export const approveFamilyIntentTemplateRevision = mutation({
+export const approveFamilyIntentTemplateRevision = internalMutation({
   args: {
     revisionId: v.id("familyIntentTemplateRevisions"),
     actor: v.string(),
@@ -489,7 +489,7 @@ export const approveFamilyIntentTemplateRevision = mutation({
   },
 });
 
-export const createProductIntentGroup = mutation({
+export const createProductIntentGroup = internalMutation({
   args: {
     templateId: v.id("familyIntentTemplates"),
     key: v.string(),
@@ -525,7 +525,7 @@ export const createProductIntentGroup = mutation({
   },
 });
 
-export const createProductIntentGroupRevision = mutation({
+export const createProductIntentGroupRevision = internalMutation({
   args: {
     groupId: v.id("productIntentGroups"),
     membershipCriteria: v.array(intentMembershipCriterionValidator),
@@ -612,7 +612,7 @@ export const createProductIntentGroupRevision = mutation({
   },
 });
 
-export const approveProductIntentGroupRevision = mutation({
+export const approveProductIntentGroupRevision = internalMutation({
   args: {
     revisionId: v.id("productIntentGroupRevisions"),
     actor: v.string(),
@@ -664,7 +664,7 @@ export const approveProductIntentGroupRevision = mutation({
   },
 });
 
-export const assignProductToIntentGroup = mutation({
+export const assignProductToIntentGroup = internalMutation({
   args: {
     productId: v.id("products"),
     groupId: v.id("productIntentGroups"),
@@ -738,7 +738,7 @@ export const assignProductToIntentGroup = mutation({
   },
 });
 
-export const createProductPageDeltaRevision = mutation({
+export const createProductPageDeltaRevision = internalMutation({
   args: {
     productId: v.id("products"),
     sourceSnapshotId: v.id("localizationSourceSnapshots"),
@@ -840,7 +840,7 @@ export const createProductPageDeltaRevision = mutation({
   },
 });
 
-export const approveProductPageDeltaRevision = mutation({
+export const approveProductPageDeltaRevision = internalMutation({
   args: {
     revisionId: v.id("pageIntentDeltaRevisions"),
     actor: v.string(),
@@ -919,7 +919,7 @@ async function nextCanonicalRevision(
   return (latest?.revision ?? 0) + 1;
 }
 
-export const materializeProductCanonicalIntent = mutation({
+export const materializeProductCanonicalIntent = internalMutation({
   args: {
     productId: v.id("products"),
     actor: v.string(),

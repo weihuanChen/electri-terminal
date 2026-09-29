@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 
-export const getNavigationByLocation = query({
+export const getNavigationByLocation = internalQuery({
   args: { location: v.string() },
   handler: async (ctx, args) => {
     const menu = await ctx.db

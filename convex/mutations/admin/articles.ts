@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { paginationOptsValidator } from "convex/server";
+import { internalMutation } from "../../_generated/server";
 import {
   assertUniqueArticleSlug,
   withCreatedAt,
@@ -31,7 +32,7 @@ async function assertRecommendationGroupsExist(
   }
 }
 
-export const createArticle = mutation({
+export const createArticle = internalMutation({
   args: {
     type: articleType,
     title: v.string(),
@@ -77,7 +78,7 @@ export const createArticle = mutation({
   },
 });
 
-export const updateArticle = mutation({
+export const updateArticle = internalMutation({
   args: {
     id: v.id("articles"),
     type: v.optional(articleType),
@@ -163,7 +164,7 @@ export const updateArticle = mutation({
   },
 });
 
-export const deleteArticle = mutation({
+export const deleteArticle = internalMutation({
   args: { id: v.id("articles") },
   handler: async (ctx, args) => {
     const article = await ctx.db.get(args.id);
@@ -175,7 +176,7 @@ export const deleteArticle = mutation({
   },
 });
 
-export const bulkUpdateArticles = mutation({
+export const bulkUpdateArticles = internalMutation({
   args: {
     ids: v.array(v.id("articles")),
     updates: v.object({
@@ -204,13 +205,47 @@ export const bulkUpdateArticles = mutation({
   },
 });
 
-export const backfillArticleDerivedData = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const articles = await ctx.db.query("articles").collect();
-    for (const article of articles) {
+export const backfillArticleDerivedData = internalMutation({
+  args: { paginationOpts: paginationOptsValidator },
+  returns: v.object({
+    synced: v.number(),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    if (args.paginationOpts.cursor === null) {
+      const state = await ctx.db.query("sitemapCardState")
+        .withIndex("by_key", (q) => q.eq("key", "catalog"))
+        .unique();
+      if (state) {
+        await ctx.db.patch(state._id, {
+          completedKinds: state.completedKinds.filter((kind) => kind !== "article"),
+        });
+      }
+    }
+    const page = await ctx.db.query("articles").paginate(args.paginationOpts);
+    for (const article of page.page) {
       await syncArticleDerivedData(ctx, article);
     }
-    return { synced: articles.length };
+    if (page.isDone) {
+      const state = await ctx.db.query("sitemapCardState")
+        .withIndex("by_key", (q) => q.eq("key", "catalog"))
+        .unique();
+      const completedKinds = [...new Set([...(state?.completedKinds ?? []), "article"])];
+      if (state) {
+        await ctx.db.patch(state._id, { completedKinds });
+      } else {
+        await ctx.db.insert("sitemapCardState", {
+          key: "catalog",
+          enabled: false,
+          completedKinds,
+        });
+      }
+    }
+    return {
+      synced: page.page.length,
+      isDone: page.isDone,
+      continueCursor: page.continueCursor,
+    };
   },
 });

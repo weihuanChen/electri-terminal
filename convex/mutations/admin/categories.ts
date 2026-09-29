@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { categoryPageConfig } from "../../lib/categoryPageConfig";
 import {
   assertUniqueCategoryPath,
@@ -12,7 +12,7 @@ import { statusCommon } from "./shared";
 import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
 import { removeSitemapCard, syncCategorySitemapCard } from "../../lib/sitemapCards";
 
-export const createCategory = mutation({
+export const createCategory = internalMutation({
   args: {
     name: v.string(),
     slug: v.string(),
@@ -68,7 +68,7 @@ export const createCategory = mutation({
   },
 });
 
-export const updateCategory = mutation({
+export const updateCategory = internalMutation({
   args: {
     id: v.id("categories"),
     name: v.optional(v.string()),
@@ -163,7 +163,7 @@ export const updateCategory = mutation({
   },
 });
 
-export const deleteCategory = mutation({
+export const deleteCategory = internalMutation({
   args: { id: v.id("categories") },
   handler: async (ctx, args) => {
     const category = await ctx.db.get(args.id);
@@ -198,7 +198,7 @@ export const deleteCategory = mutation({
   },
 });
 
-export const bulkUpdateCategories = mutation({
+export const bulkUpdateCategories = internalMutation({
   args: {
     ids: v.array(v.id("categories")),
     updates: v.object({

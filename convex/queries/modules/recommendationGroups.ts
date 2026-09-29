@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import type { Doc, Id } from "../../_generated/dataModel";
 import { statusCommon } from "./shared";
 
@@ -10,7 +10,7 @@ function sortGroups(
   return a.sortOrder - b.sortOrder || a.code.localeCompare(b.code);
 }
 
-export const listRecommendationGroups = query({
+export const listRecommendationGroups = internalQuery({
   args: {
     status: v.optional(statusCommon),
   },
@@ -38,12 +38,12 @@ export const listRecommendationGroups = query({
   },
 });
 
-export const getRecommendationGroupById = query({
+export const getRecommendationGroupById = internalQuery({
   args: { id: v.id("productRecommendationGroups") },
   handler: async (ctx, args) => ctx.db.get(args.id),
 });
 
-export const getRecommendationGroupFormOptions = query({
+export const getRecommendationGroupFormOptions = internalQuery({
   args: {},
   handler: async (ctx) => {
     const [families, products] = await Promise.all([
@@ -76,7 +76,7 @@ export const getRecommendationGroupFormOptions = query({
   },
 });
 
-export const listPublishedRecommendationGroupsByIds = query({
+export const listPublishedRecommendationGroupsByIds = internalQuery({
   args: { ids: v.array(v.id("productRecommendationGroups")) },
   handler: async (ctx, args) => {
     const groups = await Promise.all(args.ids.map((id) => ctx.db.get(id)));

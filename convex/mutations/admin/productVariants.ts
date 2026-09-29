@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, type MutationCtx } from "../../_generated/server";
+import { internalMutation, type MutationCtx } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
 import {
   getExpandedTemplateFieldsByCategoryId,
@@ -309,7 +309,7 @@ async function patchProductVariant(
   return id;
 }
 
-export const createProductVariant = mutation({
+export const createProductVariant = internalMutation({
   args: {
     productId: v.id("products"),
     skuCode: v.string(),
@@ -340,7 +340,7 @@ export const createProductVariant = mutation({
   },
 });
 
-export const updateProductVariant = mutation({
+export const updateProductVariant = internalMutation({
   args: {
     id: v.id("productVariants"),
     productId: v.optional(v.id("products")),
@@ -359,7 +359,7 @@ export const updateProductVariant = mutation({
   },
 });
 
-export const updateProductVariantsBatch = mutation({
+export const updateProductVariantsBatch = internalMutation({
   args: {
     productId: v.id("products"),
     items: v.array(
@@ -438,7 +438,7 @@ export const updateProductVariantsBatch = mutation({
   },
 });
 
-export const deleteProductVariant = mutation({
+export const deleteProductVariant = internalMutation({
   args: { id: v.id("productVariants") },
   handler: async (ctx, args) => {
     const variant = await ctx.db.get(args.id);
@@ -448,7 +448,7 @@ export const deleteProductVariant = mutation({
   },
 });
 
-export const deleteProductVariantsBatch = mutation({
+export const deleteProductVariantsBatch = internalMutation({
   args: {
     productId: v.id("products"),
     ids: v.array(v.id("productVariants")),
@@ -479,7 +479,7 @@ export const deleteProductVariantsBatch = mutation({
   },
 });
 
-export const bulkUpdateProductVariants = mutation({
+export const bulkUpdateProductVariants = internalMutation({
   args: {
     ids: v.array(v.id("productVariants")),
     updates: v.object({
@@ -534,7 +534,7 @@ export const bulkUpdateProductVariants = mutation({
   },
 });
 
-export const createProductVariantsBatch = mutation({
+export const createProductVariantsBatch = internalMutation({
   args: {
     items: v.array(
       v.object({
@@ -586,7 +586,7 @@ export const createProductVariantsBatch = mutation({
   },
 });
 
-export const importProductVariantsFromJson = mutation({
+export const importProductVariantsFromJson = internalMutation({
   args: {
     items: v.array(v.any()),
     sourceName: v.optional(v.string()),

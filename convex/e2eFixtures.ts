@@ -1,4 +1,10 @@
 import { mutation, type MutationCtx } from "./_generated/server";
+import {
+  removeSitemapCard,
+  syncCategorySitemapCard,
+  syncFamilySitemapCard,
+  syncProductSitemapCard,
+} from "./lib/sitemapCards";
 
 const FIXTURE_CATEGORY_SLUG = "e2e-terminal-components";
 const FIXTURE_FAMILY_SLUG = "e2e-terminal-family";
@@ -36,6 +42,7 @@ export const seed = mutation({
     for (const product of existingProducts) {
       if (!product) continue;
       await deleteLocalizationsForSource(ctx, "product", String(product._id));
+      await removeSitemapCard(ctx, String(product._id));
       await ctx.db.delete(product._id);
     }
 
@@ -45,6 +52,7 @@ export const seed = mutation({
       .unique();
     if (existingFamily) {
       await deleteLocalizationsForSource(ctx, "family", String(existingFamily._id));
+      await removeSitemapCard(ctx, String(existingFamily._id));
       await ctx.db.delete(existingFamily._id);
     }
 
@@ -54,6 +62,7 @@ export const seed = mutation({
       .unique();
     if (existingCategory) {
       await deleteLocalizationsForSource(ctx, "category", String(existingCategory._id));
+      await removeSitemapCard(ctx, String(existingCategory._id));
       await ctx.db.delete(existingCategory._id);
     }
 
@@ -71,6 +80,8 @@ export const seed = mutation({
       createdAt: now,
       updatedAt: now,
     });
+    const category = await ctx.db.get(categoryId);
+    if (category) await syncCategorySitemapCard(ctx, category);
     const familyId = await ctx.db.insert("productFamilies", {
       name: "E2E Terminal Family",
       slug: FIXTURE_FAMILY_SLUG,
@@ -81,6 +92,8 @@ export const seed = mutation({
       createdAt: now,
       updatedAt: now,
     });
+    const family = await ctx.db.get(familyId);
+    if (family) await syncFamilySitemapCard(ctx, family);
     const publishedProductId = await ctx.db.insert("products", {
       skuCode: "E2E-PUBLISHED-001",
       model: "E2E-PUBLISHED-001",
@@ -96,7 +109,9 @@ export const seed = mutation({
       createdAt: now,
       updatedAt: now,
     });
-    await ctx.db.insert("products", {
+    const publishedProduct = await ctx.db.get(publishedProductId);
+    if (publishedProduct) await syncProductSitemapCard(ctx, publishedProduct);
+    const missingProductId = await ctx.db.insert("products", {
       skuCode: "E2E-MISSING-001",
       model: "E2E-MISSING-001",
       normalizedModel: "e2e-missing-001",
@@ -111,6 +126,8 @@ export const seed = mutation({
       createdAt: now,
       updatedAt: now,
     });
+    const missingProduct = await ctx.db.get(missingProductId);
+    if (missingProduct) await syncProductSitemapCard(ctx, missingProduct);
 
     const commonLocalization = {
       locale: "ru",

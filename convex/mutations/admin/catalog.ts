@@ -1,11 +1,11 @@
 import { Id } from "../../_generated/dataModel";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { r2 } from "../../r2Assets";
 import { removeSitemapCard } from "../../lib/sitemapCards";
 
 const CATALOG_RELATION_TYPES = new Set(["category", "family", "product"]);
 
-export const resetCatalogData = mutation({
+export const resetCatalogData = internalMutation({
   args: {},
   handler: async (ctx) => {
     const summary = {

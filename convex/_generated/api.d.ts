@@ -22,7 +22,9 @@ import type * as lib_familyPageConfig from "../lib/familyPageConfig.js";
 import type * as lib_localization from "../lib/localization.js";
 import type * as lib_localizationFoundation from "../lib/localizationFoundation.js";
 import type * as lib_localizationStale from "../lib/localizationStale.js";
+import type * as lib_relatedSeries from "../lib/relatedSeries.js";
 import type * as lib_siteSettings from "../lib/siteSettings.js";
+import type * as lib_sitemapCards from "../lib/sitemapCards.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as llmLab from "../llmLab.js";
 import type * as mutations from "../mutations.js";
@@ -48,6 +50,7 @@ import type * as mutations_admin_relations from "../mutations/admin/relations.js
 import type * as mutations_admin_seed from "../mutations/admin/seed.js";
 import type * as mutations_admin_shared from "../mutations/admin/shared.js";
 import type * as mutations_admin_siteSettings from "../mutations/admin/siteSettings.js";
+import type * as mutations_admin_sitemapCards from "../mutations/admin/sitemapCards.js";
 import type * as queries from "../queries.js";
 import type * as queries_common from "../queries/common.js";
 import type * as queries_index from "../queries/index.js";
@@ -91,7 +94,9 @@ declare const fullApi: ApiFromModules<{
   "lib/localization": typeof lib_localization;
   "lib/localizationFoundation": typeof lib_localizationFoundation;
   "lib/localizationStale": typeof lib_localizationStale;
+  "lib/relatedSeries": typeof lib_relatedSeries;
   "lib/siteSettings": typeof lib_siteSettings;
+  "lib/sitemapCards": typeof lib_sitemapCards;
   "lib/validators": typeof lib_validators;
   llmLab: typeof llmLab;
   mutations: typeof mutations;
@@ -117,6 +122,7 @@ declare const fullApi: ApiFromModules<{
   "mutations/admin/seed": typeof mutations_admin_seed;
   "mutations/admin/shared": typeof mutations_admin_shared;
   "mutations/admin/siteSettings": typeof mutations_admin_siteSettings;
+  "mutations/admin/sitemapCards": typeof mutations_admin_sitemapCards;
   queries: typeof queries;
   "queries/common": typeof queries_common;
   "queries/index": typeof queries_index;

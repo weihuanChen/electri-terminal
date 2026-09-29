@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 
-export const getIntentManagementInventory = query({
+export const getIntentManagementInventory = internalQuery({
   args: {},
   handler: async (ctx) => {
     const [intents, snapshots, templates, groups, members, deltas] =
@@ -125,7 +125,7 @@ export const getIntentManagementInventory = query({
   },
 });
 
-export const getIntentHierarchyWorkspace = query({
+export const getIntentHierarchyWorkspace = internalQuery({
   args: { familyId: v.optional(v.id("productFamilies")) },
   handler: async (ctx, args) => {
     const familyDocs = (await ctx.db.query("productFamilies").collect()).sort(
@@ -279,7 +279,7 @@ export const getIntentHierarchyWorkspace = query({
   },
 });
 
-export const getResolvedProductCanonicalView = query({
+export const getResolvedProductCanonicalView = internalQuery({
   args: { productId: v.id("products") },
   handler: async (ctx, args) => {
     const product = await ctx.db.get(args.productId);
@@ -386,7 +386,7 @@ export const getResolvedProductCanonicalView = query({
   },
 });
 
-export const getL2IntentAnalysisInput = query({
+export const getL2IntentAnalysisInput = internalQuery({
   args: {
     productId: v.id("products"),
     sourceSnapshotId: v.id("localizationSourceSnapshots"),

@@ -28,6 +28,7 @@
     "seed:final-nine-family-intents": "node scripts/seed-final-nine-family-intents.mjs",
     "seed:remaining-nineteen-family-intents": "node scripts/seed-remaining-nineteen-family-intents.mjs",
     "backfill:variant-explanations": "node scripts/backfill-variant-explanations.mjs",
+    "backfill:article-derived-data": "node scripts/backfill-article-derived-data.mjs",
     "backfill:sitemap-cards": "node scripts/backfill-sitemap-cards.mjs"
   },
   "dependencies": {
@@ -59,16 +60,19 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4.1.10",
+    "convex-test": "^0.0.54",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite": "8.1.4",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10"
   }

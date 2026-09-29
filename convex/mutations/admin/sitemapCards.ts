@@ -16,15 +16,25 @@ export const backfillSitemapCards = internalMutation({
     kind: v.union(v.literal("category"), v.literal("family"), v.literal("product")),
     paginationOpts: paginationOptsValidator,
   },
+  returns: v.object({
+    count: v.number(),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
   handler: async (ctx, args) => {
     if (args.paginationOpts.cursor === null) {
       const state = await ctx.db.query("sitemapCardState")
         .withIndex("by_key", (q) => q.eq("key", "catalog"))
         .unique();
       if (state) {
+        const invalidated = args.kind === "family"
+          ? ["family", "familyFacets"]
+          : args.kind === "product"
+            ? ["product", "productFacets"]
+            : ["category"];
         await ctx.db.patch(state._id, {
           enabled: false,
-          completedKinds: state.completedKinds.filter((kind) => kind !== args.kind),
+          completedKinds: state.completedKinds.filter((kind) => !invalidated.includes(kind)),
         });
       }
     }
@@ -48,7 +58,12 @@ export const backfillSitemapCards = internalMutation({
       const state = await ctx.db.query("sitemapCardState")
         .withIndex("by_key", (q) => q.eq("key", "catalog"))
         .unique();
-      const completedKinds = [...new Set([...(state?.completedKinds ?? []), args.kind])];
+      const completedKinds = [...new Set([
+        ...(state?.completedKinds ?? []),
+        args.kind,
+        ...(args.kind === "family" ? ["familyFacets"] : []),
+        ...(args.kind === "product" ? ["productFacets"] : []),
+      ])];
       const enabled = KINDS.every((kind) => completedKinds.includes(kind));
       if (state) {
         await ctx.db.patch(state._id, { completedKinds, enabled });

@@ -1,10 +1,10 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import { withCreatedAt, withUpdatedAt } from "../../lib/validators";
 import { r2 } from "../../r2Assets";
 import { assetType } from "./shared";
 
-export const createAsset = mutation({
+export const createAsset = internalMutation({
   args: {
     title: v.string(),
     type: assetType,
@@ -28,7 +28,7 @@ export const createAsset = mutation({
   },
 });
 
-export const updateAsset = mutation({
+export const updateAsset = internalMutation({
   args: {
     id: v.id("assets"),
     title: v.optional(v.string()),
@@ -79,7 +79,7 @@ export const updateAsset = mutation({
   },
 });
 
-export const deleteAsset = mutation({
+export const deleteAsset = internalMutation({
   args: { id: v.id("assets") },
   handler: async (ctx, args) => {
     const asset = await ctx.db.get(args.id);

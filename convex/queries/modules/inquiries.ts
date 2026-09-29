@@ -1,8 +1,8 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { inquiryStatus, inquiryType } from "./shared";
 
-export const listInquiries = query({
+export const listInquiries = internalQuery({
   args: {
     type: v.optional(inquiryType),
     status: v.optional(inquiryStatus),

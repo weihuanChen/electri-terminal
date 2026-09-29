@@ -539,6 +539,9 @@ const inputPath = path.resolve(getArg("--input") ?? DEFAULT_INPUT_PATH);
 const entityTypeFilter = getEntityTypeFilter();
 const shouldApply = hasFlag("--apply");
 const client = new ConvexHttpClient(convexUrl);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 
 async function main() {
   if (!fs.existsSync(inputPath)) {

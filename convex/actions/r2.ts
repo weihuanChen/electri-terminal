@@ -2,7 +2,7 @@
 
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { v } from "convex/values";
-import { action } from "../_generated/server";
+import { internalAction } from "../_generated/server";
 
 function normalizePrefix(prefix: string) {
   return prefix.trim().replace(/^\/+/, "").replace(/\/+$/, "");
@@ -13,7 +13,7 @@ function matchesPrefix(key: string, prefixes: string[]) {
   return prefixes.some((prefix) => key === prefix || key.startsWith(`${prefix}/`));
 }
 
-export const listBucketObjects = action({
+export const listBucketObjects = internalAction({
   args: {
     pageSize: v.optional(v.number()),
     maxItems: v.optional(v.number()),

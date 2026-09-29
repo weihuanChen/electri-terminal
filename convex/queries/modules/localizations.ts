@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import {
   localizationEntityTypeValidator,
   localizationIdentityValidator,
@@ -13,7 +13,7 @@ function normalizeLimit(limit?: number) {
   return Math.min(Math.max(limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT);
 }
 
-export const getLocalizationById = query({
+export const getLocalizationById = internalQuery({
   args: {
     id: v.id("localizations"),
   },
@@ -22,7 +22,7 @@ export const getLocalizationById = query({
   },
 });
 
-export const getLocalizationByEntityLocale = query({
+export const getLocalizationByEntityLocale = internalQuery({
   args: localizationIdentityValidator,
   handler: async (ctx, args) => {
     const sourceId = args.sourceId.trim();
@@ -41,7 +41,7 @@ export const getLocalizationByEntityLocale = query({
   },
 });
 
-export const listLocalizations = query({
+export const listLocalizations = internalQuery({
   args: {
     locale: v.optional(v.string()),
     entityType: v.optional(localizationEntityTypeValidator),
@@ -90,7 +90,7 @@ export const listLocalizations = query({
   },
 });
 
-export const listLocalizationReviewQueue = query({
+export const listLocalizationReviewQueue = internalQuery({
   args: {
     locale: v.optional(v.string()),
     entityType: v.optional(localizationEntityTypeValidator),
@@ -118,7 +118,7 @@ export const listLocalizationReviewQueue = query({
   },
 });
 
-export const listStaleLocalizations = query({
+export const listStaleLocalizations = internalQuery({
   args: {
     locale: v.optional(v.string()),
     entityType: v.optional(localizationEntityTypeValidator),

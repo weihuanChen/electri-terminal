@@ -14,6 +14,9 @@ const productionFamilyAliases = new Map([
 ]);
 
 const client = new ConvexHttpClient(url);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 const workspace = await client.query(
   "queries/modules/intentHierarchy:getIntentHierarchyWorkspace",
   {},

@@ -369,6 +369,9 @@ if (!convexUrl) {
 const status = normalizeStatusArg(getArg("--status"));
 const outputDir = path.resolve(getArg("--out-dir") ?? DEFAULT_OUTPUT_DIR);
 const client = new ConvexHttpClient(convexUrl);
+const adminKey = process.env.CONVEX_ADMIN_KEY;
+if (!adminKey) throw new Error("Missing CONVEX_ADMIN_KEY for internal Convex functions");
+client.setAdminAuth(adminKey);
 
 async function main() {
   const queryArgs = status ? { status } : {};

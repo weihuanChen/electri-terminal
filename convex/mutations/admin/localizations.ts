@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import type { Doc } from "../../_generated/dataModel";
 import type { MutationCtx } from "../../_generated/server";
 import {
@@ -169,7 +169,7 @@ async function getLocalizationByIdentity(
     .unique();
 }
 
-export const upsertLocalizationDraft = mutation({
+export const upsertLocalizationDraft = internalMutation({
   args: {
     ...localizationIdentityValidator,
     ...localizationEditableFieldValidators,
@@ -216,7 +216,7 @@ export const upsertLocalizationDraft = mutation({
   },
 });
 
-export const updateLocalizationContent = mutation({
+export const updateLocalizationContent = internalMutation({
   args: {
     id: v.id("localizations"),
     ...localizationEditableFieldValidators,
@@ -239,7 +239,7 @@ export const updateLocalizationContent = mutation({
   },
 });
 
-export const moveLocalizationStatus = mutation({
+export const moveLocalizationStatus = internalMutation({
   args: {
     id: v.id("localizations"),
     status: localizationStatusValidator,
@@ -341,7 +341,7 @@ export const moveLocalizationStatus = mutation({
   },
 });
 
-export const unpublishLocalization = mutation({
+export const unpublishLocalization = internalMutation({
   args: {
     id: v.id("localizations"),
     actor: v.optional(v.string()),
@@ -364,7 +364,7 @@ export const unpublishLocalization = mutation({
   },
 });
 
-export const markEntityLocalizationsStale = mutation({
+export const markEntityLocalizationsStale = internalMutation({
   args: {
     entityType: localizationIdentityValidator.entityType,
     sourceId: v.string(),
@@ -410,7 +410,7 @@ export const markEntityLocalizationsStale = mutation({
   },
 });
 
-export const deleteLocalization = mutation({
+export const deleteLocalization = internalMutation({
   args: {
     id: v.id("localizations"),
   },

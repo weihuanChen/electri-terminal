@@ -1,12 +1,12 @@
 import { v } from "convex/values";
-import { query } from "../../_generated/server";
+import { internalQuery } from "../../_generated/server";
 import { localizationEntityTypeValidator } from "../../lib/localization";
 import {
   normalizeFoundationKey,
   normalizeLocale,
 } from "../../lib/localizationFoundation";
 
-export const getLocalizationFoundationEntity = query({
+export const getLocalizationFoundationEntity = internalQuery({
   args: { entityType: localizationEntityTypeValidator, sourceId: v.string() },
   handler: async (ctx, args) => {
     const sourceId = args.sourceId.trim();
@@ -55,7 +55,7 @@ export const getLocalizationFoundationEntity = query({
   },
 });
 
-export const getLanguageProfile = query({
+export const getLanguageProfile = internalQuery({
   args: { locale: v.string(), market: v.string() },
   handler: async (ctx, args) => {
     const locale = normalizeLocale(args.locale);
@@ -76,7 +76,7 @@ export const getLanguageProfile = query({
   },
 });
 
-export const listCanonicalConcepts = query({
+export const listCanonicalConcepts = internalQuery({
   args: { includeDeprecated: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
     const concepts = await ctx.db.query("canonicalConcepts").collect();
@@ -88,7 +88,7 @@ export const listCanonicalConcepts = query({
   },
 });
 
-export const getConceptLocalization = query({
+export const getConceptLocalization = internalQuery({
   args: {
     conceptId: v.id("canonicalConcepts"),
     locale: v.string(),
@@ -116,7 +116,7 @@ export const getConceptLocalization = query({
   },
 });
 
-export const getLocalizationFoundationReadiness = query({
+export const getLocalizationFoundationReadiness = internalQuery({
   args: { locale: v.string(), market: v.string() },
   handler: async (ctx, args) => {
     const locale = normalizeLocale(args.locale);

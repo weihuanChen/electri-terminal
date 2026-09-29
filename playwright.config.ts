@@ -6,7 +6,7 @@ const useLocalConvex = process.env.E2E_CONVEX_LOCAL === "1";
 
 const nextServer = {
   command: useLocalConvex
-    ? `CONVEX_SERVER_URL=http://127.0.0.1:3210 NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3210 NEXT_PUBLIC_CONVEX_SITE_URL=http://127.0.0.1:3211 ./node_modules/.bin/next start -p ${port}`
+    ? "node scripts/start-next-e2e.mjs"
     : `./node_modules/.bin/next start -p ${port}`,
   url: baseURL,
   reuseExistingServer: !process.env.CI,

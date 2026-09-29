@@ -37,6 +37,14 @@ export async function removeSitemapCard(ctx: MutationCtx, sourceId: string) {
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
     .unique();
   if (current) await ctx.db.delete(current._id);
+  const productFacet = await ctx.db.query("productFacetCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
+    .unique();
+  if (productFacet) await ctx.db.delete(productFacet._id);
+  const familyFacet = await ctx.db.query("familyFacetCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
+    .unique();
+  if (familyFacet) await ctx.db.delete(familyFacet._id);
 }
 
 export async function syncCategorySitemapCard(ctx: MutationCtx, category: Doc<"categories">) {
@@ -74,6 +82,18 @@ export async function syncFamilySitemapCard(ctx: MutationCtx, family: Doc<"produ
     seriesLabel: getRelatedSeriesRule(family)?.label,
     isRingSeries: getFamilySearchText(family).includes("ring terminal"),
   });
+  const facet = await ctx.db.query("familyFacetCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", String(family._id)))
+    .unique();
+  const facetData = {
+    sourceId: String(family._id),
+    familyId: family._id,
+    categoryId: family.categoryId,
+    status: family.status,
+    attributes: family.attributes,
+  };
+  if (facet) await ctx.db.replace(facet._id, facetData);
+  else await ctx.db.insert("familyFacetCards", facetData);
 }
 
 export async function syncProductSitemapCard(ctx: MutationCtx, product: Doc<"products">) {
@@ -86,4 +106,16 @@ export async function syncProductSitemapCard(ctx: MutationCtx, product: Doc<"pro
     updatedAt: product.updatedAt,
     mediaItems: collectImages(product.mainImage, product.mediaItems, product.gallery),
   });
+  const facet = await ctx.db.query("productFacetCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", String(product._id)))
+    .unique();
+  const facetData = {
+    sourceId: String(product._id),
+    familyId: product.familyId,
+    categoryId: product.categoryId,
+    status: product.status,
+    attributes: product.attributes,
+  };
+  if (facet) await ctx.db.replace(facet._id, facetData);
+  else await ctx.db.insert("productFacetCards", facetData);
 }

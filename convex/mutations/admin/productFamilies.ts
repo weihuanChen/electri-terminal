@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "../../_generated/server";
+import { internalMutation } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
 import { validateAttributesAgainstCategory } from "../../lib/attributes";
 import { familyPageConfig } from "../../lib/familyPageConfig";
@@ -341,7 +341,7 @@ function migrateFamilyPageConfigStructure(
   };
 }
 
-export const createProductFamily = mutation({
+export const createProductFamily = internalMutation({
   args: {
     name: v.string(),
     slug: v.string(),
@@ -381,7 +381,7 @@ export const createProductFamily = mutation({
   },
 });
 
-export const updateProductFamily = mutation({
+export const updateProductFamily = internalMutation({
   args: {
     id: v.id("productFamilies"),
     name: v.optional(v.string()),
@@ -465,7 +465,7 @@ export const updateProductFamily = mutation({
   },
 });
 
-export const deleteProductFamily = mutation({
+export const deleteProductFamily = internalMutation({
   args: { id: v.id("productFamilies") },
   handler: async (ctx, args) => {
     const family = await ctx.db.get(args.id);
@@ -488,7 +488,7 @@ export const deleteProductFamily = mutation({
   },
 });
 
-export const bulkUpdateProductFamilies = mutation({
+export const bulkUpdateProductFamilies = internalMutation({
   args: {
     ids: v.array(v.id("productFamilies")),
     updates: v.object({
@@ -515,7 +515,7 @@ export const bulkUpdateProductFamilies = mutation({
   },
 });
 
-export const backfillFamilyPageConfigFromLegacy = mutation({
+export const backfillFamilyPageConfigFromLegacy = internalMutation({
   args: {
     overwrite: v.optional(v.boolean()),
   },
@@ -552,7 +552,7 @@ export const backfillFamilyPageConfigFromLegacy = mutation({
   },
 });
 
-export const migrateFamilyPageContentStructure = mutation({
+export const migrateFamilyPageContentStructure = internalMutation({
   args: {
     overwrite: v.optional(v.boolean()),
   },
