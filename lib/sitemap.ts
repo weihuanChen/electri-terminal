@@ -1,4 +1,5 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 
 import { getAdminConvexClient } from "@/lib/convex-admin";
 import { BLOG_PAGE_SIZE, getBlogPageCount } from "@/lib/blogPagination";
@@ -246,9 +247,9 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
-async function fetchSitemapContent() {
+const fetchSitemapContent = unstable_cache(async () => {
   return (await getAdminConvexClient().query("frontend:listSitemapContent", {})) as SitemapContent;
-}
+}, ["sitemap-content-v1"], { revalidate: 3600 });
 
 function buildSitemapGscCandidatesFromEntries(entries: SitemapPageEntry[]) {
   return entries.map((entry) => ({

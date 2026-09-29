@@ -10,6 +10,7 @@ import {
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
 import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
+import { removeSitemapCard, syncCategorySitemapCard } from "../../lib/sitemapCards";
 
 export const createCategory = mutation({
   args: {
@@ -39,7 +40,7 @@ export const createCategory = mutation({
     );
     await assertUniqueCategoryPath(ctx, path);
 
-    return await ctx.db.insert(
+    const id = await ctx.db.insert(
       "categories",
       withCreatedAt({
         name: args.name,
@@ -61,6 +62,9 @@ export const createCategory = mutation({
         isVisibleInNav: args.isVisibleInNav ?? true,
       })
     );
+    const category = await ctx.db.get(id);
+    if (category) await syncCategorySitemapCard(ctx, category);
+    return id;
   },
 });
 
@@ -152,6 +156,9 @@ export const updateCategory = mutation({
       translatableFieldKeys: ["name", "description", "shortDescription", "seoTitle", "seoDescription", "pageConfig"],
     });
 
+    const updated = await ctx.db.get(args.id);
+    if (updated) await syncCategorySitemapCard(ctx, updated);
+
     return args.id;
   },
 });
@@ -186,6 +193,7 @@ export const deleteCategory = mutation({
       );
     }
 
+    await removeSitemapCard(ctx, String(args.id));
     await ctx.db.delete(args.id);
   },
 });
@@ -211,6 +219,8 @@ export const bulkUpdateCategories = mutation({
         updateData.isVisibleInNav = args.updates.isVisibleInNav;
       }
       await ctx.db.patch(id, withUpdatedAt(updateData));
+      const updated = await ctx.db.get(id);
+      if (updated) await syncCategorySitemapCard(ctx, updated);
     }
   },
 });

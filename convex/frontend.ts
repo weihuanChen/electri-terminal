@@ -11,6 +11,12 @@ import {
 } from "./lib/siteSettings";
 import { r2 } from "./r2Assets";
 import { resolveRecommendationProductIds } from "../lib/recommendationGroups";
+import {
+  getFamilySearchText,
+  getRelatedSeriesRule,
+  RELATED_SERIES_RULES,
+  type RelatedSeriesLabel,
+} from "./lib/relatedSeries";
 
 type VisualMediaType = "product" | "dimension" | "packaging" | "application";
 
@@ -702,8 +708,6 @@ function resolveFamilyHeroImage(family: {
   return resolveFamilyManualHeroImage(family) ?? resolveFamilyFallbackProductImage(family);
 }
 
-type RelatedSeriesLabel = "Single Crimp" | "Heat Shrink" | "Nylon" | "Non Insulated";
-
 type RelatedSeriesItem = {
   _id: Id<"productFamilies">;
   name: string;
@@ -719,6 +723,18 @@ type ScoredRelatedSeriesItem = {
   sortOrder: number;
 };
 
+type RelatedSeriesCandidate = {
+  _id: Id<"productFamilies">;
+  categoryId: Id<"categories">;
+  name: string;
+  slug: string;
+  summary?: string;
+  image?: string;
+  sortOrder: number;
+  rule: (typeof RELATED_SERIES_RULES)[number] | undefined;
+  isRingSeries: boolean;
+};
+
 type CategoryFilterOption = {
   label: string;
   value: string;
@@ -732,89 +748,12 @@ type CategoryFilterGroup = {
   options: CategoryFilterOption[];
 };
 
-const RELATED_SERIES_RULES: Array<{
-  label: RelatedSeriesLabel;
-  priority: number;
-  keywords: string[];
-  excludeKeywords?: string[];
-  preferredSlugs?: string[];
-}> = [
-  {
-    label: "Single Crimp",
-    priority: 100,
-    keywords: [
-      "single crimp",
-      "single crimp ring",
-      "vinyl insulated ring",
-      "vinyl insulated terminals",
-      "insulated ring terminals",
-    ],
-    excludeKeywords: ["double crimp", "heat shrink", "nylon", "non insulated"],
-    preferredSlugs: [
-      "single-crimp-ring-terminals",
-      "vinyl-insulated-ring-terminals",
-      "insulated-ring-terminals",
-    ],
-  },
-  {
-    label: "Heat Shrink",
-    priority: 80,
-    keywords: ["heat shrink", "heat shrink ring"],
-    preferredSlugs: ["heat-shrink-ring-terminals"],
-  },
-  {
-    label: "Nylon",
-    priority: 70,
-    keywords: ["nylon", "nylon ring", "nylon insulated"],
-    preferredSlugs: ["nylon-ring-terminals", "nylon-insulated-ring-terminals"],
-  },
-  {
-    label: "Non Insulated",
-    priority: 60,
-    keywords: [
-      "non insulated",
-      "non insulated ring",
-      "standard ring terminals",
-      "ring terminals standard type",
-    ],
-    excludeKeywords: ["heat shrink", "nylon"],
-    preferredSlugs: ["standard-ring-terminals", "non-insulated-ring-terminals"],
-  },
-];
 const MANUAL_RELATED_SERIES_LABELS: RelatedSeriesLabel[] = [
   "Single Crimp",
   "Heat Shrink",
   "Nylon",
   "Non Insulated",
 ];
-
-function normalizeSeriesText(value: unknown) {
-  return String(value ?? "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function getFamilySearchText(family: Doc<"productFamilies">) {
-  return normalizeSeriesText([
-    family.name,
-    family.slug,
-    family.summary,
-    family.content,
-    JSON.stringify(family.attributes ?? {}),
-  ].filter(Boolean).join(" "));
-}
-
-function getRelatedSeriesRule(family: Doc<"productFamilies">) {
-  const searchText = getFamilySearchText(family);
-  return RELATED_SERIES_RULES.find((rule) =>
-    !(rule.excludeKeywords ?? []).some((keyword) =>
-      searchText.includes(normalizeSeriesText(keyword))
-    ) &&
-    rule.keywords.some((keyword) => searchText.includes(normalizeSeriesText(keyword)))
-  );
-}
 
 function toRelatedSeriesItem(
   family: Doc<"productFamilies">,
@@ -872,58 +811,90 @@ async function computeRelatedSeriesForFamily(
     return dedupeRelatedSeriesItems(manualItems).slice(0, 4);
   }
 
-  const category = await ctx.db.get(categoryId);
-  const siblingCategories = category?.parentId
-    ? await ctx.db
-        .query("categories")
-        .withIndex("by_parentId", (q) => q.eq("parentId", category.parentId))
+  const currentSearchText = getFamilySearchText(family);
+  if (!getRelatedSeriesRule(family) && !currentSearchText.includes("ring terminal")) {
+    return [];
+  }
+
+  // Before card backfill, keep the fallback scan inside the two relevant
+  // categories. Once cards are ready, the original sibling search is cheap.
+  let candidateCategoryIds = [...new Set([family.categoryId, categoryId])];
+  const cardState = await ctx.db.query("sitemapCardState")
+    .withIndex("by_key", (q) => q.eq("key", "catalog"))
+    .unique();
+  let candidates: RelatedSeriesCandidate[];
+  if (cardState?.enabled) {
+    const category = await ctx.db.get(categoryId);
+    const siblings = category?.parentId
+      ? await ctx.db.query("categories")
+          .withIndex("by_parentId", (q) => q.eq("parentId", category.parentId))
+          .collect()
+      : [];
+    candidateCategoryIds = [...new Set([
+      ...candidateCategoryIds,
+      ...(category?.parentId ? [category.parentId] : []),
+      ...siblings.filter(isPublishedCategory).map((item) => item._id),
+    ])];
+    const cards = (await Promise.all(candidateCategoryIds.map((candidateCategoryId) =>
+      ctx.db.query("sitemapCards")
+        .withIndex("by_entityType_and_status_and_categoryId", (q) =>
+          q.eq("entityType", "family").eq("status", "published").eq("categoryId", candidateCategoryId))
         .collect()
-    : [];
-  const candidateCategoryIds = Array.from(
-    new Set(
-      [
-        category?.parentId,
-        categoryId,
-        ...siblingCategories
-          .filter((item) => item.status === "published")
-          .map((item) => item._id),
-      ]
-        .filter((id): id is Id<"categories"> => Boolean(id))
-    )
-  );
-  const familyBuckets = await Promise.all(
-    candidateCategoryIds.map((candidateCategoryId) =>
-      ctx.db
-        .query("productFamilies")
+    ))).flat();
+    candidates = cards.flatMap((card) => {
+      if (!card.familyId || !card.categoryId || !card.name) return [];
+      return [{
+        _id: card.familyId,
+        categoryId: card.categoryId,
+        name: card.name,
+        slug: card.slug,
+        summary: card.summary,
+        image: card.image,
+        sortOrder: card.sortOrder ?? 0,
+        rule: RELATED_SERIES_RULES.find((rule) => rule.label === card.seriesLabel),
+        isRingSeries: card.isRingSeries ?? false,
+      }];
+    });
+  } else {
+    const families = (await Promise.all(candidateCategoryIds.map((candidateCategoryId) =>
+      ctx.db.query("productFamilies")
         .withIndex("by_categoryId", (q) => q.eq("categoryId", candidateCategoryId))
         .collect()
-    )
-  );
-  const families = Array.from(
-    new Map(familyBuckets.flat().map((item) => [item._id, item])).values()
-  );
+    ))).flat();
+    candidates = families.filter(isPublishedFamily).map((item) => ({
+      _id: item._id,
+      categoryId: item.categoryId,
+      name: item.name,
+      slug: item.slug,
+      summary: item.summary,
+      image: resolveFamilyHeroImage(item),
+      sortOrder: item.sortOrder,
+      rule: getRelatedSeriesRule(item),
+      isRingSeries: getFamilySearchText(item).includes("ring terminal"),
+    }));
+  }
 
-  const currentSearchText = getFamilySearchText(family);
   const currentIsRingSeries = currentSearchText.includes("ring terminal");
 
-  return families
-    .filter((item) => item.status === "published")
+  return candidates
     .map((item): ScoredRelatedSeriesItem | null => {
-      const rule = getRelatedSeriesRule(item);
+      const rule = item.rule;
       if (!rule) return null;
 
-      const searchText = getFamilySearchText(item);
       const preferredSlugIndex = (rule.preferredSlugs ?? []).indexOf(item.slug);
       const score =
         rule.priority +
         (preferredSlugIndex >= 0 ? 1000 - preferredSlugIndex * 25 : 0) +
         (item._id === family._id ? 120 : 0) +
         (item.categoryId === categoryId ? 20 : 0) +
-        (currentIsRingSeries && searchText.includes("ring terminal") ? 50 : 0) +
-        (resolveFamilyHeroImage(item) || item.summary ? 5 : 0);
+        (currentIsRingSeries && item.isRingSeries ? 50 : 0) +
+        (item.image || item.summary ? 5 : 0);
 
       return {
-        item: toRelatedSeriesItem(item, rule.label),
+        item: {
+          _id: item._id, name: item.name, slug: item.slug,
+          summary: item.summary, image: item.image, relationLabel: rule.label,
+        },
         score,
         sortOrder: item.sortOrder ?? 0,
       };
@@ -1627,6 +1598,48 @@ export const listApplicationArticles = query({
 export const listSitemapContent = query({
   args: {},
   handler: async (ctx) => {
+    const cardState = await ctx.db.query("sitemapCardState")
+      .withIndex("by_key", (q) => q.eq("key", "catalog"))
+      .unique();
+    if (cardState?.enabled) {
+      const [categoryCards, familyCards, productCards, articleCards] = await Promise.all([
+        ctx.db.query("sitemapCards")
+          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "category").eq("status", "published"))
+          .collect(),
+        ctx.db.query("sitemapCards")
+          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "family").eq("status", "published"))
+          .collect(),
+        ctx.db.query("sitemapCards")
+          .withIndex("by_entityType_and_status", (q) => q.eq("entityType", "product").eq("status", "published"))
+          .collect(),
+        ctx.db.query("articleCards")
+          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+          .collect(),
+      ]);
+      const articles = articleCards.length > 0
+        ? articleCards
+        : await ctx.db.query("articles")
+            .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+            .collect();
+      return {
+        categories: categoryCards.map((card) => ({
+          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt, image: card.image,
+        })),
+        families: familyCards.map((card) => ({
+          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
+          mediaItems: card.mediaItems ?? [],
+        })),
+        products: productCards.map((card) => ({
+          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
+          mediaItems: card.mediaItems ?? [],
+        })),
+        articles: articles.map((card) => ({
+          slug: card.slug, canonical: card.canonical, updatedAt: card.updatedAt,
+          coverImage: card.coverImage, title: card.title,
+        })),
+      };
+    }
+
     const [categories, families, products, articleCards] = await Promise.all([
       ctx.db
         .query("categories")
@@ -1931,6 +1944,15 @@ export const getLocalizedRouteEligibility = query({
   },
 });
 
+// Metadata does not need the product-backed facet counts or related content.
+export const getCategoryMetadataBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => ctx.db
+    .query("categories")
+    .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+    .unique(),
+});
+
 // Get category with children
 export const getCategoryWithChildren = query({
   args: { slug: v.string() },
@@ -2215,17 +2237,12 @@ export const getArticleBySlug = query({
 
     if (!article) return null;
 
-    const [author, recommendationGroups, relatedFamilies] = await Promise.all([
+    if (article.status !== "published") return article;
+
+    const [author, recommendationGroups] = await Promise.all([
       getArticleAuthor(ctx, article),
       article.recommendationGroupIds
         ? Promise.all(article.recommendationGroupIds.map((groupId) => ctx.db.get(groupId)))
-        : [],
-      article.relatedFamilyIds
-        ? (
-            await Promise.all(article.relatedFamilyIds.map((familyId) => ctx.db.get(familyId)))
-          )
-            .filter((family): family is Doc<"productFamilies"> => Boolean(family))
-            .map((family) => omitBrand(family))
         : [],
     ]);
 
@@ -2234,7 +2251,7 @@ export const getArticleBySlug = query({
       article.relatedProductIds ?? [],
     );
     const relatedProducts = (
-      await Promise.all(resolvedProductIds.map((productId) => ctx.db.get(productId)))
+      await Promise.all(resolvedProductIds.slice(0, 6).map((productId) => ctx.db.get(productId)))
     )
       .filter(
         (product): product is Doc<"products"> =>
@@ -2246,7 +2263,6 @@ export const getArticleBySlug = query({
       ...article,
       author,
       relatedProducts,
-      relatedFamilies,
     };
   },
 });
@@ -2303,15 +2319,23 @@ export const listRelatedArticlesBySlug = query({
     if (!targetArticle) return [];
 
     const limit = Math.min(Math.max(args.limit ?? 3, 1), 8);
+    // Rank a bounded pool of recent cards. The old full scan loaded every
+    // published article separately for each blog-detail slug.
     const allPublishedArticles = useDerivedData
-      ? await ctx.db
-          .query("articleCards")
-          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-          .collect()
+      ? Array.from(new Map((await Promise.all([
+          ctx.db.query("articleCards")
+            .withIndex("by_type_status", (q) =>
+              q.eq("type", targetArticle.type).eq("status", "published"))
+            .order("desc").take(64),
+          ctx.db.query("articleCards")
+            .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+            .order("desc").take(32),
+        ])).flat().map((card) => [card._id, card])).values())
       : await ctx.db
           .query("articles")
           .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-          .collect();
+          .order("desc")
+          .take(64);
 
     const targetRelations = buildArticleRelationIdSet(targetArticle);
     const targetTags = buildArticleTagSet(targetArticle);

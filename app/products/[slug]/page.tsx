@@ -10,6 +10,7 @@ import {
 } from "@/lib/productPage";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
 import { productUrl } from "@/lib/routes";
+import { getCachedRelatedSeries } from "@/lib/relatedSeries";
 
 type ProductPageProps = {
   params: Promise<{
@@ -201,10 +202,7 @@ async function resolveRelatedSeriesFallback(product: ProductMetadataRecord) {
   const categoryId = product.categoryId || product.category?._id;
   if (familyId && categoryId) {
     try {
-      const relatedSeries = await queryPublicPage<RelatedSeriesItem[]>(
-        "frontend:getRelatedSeriesForFamily",
-        { familyId, categoryId }
-      );
+      const relatedSeries = await getCachedRelatedSeries(familyId, categoryId) as RelatedSeriesItem[];
       return { ...product, relatedSeries };
     } catch {
       // Fall through to the category-content fallback during rolling deploys.

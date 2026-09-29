@@ -300,6 +300,39 @@ export default defineSchema({
     .index("by_categoryId", ["categoryId"])
     .index("by_status_sortOrder", ["status", "sortOrder"]),
 
+  // Compact records for sitemap generation; full catalog documents include
+  // page copy, attributes, and configuration that sitemaps never use.
+  sitemapCards: defineTable({
+    sourceId: v.string(),
+    entityType: v.union(v.literal("category"), v.literal("family"), v.literal("product")),
+    status: statusCommon,
+    slug: v.string(),
+    canonical: v.optional(v.string()),
+    updatedAt: v.number(),
+    image: v.optional(v.string()),
+    title: v.optional(v.string()),
+    mediaItems: v.optional(v.array(v.object({ url: v.string(), alt: v.optional(v.string()) }))),
+    familyId: v.optional(v.id("productFamilies")),
+    categoryId: v.optional(v.id("categories")),
+    name: v.optional(v.string()),
+    summary: v.optional(v.string()),
+    sortOrder: v.optional(v.number()),
+    seriesLabel: v.optional(v.union(
+      v.literal("Single Crimp"), v.literal("Heat Shrink"),
+      v.literal("Nylon"), v.literal("Non Insulated"),
+    )),
+    isRingSeries: v.optional(v.boolean()),
+  })
+    .index("by_sourceId", ["sourceId"])
+    .index("by_entityType_and_status", ["entityType", "status"])
+    .index("by_entityType_and_status_and_categoryId", ["entityType", "status", "categoryId"]),
+
+  sitemapCardState: defineTable({
+    key: v.string(),
+    enabled: v.boolean(),
+    completedKinds: v.array(v.string()),
+  }).index("by_key", ["key"]),
+
   products: defineTable({
     productKey: v.optional(v.string()),
     seriesCode: v.optional(v.string()),
@@ -977,6 +1010,7 @@ export default defineSchema({
     slug: v.string(),
     authorId: v.optional(v.id("authors")),
     excerpt: v.optional(v.string()),
+    readingMinutes: v.optional(v.number()),
     coverImage: v.optional(v.string()),
     categoryIds: v.optional(v.array(v.id("categories"))),
     tagNames: v.optional(v.array(v.string())),

@@ -12,6 +12,7 @@ import {
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
 import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
+import { removeSitemapCard, syncProductSitemapCard } from "../../lib/sitemapCards";
 
 const visualMediaType = v.union(
   v.literal("product"),
@@ -115,7 +116,7 @@ export const createProduct = mutation({
       selectionRelatedProductIds: args.selectionRelatedProductIds,
     });
 
-    return await ctx.db.insert(
+    const id = await ctx.db.insert(
       "products",
       withCreatedAt({
         ...args,
@@ -124,6 +125,9 @@ export const createProduct = mutation({
         sortOrder: args.sortOrder ?? 0,
       })
     );
+    const product = await ctx.db.get(id);
+    if (product) await syncProductSitemapCard(ctx, product);
+    return id;
   },
 });
 
@@ -248,6 +252,9 @@ export const updateProduct = mutation({
       translatableFieldKeys: ["title", "shortTitle", "summary", "content", "featureBullets", "selectionTip", "seoTitle", "seoDescription"],
     });
 
+    const updated = await ctx.db.get(args.id);
+    if (updated) await syncProductSitemapCard(ctx, updated);
+
     return args.id;
   },
 });
@@ -272,6 +279,7 @@ export const deleteProduct = mutation({
       );
     }
 
+    await removeSitemapCard(ctx, String(args.id));
     await ctx.db.delete(args.id);
   },
 });
@@ -302,6 +310,8 @@ export const bulkUpdateProducts = mutation({
         updateData.categoryId = args.updates.categoryId;
       }
       await ctx.db.patch(id, withUpdatedAt(updateData));
+      const updated = await ctx.db.get(id);
+      if (updated) await syncProductSitemapCard(ctx, updated);
     }
   },
 });

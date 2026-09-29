@@ -10,6 +10,7 @@ import {
 } from "../../lib/validators";
 import { statusCommon } from "./shared";
 import { markChangedSourceLocalizationsStale } from "../../lib/localizationStale";
+import { removeSitemapCard, syncFamilySitemapCard } from "../../lib/sitemapCards";
 
 const visualMediaType = v.union(
   v.literal("product"),
@@ -366,7 +367,7 @@ export const createProductFamily = mutation({
     await assertUniqueFamilySlug(ctx, args.slug);
     await validateAttributesAgainstCategory(ctx, args.categoryId, args.attributes);
 
-    return await ctx.db.insert(
+    const id = await ctx.db.insert(
       "productFamilies",
       withCreatedAt({
         ...args,
@@ -374,6 +375,9 @@ export const createProductFamily = mutation({
         sortOrder: args.sortOrder ?? 0,
       })
     );
+    const family = await ctx.db.get(id);
+    if (family) await syncFamilySitemapCard(ctx, family);
+    return id;
   },
 });
 
@@ -454,6 +458,9 @@ export const updateProductFamily = mutation({
       translatableFieldKeys: ["name", "summary", "content", "highlights", "manualHeroImageAlt", "seoTitle", "seoDescription", "pageConfig"],
     });
 
+    const updated = await ctx.db.get(args.id);
+    if (updated) await syncFamilySitemapCard(ctx, updated);
+
     return args.id;
   },
 });
@@ -476,6 +483,7 @@ export const deleteProductFamily = mutation({
       );
     }
 
+    await removeSitemapCard(ctx, String(args.id));
     await ctx.db.delete(args.id);
   },
 });
@@ -501,6 +509,8 @@ export const bulkUpdateProductFamilies = mutation({
         updateData.categoryId = args.updates.categoryId;
       }
       await ctx.db.patch(id, withUpdatedAt(updateData));
+      const updated = await ctx.db.get(id);
+      if (updated) await syncFamilySitemapCard(ctx, updated);
     }
   },
 });
@@ -529,6 +539,8 @@ export const backfillFamilyPageConfigFromLegacy = mutation({
           pageConfig: nextPageConfig,
         })
       );
+      const updatedFamily = await ctx.db.get(family._id);
+      if (updatedFamily) await syncFamilySitemapCard(ctx, updatedFamily);
       updated += 1;
     }
 
@@ -564,6 +576,8 @@ export const migrateFamilyPageContentStructure = mutation({
           pageConfig: nextPageConfig,
         })
       );
+      const updatedFamily = await ctx.db.get(family._id);
+      if (updatedFamily) await syncFamilySitemapCard(ctx, updatedFamily);
       updated += 1;
     }
 

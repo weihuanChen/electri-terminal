@@ -18,6 +18,7 @@ import {
 } from "@/lib/categoryPage";
 import { buildPageMetadata, queryPublicPage } from "@/lib/metadata";
 import { categoryUrl } from "@/lib/routes";
+import { getCachedCategoryWithChildren } from "@/lib/publicCategory";
 
 type CategoryPageProps = {
   params: Promise<{
@@ -62,7 +63,11 @@ function mergeCategoryContentBuckets(
 }
 
 async function getCategoryRecord(slug: string) {
-  return await queryPublicPage<CategoryMetadataRecord | null>("frontend:getCategoryWithChildren", { slug });
+  return await getCachedCategoryWithChildren(slug) as CategoryMetadataRecord | null;
+}
+
+async function getCategoryMetadataRecord(slug: string) {
+  return await queryPublicPage<CategoryMetadataRecord | null>("frontend:getCategoryMetadataBySlug", { slug });
 }
 
 export async function generateMetadata({
@@ -70,10 +75,10 @@ export async function generateMetadata({
   searchParams,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryRecord(slug);
+  const category = await getCategoryMetadataRecord(slug);
   const resolvedSearchParams = await searchParams;
   const contentView = resolveCategoryContentView(resolvedSearchParams);
-  const activeFilters = resolveCategoryActiveFilters(resolvedSearchParams, category || { filters: [] });
+  const hasFilterQuery = Object.keys(resolvedSearchParams).some((key) => key.startsWith("filter_"));
 
   return buildPageMetadata({
     entity: resolveCategoryMetadataEntity(category),
@@ -84,7 +89,9 @@ export async function generateMetadata({
       url: category?.image,
       alt: category?.name,
     },
-    robots: resolveCategoryMetadataRobots(category, contentView, activeFilters),
+    robots: hasFilterQuery
+      ? { index: false, follow: true }
+      : resolveCategoryMetadataRobots(category, contentView, {}),
   });
 }
 

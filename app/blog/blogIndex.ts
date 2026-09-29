@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
 
 import type { BlogPageClientProps } from "./BlogPageClient";
 import { queryPublicPage } from "@/lib/metadata";
@@ -58,15 +59,22 @@ export function buildBlogMetadata(page: number): Metadata {
   };
 }
 
-export async function getBlogInitialData() {
+export const getBlogInitialData = unstable_cache(async () => {
   try {
     const initialArticles = await queryPublicPage<
       NonNullable<BlogPageClientProps["initialArticles"]>
-    >("queries/modules/articles:listArticles", { status: "published", limit: 200 });
-    return { initialArticles };
+    >("queries/modules/articles:listPublicArticleCards", { limit: 200 });
+    if (initialArticles.length > 0) return { initialArticles };
+
+    // Support deployments whose articleCards backfill has not run yet.
+    return {
+      initialArticles: await queryPublicPage<NonNullable<BlogPageClientProps["initialArticles"]>>(
+        "queries/modules/articles:listArticles", { status: "published", limit: 200 }
+      ),
+    };
   } catch {
     return { initialArticles: [] };
   }
-}
+}, ["blog-initial-data-v1"], { revalidate: 300 });
 
 export { BLOG_PAGE_SIZE };

@@ -9,6 +9,9 @@ function compactArticle(article: Doc<"articles">) {
     slug: article.slug,
     authorId: article.authorId,
     excerpt: article.excerpt,
+    readingMinutes: Math.max(1, Math.ceil(
+      `${article.title} ${article.excerpt ?? ""} ${article.content ?? ""}`.trim().split(/\s+/).filter(Boolean).length / 220
+    )),
     coverImage: article.coverImage,
     categoryIds: article.categoryIds,
     tagNames: article.tagNames,

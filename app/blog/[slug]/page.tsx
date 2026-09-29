@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 
 import JsonLd from "@/components/seo/JsonLd";
 import ArticlePageClient, { type ArticlePageData } from "./ArticlePageClient";
@@ -21,16 +22,21 @@ type ArticleMetadataRecord = ArticlePageData & {
   updatedAt?: number;
 };
 
-async function getArticleRecord(slug: string) {
-  return await queryPublicPage<ArticleMetadataRecord | null>("frontend:getArticleBySlug", { slug });
-}
+const getArticleRecord = unstable_cache(
+  async (slug: string) => queryPublicPage<ArticleMetadataRecord | null>("frontend:getArticleBySlug", { slug }),
+  ["public-article-detail-v1"],
+  { revalidate: 300 },
+);
+
+const getCachedRelatedArticles = unstable_cache(async (slug: string) =>
+  queryPublicPage<ArticlePageData[]>("frontend:listRelatedArticlesBySlug", { slug, limit: 3 }),
+  ["public-related-articles-v1"],
+  { revalidate: 300 },
+);
 
 async function getRelatedArticles(slug: string) {
   try {
-    return await queryPublicPage<ArticlePageData[]>("frontend:listRelatedArticlesBySlug", {
-      slug,
-      limit: 3,
-    });
+    return await getCachedRelatedArticles(slug);
   } catch {
     return [];
   }

@@ -1,5 +1,10 @@
 import { mutation } from "../../_generated/server";
 import { syncArticleDerivedData } from "../../lib/articleDerivedData";
+import {
+  syncCategorySitemapCard,
+  syncFamilySitemapCard,
+  syncProductSitemapCard,
+} from "../../lib/sitemapCards";
 import type { Id } from "../../_generated/dataModel";
 
 function now() {
@@ -95,6 +100,9 @@ export const seedMockCatalog = mutation({
             ...data,
             createdAt: timestamp,
           });
+
+      const category = await ctx.db.get(id);
+      if (category) await syncCategorySitemapCard(ctx, category);
 
       categories.set(seed.slug, id);
     }
@@ -324,6 +332,9 @@ export const seedMockCatalog = mutation({
             ...data,
             createdAt: timestamp,
           });
+
+      const family = await ctx.db.get(id);
+      if (family) await syncFamilySitemapCard(ctx, family);
 
       families.set(seed.slug, id);
     }
@@ -600,6 +611,9 @@ export const seedMockCatalog = mutation({
             ...data,
             createdAt: timestamp,
           });
+
+      const product = await ctx.db.get(id);
+      if (product) await syncProductSitemapCard(ctx, product);
 
       products.set(seed.slug, id);
     }

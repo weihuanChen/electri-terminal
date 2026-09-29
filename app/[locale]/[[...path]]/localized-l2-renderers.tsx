@@ -21,6 +21,8 @@ import {
 } from "@/lib/categoryPage";
 import { buildFamilyStructuredData } from "@/lib/familyPage";
 import { queryPublicPage } from "@/lib/metadata";
+import { getCachedCategoryWithChildren } from "@/lib/publicCategory";
+import { getCachedRelatedSeries } from "@/lib/relatedSeries";
 import { buildProductStructuredData } from "@/lib/productPage";
 import {
   DEFAULT_LOCALE,
@@ -209,9 +211,7 @@ async function renderLocalizedCategory({
   }
 
   const [category, maps] = await Promise.all([
-    queryPublicPage<CategoryRecord | null>("frontend:getCategoryWithChildren", {
-      slug: route.slug,
-    }),
+    getCachedCategoryWithChildren(route.slug) as Promise<CategoryRecord | null>,
     loadL2LocalizationMaps(locale),
   ]);
 
@@ -419,10 +419,7 @@ async function renderLocalizedProduct({ locale, route }: LocalizedRendererContex
   }
 
   const relatedSeries = product.familyId && product.categoryId
-    ? await queryPublicPage<NonNullable<ProductPageData["relatedSeries"]>>(
-        "frontend:getRelatedSeriesForFamily",
-        { familyId: product.familyId, categoryId: product.categoryId }
-      )
+    ? await getCachedRelatedSeries(product.familyId, product.categoryId) as NonNullable<ProductPageData["relatedSeries"]>
     : [];
 
   const localizedProduct = localizeProductRecord(

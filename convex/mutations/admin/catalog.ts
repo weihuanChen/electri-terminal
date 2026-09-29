@@ -1,6 +1,7 @@
 import { Id } from "../../_generated/dataModel";
 import { mutation } from "../../_generated/server";
 import { r2 } from "../../r2Assets";
+import { removeSitemapCard } from "../../lib/sitemapCards";
 
 const CATALOG_RELATION_TYPES = new Set(["category", "family", "product"]);
 
@@ -27,12 +28,14 @@ export const resetCatalogData = mutation({
 
     const products = await ctx.db.query("products").collect();
     for (const product of products) {
+      await removeSitemapCard(ctx, String(product._id));
       await ctx.db.delete(product._id);
       summary.products += 1;
     }
 
     const families = await ctx.db.query("productFamilies").collect();
     for (const family of families) {
+      await removeSitemapCard(ctx, String(family._id));
       await ctx.db.delete(family._id);
       summary.families += 1;
     }
@@ -40,6 +43,7 @@ export const resetCatalogData = mutation({
     const categories = await ctx.db.query("categories").collect();
     categories.sort((a, b) => b.level - a.level);
     for (const category of categories) {
+      await removeSitemapCard(ctx, String(category._id));
       await ctx.db.delete(category._id);
       summary.categories += 1;
     }
