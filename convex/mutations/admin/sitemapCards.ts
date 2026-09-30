@@ -1,7 +1,9 @@
 import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
 import { internalMutation } from "../../_generated/server";
+import { rebuildCatalogStats } from "../../lib/catalogStats";
 import {
+  refreshAllCategoryFacetSummaries,
   syncCategorySitemapCard,
   syncFamilySitemapCard,
   syncProductSitemapCard,
@@ -30,7 +32,7 @@ export const backfillSitemapCards = internalMutation({
         const invalidated = args.kind === "family"
           ? ["family", "familyFacets"]
           : args.kind === "product"
-            ? ["product", "productFacets", "productList"]
+            ? ["product", "productFacets", "productList", "facetSummaries", "catalogCounts"]
             : ["category"];
         await ctx.db.patch(state._id, {
           enabled: false,
@@ -46,12 +48,17 @@ export const backfillSitemapCards = internalMutation({
       result = { count: page.page.length, isDone: page.isDone, continueCursor: page.continueCursor };
     } else if (args.kind === "family") {
       const page = await ctx.db.query("productFamilies").paginate(args.paginationOpts);
-      for (const doc of page.page) await syncFamilySitemapCard(ctx, doc);
+      for (const doc of page.page) await syncFamilySitemapCard(ctx, doc, { deferAggregates: true });
       result = { count: page.page.length, isDone: page.isDone, continueCursor: page.continueCursor };
     } else {
       const page = await ctx.db.query("products").paginate(args.paginationOpts);
-      for (const doc of page.page) await syncProductSitemapCard(ctx, doc);
+      for (const doc of page.page) await syncProductSitemapCard(ctx, doc, { deferAggregates: true });
       result = { count: page.page.length, isDone: page.isDone, continueCursor: page.continueCursor };
+    }
+
+    if (result.isDone && args.kind === "product") {
+      await rebuildCatalogStats(ctx);
+      await refreshAllCategoryFacetSummaries(ctx);
     }
 
     if (result.isDone) {
@@ -62,7 +69,7 @@ export const backfillSitemapCards = internalMutation({
         ...(state?.completedKinds ?? []),
         args.kind,
         ...(args.kind === "family" ? ["familyFacets"] : []),
-        ...(args.kind === "product" ? ["productFacets", "productList"] : []),
+        ...(args.kind === "product" ? ["productFacets", "productList", "facetSummaries", "catalogCounts"] : []),
       ])];
       const enabled = KINDS.every((kind) => completedKinds.includes(kind));
       if (state) {

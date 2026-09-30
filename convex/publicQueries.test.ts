@@ -192,6 +192,17 @@ describe("public Convex queries", () => {
     const listCards = await t.run(async (ctx) => ctx.db.query("productListCards").collect());
     expect(listCards[0]).toMatchObject({ slug: "ring-terminal", skuCode: "RING-1" });
     expect(listCards[0]).not.toHaveProperty("content");
+    expect(state?.completedKinds).toContain("catalogCounts");
+    expect(state?.completedKinds).toContain("facetSummaries");
+    const stats = await t.run(async (ctx) => ctx.db.query("catalogStats").unique());
+    expect(Object.values(stats?.productCountByFamilyId ?? {})).toEqual([1]);
+    expect(Object.values(stats?.familyCountByCategoryId ?? {})).toEqual([1]);
+    const hub = await t.query(api.frontend.getProductsHubData, {
+      categoryLimit: 8,
+      featuredFamilyLimit: 6,
+    });
+    expect(hub.categories[0]).toMatchObject({ slug: "terminals", productCount: 1, familyCount: 1 });
+    expect(hub.featuredFamilies[0]).toMatchObject({ slug: "ring-terminals", productCount: 1 });
   });
 
   it("returns one bounded published category page, including child products", async () => {
@@ -273,6 +284,31 @@ describe("public Convex queries", () => {
     expect(empty.popularSuggestions).toContain("Ring Terminals");
   });
 
+  it("takes the newest published articles and the requested public resource type", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      await ctx.db.insert("articles", {
+        type: "blog", title: "Older", slug: "older", status: "published",
+        publishedAt: 10, createdAt: 10, updatedAt: 10,
+      });
+      await ctx.db.insert("articles", {
+        type: "blog", title: "Newer", slug: "newer", status: "published",
+        publishedAt: 20, createdAt: 20, updatedAt: 20,
+      });
+      for (const type of ["catalog", "manual"] as const) {
+        await ctx.db.insert("assets", {
+          title: `${type} file`, type, isPublic: true, requireLeadForm: false,
+          createdAt: 1, updatedAt: 1,
+        });
+      }
+    });
+
+    const articles = await t.query(api.frontend.listLatestArticles, { limit: 1 });
+    expect(articles.map((article) => article.slug)).toEqual(["newer"]);
+    const resources = await t.query(api.frontend.listPublicResources, { type: "catalog", limit: 10 });
+    expect(resources.map((asset) => asset.type)).toEqual(["catalog"]);
+  });
+
   it("marks article cards ready only after the last article page", async () => {
     const t = convexTest(schema, modules);
     await t.run(async (ctx) => {
@@ -296,5 +332,11 @@ describe("public Convex queries", () => {
     const state = await t.run(async (ctx) => ctx.db.query("sitemapCardState").first());
     expect(state?.completedKinds).toContain("article");
     expect(await t.query(api.queries.modules.articles.listPublicArticleCards, { limit: 10 })).toHaveLength(2);
+    const related = await t.query(api.frontend.listRelatedArticlesBySlug, {
+      slug: "first-article",
+      limit: 3,
+    });
+    expect(related.map((article) => article.slug)).toEqual(["second-article"]);
+    expect(related[0]).not.toHaveProperty("content");
   });
 });

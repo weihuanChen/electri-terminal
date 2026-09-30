@@ -950,6 +950,23 @@ export const getRelatedSeriesForFamily = query({
 });
 
 async function getCategoryFilters(ctx: QueryCtx, categoryId: Id<"categories">) {
+  if (await hasCatalogKind(ctx, "facetSummaries")) {
+    const summary = await ctx.db.query("categoryFacetSummaries")
+      .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
+      .unique();
+    if (summary) return summary.groups;
+  }
+  return await buildCategoryFilters(ctx, categoryId);
+}
+
+export const computeCategoryFilters = internalQuery({
+  args: { categoryId: v.id("categories") },
+  handler: async (ctx, args): Promise<CategoryFilterGroup[]> => {
+    return await buildCategoryFilters(ctx, args.categoryId);
+  },
+});
+
+async function buildCategoryFilters(ctx: QueryCtx, categoryId: Id<"categories">) {
   const state = await ctx.db.query("sitemapCardState")
     .withIndex("by_key", (q) => q.eq("key", "catalog"))
     .unique();
@@ -1178,6 +1195,81 @@ export const getProductsHubData = query({
   handler: async (ctx, args) => {
     const categoryLimit = Math.min(args.categoryLimit ?? 8, 20);
     const featuredFamilyLimit = Math.min(args.featuredFamilyLimit ?? 6, 20);
+    if (await hasCatalogKind(ctx, "catalogCounts")) {
+      const stats = await ctx.db.query("catalogStats")
+        .withIndex("by_key", (q) => q.eq("key", "published"))
+        .unique();
+      if (stats) {
+        const [categories, families] = await Promise.all([
+          ctx.db.query("categories")
+            .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+            .collect(),
+          ctx.db.query("productFamilies")
+            .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+            .take(featuredFamilyLimit),
+        ]);
+        const visibleRootCategories = categories
+          .filter((category) => category.isVisibleInNav && category.level === 0)
+          .sort((left, right) => left.sortOrder - right.sortOrder)
+          .slice(0, categoryLimit);
+        const childCategoryIdsByParentId = new Map<string, string[]>();
+        for (const category of categories) {
+          if (!category.parentId) continue;
+          const parentIdKey = category.parentId.toString();
+          const childIds = childCategoryIdsByParentId.get(parentIdKey) ?? [];
+          childIds.push(category._id.toString());
+          childCategoryIdsByParentId.set(parentIdKey, childIds);
+        }
+        const categoryLookup = new Map(categories.map((category) => [category._id, category]));
+        return {
+          categories: visibleRootCategories.map((category) => {
+            const descendantIds = new Set<string>([category._id.toString()]);
+            const queue = [category._id.toString()];
+            while (queue.length > 0) {
+              const currentId = queue.shift();
+              if (!currentId) continue;
+              for (const childId of childCategoryIdsByParentId.get(currentId) ?? []) {
+                if (descendantIds.has(childId)) continue;
+                descendantIds.add(childId);
+                queue.push(childId);
+              }
+            }
+            let familyCount = 0;
+            let productCount = 0;
+            let fallbackImage: string | undefined;
+            for (const descendantId of descendantIds) {
+              familyCount += stats.familyCountByCategoryId[descendantId] ?? 0;
+              productCount += stats.productCountByCategoryId[descendantId] ?? 0;
+              fallbackImage ??= stats.fallbackImageByCategoryId[descendantId];
+            }
+            return {
+              _id: category._id,
+              slug: category.slug,
+              name: category.name,
+              description: category.seoDescription || category.shortDescription || category.description,
+              image: category.image || fallbackImage,
+              familyCount,
+              productCount,
+            };
+          }),
+          featuredFamilies: families.map((family) => ({
+            _id: family._id,
+            slug: family.slug,
+            name: family.name,
+            summary: family.summary,
+            heroImage: resolveFamilyHeroImage(family),
+            highlights: family.highlights,
+            productCount: stats.productCountByFamilyId[String(family._id)] ?? 0,
+            category: categoryLookup.get(family.categoryId)
+              ? {
+                  slug: categoryLookup.get(family.categoryId)!.slug,
+                  name: categoryLookup.get(family.categoryId)!.name,
+                }
+              : null,
+          })),
+        };
+      }
+    }
 
     const [categories, families, products] = await Promise.all([
       ctx.db
@@ -1317,20 +1409,11 @@ export const listLatestArticles = query({
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 10, 50);
 
-    const articles = await ctx.db
+    const latestArticles = await ctx.db
       .query("articles")
-      .withIndex("by_status_publishedAt", (q) =>
-        q.eq("status", "published")
-      )
-      .collect();
-
-    const latestArticles = articles
-      .sort((a, b) => {
-        const aTime = a.publishedAt ?? a.createdAt;
-        const bTime = b.publishedAt ?? b.createdAt;
-        return bTime - aTime;
-      })
-      .slice(0, limit);
+      .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(limit);
 
     return await attachArticleAuthors(ctx, latestArticles);
   },
@@ -1574,22 +1657,23 @@ export const listApplicationArticles = query({
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 8, 20);
 
-    const applicationCards = await ctx.db
-      .query("articleCards")
-      .withIndex("by_type_status", (q) => q.eq("type", "application").eq("status", "published"))
-      .collect();
+    const useArticleCards = await hasCatalogKind(ctx, "article");
+    const applicationCards = useArticleCards
+      ? await ctx.db.query("articleCards")
+          .withIndex("by_type_status_publishedAt", (q) =>
+            q.eq("type", "application").eq("status", "published"))
+          .order("desc")
+          .take(limit)
+      : [];
 
-    if (applicationCards.length === 0) {
+    if (!useArticleCards) {
       const legacyApplications = await ctx.db
         .query("articles")
-        .withIndex("by_type_status", (q) =>
-          q.eq("type", "application").eq("status", "published")
-        )
-        .collect();
-      return legacyApplications
-        .sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt))
-        .slice(0, limit)
-        .map((item) => ({
+        .withIndex("by_type_status_publishedAt", (q) =>
+          q.eq("type", "application").eq("status", "published"))
+        .order("desc")
+        .take(limit);
+      return legacyApplications.map((item) => ({
           _id: item._id,
           title: item.title,
           slug: item.slug,
@@ -1599,11 +1683,7 @@ export const listApplicationArticles = query({
         }));
     }
 
-    const slicedApplications = applicationCards
-      .sort((a, b) => (b.publishedAt ?? b.createdAt) - (a.publishedAt ?? a.createdAt))
-      .slice(0, limit);
-
-    return slicedApplications.map((item) => ({
+    return applicationCards.map((item) => ({
         _id: item.articleId,
         title: item.title,
         slug: item.slug,
@@ -1754,6 +1834,12 @@ export const listSitemapContentPage = query({
 export const listLlmsTxtContent = query({
   args: {},
   handler: async (ctx) => {
+    const countsReady = await hasCatalogKind(ctx, "catalogCounts");
+    const stats = countsReady
+      ? await ctx.db.query("catalogStats")
+          .withIndex("by_key", (q) => q.eq("key", "published"))
+          .unique()
+      : null;
     const [categories, families, products, articleCards] = await Promise.all([
       ctx.db
         .query("categories")
@@ -1763,10 +1849,15 @@ export const listLlmsTxtContent = query({
         .query("productFamilies")
         .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
         .collect(),
-      ctx.db
-        .query("products")
-        .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
-        .collect(),
+      stats
+        ? ctx.db.query("products")
+            .withIndex("by_status_featured_sortOrder", (q) =>
+              q.eq("status", "published").eq("isFeatured", true))
+            .take(200)
+        : ctx.db
+            .query("products")
+            .withIndex("by_status_sortOrder", (q) => q.eq("status", "published"))
+            .collect(),
       ctx.db
         .query("articleCards")
         .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
@@ -1817,9 +1908,11 @@ export const listLlmsTxtContent = query({
         level: category.level,
         isVisibleInNav: category.isVisibleInNav,
         sortOrder: category.sortOrder,
-        relatedCount:
-          (familyCountByCategoryId.get(String(category._id)) ?? 0) +
-          (productCountByCategoryId.get(String(category._id)) ?? 0),
+        relatedCount: stats
+          ? (stats.familyCountByCategoryId[String(category._id)] ?? 0) +
+            (stats.productCountByCategoryId[String(category._id)] ?? 0)
+          : (familyCountByCategoryId.get(String(category._id)) ?? 0) +
+            (productCountByCategoryId.get(String(category._id)) ?? 0),
         contentSignalCount:
           Number(Boolean(category.pageConfig)) +
           Number(Boolean(category.description || category.shortDescription)),
@@ -1833,7 +1926,9 @@ export const listLlmsTxtContent = query({
         description: family.seoDescription || family.summary,
         canonical: family.canonical,
         sortOrder: family.sortOrder,
-        relatedCount: productCountByFamilyId.get(String(family._id)) ?? 0,
+        relatedCount: stats
+          ? stats.productCountByFamilyId[String(family._id)] ?? 0
+          : productCountByFamilyId.get(String(family._id)) ?? 0,
         contentSignalCount:
           Number(Boolean(family.pageConfig)) +
           Number(Boolean(family.content)) +
@@ -1901,21 +1996,24 @@ export const listPublicResources = query({
   },
   handler: async (ctx, args) => {
     const limit = Math.min(args.limit ?? 50, 100);
-    let assets = await ctx.db
-      .query("assets")
-      .withIndex("by_public", (q) => q.eq("isPublic", true))
-      .collect();
+    const keyword = args.search?.trim();
+    const resourceType = args.type;
+    const assets = keyword
+      ? await ctx.db.query("assets")
+          .withSearchIndex("search_title", (q) => {
+            const search = q.search("title", keyword).eq("isPublic", true);
+            return resourceType ? search.eq("type", resourceType) : search;
+          })
+          .take(limit)
+      : resourceType
+        ? await ctx.db.query("assets")
+            .withIndex("by_public_and_type", (q) => q.eq("isPublic", true).eq("type", resourceType))
+            .take(limit)
+        : await ctx.db.query("assets")
+            .withIndex("by_public", (q) => q.eq("isPublic", true))
+            .take(limit);
 
-    if (args.type) {
-      assets = assets.filter((asset) => asset.type === args.type);
-    }
-
-    if (args.search) {
-      const keyword = args.search.toLowerCase();
-      assets = assets.filter((asset) => asset.title.toLowerCase().includes(keyword));
-    }
-
-    return await Promise.all(assets.slice(0, limit).map((asset) => resolveAssetUrl(asset)));
+    return await Promise.all(assets.map((asset) => resolveAssetUrl(asset)));
   },
 });
 
@@ -2354,6 +2452,37 @@ function buildArticleTagSet(article: { tagNames?: string[] }) {
   );
 }
 
+async function loadRelatedArticleCandidates(
+  ctx: QueryCtx,
+  type: Doc<"articles">["type"],
+  useDerivedData: boolean,
+) {
+  if (!useDerivedData) {
+    return await ctx.db
+      .query("articles")
+      .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(64);
+  }
+
+  const recentCards = await ctx.db
+    .query("articleCards")
+    .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
+    .order("desc")
+    .take(64);
+  if (recentCards.length < 64) return recentCards;
+
+  const sameTypeCards = await ctx.db
+    .query("articleCards")
+    .withIndex("by_type_status_publishedAt", (q) =>
+      q.eq("type", type).eq("status", "published"))
+    .order("desc")
+    .take(64);
+  return Array.from(new Map(
+    [...sameTypeCards, ...recentCards.slice(0, 32)].map((card) => [card._id, card]),
+  ).values());
+}
+
 function countSetIntersection(left: Set<string>, right: Set<string>) {
   let count = 0;
   for (const value of left) {
@@ -2398,23 +2527,13 @@ export const listRelatedArticlesBySlug = query({
     if (!targetArticle || targetArticle.status !== "published") return [];
 
     const limit = Math.min(Math.max(args.limit ?? 3, 1), 8);
-    // Rank a bounded pool of recent cards. The old full scan loaded every
-    // published article separately for each blog-detail slug.
-    const allPublishedArticles = useDerivedData
-      ? Array.from(new Map((await Promise.all([
-          ctx.db.query("articleCards")
-            .withIndex("by_type_status_publishedAt", (q) =>
-              q.eq("type", targetArticle.type).eq("status", "published"))
-            .order("desc").take(64),
-          ctx.db.query("articleCards")
-            .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-            .order("desc").take(32),
-        ])).flat().map((card) => [card._id, card])).values())
-      : await ctx.db
-          .query("articles")
-          .withIndex("by_status_publishedAt", (q) => q.eq("status", "published"))
-          .order("desc")
-          .take(64);
+    // Rank a bounded pool. Cards omit article bodies. One page of recent cards
+    // already contains every published article until the catalog passes 64.
+    const allPublishedArticles = await loadRelatedArticleCandidates(
+      ctx,
+      targetArticle.type,
+      useDerivedData,
+    );
 
     const targetRelations = buildArticleRelationIdSet(targetArticle);
     const targetTags = buildArticleTagSet(targetArticle);

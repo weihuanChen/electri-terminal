@@ -386,6 +386,28 @@ export default defineSchema({
     .index("by_categoryId_and_status_and_sortOrder", ["categoryId", "status", "sortOrder"])
     .index("by_familyId_and_status_and_sortOrder", ["familyId", "status", "sortOrder"]),
 
+  categoryFacetSummaries: defineTable({
+    categoryId: v.id("categories"),
+    groups: v.array(v.object({
+      id: v.string(),
+      label: v.string(),
+      type: v.union(v.literal("checkbox"), v.literal("radio")),
+      options: v.array(v.object({
+        label: v.string(),
+        value: v.string(),
+        count: v.number(),
+      })),
+    })),
+  }).index("by_categoryId", ["categoryId"]),
+
+  catalogStats: defineTable({
+    key: v.string(),
+    productCountByCategoryId: v.record(v.string(), v.number()),
+    familyCountByCategoryId: v.record(v.string(), v.number()),
+    productCountByFamilyId: v.record(v.string(), v.number()),
+    fallbackImageByCategoryId: v.record(v.string(), v.string()),
+  }).index("by_key", ["key"]),
+
   products: defineTable({
     productKey: v.optional(v.string()),
     seriesCode: v.optional(v.string()),
@@ -500,7 +522,12 @@ export default defineSchema({
   })
     .index("by_type", ["type"])
     .index("by_public", ["isPublic"])
-    .index("by_objectKey", ["objectKey"]),
+    .index("by_public_and_type", ["isPublic", "type"])
+    .index("by_objectKey", ["objectKey"])
+    .searchIndex("search_title", {
+      searchField: "title",
+      filterFields: ["isPublic", "type"],
+    }),
 
   assetRelations: defineTable({
     assetId: v.id("assets"),

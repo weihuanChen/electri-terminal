@@ -19,6 +19,12 @@ article bodies or every catalog document to answer a query. Suggestions come
 from those matches, and an empty query only reads a small set of visible
 categories, families, and featured products.
 
+Category filter counts are stored on `categoryFacetSummaries` and refreshed
+when a product or family changes. `/products` and `/llms.txt` read
+`catalogStats` instead of scanning every product for counts. Application
+articles, latest articles, and public resources use an ordered index and
+`take`. These summaries are rebuilt at the end of the product sitemap backfill.
+
 ## Rollout
 
 1. Configure `CONVEX_ADMIN_KEY`, then deploy the Next.js app and Convex

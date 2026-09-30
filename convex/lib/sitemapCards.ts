@@ -1,6 +1,17 @@
-import type { Doc } from "../_generated/dataModel";
+import type { Doc, Id } from "../_generated/dataModel";
 import type { MutationCtx } from "../_generated/server";
+import { internal } from "../_generated/api";
+import { categoryPlacement, noteCatalogPlacement } from "./catalogStats";
 import { getFamilySearchText, getRelatedSeriesRule } from "./relatedSeries";
+
+type SyncOptions = { deferAggregates?: boolean };
+
+type FacetGroup = {
+  id: string;
+  label: string;
+  type: "checkbox" | "radio";
+  options: Array<{ label: string; value: string; count: number }>;
+};
 
 type SitemapCard = Omit<Doc<"sitemapCards">, "_id" | "_creationTime">;
 
@@ -35,10 +46,39 @@ async function upsert(ctx: MutationCtx, card: SitemapCard) {
   }
 }
 
+async function refreshCategoryFacetSummary(ctx: MutationCtx, categoryId: Id<"categories">) {
+  const groups: FacetGroup[] = await ctx.runQuery(internal.frontend.computeCategoryFilters, {
+    categoryId,
+  });
+  const current = await ctx.db.query("categoryFacetSummaries")
+    .withIndex("by_categoryId", (q) => q.eq("categoryId", categoryId))
+    .unique();
+  if (current) await ctx.db.replace(current._id, { categoryId, groups });
+  else await ctx.db.insert("categoryFacetSummaries", { categoryId, groups });
+}
+
+export async function refreshAllCategoryFacetSummaries(ctx: MutationCtx) {
+  for await (const category of ctx.db.query("categories")) {
+    await refreshCategoryFacetSummary(ctx, category._id);
+  }
+}
+
 export async function removeSitemapCard(ctx: MutationCtx, sourceId: string) {
   const current = await ctx.db.query("sitemapCards")
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
     .unique();
+  const productList = await ctx.db.query("productListCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
+    .unique();
+  if (productList?.status === "published") {
+    await noteCatalogPlacement(ctx, {
+      categoryId: String(productList.categoryId),
+      familyId: String(productList.familyId),
+      status: productList.status,
+    }, null, "product");
+  } else if (current?.entityType === "family" && current.status === "published" && current.categoryId) {
+    await noteCatalogPlacement(ctx, categoryPlacement(current.categoryId, current.status), null, "family");
+  }
   if (current) await ctx.db.delete(current._id);
   const productFacet = await ctx.db.query("productFacetCards")
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
@@ -48,10 +88,12 @@ export async function removeSitemapCard(ctx: MutationCtx, sourceId: string) {
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
     .unique();
   if (familyFacet) await ctx.db.delete(familyFacet._id);
-  const productList = await ctx.db.query("productListCards")
+  const listed = await ctx.db.query("productListCards")
     .withIndex("by_sourceId", (q) => q.eq("sourceId", sourceId))
     .unique();
-  if (productList) await ctx.db.delete(productList._id);
+  if (listed) await ctx.db.delete(listed._id);
+  const categoryId = productList?.categoryId ?? current?.categoryId;
+  if (categoryId) await refreshCategoryFacetSummary(ctx, categoryId);
 }
 
 export async function syncCategorySitemapCard(ctx: MutationCtx, category: Doc<"categories">) {
@@ -66,7 +108,14 @@ export async function syncCategorySitemapCard(ctx: MutationCtx, category: Doc<"c
   });
 }
 
-export async function syncFamilySitemapCard(ctx: MutationCtx, family: Doc<"productFamilies">) {
+export async function syncFamilySitemapCard(
+  ctx: MutationCtx,
+  family: Doc<"productFamilies">,
+  options?: SyncOptions,
+) {
+  const previous = await ctx.db.query("sitemapCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", String(family._id)))
+    .unique();
   const mediaItems = collectImages(
     family.manualHeroImage ?? family.heroImage,
     family.mediaItems,
@@ -101,9 +150,32 @@ export async function syncFamilySitemapCard(ctx: MutationCtx, family: Doc<"produ
   };
   if (facet) await ctx.db.replace(facet._id, facetData);
   else await ctx.db.insert("familyFacetCards", facetData);
+  if (!options?.deferAggregates) {
+    await noteCatalogPlacement(
+      ctx,
+      previous?.categoryId ? categoryPlacement(previous.categoryId, previous.status) : null,
+      categoryPlacement(
+        family.categoryId,
+        family.status,
+        family.manualHeroImage ?? family.heroImage ?? family.gallery?.[0],
+      ),
+      "family",
+    );
+    await refreshCategoryFacetSummary(ctx, family.categoryId);
+    if (previous?.categoryId && previous.categoryId !== family.categoryId) {
+      await refreshCategoryFacetSummary(ctx, previous.categoryId);
+    }
+  }
 }
 
-export async function syncProductSitemapCard(ctx: MutationCtx, product: Doc<"products">) {
+export async function syncProductSitemapCard(
+  ctx: MutationCtx,
+  product: Doc<"products">,
+  options?: SyncOptions,
+) {
+  const previousList = await ctx.db.query("productListCards")
+    .withIndex("by_sourceId", (q) => q.eq("sourceId", String(product._id)))
+    .unique();
   await upsert(ctx, {
     sourceId: String(product._id),
     entityType: "product",
@@ -145,9 +217,28 @@ export async function syncProductSitemapCard(ctx: MutationCtx, product: Doc<"pro
     moq: product.moq,
     leadTime: product.leadTime,
   };
-  const currentList = await ctx.db.query("productListCards")
-    .withIndex("by_sourceId", (q) => q.eq("sourceId", listCard.sourceId))
-    .unique();
-  if (currentList) await ctx.db.replace(currentList._id, listCard);
+  if (previousList) await ctx.db.replace(previousList._id, listCard);
   else await ctx.db.insert("productListCards", listCard);
+  if (!options?.deferAggregates) {
+    await noteCatalogPlacement(
+      ctx,
+      previousList
+        ? {
+            categoryId: String(previousList.categoryId),
+            familyId: String(previousList.familyId),
+            status: previousList.status,
+          }
+        : null,
+      {
+        categoryId: String(product.categoryId),
+        familyId: String(product.familyId),
+        status: product.status,
+      },
+      "product",
+    );
+    await refreshCategoryFacetSummary(ctx, product.categoryId);
+    if (previousList && previousList.categoryId !== product.categoryId) {
+      await refreshCategoryFacetSummary(ctx, previousList.categoryId);
+    }
+  }
 }
