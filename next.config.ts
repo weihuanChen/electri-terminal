@@ -59,6 +59,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Assets are already WebP on R2, Unsplash, or local files. Skip Vercel
+    // image transformations, cache reads, and cache writes.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
