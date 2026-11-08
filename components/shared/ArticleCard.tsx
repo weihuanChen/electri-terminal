@@ -54,7 +54,7 @@ export default function ArticleCard({
 
       <div className="p-6">
         {type && (
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold mb-3 uppercase">
+          <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-control text-xs font-semibold mb-3 uppercase">
             {type}
           </span>
         )}
@@ -86,7 +86,7 @@ export default function ArticleCard({
               {categoryNames.slice(0, 2).map((category) => (
                 <span
                   key={category}
-                  className="px-2 py-1 bg-muted rounded text-xs"
+                  className="px-2 py-1 bg-muted rounded-control text-xs"
                 >
                   {category}
                 </span>

@@ -14,7 +14,7 @@ export default function ManufacturingSection() {
 
                 <div className="mt-12 space-y-8">
                     {/* Focal Point: Massive Factory Photo */}
-                    <div className="relative w-full h-[500px] md:h-[600px] rounded-sm overflow-hidden bg-slate-800 shadow-2xl">
+                    <div className="relative w-full h-[500px] md:h-[600px] rounded-card overflow-hidden bg-slate-800 shadow-2xl">
                         <Image
                             src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop"
                             alt="Industrial Factory Facility"
@@ -34,7 +34,7 @@ export default function ManufacturingSection() {
 
                     {/* Supporting Images */}
                     <div className="grid md:grid-cols-3 gap-6">
-                        <div className="relative h-64 rounded-sm overflow-hidden bg-slate-800 group">
+                        <div className="relative h-64 rounded-card overflow-hidden bg-slate-800 group">
                             <Image
                                 src="https://images.unsplash.com/photo-1565514020179-026b92b647bf?q=80&w=2070&auto=format&fit=crop"
                                 alt="Automated CNC Machining"
@@ -45,7 +45,7 @@ export default function ManufacturingSection() {
                                 <h4 className="font-bold text-white text-lg">Automated Production</h4>
                             </div>
                         </div>
-                        <div className="relative h-64 rounded-sm overflow-hidden bg-slate-800 group">
+                        <div className="relative h-64 rounded-card overflow-hidden bg-slate-800 group">
                             <Image
                                 src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop"
                                 alt="Precision Assembly Line"
@@ -56,7 +56,7 @@ export default function ManufacturingSection() {
                                 <h4 className="font-bold text-white text-lg">Integrated Assembly</h4>
                             </div>
                         </div>
-                        <div className="relative h-64 rounded-sm overflow-hidden bg-slate-800 group">
+                        <div className="relative h-64 rounded-card overflow-hidden bg-slate-800 group">
                             <Image
                                 src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop"
                                 alt="Smart Logistics Warehouse"

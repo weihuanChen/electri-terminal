@@ -11,15 +11,15 @@ interface ULListedCardProps {
 
 export default function ULListedCard({ listing }: ULListedCardProps) {
   return (
-    <article className="overflow-hidden rounded-[3px] border border-slate-200 bg-[#FFFFFF] text-[#0F172A] shadow-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white">
+    <article className="overflow-hidden rounded-card border border-slate-200 bg-[#FFFFFF] text-[#0F172A] shadow-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white">
       <div className="grid gap-0 lg:grid-cols-[0.42fr_0.58fr]">
         <div className="border-b border-slate-200 bg-[#F8FAFC] p-6 lg:border-b-0 lg:border-r dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-full min-h-[280px] flex-col justify-between rounded-sm border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-950">
+          <div className="flex h-full min-h-[280px] flex-col justify-between rounded-card border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-950">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] dark:text-slate-400">
                 UL Listing Reference
               </p>
-              <div className="mt-4 flex h-14 w-14 items-center justify-center rounded-sm border border-slate-200 bg-[#F8FAFC] text-[#1E293B] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+              <div className="mt-4 flex h-14 w-14 items-center justify-center rounded-control border border-slate-200 bg-[#F8FAFC] text-[#1E293B] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
                 <Database className="h-6 w-6" />
               </div>
               <h3 className="mt-5 text-2xl font-bold tracking-[-0.01em] text-[#0F172A] dark:text-white">
@@ -30,7 +30,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
               </p>
             </div>
 
-            <div className="mt-6 rounded-sm border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-900/60 dark:bg-slate-900">
+            <div className="mt-6 rounded-card border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-900/60 dark:bg-slate-900">
               <div className="flex items-start gap-3">
                 <Search className="mt-0.5 h-4 w-4 flex-none text-blue-700 dark:text-blue-300" />
                 <p className="text-sm leading-6 text-[#475569] dark:text-slate-300">
@@ -47,7 +47,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
           </p>
 
           <div className="mt-3 flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-sm border border-slate-200 bg-[#F8FAFC] text-[#1E293B] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+            <div className="flex h-11 w-11 items-center justify-center rounded-control border border-slate-200 bg-[#F8FAFC] text-[#1E293B] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
               <BadgeCheck className="h-5 w-5" />
             </div>
             <div className="min-w-0">
@@ -96,7 +96,7 @@ export default function ULListedCard({ listing }: ULListedCardProps) {
             ))}
           </ul>
 
-          <div className="mt-6 rounded-sm border border-slate-200 bg-[#F8FAFC] px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
+          <div className="mt-6 rounded-card border border-slate-200 bg-[#F8FAFC] px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
             <p className="whitespace-pre-line text-sm leading-6 text-[#475569] dark:text-slate-300">
               {listing.supportText}
             </p>

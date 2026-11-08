@@ -169,7 +169,7 @@ function RelatedSeriesSection({
             <Link
               key={item._id}
               href={familyUrl(item.slug, urlOptions)}
-              className="group relative min-h-[190px] overflow-hidden rounded-sm border border-border bg-white p-4 transition-colors hover:border-primary dark:bg-slate-900"
+              className="group relative min-h-[190px] overflow-hidden rounded-card border border-border bg-white p-4 transition-colors hover:border-primary dark:bg-slate-900"
             >
               {item.image && (
                 <div
@@ -180,7 +180,7 @@ function RelatedSeriesSection({
               )}
               <div className="relative flex h-full flex-col">
                 <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="inline-flex min-h-8 items-center rounded-sm border border-border bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-secondary">
+                  <span className="inline-flex min-h-8 items-center rounded-control border border-border bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-secondary">
                     {item.relationLabel}
                   </span>
                   {index < items.length - 1 && (
@@ -273,7 +273,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
         <div className="container">
           <div className="grid grid-cols-1 gap-8 md:gap-12 lg:grid-cols-2">
             <div className="space-y-3">
-              <div className="rounded-sm border border-border bg-white p-2 sm:p-4 md:p-5">
+              <div className="rounded-card border border-border bg-white p-2 sm:p-4 md:p-5">
                 <ImageGallery
                   images={visualMediaItems.map((item) => ({
                     url: item.url,
@@ -289,7 +289,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
               />
             </div>
 
-            <div className="rounded-sm border border-border bg-white p-4 md:p-8">
+            <div className="rounded-card border border-border bg-white p-4 md:p-8">
               {(product.skuCode || product.model) && (
                 <p className="mb-2 break-all text-xs text-secondary md:text-sm">
                   {product.skuCode || product.model}
@@ -317,7 +317,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
                           {item.values.map((value) => (
                             <span
                               key={value}
-                              className="inline-flex min-h-8 items-center rounded-sm border border-border bg-muted px-2.5 py-1 text-sm font-semibold leading-5 text-foreground"
+                              className="inline-flex min-h-8 items-center rounded-control border border-border bg-muted px-2.5 py-1 text-sm font-semibold leading-5 text-foreground"
                             >
                               {value}
                             </span>
@@ -357,7 +357,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
               {(() => { const pack = product.variants?.map((v) => v.attributes?.pcs_per_pack).find((v) => typeof v === "number"); return typeof pack === "number" ? <div className="mt-2 text-sm text-secondary"><strong>Standard pack:</strong> {pack} pcs</div> : null; })()}
 
               {product.packageInfo && (
-                <div className="mt-6 rounded-sm border border-border bg-muted px-3 py-2 text-sm text-secondary">
+                <div className="mt-6 rounded-card border border-border bg-muted px-3 py-2 text-sm text-secondary">
                   <strong>{t("packaging")}:</strong> {product.packageInfo}
                 </div>
               )}
@@ -368,34 +368,34 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
             <div className="overflow-x-auto pb-1">
               <div className="flex min-w-max gap-2">
                 {showProductOverview && (
-                  <a href="#product-overview" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#product-overview" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("overview")}
                   </a>
                 )}
                 {hasRelatedSeries && (
-                  <a href="#related-series" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#related-series" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("series")}
                   </a>
                 )}
 
                 {hasVariants && (
-                  <a href="#variant-matrix" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#variant-matrix" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("variants")}
                   </a>
                 )}
                 {hasResources && (
-                  <a href="#documentation" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#documentation" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("docs")}
                   </a>
                 )}
 
                 {showFaq && (
-                  <a href="#technical-faq" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#technical-faq" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("faq")}
                   </a>
                 )}
                 {showInquiry && (
-                  <a href="#inquiry-form" className="rounded-sm border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
+                  <a href="#inquiry-form" className="rounded-control border border-border bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-primary">
                     {t("quote")}
                   </a>
                 )}

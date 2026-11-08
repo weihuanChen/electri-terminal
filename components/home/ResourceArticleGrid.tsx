@@ -69,7 +69,7 @@ export default function ResourceArticleGrid({
                 {/* Category & Meta */}
                 <div className="flex items-center gap-3 text-xs text-secondary mb-3">
                   {article.category && (
-                    <span className="px-2 py-1 bg-primary/10 text-primary rounded">
+                    <span className="px-2 py-1 bg-primary/10 text-primary rounded-control">
                       {article.category}
                     </span>
                   )}

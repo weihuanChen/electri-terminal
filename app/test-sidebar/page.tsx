@@ -15,7 +15,7 @@ export default function TestSidebarPage() {
                     {/* Variant 1: Category Page Sidebar */}
                     <div>
                         <div className="mb-4">
-                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full mb-2">
+                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-control mb-2">
                                 Category Page
                             </span>
                             <h2 className="text-lg font-semibold text-gray-900">Terminal Blocks Category</h2>
@@ -27,7 +27,7 @@ export default function TestSidebarPage() {
                     {/* Variant 2: Subcategory Page Sidebar */}
                     <div>
                         <div className="mb-4">
-                            <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full mb-2">
+                            <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-control mb-2">
                                 Subcategory Page
                             </span>
                             <h2 className="text-lg font-semibold text-gray-900">Push-in Terminal Blocks</h2>
@@ -39,7 +39,7 @@ export default function TestSidebarPage() {
                     {/* Variant 3: Product Detail Page Sidebar */}
                     <div>
                         <div className="mb-4">
-                            <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full mb-2">
+                            <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-control mb-2">
                                 Product Detail Page
                             </span>
                             <h2 className="text-lg font-semibold text-gray-900">UK-2.5 Product</h2>
@@ -54,7 +54,7 @@ export default function TestSidebarPage() {
                     {/* Category Page Example */}
                     <div className="bg-white border border-gray-300 p-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Page Usage</h3>
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-card overflow-x-auto text-sm">
 {`import { CategoryPageSidebar } from "@/components/shared/TechnicalSidebar";
 
 export default function CategoryPage() {
@@ -76,7 +76,7 @@ export default function CategoryPage() {
                     {/* Subcategory Page Example */}
                     <div className="bg-white border border-gray-300 p-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Subcategory Page Usage</h3>
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-card overflow-x-auto text-sm">
 {`import { SubcategoryPageSidebar } from "@/components/shared/TechnicalSidebar";
 
 export default function SubcategoryPage() {
@@ -98,7 +98,7 @@ export default function SubcategoryPage() {
                     {/* Product Detail Page Example */}
                     <div className="bg-white border border-gray-300 p-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Detail Page Usage</h3>
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-card overflow-x-auto text-sm">
 {`import { ProductDetailSidebar } from "@/components/shared/TechnicalSidebar";
 
 export default function ProductPage() {

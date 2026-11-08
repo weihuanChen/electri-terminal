@@ -32,7 +32,7 @@ export default function ResourceNav({ activeType, onTypeChange }: ResourceNavPro
             key={type.id}
             onClick={() => onTypeChange(type.id)}
             className={`
-              inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
+              inline-flex items-center gap-2 px-4 py-2 rounded-control font-medium transition-all
               ${
                 isActive
                   ? "bg-primary text-white shadow-md"

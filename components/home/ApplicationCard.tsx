@@ -19,7 +19,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
   return (
     <Link
       href={articleUrl(application.slug)}
-      className="group block relative h-96 w-full rounded-sm overflow-hidden bg-slate-900 shadow-sm hover:shadow-lg transition-shadow duration-300"
+      className="group block relative h-80 sm:h-96 w-full rounded-card overflow-hidden bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
     >
       {/* Background Image */}
       {application.image ? (
@@ -28,38 +28,40 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
           alt={application.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 58vw"
         />
       ) : (
         <div className="absolute inset-0 bg-slate-800" />
       )}
 
-      {/* Heavy Gradient Overlay for Text Readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent transition-opacity duration-300" />
+      {/* Smooth Gradient Overlay for Text Readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/45 to-transparent transition-opacity duration-300" />
 
       {/* Content */}
-      <div className="absolute inset-0 p-6 flex flex-col justify-end">
+      <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
         {/* Top Product Count Badge */}
         {application.productCount !== undefined && (
-          <div className="absolute top-6 right-6">
-            <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-sm shadow-sm">
+          <div className="absolute top-5 right-5">
+            <span className="bg-slate-950/55 backdrop-blur-md border border-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-control shadow-xs">
               {application.productCount} Related Models
             </span>
           </div>
         )}
 
         {/* Text Block */}
-        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <h3 className="text-xl font-black text-white mb-2 drop-shadow-md">
+        <div>
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2.5 tracking-tight">
             {application.title}
           </h3>
 
-          <p className="text-sm text-slate-300 line-clamp-2 mb-4 drop-shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-            {application.description}
-          </p>
+          {application.description && (
+            <p className="text-sm text-slate-200/90 line-clamp-2 mb-4 leading-relaxed max-w-xl">
+              {application.description}
+            </p>
+          )}
 
-          <div className="flex items-center text-sm font-bold text-primary group-hover:text-white transition-colors">
-            View Article
+          <div className="inline-flex items-center text-sm font-semibold text-orange-300 group-hover:text-white transition-colors">
+            Explore Application
             <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
           </div>
         </div>

@@ -136,7 +136,7 @@ export default function ResourcesPageClient({
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Search available documents..."
-                  className="w-full pl-12 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full pl-12 pr-4 py-3 border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                 />
               </div>
             </div>

@@ -7,6 +7,7 @@ import LazyToaster from "@/components/providers/LazyToaster";
 import RouteAwareAnalytics from "@/components/providers/RouteAwareAnalytics";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FloatingContact from "@/components/layout/FloatingContact";
 import JsonLd from "@/components/seo/JsonLd";
 import { makeOrganizationSchema, makeWebsiteSchema } from "@/lib/schema";
 import { getSiteUrl } from "@/lib/site"; // Force HMR
@@ -56,6 +57,7 @@ export default async function RootLayout({
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
+            <FloatingContact />
           </ConvexClientProvider>
           <LazyToaster />
           <RouteAwareAnalytics />

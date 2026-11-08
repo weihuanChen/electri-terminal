@@ -89,7 +89,7 @@ export default function CertificationSection({
           align="center"
         />
 
-        <div className="mt-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl rounded-sm overflow-hidden">
+        <div className="mt-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl rounded-card overflow-hidden">
           <div className="grid lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-slate-800">
 
             {/* Left: Wall of Certifications (Large Photos) */}
@@ -102,7 +102,7 @@ export default function CertificationSection({
               <div className="grid sm:grid-cols-2 gap-6">
                 {displayCertifications.map((cert, index) => (
                   <div key={index} className="group relative">
-                    <div className="relative w-full aspect-[4/3] rounded-sm overflow-hidden bg-slate-800 border-4 border-slate-100 dark:border-slate-800 shadow-md">
+                    <div className="relative w-full aspect-[4/3] rounded-card overflow-hidden bg-slate-800 border-4 border-slate-100 dark:border-slate-800 shadow-md">
                       <Image
                         src={cert.image || ""}
                         alt={cert.name}
@@ -137,7 +137,7 @@ export default function CertificationSection({
                 {displayDownloads.map((download, index) => (
                   <div
                     key={index}
-                    className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm p-5 hover:border-primary transition-colors shadow-sm"
+                    className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-card p-5 hover:border-primary transition-colors shadow-sm"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -162,7 +162,7 @@ export default function CertificationSection({
                       </div>
                       <Link
                         href={download.fileUrl || contactUrl()}
-                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-sm bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-primary"
+                        className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-control bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 group-hover:bg-primary group-hover:text-white transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-primary"
                         aria-label={`Request ${download.title}`}
                       >
                         <Download className="w-5 h-5" />

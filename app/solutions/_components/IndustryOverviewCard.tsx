@@ -12,7 +12,7 @@ export default function IndustryOverviewCard({ industry }: IndustryOverviewCardP
   return (
     <Link
       href={`#${industry.slug}`}
-      className="group flex flex-col overflow-hidden rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-shadow hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-shadow hover:shadow-md"
     >
       <div
         className="relative aspect-[16/10] bg-[#EEF2F6] dark:bg-slate-800"

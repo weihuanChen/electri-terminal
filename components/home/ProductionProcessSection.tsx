@@ -47,7 +47,7 @@ export default function ProductionProcessSection() {
                     {steps.map((step, index) => (
                         <div key={index} className="relative z-10 flex flex-col items-center group w-full lg:w-[18%] mb-12 lg:mb-0">
                             {/* Photo Node */}
-                            <div className="relative w-48 h-48 sm:w-full sm:h-52 rounded-sm overflow-hidden bg-white dark:bg-slate-800 border-4 border-white dark:border-slate-800 shadow-md group-hover:border-primary transition-colors duration-300">
+                            <div className="relative w-48 h-48 sm:w-full sm:h-52 rounded-card overflow-hidden bg-white dark:bg-slate-800 border-4 border-white dark:border-slate-800 shadow-md group-hover:border-primary transition-colors duration-300">
                                 <Image
                                     src={step.image}
                                     alt={step.title}

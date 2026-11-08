@@ -40,14 +40,15 @@ export default function CategoryGrid({
     <section className="section bg-white dark:bg-slate-900">
       <div className="container">
         <SectionHeader
+          eyebrow="Core Product Lines"
           title={title}
           subtitle={subtitle}
           showViewAll={showViewAll}
           viewAllHref={viewAllHref}
-          align="center"
+          align="left"
         />
 
-        <div className={`grid ${gridCols[columns]} gap-6 md:gap-8`}>
+        <div className={`grid ${gridCols[columns]} gap-6 md:gap-7`}>
           {categories.slice(0, columns).map((category) => (
             <CategoryCard
               key={category._id}

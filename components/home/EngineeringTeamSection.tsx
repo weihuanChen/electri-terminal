@@ -42,7 +42,7 @@ export default function EngineeringTeamSection() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                     {teamMembers.map((member, index) => (
                         <div key={index} className="group">
-                            <div className="relative w-full aspect-[4/5] rounded-sm overflow-hidden bg-slate-100 dark:bg-slate-800 mb-5">
+                            <div className="relative w-full aspect-[4/5] rounded-card overflow-hidden bg-slate-100 dark:bg-slate-800 mb-5">
                                 <Image
                                     src={member.image}
                                     alt={member.name}

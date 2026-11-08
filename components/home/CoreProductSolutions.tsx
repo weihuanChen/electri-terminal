@@ -77,9 +77,9 @@ export default function CoreProductSolutions({ solutions }: CoreProductSolutions
                             {/* Image Content */}
                             <div className="flex-1 w-full relative">
                                 {/* Decorative background element */}
-                                <div className={`absolute -inset-4 bg-slate-100 dark:bg-slate-900 rounded-sm transform ${isImageRight ? '-rotate-2' : 'rotate-2'} -z-10 transition-transform duration-500 hover:rotate-0`}></div>
+                                <div className={`absolute -inset-4 bg-slate-100 dark:bg-slate-900 rounded-card transform ${isImageRight ? '-rotate-2' : 'rotate-2'} -z-10 transition-transform duration-500 hover:rotate-0`}></div>
 
-                                <div className="relative aspect-[4/3] w-full rounded-sm overflow-hidden border-4 border-slate-50 dark:border-slate-800 shadow-xl bg-slate-200 dark:bg-slate-800">
+                                <div className="relative aspect-[4/3] w-full rounded-card overflow-hidden border-4 border-slate-50 dark:border-slate-800 shadow-xl bg-slate-200 dark:bg-slate-800">
                                     <Image
                                         src={solution.image}
                                         alt={solution.title}

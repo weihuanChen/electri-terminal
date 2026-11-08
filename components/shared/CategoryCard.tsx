@@ -47,17 +47,17 @@ export default function CategoryCard({
   return (
     <Link
       href={categoryUrl(slug, locale ? { locale } : undefined)}
-      className="group flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary transition-all duration-300 rounded-sm overflow-hidden"
+      className="group flex flex-col h-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-primary/70 dark:hover:border-primary transition-all duration-300 rounded-card overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1"
     >
       {/* Full-bleed photo area */}
-      <div className="relative h-48 overflow-hidden border-b border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-800 sm:h-56">
+      <div className="relative h-48 overflow-hidden border-b border-slate-100 bg-slate-100/80 dark:border-slate-800/80 dark:bg-slate-800/60 sm:h-56">
         {image ? (
           <Image
             src={image}
             alt={name}
             fill
             unoptimized={shouldBypassNextImageOptimization(image)}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           />
         ) : iconImageSource ? (
@@ -66,7 +66,7 @@ export default function CategoryCard({
             alt={`${name} icon`}
             fill
             unoptimized={shouldBypassNextImageOptimization(iconImageSource)}
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           />
         ) : icon ? (
@@ -88,17 +88,19 @@ export default function CategoryCard({
           <h3 className="min-h-[3.25rem] pr-4 text-lg font-bold text-slate-900 transition-colors group-hover:text-primary dark:text-white sm:min-h-[3.5rem] sm:text-xl line-clamp-2">
             {name}
           </h3>
-          <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 mt-0.5" />
+          <span className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all group-hover:bg-primary/10 group-hover:text-primary dark:bg-slate-800 dark:text-slate-400">
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </span>
         </div>
 
         {description && (
-          <p className={`text-sm text-slate-600 dark:text-slate-400 mb-4 flex-grow leading-relaxed ${descriptionClampClass}`}>
+          <p className={`text-sm text-slate-600 dark:text-slate-400 mb-5 flex-grow leading-relaxed ${descriptionClampClass}`}>
             {description}
           </p>
         )}
 
         {showProductCount && productCount !== undefined && (
-          <div className="mt-auto inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 rounded-sm self-start">
+          <div className="mt-auto inline-flex items-center px-3 py-1 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 text-xs font-semibold text-slate-600 dark:text-slate-300 rounded-control self-start">
             {productCount} Series
           </div>
         )}

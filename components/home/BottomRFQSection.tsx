@@ -42,93 +42,106 @@ export default function BottomRFQSection({
   contactLinks,
 }: BottomRFQSectionProps) {
   return (
-    <section className="border-t border-border bg-white py-16 md:py-24">
+    <section className="py-16 md:py-24 bg-background">
       <div className="container">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* Clear Headline */}
-          <h2 className="mb-6 text-3xl font-semibold text-gray-900 md:text-4xl">
-            {title}
-          </h2>
+        <div className="relative overflow-hidden rounded-card bg-gradient-to-br from-slate-900 via-[#131C27] to-slate-950 text-white p-8 sm:p-12 lg:p-14 shadow-xl border border-slate-800/80">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.16),transparent_42%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.12),transparent_40%)]" />
 
-          {/* Short Supporting Description */}
-          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-gray-600">
-            {subtitle}
-          </p>
-
-          {/* Two Action Buttons */}
-          <div className="flex flex-wrap justify-center items-center gap-4 mb-12">
-            <Link
-              href={primaryCta.href}
-              className="btn btn-primary btn-lg gap-2"
-            >
-              {primaryCta.text}
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-
-            <Link
-              href={secondaryCta.href}
-              className="btn btn-secondary btn-lg gap-2"
-            >
-              <FileText className="h-5 w-5" />
-              {secondaryCta.text}
-            </Link>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="mx-auto grid max-w-3xl gap-6 border-t border-border pt-10 sm:grid-cols-2 lg:grid-cols-4">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-center sm:justify-start gap-3 text-sm text-gray-700"
-              >
-                <Check className="h-4 w-4 flex-shrink-0 text-accent" />
-                <span className="font-medium">{benefit}</span>
-              </div>
-            ))}
-          </div>
-
-          {contactLinks && contactLinks.length > 0 && (
-            <div className="mx-auto mt-8 max-w-3xl border-t border-border pt-8">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Direct Contact
+          <div className="relative z-10 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-orange-300">
+                Project Quotation & Support
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                {contactLinks.map((contact) => {
-                  if (!contact.href) {
-                    return (
-                      <div
-                        key={`${contact.label}-${contact.value}`}
-                        className="btn btn-outline cursor-default"
-                      >
-                        <span className="text-xs uppercase tracking-wide text-secondary">
-                          {contact.label}
-                        </span>
-                        <span className="font-medium text-foreground">{contact.value}</span>
-                      </div>
-                    );
-                  }
+              <h2 className="mb-4 text-3xl font-bold tracking-tight !text-white md:text-4xl leading-tight">
+                {title}
+              </h2>
+              <p className="mb-8 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-300">
+                {subtitle}
+              </p>
 
-                  const isExternal =
-                    contact.external === true || /^https?:\/\//.test(contact.href);
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href={primaryCta.href}
+                  className="btn btn-primary btn-lg gap-2"
+                >
+                  {primaryCta.text}
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
 
-                  return (
-                    <Link
-                      key={`${contact.label}-${contact.value}`}
-                      href={contact.href}
-                      className="btn btn-outline"
-                      target={isExternal ? "_blank" : undefined}
-                      rel={isExternal ? "noopener noreferrer" : undefined}
-                    >
-                      <span className="text-xs uppercase tracking-wide text-secondary">
-                        {contact.label}
-                      </span>
-                      <span className="font-medium text-foreground">{contact.value}</span>
-                    </Link>
-                  );
-                })}
+                <Link
+                  href={secondaryCta.href}
+                  className="btn btn-hero-secondary btn-lg gap-2"
+                >
+                  <FileText className="h-5 w-5" />
+                  {secondaryCta.text}
+                </Link>
               </div>
             </div>
-          )}
+
+            <div className="rounded-card border border-white/10 bg-white/[0.04] p-6 sm:p-7 backdrop-blur-xs space-y-6">
+              <div>
+                <p className="mb-3.5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  What You Can Expect
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                  {benefits.map((benefit, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 text-sm text-slate-200"
+                    >
+                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 text-accent">
+                        <Check className="h-3.5 w-3.5" />
+                      </span>
+                      <span className="font-medium leading-snug">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {contactLinks && contactLinks.length > 0 && (
+                <div className="border-t border-white/10 pt-5">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    Direct Channels
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {contactLinks.map((contact) => {
+                      if (!contact.href) {
+                        return (
+                          <div
+                            key={`${contact.label}-${contact.value}`}
+                            className="inline-flex items-center gap-2 rounded-control border border-white/15 bg-white/5 px-3 py-1.5 text-xs"
+                          >
+                            <span className="uppercase tracking-wider text-slate-400">
+                              {contact.label}:
+                            </span>
+                            <span className="font-medium text-white">{contact.value}</span>
+                          </div>
+                        );
+                      }
+
+                      const isExternal =
+                        contact.external === true || /^https?:\/\//.test(contact.href);
+
+                      return (
+                        <Link
+                          key={`${contact.label}-${contact.value}`}
+                          href={contact.href}
+                          className="inline-flex items-center gap-2 rounded-control border border-white/15 bg-white/5 hover:bg-white/12 hover:border-white/30 px-3 py-1.5 text-xs transition-colors"
+                          target={isExternal ? "_blank" : undefined}
+                          rel={isExternal ? "noopener noreferrer" : undefined}
+                        >
+                          <span className="uppercase tracking-wider text-slate-300">
+                            {contact.label}:
+                          </span>
+                          <span className="font-medium text-white">{contact.value}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

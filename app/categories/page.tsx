@@ -254,7 +254,7 @@ export default function CategoriesPage() {
         <div className="container relative py-12 md:py-20">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] lg:items-center">
             <div className="max-w-2xl">
-              <p className="mb-4 inline-flex items-center rounded-full border border-slate-500/70 bg-slate-700/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-200">
+              <p className="mb-4 inline-flex items-center rounded-control border border-slate-500/70 bg-slate-700/35 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-200">
                 Industrial Electrical Connection Systems
               </p>
               <h1
@@ -284,7 +284,7 @@ export default function CategoriesPage() {
                 ].map((tag) => (
                   <p
                     key={tag}
-                    className="inline-flex items-center gap-2 rounded-sm border border-white/15 bg-white/[0.045] px-3 py-2"
+                    className="inline-flex items-center gap-2 rounded-control border border-white/15 bg-white/[0.045] px-3 py-2"
                   >
                     <CheckCircle2 className="h-4 w-4 text-orange-300" aria-hidden="true" />
                     {tag}
@@ -299,7 +299,7 @@ export default function CategoriesPage() {
             </div>
 
             <div className="relative mx-auto w-full max-w-2xl lg:max-w-none">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-slate-500/45">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-slate-500/45">
                 <Image
                   src={HERO_IMAGE}
                   alt="Copper tube cutting manufacturing process"
@@ -308,7 +308,7 @@ export default function CategoriesPage() {
                   className="object-cover"
                   priority
                 />
-                <div className="absolute left-4 right-4 bottom-4 rounded-sm border border-slate-300/35 bg-slate-900/62 p-4 backdrop-blur-[2px]">
+                <div className="absolute left-4 right-4 bottom-4 rounded-card border border-slate-300/35 bg-slate-900/62 p-4 backdrop-blur-[2px]">
                   <p className="text-xs uppercase tracking-[0.12em] text-slate-200/90">
                     Manufacturing Insight
                   </p>
@@ -319,10 +319,10 @@ export default function CategoriesPage() {
                 </div>
               </div>
 
-              <div className="absolute -left-4 -top-4 hidden w-32 rounded-sm border border-blue-300/35 bg-[#102139]/88 p-3 text-xs text-slate-200/90 md:block">
+              <div className="absolute -left-4 -top-4 hidden w-32 rounded-card border border-blue-300/35 bg-[#102139]/88 p-3 text-xs text-slate-200/90 md:block">
                 Process Stability
               </div>
-              <div className="absolute -bottom-4 -right-4 hidden w-32 rounded-sm border border-orange-300/35 bg-[#2A1A0E]/90 p-3 text-xs text-orange-100/95 md:block">
+              <div className="absolute -bottom-4 -right-4 hidden w-32 rounded-card border border-orange-300/35 bg-[#2A1A0E]/90 p-3 text-xs text-orange-100/95 md:block">
                 Consistent Geometry
               </div>
             </div>
@@ -350,10 +350,10 @@ export default function CategoriesPage() {
             {coreSystemCards.map((card) => (
               <article
                 key={card.title}
-                className="group relative overflow-hidden rounded-sm border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-[0_16px_30px_rgba(30,64,175,0.16)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+                className="group relative overflow-hidden rounded-card border border-slate-200 bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-[0_16px_30px_rgba(30,64,175,0.16)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
               >
                 <div className="absolute right-0 top-0 h-20 w-20 bg-gradient-to-bl from-blue-100/70 to-transparent dark:from-blue-500/15" />
-                <div className="mb-4 inline-flex rounded-sm border border-slate-300 bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                <div className="mb-4 inline-flex rounded-control border border-slate-300 bg-slate-100 p-2 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                   {card.icon}
                 </div>
                 <h3 className="mb-3 text-xl font-semibold text-slate-900 dark:text-slate-100">{card.title}</h3>
@@ -362,7 +362,7 @@ export default function CategoriesPage() {
                   {card.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-sm border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                      className="rounded-control border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                     >
                       {tag}
                     </span>
@@ -404,7 +404,7 @@ export default function CategoriesPage() {
                 data-ga-event="category_open"
                 data-ga-param-navigation-level="product_type"
                 data-ga-param-category-name={item.name}
-                className="group rounded-sm border border-slate-200 bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-[0_10px_24px_rgba(30,64,175,0.12)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+                className="group rounded-card border border-slate-200 bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-[0_10px_24px_rgba(30,64,175,0.12)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
               >
                 <div className="mb-3 h-1.5 w-16 rounded-full bg-gradient-to-r from-blue-500 to-orange-500" />
                 <h3 className="mb-2 text-lg font-semibold text-slate-900 transition-colors group-hover:text-primary dark:text-slate-100">
@@ -424,7 +424,7 @@ export default function CategoriesPage() {
       <section className="section bg-[#0F1B2D] text-slate-100">
         <div className="container">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.06fr)_minmax(0,0.94fr)] lg:items-stretch">
-            <div className="relative overflow-hidden rounded-sm border border-slate-600/70 bg-slate-900/50 min-h-[320px]">
+            <div className="relative overflow-hidden rounded-card border border-slate-600/70 bg-slate-900/50 min-h-[320px]">
               <Image
                 src={MANUFACTURING_CAPABILITY_IMAGE}
                 alt="Terminal production quality inspection and weighing process"
@@ -433,7 +433,7 @@ export default function CategoriesPage() {
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#08111E]/82 via-[#08111E]/42 to-[#08111E]/20" />
-              <div className="absolute left-5 right-5 bottom-5 rounded-sm border border-slate-300/35 bg-slate-900/62 px-4 py-3">
+              <div className="absolute left-5 right-5 bottom-5 rounded-card border border-slate-300/35 bg-slate-900/62 px-4 py-3">
                 <p className="text-xs uppercase tracking-[0.12em] text-slate-200/90">
                   Why Choose Electri Terminal
                 </p>
@@ -444,7 +444,7 @@ export default function CategoriesPage() {
               </div>
             </div>
 
-            <div className="flex flex-col rounded-sm border border-slate-600/70 bg-slate-900/45 p-6 md:p-8">
+            <div className="flex flex-col rounded-card border border-slate-600/70 bg-slate-900/45 p-6 md:p-8">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">
                 Why Choose Electri Terminal
               </p>
@@ -459,10 +459,10 @@ export default function CategoriesPage() {
                 {whyChooseCards.map((item) => (
                   <article
                     key={item.title}
-                    className="rounded-sm border border-slate-600/70 bg-slate-800/45 p-4 transition-colors hover:border-slate-400/90"
+                    className="rounded-card border border-slate-600/70 bg-slate-800/45 p-4 transition-colors hover:border-slate-400/90"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 inline-flex rounded-sm border border-slate-500/60 bg-slate-700/55 p-2 text-orange-300">
+                      <div className="mt-0.5 inline-flex rounded-control border border-slate-500/60 bg-slate-700/55 p-2 text-orange-300">
                         {item.icon}
                       </div>
                       <div>
@@ -493,7 +493,7 @@ export default function CategoriesPage() {
             {technicalGuides.map((guide) => (
               <article
                 key={guide.title}
-                className="rounded-sm border border-slate-200 bg-white p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+                className="rounded-card border border-slate-200 bg-white p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
               >
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{guide.title}</h3>
                 <p className="mt-3 text-sm leading-7 text-secondary">{guide.description}</p>
@@ -512,7 +512,7 @@ export default function CategoriesPage() {
 
       <section className="section">
         <div className="container">
-          <div className="rounded-sm border border-slate-300 bg-gradient-to-br from-[#10233A] to-[#1A2D47] p-8 text-slate-100 md:p-12">
+          <div className="rounded-card border border-slate-300 bg-gradient-to-br from-[#10233A] to-[#1A2D47] p-8 text-slate-100 md:p-12">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-300">
               Project Support
             </p>
@@ -538,7 +538,7 @@ export default function CategoriesPage() {
       <section className="section-compact">
         <div className="container">
           <div className="mx-auto max-w-[840px]">
-            <details className="group rounded-sm border border-border bg-white p-5 md:p-6 dark:bg-slate-900">
+            <details className="group rounded-card border border-border bg-white p-5 md:p-6 dark:bg-slate-900">
               <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-[0.12em] text-secondary">
                 Read More: Electrical Connection Solutions
                 <span className="text-primary transition-transform duration-200 group-open:rotate-180">
@@ -564,7 +564,7 @@ export default function CategoriesPage() {
                     body: "Electrical terminals are widely used in industrial equipment, automotive systems, control panels, and power distribution applications.",
                   },
                 ].map((entry) => (
-                  <article key={entry.title} className="rounded-sm border border-border bg-muted p-4">
+                  <article key={entry.title} className="rounded-card border border-border bg-muted p-4">
                     <h3 className="mb-2 text-base font-semibold text-slate-900 dark:text-slate-100">{entry.title}</h3>
                     <p className="text-sm leading-7 text-secondary">{entry.body}</p>
                   </article>
@@ -578,7 +578,7 @@ export default function CategoriesPage() {
       {categories && categories.length === 0 && (
         <section className="section-compact">
           <div className="container">
-            <div className="rounded-sm border border-border bg-muted p-4 text-center">
+            <div className="rounded-card border border-border bg-muted p-4 text-center">
               <p className="text-sm text-secondary">
                 Live category data is temporarily unavailable. Structure and navigation remain ready
                 for selection flow.

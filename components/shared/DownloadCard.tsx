@@ -52,7 +52,7 @@ export default function DownloadCard({
         <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
             {previewImage ? (
-              <div className="relative h-20 w-20 overflow-hidden rounded-sm border border-border bg-muted">
+              <div className="relative h-20 w-20 overflow-hidden rounded-control border border-border bg-muted">
                 <Image
                   src={previewImage}
                   alt={title}
@@ -62,7 +62,7 @@ export default function DownloadCard({
                 />
               </div>
             ) : (
-              <div className={`flex h-20 w-20 items-center justify-center rounded-sm bg-muted ${config.color}`}>
+              <div className={`flex h-20 w-20 items-center justify-center rounded-control bg-muted ${config.color}`}>
                 <Icon className="h-10 w-10" />
               </div>
             )}
@@ -76,11 +76,11 @@ export default function DownloadCard({
                   {title}
                 </h3>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-secondary">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-muted">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-control bg-muted">
                     {config.label}
                   </span>
                   {language && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-muted">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-control bg-muted">
                       {language.toUpperCase()}
                     </span>
                   )}

@@ -143,7 +143,7 @@ export default function QualityCertificationsPage() {
                 {heroTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-sm border border-slate-600 bg-slate-900/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-slate-100"
+                    className="rounded-control border border-slate-600 bg-slate-900/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-slate-100"
                   >
                     {tag}
                   </span>
@@ -151,17 +151,17 @@ export default function QualityCertificationsPage() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-sm border border-slate-700 bg-slate-900 p-5 shadow-2xl md:p-6">
+            <div className="relative overflow-hidden rounded-card border border-slate-700 bg-slate-900 p-5 shadow-2xl md:p-6">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.22),_transparent_34%),radial-gradient(circle_at_bottom_left,_rgba(249,115,22,0.18),_transparent_36%)]" />
               <div className="relative grid gap-4 md:grid-cols-[1.12fr_0.88fr]">
-                <div className="rounded-sm border border-slate-700 bg-white p-3 shadow-lg">
-                  <div className="relative h-[330px] overflow-hidden rounded-sm border border-slate-200 bg-slate-50">
+                <div className="rounded-card border border-slate-700 bg-white p-3 shadow-lg">
+                  <div className="relative h-[330px] overflow-hidden rounded-card border border-slate-200 bg-slate-50">
                     <CertificateCardPreview />
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="rounded-sm border border-slate-700 bg-slate-950/80 p-4">
+                  <div className="rounded-card border border-slate-700 bg-slate-950/80 p-4">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
                       Compliance Planning Snapshot
                     </p>
@@ -181,7 +181,7 @@ export default function QualityCertificationsPage() {
 
                   <a
                     href="#gallery"
-                    className="group flex items-center justify-between rounded-sm border border-slate-700 bg-slate-900/90 px-4 py-4 text-sm font-semibold text-white transition hover:border-blue-500 hover:bg-slate-900"
+                    className="group flex items-center justify-between rounded-card border border-slate-700 bg-slate-900/90 px-4 py-4 text-sm font-semibold text-white transition hover:border-blue-500 hover:bg-slate-900"
                   >
                     Review documentation references
                     <ArrowDown className="h-4 w-4 transition group-hover:translate-y-0.5" />
@@ -217,7 +217,7 @@ export default function QualityCertificationsPage() {
                   key={item.title}
                   className="card card-hoverable h-full border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm hover:bg-[#F8FAFC]"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-sm border border-[#E2E8F0] bg-[#F8FAFC] text-[#475569]">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-control border border-[#E2E8F0] bg-[#F8FAFC] text-[#475569]">
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-5 text-xl font-semibold text-[#0F172A]">{item.title}</h3>
@@ -275,7 +275,7 @@ export default function QualityCertificationsPage() {
               </p>
             </div>
 
-            <div className="overflow-hidden rounded-sm border border-slate-200 bg-[#FFFFFF] text-[#1E293B] shadow-sm">
+            <div className="overflow-hidden rounded-card border border-slate-200 bg-[#FFFFFF] text-[#1E293B] shadow-sm">
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse">
                   <thead className="bg-[#F8FAFC]">
@@ -369,7 +369,7 @@ export default function QualityCertificationsPage() {
                     className="card h-full border-slate-200 bg-[#FFFFFF] p-6 shadow-sm transition hover:bg-[#F1F5F9]"
                   >
                     <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-sm border ${iconStyle}`}
+                      className={`flex h-11 w-11 items-center justify-center rounded-control border ${iconStyle}`}
                     >
                       <Icon className="h-5 w-5" />
                     </div>
@@ -406,7 +406,7 @@ export default function QualityCertificationsPage() {
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
-            <aside className="space-y-4 rounded-sm border border-slate-800 bg-slate-950/70 p-6">
+            <aside className="space-y-4 rounded-card border border-slate-800 bg-slate-950/70 p-6">
               <div className="flex items-start gap-3">
                 <CircleHelp className="mt-1 h-5 w-5 text-blue-400" />
                 <div>
@@ -419,7 +419,7 @@ export default function QualityCertificationsPage() {
                   </p>
                 </div>
               </div>
-              <div className="rounded-sm border border-slate-800 bg-slate-900 px-4 py-4">
+              <div className="rounded-card border border-slate-800 bg-slate-900 px-4 py-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
                   Typical requests
                 </p>
@@ -443,13 +443,13 @@ function CertificateCardPreview() {
   return (
     <div className="absolute inset-0 grid grid-rows-[1.15fr_0.85fr] bg-white">
       <div className="border-b border-slate-200 p-3">
-        <div className="h-full rounded-sm border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
+        <div className="h-full rounded-card border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-4">
           <div className="flex items-start justify-between">
             <div>
               <div className="h-2.5 w-28 rounded-full bg-blue-700" />
               <div className="mt-3 h-2 w-40 rounded-full bg-slate-300" />
             </div>
-            <div className="h-10 w-10 rounded-sm border border-slate-300" />
+            <div className="h-10 w-10 rounded-control border border-slate-300" />
           </div>
           <div className="mt-5 space-y-2">
             <div className="h-2 rounded-full bg-slate-200" />
@@ -457,13 +457,13 @@ function CertificateCardPreview() {
             <div className="h-2 w-5/6 rounded-full bg-slate-200" />
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="h-16 rounded-sm border border-slate-200 bg-slate-50" />
-            <div className="h-16 rounded-sm border border-slate-200 bg-slate-50" />
+            <div className="h-16 rounded-card border border-slate-200 bg-slate-50" />
+            <div className="h-16 rounded-card border border-slate-200 bg-slate-50" />
           </div>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 p-3">
-        <div className="rounded-sm border border-slate-200 bg-slate-50 p-3">
+        <div className="rounded-card border border-slate-200 bg-slate-50 p-3">
           <div className="h-2 w-16 rounded-full bg-orange-300" />
           <div className="mt-3 space-y-2">
             <div className="h-2 rounded-full bg-slate-200" />
@@ -471,7 +471,7 @@ function CertificateCardPreview() {
             <div className="h-2 w-2/3 rounded-full bg-slate-200" />
           </div>
         </div>
-        <div className="rounded-sm border border-slate-200 bg-slate-50 p-3">
+        <div className="rounded-card border border-slate-200 bg-slate-50 p-3">
           <div className="h-2 w-16 rounded-full bg-emerald-300" />
           <div className="mt-3 space-y-2">
             <div className="h-2 rounded-full bg-slate-200" />

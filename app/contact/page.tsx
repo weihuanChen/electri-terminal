@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   ClipboardCheck,
   FileText,
+  FileUp,
   Globe,
   Linkedin,
   Mail,
@@ -20,6 +21,7 @@ import {
   TestTube2,
   Truck,
   Trash2,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -48,6 +50,33 @@ const INITIAL_FORM_DATA = {
   phone: "",
   message: "",
 };
+
+type AttachmentField = "drawing" | "bom";
+type RFQAttachments = Record<AttachmentField, File | null>;
+
+const INITIAL_ATTACHMENTS: RFQAttachments = { drawing: null, bom: null };
+
+// Keep in sync with ATTACHMENT_CONFIGS / size limits in app/api/inquiries/route.ts
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+const ATTACHMENT_FIELDS: { field: AttachmentField; label: string; hint: string; accept: string }[] = [
+  {
+    field: "drawing",
+    label: "Drawing or Sample Photo",
+    hint: "PDF, DWG, DXF, STEP, IGES, JPG, PNG · max 10 MB",
+    accept: ".pdf,.dwg,.dxf,.step,.stp,.igs,.iges,.jpg,.jpeg,.png",
+  },
+  {
+    field: "bom",
+    label: "BOM or Part List",
+    hint: "XLSX, XLS, CSV, PDF · max 10 MB",
+    accept: ".xlsx,.xls,.csv,.pdf",
+  },
+];
+
+function formatFileSize(bytes: number) {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 const INITIAL_RFQ_ITEMS: RFQItem[] = [{ id: "1", productId: "", quantity: 1, quantityUnit: "unknown", notes: "" }];
 
@@ -165,6 +194,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [items, setItems] = useState<RFQItem[]>(INITIAL_RFQ_ITEMS);
+  const [attachments, setAttachments] = useState<RFQAttachments>(INITIAL_ATTACHMENTS);
 
   useEffect(() => {
     const syncModeFromHash = () => {
@@ -198,6 +228,14 @@ export default function ContactPage() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (field: AttachmentField, file: File | null) => {
+    if (file && file.size > MAX_ATTACHMENT_BYTES) {
+      toast.error("Each file must be 10 MB or smaller. For larger files, send them by email.");
+      return;
+    }
+    setAttachments((prev) => ({ ...prev, [field]: file }));
   };
 
   const handleItemChange = (id: string, field: keyof RFQItem, value: string | number) => {
@@ -247,28 +285,50 @@ export default function ContactPage() {
       }))
       .filter((item) => item.productId.length > 0);
 
-    if (isRfqMode && validItems.length === 0) {
-      toast.error("Please add at least one product or item number.");
+    const hasAttachments = isRfqMode && Boolean(attachments.drawing || attachments.bom);
+
+    if (isRfqMode && validItems.length === 0 && !hasAttachments) {
+      toast.error("Please attach a drawing or add at least one part / item number.");
       return;
     }
 
+    const rfqItems = isRfqMode
+      ? validItems.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          quantityUnit: item.quantityUnit,
+          notes: item.notes || undefined,
+        }))
+      : undefined;
+    // Keep the query string (e.g. ?source=blog&article=...) so inquiries show which page sent the buyer.
+    const sourcePage = `${window.location.pathname}${window.location.search}${isRfqMode ? "#request-quote" : ""}`.slice(0, 260); // API limit
+
     try {
       setIsSubmitting(true);
-      await submitPublicInquiry({
-        type: inquiryMode,
-        ...formData,
-        message: trimmedMessage || undefined,
-        replyTo: formData.email,
-        items: isRfqMode
-          ? validItems.map((item) => ({
-              productId: item.productId,
-              quantity: item.quantity,
-              quantityUnit: item.quantityUnit,
-              notes: item.notes || undefined,
-            }))
-          : undefined,
-        sourcePage: `${window.location.pathname}${isRfqMode ? "#request-quote" : ""}`,
-      });
+      if (hasAttachments) {
+        // Multipart so the API can forward drawings/BOM as email attachments.
+        const payload = new FormData();
+        payload.append("type", inquiryMode);
+        (Object.keys(formData) as (keyof typeof formData)[]).forEach((key) => {
+          const value = key === "message" ? trimmedMessage : formData[key].trim();
+          if (value) payload.append(key, value);
+        });
+        payload.append("replyTo", formData.email);
+        payload.append("sourcePage", sourcePage);
+        if (rfqItems && rfqItems.length > 0) payload.append("items", JSON.stringify(rfqItems));
+        if (attachments.drawing) payload.append("drawing", attachments.drawing);
+        if (attachments.bom) payload.append("bom", attachments.bom);
+        await submitPublicInquiry(payload);
+      } else {
+        await submitPublicInquiry({
+          type: inquiryMode,
+          ...formData,
+          message: trimmedMessage || undefined,
+          replyTo: formData.email,
+          items: rfqItems,
+          sourcePage,
+        });
+      }
 
       toast.success(
         isRfqMode
@@ -277,6 +337,7 @@ export default function ContactPage() {
       );
       setFormData(INITIAL_FORM_DATA);
       setItems(INITIAL_RFQ_ITEMS);
+      setAttachments(INITIAL_ATTACHMENTS);
     } catch (error) {
       console.error("Failed to submit inquiry:", error);
       const message =
@@ -343,40 +404,55 @@ export default function ContactPage() {
 
   return (
     <>
-      <div className="bg-slate-50 dark:bg-slate-900/40 border-b border-border transition-colors duration-300">
+      <div className="bg-slate-50/80 dark:bg-slate-900/40 border-b border-border-light transition-colors duration-300">
         <div className="container">
           <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
 
-      <section className="pt-16 pb-20 transition-colors duration-300">
-        <div className="container">
-          <div className="max-w-4xl mx-auto space-y-20">
-            {/* Hero */}
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-semibold mb-6 text-slate-950 dark:text-slate-50 transition-colors duration-300">Contact Us</h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto transition-colors duration-300">
-                Reach our sales and engineering team through one page. Send a general inquiry or
-                switch to the quote workflow for pricing, MOQ, and lead-time review.
-              </p>
-            </div>
+      <section className="pt-12 pb-20 md:pt-16 md:pb-28 bg-gradient-to-b from-slate-50/50 via-white to-white dark:from-slate-950 dark:via-slate-950 dark:to-slate-950 transition-colors duration-300">
+        <div className="container space-y-20 md:space-y-24">
+          {/* Editorial Hero */}
+          <div className="max-w-3xl">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-primary">
+              Sales & Engineering Desk
+            </p>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-5 text-slate-950 dark:text-slate-50 transition-colors duration-300">
+              Contact Us
+            </h1>
+            <p className="text-base md:text-lg leading-relaxed text-slate-600 dark:text-slate-400 transition-colors duration-300">
+              Reach our sales and engineering team through one workspace. Send a general inquiry or
+              switch to the quote workflow for pricing, MOQ, and lead-time review.
+            </p>
+          </div>
 
-            {/* Switch & Form Container */}
-            <div id="request-quote" className="scroll-mt-28 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm transition-colors duration-300">
-              <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800 space-y-6 transition-colors duration-300">
-                <div>
-                  <h2 className="text-2xl font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">{formTitle}</h2>
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">{formDescription}</p>
+          {/* Asymmetric 2-Column Workspace: Form (Left) + Companion Sidebar (Right) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            {/* Main Form Column */}
+            <div
+              id="request-quote"
+              className="lg:col-span-7 xl:col-span-8 scroll-mt-28 rounded-card border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm overflow-hidden transition-colors duration-300"
+            >
+              <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-50/80 via-white to-white dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950 border-b border-slate-100 dark:border-slate-800/80 space-y-6 transition-colors duration-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-slate-50 transition-colors duration-300">
+                      {formTitle}
+                    </h2>
+                    <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400 max-w-xl transition-colors duration-300">
+                      {formDescription}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="inline-flex flex-wrap bg-slate-100 dark:bg-slate-900/50 p-1 border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                <div className="inline-flex flex-wrap rounded-card bg-slate-100/90 dark:bg-slate-900 p-1.5 border border-slate-200/70 dark:border-slate-800 transition-colors duration-300">
                   <button
                     type="button"
                     onClick={() => handleModeChange("general")}
-                    className={`px-6 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                    className={`rounded-control px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
                       !isRfqMode
-                        ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-50 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                        ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-50 shadow-xs"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                     }`}
                   >
                     General Inquiry
@@ -384,10 +460,10 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => handleModeChange("rfq")}
-                    className={`px-6 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                    className={`rounded-control px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
                       isRfqMode
-                        ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-50 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                        ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-50 shadow-xs"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                     }`}
                   >
                     Request a Quote
@@ -395,13 +471,15 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-0">
-                <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-                  <h3 className="text-lg font-semibold mb-6 text-slate-950 dark:text-slate-50 transition-colors duration-300">Contact Information</h3>
+              <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
+                <div>
+                  <h3 className="text-base font-semibold mb-5 text-slate-950 dark:text-slate-50 transition-colors duration-300">
+                    Contact Information
+                  </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                      <label htmlFor="name" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                         Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -411,13 +489,13 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         placeholder="Your name"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                      <label htmlFor="email" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                         Email <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -427,13 +505,13 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         placeholder="your.email@example.com"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="company" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                      <label htmlFor="company" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                         Company {isRfqMode && <span className="text-red-500">*</span>}
                       </label>
                       <input
@@ -443,13 +521,13 @@ export default function ContactPage() {
                         required={isRfqMode}
                         value={formData.company}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         placeholder="Company name"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="country" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                      <label htmlFor="country" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                         Country {isRfqMode && <span className="text-red-500">*</span>}
                       </label>
                       <input
@@ -459,14 +537,14 @@ export default function ContactPage() {
                         required={isRfqMode}
                         value={formData.country}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         placeholder="Your country"
                       />
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                  <div className="mt-5">
+                    <label htmlFor="phone" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                       Phone
                     </label>
                     <input
@@ -475,25 +553,79 @@ export default function ContactPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                      className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       placeholder="+1 (555) 000-0000"
                     />
                   </div>
                 </div>
 
                 {isRfqMode && (
-                  <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 transition-colors duration-300">
+                    <h3 className="text-base font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">
+                      Drawings &amp; Files
+                    </h3>
+                    <p className="mt-1 mb-4 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">
+                      For custom parts, a drawing or a clear photo of your sample is the fastest way to get an accurate quote.
+                    </p>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      {ATTACHMENT_FIELDS.map(({ field, label, hint, accept }) => {
+                        const file = attachments[field];
+                        return (
+                          <div key={field}>
+                            {file ? (
+                              <div className="flex items-center justify-between gap-3 rounded-control border border-primary/40 bg-primary/5 px-4 py-3 text-sm">
+                                <span className="flex min-w-0 items-center gap-2 text-slate-800 dark:text-slate-200">
+                                  <FileText className="h-4 w-4 shrink-0 text-primary" />
+                                  <span className="truncate">{file.name}</span>
+                                  <span className="shrink-0 text-xs text-slate-500">{formatFileSize(file.size)}</span>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleFileChange(field, null)}
+                                  className="shrink-0 p-1 text-slate-400 hover:text-red-600 transition-colors"
+                                  aria-label={`Remove ${label}`}
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ) : (
+                              <label
+                                htmlFor={`contact-rfq-${field}`}
+                                className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-control border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/40 px-4 py-5 text-center transition-colors hover:border-primary hover:bg-primary/5"
+                              >
+                                <span className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+                                  <FileUp className="h-4 w-4 text-primary" />
+                                  {label}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">{hint}</span>
+                              </label>
+                            )}
+                            <input
+                              key={file ? `${file.name}-${file.size}` : "empty"}
+                              id={`contact-rfq-${field}`}
+                              type="file"
+                              accept={accept}
+                              className="sr-only"
+                              onChange={(e) => handleFileChange(field, e.target.files?.[0] ?? null)}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">Quote Items</h3>
+                        <h3 className="text-base font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">
+                          Quote Items
+                        </h3>
                         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">
-                          Add item numbers, model names, or short descriptions.
+                          Describe each custom part, or enter item numbers for standard terminals. Optional if you attached a drawing.
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={addItem}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white transition-colors duration-300 text-sm font-semibold whitespace-nowrap"
+                        className="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-white transition-colors duration-200 text-sm font-semibold whitespace-nowrap"
                       >
                         <Plus className="h-4 w-4" />
                         Add Product
@@ -502,16 +634,19 @@ export default function ContactPage() {
 
                     <div className="space-y-4">
                       {items.map((item, index) => (
-                        <div key={item.id} className="p-5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 relative group transition-colors duration-300">
+                        <div
+                          key={item.id}
+                          className="p-5 rounded-card bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 relative group transition-colors duration-300"
+                        >
                           <div className="flex items-start justify-between mb-4">
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 transition-colors duration-300">
+                            <span className="inline-flex items-center rounded-control bg-white dark:bg-slate-800 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700">
                               Item 0{index + 1}
                             </span>
                             {items.length > 1 && (
                               <button
                                 type="button"
                                 onClick={() => removeItem(item.id)}
-                                className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300 absolute top-4 right-4"
+                                className="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200 absolute top-4 right-4 p-1"
                                 aria-label="Remove item"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -520,9 +655,9 @@ export default function ContactPage() {
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="md:col-span-3">
-                              <label className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
-                                Product Model or Item Number <span className="text-red-500">*</span>
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
+                                Part Name, Model or Item Number
                               </label>
                               <input
                                 type="text"
@@ -530,55 +665,75 @@ export default function ContactPage() {
                                 onChange={(e) =>
                                   handleItemChange(item.id, "productId", e.target.value)
                                 }
-                                className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                                placeholder="e.g., RNB5.5-8, custom copper lug"
+                                className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                placeholder="e.g., custom copper lug per drawing, RNB5.5-8"
                               />
                             </div>
 
-                            <div>
-                              <label className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                                 Quantity <span className="text-red-500">*</span>
                               </label>
-                              <div className="flex gap-2"><input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    item.id,
-                                    "quantity",
-                                    parseInt(e.target.value, 10) || 1
-                                  )
-                                }
-                                className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                              /><select value={item.quantityUnit} onChange={(e) => handleItemChange(item.id, "quantityUnit", e.target.value as RFQItem["quantityUnit"])} className="w-32 border border-slate-300 bg-transparent px-2 text-sm"><option value="pcs">Pieces (pcs)</option><option value="packs">Packs</option><option value="cartons">Cartons</option><option value="unknown">Not sure</option></select></div>
+                              <div className="flex gap-2">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={item.quantity}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      item.id,
+                                      "quantity",
+                                      parseInt(e.target.value, 10) || 1
+                                    )
+                                  }
+                                  className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                                />
+                                <select
+                                  value={item.quantityUnit}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      item.id,
+                                      "quantityUnit",
+                                      e.target.value as RFQItem["quantityUnit"]
+                                    )
+                                  }
+                                  className="w-36 shrink-0 rounded-control border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                >
+                                  <option value="pcs">Pieces (pcs)</option>
+                                  <option value="packs">Packs</option>
+                                  <option value="cartons">Cartons</option>
+                                  <option value="unknown">Not sure</option>
+                                </select>
+                              </div>
                             </div>
                           </div>
 
                           <div className="mt-4">
-                            <label className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">Notes</label>
+                            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
+                              Notes
+                            </label>
                             <input
                               type="text"
                               value={item.notes}
                               onChange={(e) =>
                                 handleItemChange(item.id, "notes", e.target.value)
                               }
-                              className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                              placeholder="Material, plating, certification, or packaging requirements"
+                              className="w-full rounded-control px-4 py-2.5 border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                              placeholder="Material, plating (e.g., tin), brazing, certification, or packaging requirements"
                             />
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <p className="mt-5 text-sm text-slate-500 dark:text-slate-400 transition-colors duration-300">
-                      If you need to share drawings or spreadsheets, mention it in the message below and we will coordinate via email.
+                    <p className="mt-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400 border-l-2 border-primary/40 pl-3 transition-colors duration-300">
+                      Files larger than 10 MB? Submit the form and mention it below. We will reply with an email address for large files.
                     </p>
                   </div>
                 )}
 
-                <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-                  <label htmlFor="message" className="block text-sm font-semibold text-slate-900 dark:text-slate-200 mb-2 transition-colors duration-300">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 transition-colors duration-300">
+                  <label htmlFor="message" className="block text-sm font-medium text-slate-800 dark:text-slate-200 mb-2 transition-colors duration-300">
                     {isRfqMode ? "Additional Information" : "Message"}{" "}
                     {!isRfqMode && <span className="text-red-500">*</span>}
                   </label>
@@ -586,10 +741,10 @@ export default function ContactPage() {
                     id="message"
                     name="message"
                     required={!isRfqMode}
-                    rows={isRfqMode ? 4 : 6}
+                    rows={isRfqMode ? 4 : 5}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-vertical transition-colors duration-300 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className="w-full rounded-control px-4 py-3 border border-slate-300/90 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-vertical transition-all duration-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder={
                       isRfqMode
                         ? "Add target lead time, application details, or other commercial notes..."
@@ -598,8 +753,8 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <div className="p-6 md:p-8 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors duration-300">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 order-2 sm:order-1 text-center sm:text-left transition-colors duration-300">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors duration-300">
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 order-2 sm:order-1 text-center sm:text-left transition-colors duration-300">
                     By submitting, you agree to our{" "}
                     <Link href={resourcesUrl()} className="text-primary hover:underline font-medium">
                       Documentation Policy
@@ -608,7 +763,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-8 py-3 bg-primary text-white hover:bg-primary-dark transition-all duration-300 font-semibold order-1 sm:order-2 disabled:opacity-70"
+                    className="btn btn-primary w-full sm:w-auto px-8 py-3 order-1 sm:order-2 disabled:opacity-70"
                   >
                     {isSubmitting
                       ? isRfqMode
@@ -622,148 +777,85 @@ export default function ContactPage() {
               </form>
             </div>
 
-            {/* Checklist */}
-            <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 p-6 md:p-8 transition-colors duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <ClipboardCheck className="h-6 w-6 text-slate-700 dark:text-slate-300 transition-colors duration-300" />
-                <h2 className="text-xl font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">Before Sending Your RFQ</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
-                {rfqChecklistItems.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <span className="text-sm text-slate-700 dark:text-slate-300 font-medium transition-colors duration-300">{item}</span>
+            {/* Companion Sidebar: Checklist + Direct Contact Channels */}
+            <aside className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-24 space-y-6">
+              {/* RFQ Preparation Checklist Card */}
+              <div className="rounded-card border border-slate-200/80 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-blue-50/35 dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-800/40 p-6 sm:p-7 shadow-xs transition-colors duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-control bg-primary/10 text-primary">
+                    <ClipboardCheck className="h-5 w-5" />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Project Information Table */}
-            <div>
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">
-                  Project Information
-                </h2>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">
-                  Typical practices and requirements. Final confirmation is based on product family and scope.
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                      Fast Quotation Tip
+                    </p>
+                    <h2 className="text-base font-bold text-slate-950 dark:text-slate-50">
+                      Before Sending Your RFQ
+                    </h2>
+                  </div>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+                  Including these details helps our engineering team confirm pricing, MOQ, and lead time with fewer follow-ups:
                 </p>
-              </div>
-              <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors duration-300">
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[680px] border-collapse text-left">
-                    <thead className="bg-slate-50 dark:bg-slate-900/60 transition-colors duration-300">
-                      <tr>
-                        <th className="w-56 border-b border-slate-200 dark:border-slate-800 px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 transition-colors duration-300">
-                          Project Item
-                        </th>
-                        <th className="border-b border-slate-200 dark:border-slate-800 px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 transition-colors duration-300">
-                          Typical Practice
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {projectInformationRows.map((row) => (
-                        <tr key={row.item} className="border-b border-slate-200 dark:border-slate-800 last:border-b-0 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors duration-300">
-                          <th scope="row" className="align-top px-6 py-4 text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors duration-300">
-                            {row.item}
-                          </th>
-                          <td className="px-6 py-4 text-sm leading-6 text-slate-700 dark:text-slate-300 transition-colors duration-300">
-                            {row.practice}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2.5">
+                  {rfqChecklistItems.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-2.5 rounded-control bg-white/80 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800/80 px-3 py-2"
+                    >
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            {/* Timeline: What Happens Next */}
-            <div>
-              <div className="mb-10">
-                <h2 className="text-2xl font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">
-                  What Happens Next
-                </h2>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">
-                  The typical project path from RFQ review to production confirmation and shipment.
-                </p>
-              </div>
-              
-              <div className="relative">
-                {/* Desktop Connecting Line */}
-                <div className="hidden lg:block absolute top-[2rem] left-8 right-8 h-[2px] bg-slate-200 dark:bg-slate-800 transition-colors duration-300 -z-10"></div>
-                
-                <div className="grid grid-cols-1 gap-10 lg:gap-4 lg:grid-cols-6 relative z-0">
-                  {submissionProcessSteps.map((step, index) => {
-                    const Icon = step.icon;
-                    return (
-                      <div key={step.title} className="relative flex lg:flex-col items-start lg:items-center gap-5 lg:gap-4 group">
-                        {/* Mobile Connecting Line */}
-                        {index < submissionProcessSteps.length - 1 && (
-                           <div className="lg:hidden absolute left-[1.95rem] top-12 bottom-[-3rem] w-[2px] bg-slate-200 dark:bg-slate-800 transition-colors duration-300 -z-10"></div>
-                        )}
-                        
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-400 dark:text-slate-500 group-hover:border-primary dark:group-hover:border-primary group-hover:text-primary dark:group-hover:text-primary transition-all duration-300">
-                          <Icon className="h-6 w-6" />
-                        </div>
-                        
-                        <div className="pt-1 lg:pt-0 lg:text-center">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1 transition-colors duration-300">
-                            Step 0{index + 1}
-                          </p>
-                          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors duration-300">
-                            {step.title}
-                          </h3>
-                          {step.note ? (
-                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">
-                              {step.note}
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Project FAQ */}
-            <div>
-              <div className="mb-8">
-                <h2 className="text-2xl font-semibold text-slate-950 dark:text-slate-50 transition-colors duration-300">
-                  Project FAQ
-                </h2>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors duration-300">
-                  Short answers to the buying questions that usually slow down quotation and review.
-                </p>
-              </div>
-              <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors duration-300">
-                <FAQAccordion items={contactFaqItems} />
-              </div>
-            </div>
-
-            {/* Downgraded Contact Info Section */}
-            <div className="pt-16 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                {/* Contact Information */}
+              {/* Direct Contact & Hours Card */}
+              <div className="rounded-card border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 sm:p-7 shadow-xs space-y-6 transition-colors duration-300">
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-5 uppercase tracking-wider transition-colors duration-300">Contact Details</h3>
-                  <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-4 uppercase tracking-[0.14em]">
+                    Direct Contact Channels
+                  </h3>
+                  <div className="space-y-3.5">
                     {contactInfoItems.length === 0 && (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-300">Contact channels unavailable.</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Contact channels unavailable.
+                      </p>
                     )}
                     {contactInfoItems.map((item) => {
                       const Icon = item.icon;
                       return (
                         <div key={item.key} className="flex items-start gap-3">
-                          <Icon className="h-4 w-4 text-slate-400 dark:text-slate-500 mt-0.5 shrink-0 transition-colors duration-300" />
-                          <div>
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-control bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                              {item.title}
+                            </p>
                             {item.href ? (
-                              <Link href={item.href} className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors duration-300 font-medium" target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined}>
-                                {item.lines.map((line, index) => <span key={`${item.key}-${index}`} className="block">{line}</span>)}
+                              <Link
+                                href={item.href}
+                                className="text-sm text-slate-700 dark:text-slate-200 hover:text-primary dark:hover:text-primary transition-colors font-medium break-words"
+                                target={item.external ? "_blank" : undefined}
+                                rel={item.external ? "noopener noreferrer" : undefined}
+                              >
+                                {item.lines.map((line, index) => (
+                                  <span key={`${item.key}-${index}`} className="block">
+                                    {line}
+                                  </span>
+                                ))}
                               </Link>
                             ) : (
-                              <p className="text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors duration-300">{item.lines.map((line, index) => <span key={`${item.key}-${index}`} className="block">{line}</span>)}</p>
+                              <p className="text-sm text-slate-700 dark:text-slate-200 font-medium break-words">
+                                {item.lines.map((line, index) => (
+                                  <span key={`${item.key}-${index}`} className="block">
+                                    {line}
+                                  </span>
+                                ))}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -772,18 +864,25 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Social Media */}
                 {socialLinks.length > 0 && (
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-5 uppercase tracking-wider transition-colors duration-300">Connect</h3>
-                    <div className="space-y-4">
+                  <div className="pt-5 border-t border-slate-100 dark:border-slate-800/80">
+                    <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-3 uppercase tracking-[0.14em]">
+                      Connect
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
                       {socialLinks.map((item) => {
                         const isLinkedIn = item.platform.trim().toLowerCase() === "linkedin";
                         const Icon = isLinkedIn ? Linkedin : Globe;
                         return (
-                          <a key={`${item.platform}-${item.url}`} href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                            <Icon className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300 shrink-0" />
-                            <span className="text-sm text-slate-600 dark:text-slate-400 group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300 font-medium">{getSocialMediaDisplayLabel(item)}</span>
+                          <a
+                            key={`${item.platform}-${item.url}`}
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 rounded-control border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary transition-colors"
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                            <span>{getSocialMediaDisplayLabel(item)}</span>
                           </a>
                         );
                       })}
@@ -791,25 +890,135 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                {/* Business Hours */}
-                <div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-5 uppercase tracking-wider transition-colors duration-300">Business Hours</h3>
-                  <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400 font-medium transition-colors duration-300">
-                    <div className="flex justify-between"><span>Mon - Fri</span><span>9:00 AM - 6:00 PM</span></div>
-                    <div className="flex justify-between"><span>Saturday</span><span>10:00 AM - 4:00 PM</span></div>
-                    <div className="flex justify-between text-slate-400 dark:text-slate-500"><span>Sunday</span><span>Closed</span></div>
+                <div className="pt-5 border-t border-slate-100 dark:border-slate-800/80">
+                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-3 uppercase tracking-[0.14em]">
+                    Business Hours (UTC+8)
+                  </h3>
+                  <div className="space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                    <div className="flex justify-between">
+                      <span>Mon – Fri</span>
+                      <span className="text-slate-900 dark:text-slate-200">9:00 AM – 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Saturday</span>
+                      <span className="text-slate-900 dark:text-slate-200">10:00 AM – 4:00 PM</span>
+                    </div>
+                    <div className="flex justify-between text-slate-400 dark:text-slate-500">
+                      <span>Sunday</span>
+                      <span>Closed</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">All times in Beijing Time (UTC+8)</p>
                 </div>
               </div>
+            </aside>
+          </div>
+
+          {/* Timeline: What Happens Next */}
+          <div className="rounded-card border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 p-7 sm:p-10">
+            <div className="max-w-2xl mb-8">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Order Workflow
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-950 dark:text-slate-50">
+                What Happens Next
+              </h2>
+              <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
+                The typical project path from RFQ review to production confirmation and shipment.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+              {submissionProcessSteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <div
+                    key={step.title}
+                    className="group relative flex flex-col justify-between rounded-card border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 shadow-xs hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="inline-flex items-center rounded-control bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+                        0{index + 1}
+                      </span>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-control bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">
+                        {step.title}
+                      </h3>
+                      {step.note ? (
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                          {step.note}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Project Information: De-tabled into 3x2 Editorial Cards */}
+          <div>
+            <div className="max-w-2xl mb-8">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Commercial Reference
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-950 dark:text-slate-50">
+                Project Information
+              </h2>
+              <p className="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-400">
+                Typical practices and requirements. Final confirmation is based on product family and scope.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {projectInformationRows.map((row, index) => (
+                <div
+                  key={row.item}
+                  className="rounded-card border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-6 shadow-xs hover:border-primary/40 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                      {row.item}
+                    </h3>
+                    <span className="text-xs font-mono text-slate-400 dark:text-slate-500">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                    {row.practice}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Project FAQ: Asymmetric 2-Column Split */}
+          <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start lg:gap-14 pt-4">
+            <div className="lg:sticky lg:top-28">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                Common Questions
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-950 dark:text-slate-50">
+                Project FAQ
+              </h2>
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-400">
+                Short answers to the buying questions that usually slow down quotation and review.
+              </p>
+            </div>
+            <div>
+              <FAQAccordion items={contactFaqItems} />
             </div>
           </div>
         </div>
       </section>
-      
-      <CTABanner 
-        title="Ready to Start Your Project?" 
-        description="Connect with our engineering team for a comprehensive technical review." 
+
+      <CTABanner
+        title="Ready to Start Your Project?"
+        description="Connect with our engineering team for a comprehensive technical review."
         primaryCTA={{ label: "View Products", href: productsUrl() }}
         secondaryCTA={{ label: "Browse Resources", href: resourcesUrl() }}
         variant="default"

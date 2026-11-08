@@ -73,7 +73,7 @@ export default function ImagePreview({
         aria-label={`Preview image: ${alt}`}
         className="group absolute inset-0 cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/60"
       >
-        <span className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-sm border border-white/45 bg-black/50 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+        <span className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-control border border-white/45 bg-black/50 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
           <Search className="h-3.5 w-3.5" />
           {previewLabel}
         </span>
@@ -93,13 +93,13 @@ export default function ImagePreview({
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close preview"
-              className="tap-target absolute right-3 top-3 z-10 rounded-sm border border-white/30 bg-black/50 p-2 text-white hover:bg-black/70 sm:right-4 sm:top-4"
+              className="tap-target absolute right-3 top-3 z-10 rounded-control border border-white/30 bg-black/50 p-2 text-white hover:bg-black/70 sm:right-4 sm:top-4"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div
-              className="relative h-full w-full overflow-hidden rounded-sm border border-white/20 bg-black md:max-h-[88vh] md:max-w-6xl"
+              className="relative h-full w-full overflow-hidden rounded-card border border-white/20 bg-black md:max-h-[88vh] md:max-w-6xl"
               onClick={(event) => event.stopPropagation()}
             >
               <Image
@@ -112,7 +112,7 @@ export default function ImagePreview({
                 className="object-contain"
               />
 
-              <div className="pointer-events-none absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 rounded-sm border border-white/25 bg-black/55 px-2.5 py-1.5 text-center text-[11px] font-medium text-white/90 md:hidden [@media(orientation:landscape)]:hidden">
+              <div className="pointer-events-none absolute bottom-2 left-2 right-2 flex items-center justify-center gap-1 rounded-control border border-white/25 bg-black/55 px-2.5 py-1.5 text-center text-[11px] font-medium text-white/90 md:hidden [@media(orientation:landscape)]:hidden">
                 <Smartphone className="h-3.5 w-3.5" />
                 Rotate to landscape for detailed diagrams
               </div>

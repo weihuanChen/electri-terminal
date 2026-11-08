@@ -32,13 +32,13 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
   const CertificateIcon = certificateIconMap[certificate.icon];
 
   return (
-    <article className="overflow-hidden rounded-[3px] border border-slate-200 bg-[#FFFFFF] text-[#0F172A] shadow-sm">
+    <article className="overflow-hidden rounded-card border border-slate-200 bg-[#FFFFFF] text-[#0F172A] shadow-sm">
       <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="border-b border-slate-200 bg-[#F8FAFC] p-5 lg:border-b-0 lg:border-r">
           <div className={`grid gap-4 ${isMultiPage ? "md:grid-cols-2" : "grid-cols-1"}`}>
             {certificate.images.map((image, index) => (
               <figure key={image.src} className="space-y-3">
-                <div className="relative h-[260px] overflow-hidden rounded-sm border border-slate-300 bg-white shadow-sm md:h-[320px]">
+                <div className="relative h-[260px] overflow-hidden rounded-card border border-slate-300 bg-white shadow-sm md:h-[320px]">
                   <ImagePreview
                     src={image.src}
                     alt={image.alt}
@@ -61,7 +61,7 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
           </p>
 
           <div className="mt-3 flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-sm border border-slate-200 bg-[#F8FAFC] text-[#1E293B]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-control border border-slate-200 bg-[#F8FAFC] text-[#1E293B]">
               <CertificateIcon className="h-5 w-5" />
             </div>
             <div className="min-w-0">
@@ -107,7 +107,7 @@ export default function CertificateCard({ certificate }: CertificateCardProps) {
             ))}
           </ul>
 
-          <div className="mt-6 rounded-sm border border-slate-200 bg-[#F8FAFC] px-4 py-3">
+          <div className="mt-6 rounded-card border border-slate-200 bg-[#F8FAFC] px-4 py-3">
             <div className="flex items-start gap-3">
               <Shield className="mt-0.5 h-4 w-4 flex-none text-emerald-600" />
               <p className="text-sm leading-6 text-[#475569]">

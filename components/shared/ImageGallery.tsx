@@ -19,7 +19,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
+      <div className="relative aspect-square bg-muted rounded-card overflow-hidden">
         <div className="flex h-full w-full items-center justify-center">
           <span className="text-4xl font-bold text-muted-foreground/20">
             {alt.charAt(0)}
@@ -44,7 +44,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="group relative aspect-square overflow-hidden rounded-sm bg-muted">
+      <div className="group relative aspect-square overflow-hidden rounded-card bg-muted">
         <Image
           src={images[currentIndex].url}
           alt={images[currentIndex].alt || `${alt} - Image ${currentIndex + 1}`}
@@ -84,7 +84,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
 
         {/* Image Counter */}
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white rounded-full text-sm">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white rounded-control text-sm">
             {currentIndex + 1} / {images.length}
           </div>
         )}
@@ -97,7 +97,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
             <button
               key={index}
               onClick={() => handleThumbnailClick(index)}
-              className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-sm border-2 transition-all sm:h-20 sm:w-20 ${
+              className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-control border-2 transition-all sm:h-20 sm:w-20 ${
                 index === currentIndex
                   ? "border-primary scale-105"
                   : "border-transparent opacity-60 hover:opacity-100"
@@ -153,7 +153,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
             />
           </div>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/10 text-white rounded-full">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/10 text-white rounded-control">
             {currentIndex + 1} / {images.length}
           </div>
         </div>

@@ -134,7 +134,7 @@ export default function InquiryForm({
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               placeholder="your.email@example.com"
             />
           </div>
@@ -149,7 +149,7 @@ export default function InquiryForm({
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               placeholder={t("companyPlaceholder")}
             />
           </div>
@@ -166,7 +166,7 @@ export default function InquiryForm({
             rows={5}
             value={formData.message}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-vertical"
+            className="w-full px-4 py-2 border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-vertical"
             placeholder={
               productName
                 ? t("productMessagePlaceholder", { productName })
@@ -181,10 +181,10 @@ export default function InquiryForm({
             const label = field === "drawing" ? t("attachDrawing") : t("attachBom");
 
             return (
-              <div key={field} className="rounded-sm border border-border bg-muted/40 p-3">
+              <div key={field} className="rounded-card border border-border bg-muted/40 p-3">
                 <label
                   htmlFor={`rfq-${field}`}
-                  className="flex cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-control border border-dashed border-border bg-white px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
                 >
                   <FileUp className="h-4 w-4" />
                   {label}

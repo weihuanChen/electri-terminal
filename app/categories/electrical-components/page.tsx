@@ -186,7 +186,7 @@ export default function ElectricalComponentsCategory() {
 
                 <div className="container relative z-10">
                     <div className="max-w-2xl">
-                        <div className="inline-block px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-blue-500/30">
+                        <div className="inline-block px-3 py-1 bg-blue-500/20 text-blue-300 rounded-control text-sm font-medium mb-6 backdrop-blur-sm border border-blue-500/30">
                             Premium Industrial Components
                         </div>
                         <h1
@@ -199,10 +199,10 @@ export default function ElectricalComponentsCategory() {
                             Terminal blocks, cable glands, and enclosures for industrial applications, with model-specific compliance support available on request.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <Link href="#products" className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg shadow-blue-600/20 flex items-center gap-2">
+                            <Link href="#products" className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-control transition-colors shadow-lg shadow-blue-600/20 flex items-center gap-2">
                                 Browse Products
                             </Link>
-                            <Link href={requestQuoteUrl()} className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium rounded-lg transition-all backdrop-blur-sm flex items-center gap-2">
+                            <Link href={requestQuoteUrl()} className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium rounded-control transition-all backdrop-blur-sm flex items-center gap-2">
                                 Request Quote
                             </Link>
                         </div>
@@ -215,7 +215,7 @@ export default function ElectricalComponentsCategory() {
 
                     {/* 2. Product Filter Sidebar */}
                     <aside className="w-full lg:w-72 flex-shrink-0">
-                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden sticky top-24">
+                        <div className="bg-white rounded-card border border-slate-200 shadow-sm overflow-hidden sticky top-24">
                             <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                                 <h2 className="font-semibold text-slate-900 flex items-center gap-2">
                                     <Settings2 className="w-4 h-4 text-slate-500" />
@@ -232,7 +232,7 @@ export default function ElectricalComponentsCategory() {
                                                 <label key={idx} className="flex items-center gap-3 cursor-pointer group">
                                                     <div className="relative flex items-center">
                                                         <input type="checkbox" className="peer sr-only" />
-                                                        <div className="w-4 h-4 rounded text-blue-600 bg-white border border-slate-300 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all flex items-center justify-center">
+                                                        <div className="w-4 h-4 rounded-control text-blue-600 bg-white border border-slate-300 peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all flex items-center justify-center">
                                                             <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                             </svg>
@@ -256,7 +256,7 @@ export default function ElectricalComponentsCategory() {
                             </p>
                             <div className="flex items-center gap-3">
                                 <span className="text-sm text-slate-500">Sort by:</span>
-                                <select className="text-sm border-slate-200 rounded-lg bg-white px-3 py-1.5 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                                <select className="text-sm border-slate-200 rounded-control bg-white px-3 py-1.5 focus:ring-blue-500 focus:border-blue-500 outline-none">
                                     <option>Most Popular</option>
                                     <option>Newest Additions</option>
                                     <option>Name A-Z</option>
@@ -266,7 +266,7 @@ export default function ElectricalComponentsCategory() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                             {products.map((product) => (
-                                <div key={product.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                                <div key={product.id} className="bg-white rounded-card border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                                     <div className="relative h-48 bg-slate-100 overflow-hidden">
                                         <Image
                                             src={product.image}
@@ -275,7 +275,7 @@ export default function ElectricalComponentsCategory() {
                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors"></div>
-                                        <button className="absolute inset-x-4 bottom-4 bg-white/90 backdrop-blur-sm text-slate-900 font-medium py-2 rounded-lg opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-sm hover:bg-white">
+                                        <button className="absolute inset-x-4 bottom-4 bg-white/90 backdrop-blur-sm text-slate-900 font-medium py-2 rounded-control opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-sm hover:bg-white">
                                             Quick View
                                         </button>
                                     </div>
@@ -299,7 +299,7 @@ export default function ElectricalComponentsCategory() {
                                         </div>
                                         <Link
                                             href={requestQuoteUrl()}
-                                            className="w-full text-center block py-2.5 px-4 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors"
+                                            className="w-full text-center block py-2.5 px-4 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-control transition-colors"
                                         >
                                             Request Quote
                                         </Link>
@@ -309,7 +309,7 @@ export default function ElectricalComponentsCategory() {
                         </div>
 
                         <div className="mt-12 flex justify-center">
-                            <button className="px-6 py-2.5 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                            <button className="px-6 py-2.5 border border-slate-300 text-slate-700 font-medium rounded-control hover:bg-slate-50 transition-colors">
                                 Load More Products
                             </button>
                         </div>
@@ -328,7 +328,7 @@ export default function ElectricalComponentsCategory() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div className="text-center p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="text-center p-6 rounded-card bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
                             <div className="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6">
                                 <CheckCircle2 className="w-8 h-8" />
                             </div>
@@ -337,7 +337,7 @@ export default function ElectricalComponentsCategory() {
                                 Material combinations and electrical ratings are defined per model and application context.
                             </p>
                         </div>
-                        <div className="text-center p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="text-center p-6 rounded-card bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
                             <div className="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6">
                                 <ShieldCheck className="w-8 h-8" />
                             </div>
@@ -346,14 +346,14 @@ export default function ElectricalComponentsCategory() {
                                 Certificate scope and applicable files are confirmed by item number and destination requirements.
                             </p>
                         </div>
-                        <div className="text-center p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="text-center p-6 rounded-card bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
                             <div className="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6">
                                 <Settings2 className="w-8 h-8" />
                             </div>
                             <h3 className="text-xl font-semibold mb-3 text-slate-900">Custom OEM Service</h3>
                             <p className="text-slate-600">Tailored solutions from specific colors to completely custom mold development.</p>
                         </div>
-                        <div className="text-center p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
+                        <div className="text-center p-6 rounded-card bg-slate-50 border border-slate-100 hover:shadow-md transition-shadow">
                             <div className="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6">
                                 <Truck className="w-8 h-8" />
                             </div>
@@ -374,9 +374,9 @@ export default function ElectricalComponentsCategory() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {applications.map((app, idx) => (
-                            <div key={idx} className="group relative rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all h-64 flex border border-slate-200">
+                            <div key={idx} className="group relative rounded-card overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all h-64 flex border border-slate-200">
                                 <div className="w-1/2 p-8 flex flex-col justify-center relative z-10 bg-white/90 backdrop-blur-md">
-                                    <div className="mb-4 bg-slate-50 p-3 inline-block rounded-xl border border-slate-100">
+                                    <div className="mb-4 bg-slate-50 p-3 inline-block rounded-control border border-slate-100">
                                         {app.icon}
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-900 mb-2">{app.title}</h3>

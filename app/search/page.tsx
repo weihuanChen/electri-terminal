@@ -168,7 +168,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 name="q"
                 defaultValue={query}
                 placeholder="Search by model, series, product name, or article title"
-                className="w-full rounded-lg border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
+                className="w-full rounded-control border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-primary"
               />
               <button type="submit" className="btn btn-primary whitespace-nowrap">
                 Search
@@ -181,7 +181,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <section className="section">
         <div className="container">
           {!query ? (
-            <div className="space-y-6 rounded-lg border border-border bg-muted p-8">
+            <div className="space-y-6 rounded-card border border-border bg-muted p-8">
               <p className="text-secondary">
                 Start with a product model, family name, or application keyword.
               </p>
@@ -195,7 +195,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       <Link
                         key={suggestion}
                         href={searchUrl(suggestion)}
-                        className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                        className="rounded-control border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
                       </Link>
@@ -221,7 +221,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       <Link
                         key={suggestion}
                         href={searchUrl(suggestion)}
-                        className="rounded-full border border-border px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                        className="rounded-control border border-border px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
                       </Link>
@@ -273,7 +273,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       <Link
                         key={category._id}
                         href={categoryUrl(category.slug)}
-                        className="rounded-lg border border-border p-5 transition-colors hover:border-primary"
+                        className="rounded-card border border-border p-5 transition-colors hover:border-primary"
                       >
                         <h3 className="mb-2 text-lg font-semibold">{category.name}</h3>
                         <p className="text-sm text-secondary">
@@ -305,7 +305,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               ) : null}
             </div>
           ) : (
-            <div className="space-y-6 rounded-lg border border-border bg-muted p-8 text-secondary">
+            <div className="space-y-6 rounded-card border border-border bg-muted p-8 text-secondary">
               <p>
                 No published results found for{" "}
                 <span className="font-medium text-foreground">&quot;{query}&quot;</span>.
@@ -320,7 +320,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       <Link
                         key={suggestion}
                         href={searchUrl(suggestion)}
-                        className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                        className="rounded-control border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
                       </Link>
@@ -337,7 +337,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       <Link
                         key={suggestion}
                         href={searchUrl(suggestion)}
-                        className="rounded-full border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
+                        className="rounded-control border border-border bg-white px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                       >
                         {suggestion}
                       </Link>

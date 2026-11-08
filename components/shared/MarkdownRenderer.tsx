@@ -294,7 +294,7 @@ export default function MarkdownRenderer({ content, className }: MarkdownRendere
             return (
               <figure className="my-5" data-markdown-block data-markdown-image>
                 <div
-                  className="relative w-full overflow-hidden rounded-sm border border-border bg-background-muted/70"
+                  className="relative w-full overflow-hidden rounded-card border border-border bg-background-muted/70"
                   style={{ aspectRatio }}
                 >
                   <ImagePreview

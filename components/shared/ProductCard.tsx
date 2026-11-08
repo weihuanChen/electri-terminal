@@ -47,7 +47,7 @@ export default function ProductCard({
         )}
         {isFeatured && (
           <div className="absolute top-3 right-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-accent text-white">
+            <span className="inline-flex items-center px-3 py-1 rounded-control text-xs font-semibold bg-accent text-white">
               Featured
             </span>
           </div>

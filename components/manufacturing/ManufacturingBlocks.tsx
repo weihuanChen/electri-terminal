@@ -77,7 +77,7 @@ export function ProcessStepCard({
           unoptimized
           className="object-cover"
         />
-        <span className="absolute left-4 top-4 rounded-sm bg-slate-900/85 px-2.5 py-1 text-xs font-semibold tracking-[0.12em] text-white">
+        <span className="absolute left-4 top-4 rounded-control bg-slate-900/85 px-2.5 py-1 text-xs font-semibold tracking-[0.12em] text-white">
           STEP {step}
         </span>
       </div>
@@ -127,7 +127,7 @@ export function ProductionImageCard({
 export function CapabilityCard({ title, description, detail, icon: Icon }: CapabilityCardProps) {
   return (
     <article className="card p-6">
-      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-sm border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors duration-300">
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-control border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors duration-300">
         <Icon className="h-5 w-5" />
       </div>
       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors duration-300">{title}</h3>

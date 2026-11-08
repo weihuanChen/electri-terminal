@@ -274,7 +274,7 @@ export default function HeaderClient({
                 href={socialLink.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center justify-center rounded-md border border-slate-700 p-2 text-slate-300 transition-colors hover:border-orange-500 hover:text-orange-500"
+                className="hidden sm:inline-flex items-center justify-center rounded-control border border-slate-700 p-2 text-slate-300 transition-colors hover:border-orange-500 hover:text-orange-500"
                 aria-label={getSocialMediaDisplayLabel(socialLink)}
                 title={getSocialMediaDisplayLabel(socialLink)}
               >

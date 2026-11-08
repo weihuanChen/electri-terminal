@@ -289,7 +289,7 @@ export default function ManufacturingPage() {
               </ul>
             </div>
 
-            <div className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-slate-900 shadow-2xl md:h-[440px] transition-colors duration-300">
+            <div className="relative h-[300px] overflow-hidden rounded-card border border-slate-700 bg-slate-900 shadow-2xl md:h-[440px] transition-colors duration-300">
               <ImagePreview
                 src={heroImage}
                 alt="CNC machining line in active industrial manufacturing"
@@ -364,7 +364,7 @@ export default function ManufacturingPage() {
             description="From controlled production to organized storage, finished terminals are prepared for efficient handling and shipment readiness."
             descriptionClassName="!text-slate-500 dark:!text-slate-400"
           />
-          <div className="mt-10 overflow-hidden rounded-sm border border-border dark:border-slate-800 bg-slate-950 transition-colors duration-300">
+          <div className="mt-10 overflow-hidden rounded-card border border-border dark:border-slate-800 bg-slate-950 transition-colors duration-300">
             <div className="relative h-[360px] w-full md:h-[460px]">
               <ImagePreview
                 src="https://assets.electriterminal.com/factory/5s-managed-cable-glands-warehouse.webp"
@@ -388,8 +388,8 @@ export default function ManufacturingPage() {
                   efficiency.
                 </p>
               </div>
-              <div className="absolute bottom-4 right-4 z-10 hidden w-[320px] overflow-hidden rounded-sm border border-slate-500/70 dark:border-slate-600/70 bg-slate-900/85 p-3 backdrop-blur-sm md:block transition-colors duration-300">
-                <div className="relative h-40 w-full overflow-hidden rounded-sm transition-colors duration-300">
+              <div className="absolute bottom-4 right-4 z-10 hidden w-[320px] overflow-hidden rounded-card border border-slate-500/70 dark:border-slate-600/70 bg-slate-900/85 p-3 backdrop-blur-sm md:block transition-colors duration-300">
+                <div className="relative h-40 w-full overflow-hidden rounded-card transition-colors duration-300">
                   <ImagePreview
                     src="https://assets.electriterminal.com/factory/cable-glands-packed-ready-for-shipment.webp"
                     alt="Packed finished products ready for shipment"
@@ -407,7 +407,7 @@ export default function ManufacturingPage() {
           </div>
           <div className="mt-4 block md:hidden transition-colors duration-300">
             <div className="card overflow-hidden p-3 dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
-              <div className="relative h-48 w-full overflow-hidden rounded-sm transition-colors duration-300">
+              <div className="relative h-48 w-full overflow-hidden rounded-card transition-colors duration-300">
                 <ImagePreview
                   src="https://assets.electriterminal.com/factory/cable-glands-packed-ready-for-shipment.webp"
                   alt="Packed finished products ready for shipment"
@@ -439,10 +439,10 @@ export default function ManufacturingPage() {
               <CapabilityCard key={item.title} {...item} />
             ))}
           </div>
-          <div className="mt-12 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm md:p-10 transition-colors duration-300">
+          <div className="mt-12 rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm md:p-10 transition-colors duration-300">
             <div className="mb-10 flex flex-col gap-4 border-b border-slate-100 dark:border-slate-700 pb-8 md:flex-row md:items-end md:justify-between transition-colors duration-300">
               <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700 dark:text-blue-300 transition-colors duration-300">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-control border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-blue-700 dark:text-blue-300 transition-colors duration-300">
                   <Workflow className="h-4 w-4" />
                   OEM Project Workflow
                 </div>
@@ -465,10 +465,10 @@ export default function ManufacturingPage() {
                 <div className="relative flex flex-col gap-6">
                   {oemProjectWorkflowSteps.map((entry, index) => (
                     <div key={entry.step} className="group/step relative flex flex-col gap-4 md:flex-row md:gap-6">
-                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm border-[3px] border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-base font-bold text-slate-500 dark:text-slate-400 shadow-sm transition-all duration-300 group-hover/step:bg-blue-600 group-hover/step:border-blue-100 group-hover/step:text-white group-hover/step:scale-105">
+                      <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-control border-[3px] border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-base font-bold text-slate-500 dark:text-slate-400 shadow-sm transition-all duration-300 group-hover/step:bg-blue-600 group-hover/step:border-blue-100 group-hover/step:text-white group-hover/step:scale-105">
                         {index + 1}
                       </div>
-                      <div className="flex-1 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm transition-all duration-300 group-hover/step:-translate-y-1 group-hover/step:border-blue-300 group-hover/step:bg-blue-50/40 dark:group-hover/step:bg-blue-900/20 group-hover/step:shadow-md">
+                      <div className="flex-1 rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm transition-all duration-300 group-hover/step:-translate-y-1 group-hover/step:border-blue-300 group-hover/step:bg-blue-50/40 dark:group-hover/step:bg-blue-900/20 group-hover/step:shadow-md">
                         <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400 transition-colors duration-300">
                           {entry.step}
                         </p>
@@ -479,7 +479,7 @@ export default function ManufacturingPage() {
                           {entry.details.map((detail) => (
                             <span
                               key={detail}
-                              className="rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors group-hover/step:border-blue-300 group-hover/step:bg-white dark:group-hover/step:bg-slate-900 group-hover/step:text-blue-700 dark:group-hover/step:text-blue-400"
+                              className="rounded-control border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors group-hover/step:border-blue-300 group-hover/step:bg-white dark:group-hover/step:bg-slate-900 group-hover/step:text-blue-700 dark:group-hover/step:text-blue-400"
                             >
                               {detail}
                             </span>
@@ -493,9 +493,9 @@ export default function ManufacturingPage() {
 
               {/* Right Column: Information & Decision Logic */}
               <div className="flex flex-col gap-6 transition-colors duration-300">
-                <div className="flex-1 rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-6 md:p-8 transition-colors duration-300">
+                <div className="flex-1 rounded-card border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-6 md:p-8 transition-colors duration-300">
                   <div className="mb-6 flex items-center gap-3 transition-colors duration-300">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm transition-colors duration-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-control border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm transition-colors duration-300">
                       <ClipboardCheck className="h-5 w-5" />
                     </div>
                     <h4 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50 transition-colors duration-300">
@@ -506,7 +506,7 @@ export default function ManufacturingPage() {
                     {manufacturingInformationRows.map((row) => (
                       <div
                         key={row.label}
-                        className="group flex flex-col gap-1.5 rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-sm"
+                        className="group flex flex-col gap-1.5 rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-sm"
                       >
                         <span className="text-xs font-bold uppercase tracking-[0.12em] text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-700 dark:group-hover:text-blue-400">
                           {row.label}
@@ -519,11 +519,11 @@ export default function ManufacturingPage() {
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden rounded-sm bg-blue-600 dark:bg-blue-700 p-6 text-white shadow-md md:p-8 transition-colors duration-300">
+                <div className="relative overflow-hidden rounded-card bg-blue-600 dark:bg-blue-700 p-6 text-white shadow-md md:p-8 transition-colors duration-300">
                   <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white opacity-10 blur-3xl transition-transform duration-700 hover:scale-150"></div>
                   <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-blue-400 dark:bg-blue-500 opacity-20 blur-2xl transition-colors duration-300"></div>
                   <div className="relative z-10 transition-colors duration-300">
-                    <span className="mb-3 inline-block rounded-sm border border-blue-400/50 bg-blue-700/50 dark:bg-blue-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100 transition-colors duration-300">
+                    <span className="mb-3 inline-block rounded-control border border-blue-400/50 bg-blue-700/50 dark:bg-blue-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-100 transition-colors duration-300">
                       Decision Logic
                     </span>
                     <p className="text-base font-medium leading-relaxed text-blue-50 md:text-lg transition-colors duration-300">
@@ -534,7 +534,7 @@ export default function ManufacturingPage() {
               </div>
             </div>
           </div>
-          <div className="mt-10 rounded-sm border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 md:p-8 transition-colors duration-300">
+          <div className="mt-10 rounded-card border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 md:p-8 transition-colors duration-300">
             <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 md:text-2xl transition-colors duration-300">
               Need Manufacturing Support for Engineering Review?
             </h3>

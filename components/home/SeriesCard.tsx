@@ -31,7 +31,7 @@ export default function SeriesCard({
   showActions = true,
 }: SeriesCardProps) {
   return (
-    <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full">
+    <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-card overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full">
       {/* Series Info */}
       <div className="relative h-56 bg-slate-100 dark:bg-slate-800 overflow-hidden border-b border-slate-200 dark:border-slate-800">
         {series.heroImage ? (
@@ -54,7 +54,7 @@ export default function SeriesCard({
         <div className="absolute top-3 left-3 z-10">
           <Link
             href={categoryUrl(series.category.slug)}
-            className="inline-block px-2.5 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-sm text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm hover:text-primary transition-colors"
+            className="inline-block px-2.5 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-control text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-sm hover:text-primary transition-colors"
           >
             {series.category.name}
           </Link>
@@ -75,7 +75,7 @@ export default function SeriesCard({
 
         {/* Quick Specs */}
         {showQuickSpecs && series.quickSpecs && series.quickSpecs.length > 0 && (
-          <div className="mb-5 space-y-1.5 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-sm border border-slate-100 dark:border-slate-800">
+          <div className="mb-5 space-y-1.5 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-card border border-slate-100 dark:border-slate-800">
             {series.quickSpecs.slice(0, 3).map((spec, index) => (
               <div key={index} className="flex justify-between text-xs">
                 <span className="text-slate-500 dark:text-slate-400">{spec.label}</span>
@@ -90,13 +90,13 @@ export default function SeriesCard({
           <div className="flex gap-3 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
             <Link
               href={familyUrl(series.slug)}
-              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary transition-colors gap-2 shadow-sm"
+              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-semibold rounded-control hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary transition-colors gap-2 shadow-sm"
             >
               Details
             </Link>
             <Link
               href={requestQuoteUrl({ query: { series: series._id } })}
-              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-primary text-white text-sm font-semibold rounded-sm hover:bg-primary/90 transition-colors gap-2 shadow-sm"
+              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-primary text-white text-sm font-semibold rounded-control hover:bg-primary/90 transition-colors gap-2 shadow-sm"
             >
               <ShoppingCart className="w-4 h-4" />
               Quote

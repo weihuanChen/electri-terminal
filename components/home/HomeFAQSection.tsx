@@ -44,11 +44,21 @@ export default function HomeFAQSection({
   ],
 }: HomeFAQSectionProps) {
   return (
-    <section className="section border-t border-border bg-muted">
+    <section className="section bg-slate-50/70 dark:bg-slate-900/50">
       <div className="container">
-        <SectionHeader title={title} subtitle={subtitle} align="center" />
-        <div className="mx-auto mt-8 max-w-4xl">
-          <FAQAccordion items={items} />
+        <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start lg:gap-16">
+          <div className="lg:sticky lg:top-28">
+            <SectionHeader
+              eyebrow="Sourcing Q&A"
+              title={title}
+              subtitle={subtitle}
+              align="left"
+              className="!mb-0"
+            />
+          </div>
+          <div>
+            <FAQAccordion items={items} />
+          </div>
         </div>
       </div>
     </section>

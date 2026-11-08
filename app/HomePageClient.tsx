@@ -106,7 +106,7 @@ export default async function HomePageClient() {
       icon: ShieldCheck,
       title: "Real Production, Not Just Trading",
       description:
-        "All images and videos come from actual workshop and production processes.",
+        "Own factory since 2009 and OEM supplier to Amazon brand sellers. All photos come from our actual workshop.",
     },
     {
       icon: Users,
@@ -174,19 +174,20 @@ export default async function HomePageClient() {
 
   return (
     <>
-      <HeroSection 
-        title="Reliable Ring Terminal Manufacturer for Industrial Wiring"
-        subtitle="High-quality copper ring terminals for secure and stable electrical connections."
-        description="Custom solutions, flexible production, and fast response for global buyers."
-        trustLine="Real Factory Production · Flexible MOQ · Custom Solutions · Fast Response"
-        categories={[
-          "Insulated Ring Terminals",
-          "Non-Insulated Ring Terminals",
-          "Copper Ring Terminals",
-          "Heavy-Duty Cable Lugs",
+      <HeroSection
+        title="Custom Copper Terminals & Precision Copper Parts, Made to Your Drawing"
+        subtitle=""
+        description="Send us a drawing or sample. We produce ring terminals, cable lugs, and custom copper connector parts from 99.9% pure copper, with tin plating and silver brazing, for industrial wiring, control cabinets, and OEM assemblies."
+        trustLine="Factory-Direct Since 2009 · OEM Supplier to Amazon Brand Sellers"
+        categories={[]}
+        primaryCta={{ text: "Send Drawing for a Quote", href: requestQuoteUrl() }}
+        secondaryCta={{ text: "Browse Standard Terminals", href: productsUrl() }}
+        stats={[
+          { value: "Since 2009", label: "Copper terminal factory" },
+          { value: "99.9% Cu", label: "High-purity copper, tin-plated" },
+          { value: "cULus · CE", label: "cULus on selected models" },
+          { value: "~7 days", label: "Standard parts · custom tooling ~30 days" },
         ]}
-        primaryCta={{ text: "Request a Quote", href: requestQuoteUrl() }}
-        secondaryCta={{ text: "View Products", href: productsUrl() }}
       />
 
       {homepageFocusCategories.length > 0 && (
@@ -233,22 +234,23 @@ export default async function HomePageClient() {
       <HomeFAQSection />
 
       <BottomRFQSection
-        title="Get a Quote for Your Project"
-        subtitle="Tell us your requirements. We will respond quickly with suitable options and pricing. MOQ and lead time are confirmed per item number and order quantity."
+        title="Have a Drawing? Get a Quote for Your Custom Part"
+        subtitle="Attach your drawing, sample photo, or BOM. Our engineers review dimensions, material, and finishing, then confirm pricing, MOQ, and lead time for each part."
         primaryCta={{
-          text: "Request a Quote",
+          text: "Send Drawing for a Quote",
           href: requestQuoteUrl(),
         }}
         secondaryCta={{
-          text: "View Products",
+          text: "Browse Standard Terminals",
           href: productsUrl(),
         }}
         benefits={[
-          "Real factory production visibility",
-          "Flexible MOQ and specification alignment",
-          "Custom solutions for project needs",
-          "MOQ and lead time confirmed by item number",
-          "Certificates available for selected models on request",
+          "Own factory since 2009, real production, not trading",
+          "OEM supplier to Amazon brand sellers",
+          "99.9% pure copper with tin plating and silver brazing",
+          "Standard parts in about 1 week; new tooling about 30 days",
+          "MOQ confirmed by part size and order quantity",
+          "cULus (selected models) and CE documents on request",
         ]}
         contactLinks={contactLinks}
       />

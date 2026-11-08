@@ -88,7 +88,7 @@ export default function ComplianceRequestForm() {
   };
 
   return (
-    <div className="overflow-hidden rounded-[3px] border border-slate-200 bg-white text-[#0F172A] shadow-2xl dark:border-slate-700 dark:bg-slate-950 dark:text-white">
+    <div className="overflow-hidden rounded-card border border-slate-200 bg-white text-[#0F172A] shadow-2xl dark:border-slate-700 dark:bg-slate-950 dark:text-white">
       <div className="border-b border-slate-200 bg-[#F8FAFC] px-6 py-5 md:px-8 dark:border-slate-800 dark:bg-slate-900">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#94A3B8] dark:text-slate-400">
           Project Request
@@ -120,7 +120,7 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Your name"
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             />
           </div>
 
@@ -139,7 +139,7 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Company name"
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             />
           </div>
 
@@ -158,7 +158,7 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="your.email@example.com"
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             />
           </div>
 
@@ -177,7 +177,7 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Country / region"
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             />
           </div>
 
@@ -196,7 +196,7 @@ export default function ComplianceRequestForm() {
               onChange={handleChange}
               required
               placeholder="Model, family, or material"
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             />
           </div>
 
@@ -212,7 +212,7 @@ export default function ComplianceRequestForm() {
               name="requiredCertificate"
               value={formData.requiredCertificate}
               onChange={handleChange}
-              className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+              className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
             >
               {certificateOptions.map((option) => (
                 <option key={option} value={option}>
@@ -237,7 +237,7 @@ export default function ComplianceRequestForm() {
             value={formData.message}
             onChange={handleChange}
             placeholder="Project scope, target market, certification route, customs needs, or specific batch requests"
-            className="w-full rounded-sm border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
+            className="w-full rounded-control border border-slate-200 bg-[#FFFFFF] px-4 py-3 text-sm text-[#0F172A] outline-none transition placeholder:text-[#94A3B8] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/25"
           />
         </div>
 

@@ -631,7 +631,7 @@ export default function CategoryPageClient({
           <div className="container relative py-10 md:py-14">
             <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="max-w-2xl text-slate-100">
-                <p className="inline-flex rounded-sm border border-orange-300/35 bg-orange-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-orange-100">
+                <p className="inline-flex rounded-control border border-orange-300/35 bg-orange-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-orange-100">
                   {heroEyebrow}
                 </p>
                 <h1
@@ -673,8 +673,8 @@ export default function CategoryPageClient({
               </div>
 
               <div className="relative">
-                <div className="absolute -inset-4 rounded-[20px] bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
-                <div className="relative h-[260px] overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
+                <div className="absolute -inset-4 rounded-card bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
+                <div className="relative h-[260px] overflow-hidden rounded-card border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
                   <Image
                     src={heroVisualImage}
                     alt={`${category.name} manufacturing process`}
@@ -693,7 +693,7 @@ export default function CategoryPageClient({
       ) : (
         <section className="section-compact border-y border-border bg-muted">
           <div className="container">
-            <div className="max-w-4xl rounded-sm border border-border bg-white p-5 md:p-7 dark:bg-slate-900">
+            <div className="max-w-4xl rounded-card border border-border bg-white p-5 md:p-7 dark:bg-slate-900">
               <h1 className="mb-3 text-3xl font-semibold md:text-5xl">{category.name}</h1>
               <p className="max-w-3xl text-base text-secondary md:text-lg">{heroIntroText}</p>
               <p className="mt-4 max-w-2xl border-l-2 border-primary/60 pl-4 text-sm leading-6 text-secondary">
@@ -735,7 +735,7 @@ export default function CategoryPageClient({
             <div className="flex flex-wrap gap-3">
               <Link
                 href={categoryUrl(category.slug, urlOptions)}
-                className="inline-flex items-center rounded-sm border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
+                className="inline-flex items-center rounded-control border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
               >
                 All {category.name}
               </Link>
@@ -743,7 +743,7 @@ export default function CategoryPageClient({
                 <Link
                   key={child._id}
                   href={categoryUrl(child.slug, urlOptions)}
-                  className="inline-flex items-center rounded-sm border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
+                  className="inline-flex items-center rounded-control border border-border bg-white px-4 py-2 transition-colors hover:border-primary hover:text-primary dark:bg-slate-900"
                 >
                   {child.name}
                 </Link>
@@ -756,7 +756,7 @@ export default function CategoryPageClient({
       {quickSelectionItems.length > 0 && (
         <section id="application-selector" className="section-compact !py-7 border-y border-border bg-[#F3F4F6] scroll-mt-24 dark:bg-slate-950 md:!py-7">
           <div className="container">
-            <div className="rounded-sm border border-border bg-white p-[18px] shadow-[0_2px_8px_rgba(15,23,42,0.06)] dark:bg-slate-900 dark:shadow-none md:p-5">
+            <div className="rounded-card border border-border bg-white p-[18px] shadow-[0_2px_8px_rgba(15,23,42,0.06)] dark:bg-slate-900 dark:shadow-none md:p-5">
               <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-secondary">
                 {t("chooseByApplication")}
               </p>
@@ -771,7 +771,7 @@ export default function CategoryPageClient({
                     data-ga-event="catalog_application_select"
                     data-ga-param-category-slug={category.slug}
                     data-ga-param-option-label={item.label}
-                    className="group rounded-sm border border-border bg-white p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#CBD5F5] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:bg-slate-900 dark:shadow-none dark:hover:border-primary"
+                    className="group rounded-card border border-border bg-white p-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#CBD5F5] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] dark:bg-slate-900 dark:shadow-none dark:hover:border-primary"
                   >
                     <div>
                       <h3 className="text-base font-semibold text-slate-900 transition-colors group-hover:text-primary dark:text-slate-100">

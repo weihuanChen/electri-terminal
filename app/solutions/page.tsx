@@ -137,7 +137,7 @@ export default function SolutionsPage() {
             </div>
 
             <div
-              className="relative h-[300px] overflow-hidden rounded-sm border border-slate-700 bg-white md:h-[440px]"
+              className="relative h-[300px] overflow-hidden rounded-card border border-slate-700 bg-white md:h-[440px]"
             >
               <Image
                 src={solutionsHeroImage}
@@ -165,7 +165,7 @@ export default function SolutionsPage() {
               <Link
                 key={industry.slug}
                 href={`#${industry.slug}`}
-                className="rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary transition-colors"
+                className="rounded-control border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-primary hover:text-primary transition-colors"
               >
                 {industry.shortTitle}
               </Link>
@@ -188,7 +188,7 @@ export default function SolutionsPage() {
             {materialHighlights.map((item) => (
               <div
                 key={item.title}
-                className="rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-6"
+                className="rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-6"
               >
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                   {item.title}
@@ -271,7 +271,7 @@ export default function SolutionsPage() {
             {exportMarkets.map((market) => (
               <div
                 key={market.country}
-                className="rounded-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-6"
+                className="rounded-card border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-6"
               >
                 <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400">
                   {market.regionLabel}

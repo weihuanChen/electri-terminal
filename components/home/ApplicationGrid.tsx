@@ -30,23 +30,40 @@ export default function ApplicationGrid({
     return null;
   }
 
+  const isBentoFour = applications.length === 4;
+
   return (
     <section className="section bg-white dark:bg-slate-900">
       <div className="container">
         <SectionHeader
+          eyebrow="Industry Scenarios"
           title={title}
           subtitle={subtitle}
           showViewAll={showViewAll}
           viewAllText={viewAllText}
           viewAllHref={viewAllHref}
-          align="center"
+          align="left"
         />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {applications.map((application, index) => (
-            <ApplicationCard key={index} application={application} />
-          ))}
-        </div>
+        {isBentoFour ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+            {applications.map((application, index) => {
+              const spanClass =
+                index === 0 || index === 3 ? "lg:col-span-7" : "lg:col-span-5";
+              return (
+                <div key={application.slug || index} className={spanClass}>
+                  <ApplicationCard application={application} />
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+            {applications.map((application, index) => (
+              <ApplicationCard key={application.slug || index} application={application} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

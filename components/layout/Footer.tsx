@@ -225,7 +225,7 @@ export default async function Footer() {
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:border-blue-400 hover:text-blue-300"
+                        className="inline-flex items-center gap-2 rounded-control border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:border-blue-400 hover:text-blue-300"
                       >
                         {isLinkedIn && <Linkedin className="h-4 w-4" />}
                         <span>{getSocialMediaDisplayLabel(item)}</span>

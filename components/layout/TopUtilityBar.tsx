@@ -58,7 +58,7 @@ export default function TopUtilityBar({
                   <span className="hidden sm:inline">Language</span>
                 </button>
                 {/* Language dropdown */}
-                <div className="absolute right-0 mt-2 w-40 bg-white text-slate-900 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-white text-slate-900 rounded-card shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-1">
                     {languages.map((lang) => (
                       <button

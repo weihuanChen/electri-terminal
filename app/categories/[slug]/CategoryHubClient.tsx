@@ -291,7 +291,7 @@ export default function CategoryHubClient({
         <div className="container relative py-10 md:py-14">
           <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="max-w-2xl text-slate-100">
-              <p className="inline-flex rounded-sm border border-orange-300/35 bg-orange-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-orange-100">
+              <p className="inline-flex rounded-control border border-orange-300/35 bg-orange-500/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-orange-100">
                 Industrial Terminal Manufacturing
               </p>
               <h1
@@ -310,7 +310,7 @@ export default function CategoryHubClient({
                 </Link>
                 <Link
                   href={requestQuoteUrl(urlOptions)}
-                  className="inline-flex items-center rounded-sm border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
+                  className="inline-flex items-center rounded-control border border-slate-100/80 bg-slate-900/70 px-5 py-3 text-sm font-semibold !text-[#3B82F6] transition-colors hover:border-orange-200 hover:bg-slate-900"
                 >
                   Request Quote
                 </Link>
@@ -319,7 +319,7 @@ export default function CategoryHubClient({
                 {heroTrustTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-sm border border-slate-200/25 bg-slate-900/45 px-3 py-1.5 text-xs font-medium text-slate-200"
+                    className="rounded-control border border-slate-200/25 bg-slate-900/45 px-3 py-1.5 text-xs font-medium text-slate-200"
                   >
                     {tag}
                   </span>
@@ -328,8 +328,8 @@ export default function CategoryHubClient({
             </div>
 
               <div className="relative">
-                <div className="absolute -inset-4 rounded-[20px] bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
-                <div className="relative h-[260px] overflow-hidden rounded-[18px] border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
+                <div className="absolute -inset-4 rounded-card bg-gradient-to-tr from-orange-500/20 via-sky-300/5 to-sky-300/25 blur-2xl" />
+                <div className="relative h-[260px] overflow-hidden rounded-card border border-slate-200/20 bg-slate-950 shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-[320px] lg:h-[360px]">
                   <Image
                     src={heroImageUrl}
                     alt="Bulk metal cable glands in manufacturing facility"
@@ -397,7 +397,7 @@ export default function CategoryHubClient({
               ))}
             </div>
           ) : (
-            <div className="rounded-sm border border-border bg-white p-8 text-center">
+            <div className="rounded-card border border-border bg-white p-8 text-center">
               <p className="text-secondary">No subcategories are available right now.</p>
             </div>
           )}
@@ -455,7 +455,7 @@ export default function CategoryHubClient({
                 <Link
                   key={item.key}
                   href={item.href}
-                  className="group block overflow-hidden rounded-sm border border-border bg-white transition-colors hover:border-primary"
+                  className="group block overflow-hidden rounded-card border border-border bg-white transition-colors hover:border-primary"
                 >
                   <div className="relative h-44 overflow-hidden bg-slate-100">
                     {item.image ? (

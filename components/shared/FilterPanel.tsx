@@ -151,7 +151,7 @@ export default function FilterPanel({
                             <input
                               type={group.type === "radio" ? "radio" : "checkbox"}
                               className={`
-                                h-4 w-4 rounded border-border text-primary
+                                h-4 w-4 rounded-control border-border text-primary
                                 focus:ring-2 focus:ring-primary focus:ring-offset-0
                                 ${group.type === "radio" ? "text-primary" : ""}
                               `}
@@ -203,7 +203,7 @@ export default function FilterPanel({
                       return (
                         <span
                           key={`${groupId}-${value}`}
-                          className="inline-flex items-center space-x-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                          className="inline-flex items-center space-x-1 px-3 py-1 bg-primary/10 text-primary rounded-control text-sm"
                         >
                           <span>{option?.label || value}</span>
                           <button

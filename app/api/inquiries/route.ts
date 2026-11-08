@@ -41,10 +41,14 @@ const inquiryPayloadSchema = z
         message: "Message is required.",
       });
     }
-    if (value.type === "rfq" && (!value.items || value.items.length === 0)) {
+    if (
+      value.type === "rfq" &&
+      (!value.items || value.items.length === 0) &&
+      !value.attachmentName
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "At least one RFQ item is required.",
+        message: "Please add at least one item or attach a drawing.",
       });
     }
   });
@@ -180,7 +184,10 @@ function buildStoredMessage(
     return [productLine, baseMessage, attachmentSection].filter((part) => part.length > 0).join("\n\n");
   }
 
-  const sections = [productLine, baseMessage, "RFQ Items:", buildRfqItemsText(payload.items), attachmentSection].filter(
+  const itemsSection = payload.items && payload.items.length > 0
+    ? ["RFQ Items:", buildRfqItemsText(payload.items)]
+    : [];
+  const sections = [productLine, baseMessage, ...itemsSection, attachmentSection].filter(
     (part) => part.length > 0
   );
   return sections.join("\n\n");
@@ -376,6 +383,16 @@ async function getInquiryAttachments(formData: FormData) {
   return attachments;
 }
 
+/** RFQ items arrive as a JSON string in multipart submissions; the zod schema validates the shape. */
+function parseMultipartItems(raw: string | undefined): unknown {
+  if (!raw) return undefined;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error("Invalid RFQ items payload.");
+  }
+}
+
 async function parseMultipartInquiry(request: Request) {
   const formData = await request.formData();
   const attachments = await getInquiryAttachments(formData);
@@ -396,6 +413,7 @@ async function parseMultipartInquiry(request: Request) {
     sourcePage: getFormString(formData, "sourcePage"),
     productName: getFormString(formData, "productName"),
     attachmentName: attachmentName.length > 0 ? attachmentName : undefined,
+    items: parseMultipartItems(getFormString(formData, "items")),
   };
 
   return { rawPayload, attachments };

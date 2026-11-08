@@ -3,23 +3,24 @@ import type { Metadata } from "next";
 import HomePageClient from "./HomePageClient";
 import { homeUrl } from "@/lib/routes";
 
-const homeTitle =
-  "Electri Terminal | Ring Terminal & Cable Gland Manufacturer";
+// Homepage targets commercial "custom/OEM copper terminal manufacturer" intent.
+// Generic "ring terminal(s)" queries belong to /categories/ring-terminals to avoid cannibalization
+// (GSC Aug–Nov 2026: home ranked ~10.6 with 918 impressions; ring-terminals category had 2,034).
+const homeTitle = "Custom Copper Terminal & Lug Manufacturer | Electri Terminal";
 const homeDescription =
-  "Electri Terminal manufactures ring terminals, cable glands, and precision copper connector parts for industrial wiring, control cabinets, and OEM assemblies.";
+  "Factory since 2009 making custom copper terminals, ring terminals, and cable lugs to your drawing. 99.9% copper, tin-plated. OEM supplier to Amazon brand sellers.";
 
 export const metadata: Metadata = {
   title: homeTitle,
   description: homeDescription,
   keywords: [
-    "ring terminal manufacturer",
-    "ring terminal supplier",
-    "cable gland manufacturer",
-    "cable gland supplier",
-    "precision copper parts",
-    "copper connector parts",
+    "custom copper terminal manufacturer",
     "copper terminal manufacturer",
-    "industrial electrical connectors",
+    "OEM copper terminals",
+    "custom cable lugs",
+    "copper lug manufacturer",
+    "ring terminal manufacturer",
+    "precision copper parts",
   ],
   alternates: {
     canonical: homeUrl(),

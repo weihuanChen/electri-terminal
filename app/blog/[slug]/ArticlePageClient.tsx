@@ -1,7 +1,7 @@
 import { Breadcrumb, CTABanner, ImagePreview, MarkdownRenderer } from "@/components/shared";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, User, ArrowLeft, ArrowRight, CheckCircle2, FileUp } from "lucide-react";
 import { shouldBypassNextImageOptimization } from "@/lib/images";
 import {
   articleUrl,
@@ -466,6 +466,51 @@ function matchProductsBySection(
   });
 }
 
+/**
+ * Mid-article bridge from informational blog traffic (~80% of organic clicks) to the custom-part RFQ.
+ * The article slug is passed through to the contact form so inquiries show which article converted.
+ */
+function InlineCustomPartCta({ articleSlug }: { articleSlug: string }) {
+  return (
+    <aside className="mt-8 rounded-card border border-slate-800 bg-slate-900 p-5 text-white sm:p-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-orange-300">
+        Custom parts · Factory direct
+      </p>
+      <h3 className="mt-2 text-lg font-semibold sm:text-xl">
+        Need a terminal or copper part that isn&apos;t in a catalog?
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-300">
+        Send us your drawing or a photo of your sample. We have made copper terminals since 2009 and
+        are an OEM supplier to Amazon brand sellers.
+      </p>
+      <ul className="mt-4 grid gap-2 text-sm text-slate-200 sm:grid-cols-3">
+        <li className="flex items-start gap-2">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-orange-300" />
+          99.9% copper, tin-plated
+        </li>
+        <li className="flex items-start gap-2">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-orange-300" />
+          Standard parts in ~1 week
+        </li>
+        <li className="flex items-start gap-2">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-orange-300" />
+          New tooling in ~30 days
+        </li>
+      </ul>
+      <Link
+        href={requestQuoteUrl({ query: { source: "blog", article: articleSlug } })}
+        data-ga-event="blog_custom_cta_click"
+        data-ga-param-placement="inline"
+        data-ga-param-article={articleSlug}
+        className="btn btn-primary mt-5 w-full sm:w-auto"
+      >
+        <FileUp className="h-4 w-4" />
+        Send Drawing for a Quote
+      </Link>
+    </aside>
+  );
+}
+
 function InlineRelatedProducts({
   sectionKey,
   products,
@@ -494,7 +539,7 @@ function InlineRelatedProducts({
   const displayProducts = [...topProducts, ...fallbackProducts].slice(0, 3);
 
   return (
-    <div className="mt-5 rounded-sm border border-border bg-muted p-4 sm:p-5">
+    <div className="mt-5 rounded-card border border-border bg-muted p-4 sm:p-5">
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-secondary">
         Related Products
       </p>
@@ -504,7 +549,7 @@ function InlineRelatedProducts({
           <Link
             key={`${sectionKey}-${product.slug}`}
             href={productUrl(product.slug)}
-            className="group overflow-hidden rounded-sm border border-border bg-background transition-colors hover:border-primary"
+            className="group overflow-hidden rounded-card border border-border bg-background transition-colors hover:border-primary"
           >
             <div className="relative h-24 bg-muted">
               {product.mainImage ? (
@@ -644,6 +689,16 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
         )
       : firstRelatedInsertIndex;
 
+  // Place the custom-part CTA at ~60% of the article, on a section without another inline block.
+  const customCtaInsertIndex = (() => {
+    const lastIndex = markdownSections.length - 1;
+    if (lastIndex <= 0) return 0;
+    const occupied = new Set([summaryInsertIndex, firstRelatedInsertIndex, secondRelatedInsertIndex]);
+    let index = Math.round(lastIndex * 0.6);
+    while (occupied.has(index) && index < lastIndex) index += 1;
+    return index;
+  })();
+
   const relatedProducts = article.relatedProducts ?? [];
   const hasCuratedRelatedProducts = relatedProducts.length > 0;
   const fallbackRelatedProducts = buildFallbackRelatedProducts(article);
@@ -731,7 +786,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
               </Link>
 
               {article.type && (
-                <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase text-primary">
+                <span className="inline-block rounded-control bg-primary/10 px-3 py-1 text-xs font-semibold uppercase text-primary">
                   {article.type}
                 </span>
               )}
@@ -750,15 +805,15 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
             {isWireTerminalGuide && (
               <>
                 <ul className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
+                  <li className="inline-flex items-start gap-2 rounded-control border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Compare terminal types quickly</span>
                   </li>
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
+                  <li className="inline-flex items-start gap-2 rounded-control border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Avoid common selection mistakes</span>
                   </li>
-                  <li className="inline-flex items-start gap-2 rounded-sm border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
+                  <li className="inline-flex items-start gap-2 rounded-control border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
                     <span>Match wire size and insulation correctly</span>
                   </li>
@@ -779,15 +834,15 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
             )}
 
             <div className="mt-6 grid gap-3 text-sm text-secondary sm:grid-cols-3">
-              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
+              <div className="flex items-center gap-2 rounded-control border border-border bg-muted px-3 py-2">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(article.publishedAt || article.createdAt)}</span>
               </div>
-              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
+              <div className="flex items-center gap-2 rounded-control border border-border bg-muted px-3 py-2">
                 <Clock className="h-4 w-4" />
                 <span>5 min read</span>
               </div>
-              <div className="flex items-center gap-2 rounded-sm border border-border bg-muted px-3 py-2">
+              <div className="flex items-center gap-2 rounded-control border border-border bg-muted px-3 py-2">
                 <User className="h-4 w-4" />
                 <span className="min-w-0">
                   <span className="block truncate">{authorName}</span>
@@ -799,7 +854,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
             </div>
 
             {article.coverImage && (
-              <div className="relative mt-6 h-52 overflow-hidden rounded-sm border border-border sm:h-72 md:h-[21rem]">
+              <div className="relative mt-6 h-52 overflow-hidden rounded-card border border-border sm:h-72 md:h-[21rem]">
                 <ImagePreview
                   src={article.coverImage}
                   alt={article.title}
@@ -810,7 +865,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
             )}
 
             {shouldShowAuthorBio && article.author && (
-              <div className="mt-5 flex flex-col gap-4 rounded-sm border border-border bg-background p-4 sm:flex-row sm:items-start">
+              <div className="mt-5 flex flex-col gap-4 rounded-card border border-border bg-background p-4 sm:flex-row sm:items-start">
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
                   {article.author.avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -853,7 +908,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                 <a
                   key={`quick-${item.id}`}
                   href={`#${item.id}`}
-                  className="rounded-full border border-border bg-muted px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary"
+                  className="rounded-control border border-border bg-muted px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary"
                 >
                   {item.label}
                 </a>
@@ -897,7 +952,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                         <MarkdownRenderer content={section.content} className="article-markdown" />
 
                         {index === summaryInsertIndex && (
-                          <div className="mt-6 rounded-sm border border-primary/40 bg-muted p-4 sm:p-5">
+                          <div className="mt-6 rounded-card border border-primary/40 bg-muted p-4 sm:p-5">
                             <h3 className="text-lg font-semibold text-foreground">
                               How to Choose (Quick Guide)
                             </h3>
@@ -942,6 +997,8 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                             viewAllLabel={hasCuratedRelatedProducts ? "View All Products" : undefined}
                           />
                         )}
+
+                        {index === customCtaInsertIndex && <InlineCustomPartCta articleSlug={slug} />}
                       </div>
                     ))}
                   </div>
@@ -970,7 +1027,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                       Here are the main characteristics that set this solution apart.
                     </p>
 
-                    <div className="mt-6 rounded-sm border border-primary/40 bg-muted p-4 sm:p-5">
+                    <div className="mt-6 rounded-card border border-primary/40 bg-muted p-4 sm:p-5">
                       <h3 className="text-lg font-semibold text-foreground">
                         How to Choose (Quick Guide)
                       </h3>
@@ -1046,7 +1103,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                       <blockquote
                         key={`${quotation.citationId}-${index}`}
                         cite={citation?.url}
-                        className="rounded-sm border-l-4 border-primary bg-primary/5 px-5 py-4 text-secondary"
+                        className="rounded-card border-l-4 border-primary bg-primary/5 px-5 py-4 text-secondary"
                       >
                         <p className="text-base italic leading-7 text-foreground">
                           “{quotation.text}”
@@ -1100,7 +1157,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                       <li
                         key={citation.id}
                         id={`reference-${citation.id}`}
-                        className="rounded-sm border border-border bg-muted/50 p-4 text-sm"
+                        className="rounded-card border border-border bg-muted/50 p-4 text-sm"
                       >
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <p className="min-w-0 font-medium leading-6 text-foreground">
@@ -1117,7 +1174,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                               </a>
                             </cite>
                           </p>
-                          <span className="w-fit shrink-0 rounded-sm bg-background px-2 py-1 text-xs font-medium text-secondary">
+                          <span className="w-fit shrink-0 rounded-control bg-background px-2 py-1 text-xs font-medium text-secondary">
                             {CITATION_SOURCE_LABEL[citation.sourceType]}
                           </span>
                         </div>
@@ -1169,7 +1226,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
 
             {tocItems.length > 0 && (
               <aside className="order-1 xl:order-2">
-                <div className="sticky top-24 rounded-sm border border-border bg-white p-4">
+                <div className="sticky top-24 rounded-card border border-border bg-white p-4">
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.08em] text-secondary">
                     On This Page
                   </h3>
@@ -1208,7 +1265,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
                 <Link
                   key={relatedArticle._id}
                   href={articleUrl(relatedArticle.slug)}
-                  className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+                  className="group block min-w-[230px] rounded-card border border-border bg-white p-4 md:min-w-[260px]"
                 >
                   <div>
                     <span className="text-xs font-semibold uppercase text-primary">
@@ -1230,7 +1287,7 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
             ) : (
               <Link
                 href={blogUrl()}
-                className="group block min-w-[230px] rounded-sm border border-border bg-white p-4 md:min-w-[260px]"
+                className="group block min-w-[230px] rounded-card border border-border bg-white p-4 md:min-w-[260px]"
               >
                 <div>
                   <span className="text-xs font-semibold uppercase text-primary">Article</span>
@@ -1248,11 +1305,11 @@ export default function ArticlePageClient({ article, slug, relatedArticles }: Ar
       </section>
 
       <CTABanner
-        title="Need Help Selecting the Right Terminal?"
-        description="Our team can recommend the exact model based on your application."
+        title="Need a Custom Terminal or Copper Part?"
+        description="Send your drawing or sample. Our engineers confirm pricing, MOQ, and lead time. Need a standard part instead? We can recommend the exact model."
         primaryCTA={{
-          label: "Request Quote",
-          href: requestQuoteUrl(),
+          label: "Send Drawing for a Quote",
+          href: requestQuoteUrl({ query: { source: "blog", article: slug } }),
         }}
         secondaryCTA={{
           label: "Talk to Engineer",

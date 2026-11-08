@@ -70,7 +70,7 @@ export default function MegaMenu({
 
       {/* Dropdown Content */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-[600px] bg-white rounded-lg shadow-xl border border-border overflow-hidden z-50">
+        <div className="absolute left-0 mt-2 w-[600px] bg-white rounded-card shadow-xl border border-border overflow-hidden z-50">
           <div className="p-6">
             <div
               className={`grid gap-6`}

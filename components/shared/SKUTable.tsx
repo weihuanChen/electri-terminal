@@ -142,7 +142,7 @@ export default function SKUTable({
             {Object.entries(filters).map(([key, value]) => (
               <span
                 key={key}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-control text-sm"
               >
                 <span>{key}: {value}</span>
                 <button

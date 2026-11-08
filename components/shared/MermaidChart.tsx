@@ -81,7 +81,7 @@ export default function MermaidChart({ chart }: MermaidChartProps) {
 
   if (hasError) {
     return (
-      <div className="not-prose rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/60 dark:bg-amber-900/30 dark:text-amber-200">
+      <div className="not-prose rounded-card border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/60 dark:bg-amber-900/30 dark:text-amber-200">
         Mermaid chart parse failed. Please verify the fenced block syntax.
       </div>
     );
@@ -92,7 +92,7 @@ export default function MermaidChart({ chart }: MermaidChartProps) {
       {svg ? (
         <div dangerouslySetInnerHTML={{ __html: svg }} />
       ) : (
-        <div className="rounded-md border border-border bg-muted px-4 py-3 text-sm text-secondary">
+        <div className="rounded-card border border-border bg-muted px-4 py-3 text-sm text-secondary">
           Rendering chart...
         </div>
       )}

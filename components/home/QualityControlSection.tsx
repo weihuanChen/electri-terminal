@@ -36,7 +36,7 @@ export default function QualityControlSection() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
                     {qcSteps.map((step, index) => (
-                        <div key={index} className="group flex flex-col bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-sm overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div key={index} className="group flex flex-col bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-card overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             <div className="relative h-56 w-full overflow-hidden bg-slate-100 dark:bg-slate-900">
                                 <Image
                                     src={step.image}

@@ -59,7 +59,7 @@ export default function ApplicationDetailSection({
           </div>
 
           <div
-            className="relative aspect-[4/3] overflow-hidden rounded-sm border border-slate-200 dark:border-slate-700 bg-[#EEF2F6] dark:bg-slate-900"
+            className="relative aspect-[4/3] overflow-hidden rounded-card border border-slate-200 dark:border-slate-700 bg-[#EEF2F6] dark:bg-slate-900"
           >
             <Image
               src={industry.imageSrc}
