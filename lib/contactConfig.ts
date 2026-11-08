@@ -39,9 +39,8 @@ export const DEFAULT_PUBLIC_CONTACT_SETTINGS: PublicContactSettings = {
     value: "sales@electriterminal.com",
   },
   whatsapp: {
-    enabled: true,
-    value: "+1 555 123 4567",
-    href: "https://wa.me/15551234567",
+    enabled: false,
+    value: "",
   },
   wechat: {
     enabled: false,
@@ -49,16 +48,11 @@ export const DEFAULT_PUBLIC_CONTACT_SETTINGS: PublicContactSettings = {
   },
   phone: {
     enabled: false,
-    value: "+1 (555) 123-4567",
+    value: "",
   },
   address: {
-    enabled: true,
-    lines: [
-      "123 Industrial Avenue",
-      "Technology District",
-      "City, State 12345",
-      "United States",
-    ],
+    enabled: false,
+    lines: [],
   },
   socialMedia: {
     enabled: false,

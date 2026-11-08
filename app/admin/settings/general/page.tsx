@@ -116,14 +116,14 @@ export default async function GeneralSettingsPage({
                 type="text"
                 name="whatsappValue"
                 defaultValue={settings.whatsapp.value}
-                placeholder="+1 555 123 4567"
+                placeholder="请输入含国家区号的 WhatsApp 号码"
                 className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
               />
               <input
                 type="url"
                 name="whatsappHref"
                 defaultValue={settings.whatsapp.href}
-                placeholder="https://wa.me/15551234567（可留空，系统自动生成）"
+                placeholder="WhatsApp 联系链接（可留空，按号码自动生成）"
                 className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
               />
             </div>
@@ -181,7 +181,7 @@ export default async function GeneralSettingsPage({
                 type="text"
                 name="phoneValue"
                 defaultValue={settings.phone.value}
-                placeholder="+1 (555) 123-4567"
+                placeholder="请输入含国家区号的电话号码"
                 className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-950"
               />
             </div>

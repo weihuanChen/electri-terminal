@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { DEFAULT_PUBLIC_CONTACT_SETTINGS } from "../../lib/contactConfig";
 
 export const SITE_SETTINGS_GLOBAL_KEY = "global";
 
@@ -131,38 +132,7 @@ export type LanguageWorkflowSettings = {
   updatedAt: number;
 };
 
-export const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
-  email: {
-    enabled: true,
-    value: "sales@electriterminal.com",
-  },
-  whatsapp: {
-    enabled: true,
-    value: "+1 555 123 4567",
-    href: "https://wa.me/15551234567",
-  },
-  wechat: {
-    enabled: false,
-    value: "",
-  },
-  phone: {
-    enabled: false,
-    value: "+1 (555) 123-4567",
-  },
-  address: {
-    enabled: true,
-    lines: [
-      "123 Industrial Avenue",
-      "Technology District",
-      "City, State 12345",
-      "United States",
-    ],
-  },
-  socialMedia: {
-    enabled: false,
-    items: [],
-  },
-};
+export const DEFAULT_CONTACT_SETTINGS: ContactSettings = DEFAULT_PUBLIC_CONTACT_SETTINGS;
 
 export function resolveLanguageWorkflowExposure(status: LanguageWorkflowStatus, gscEnabled = false) {
   if (status === "published") {
