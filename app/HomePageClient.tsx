@@ -177,7 +177,7 @@ export default async function HomePageClient() {
       <HeroSection
         title="Custom Copper Terminals & Precision Copper Parts, Made to Your Drawing"
         subtitle=""
-        description="Send us a drawing or sample. We produce ring terminals, cable lugs, and custom copper connector parts from 99.9% pure copper, with tin plating and silver brazing, for industrial wiring, control cabinets, and OEM assemblies."
+        description="Send us a drawing or sample. We produce ring terminals, cable lugs, and custom copper connector parts from 99.9% pure copper, with tin plating and silver brazing, held to tolerances down to ±0.01 mm, for industrial wiring, control cabinets, and OEM assemblies."
         trustLine="Factory-Direct Since 2009 · OEM Supplier to Amazon Brand Sellers"
         categories={[]}
         primaryCta={{ text: "Send Drawing for a Quote", href: requestQuoteUrl() }}
@@ -248,6 +248,7 @@ export default async function HomePageClient() {
           "Own factory since 2009, real production, not trading",
           "OEM supplier to Amazon brand sellers",
           "99.9% pure copper with tin plating and silver brazing",
+          "Tolerances down to ±0.01 mm on critical dimensions",
           "Standard parts in about 1 week; new tooling about 30 days",
           "MOQ confirmed by part size and order quantity",
           "cULus (selected models) and CE documents on request",

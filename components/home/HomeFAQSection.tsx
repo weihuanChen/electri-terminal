@@ -29,7 +29,7 @@ export default function HomeFAQSection({
     {
       question: "Do you support custom specifications?",
       answer:
-        "Yes. We support customization based on drawings, samples, or application requirements.",
+        "Yes. We support customization based on drawings, samples, or application requirements, with tolerances down to ±0.01 mm on critical dimensions.",
     },
     {
       question: "What materials are available?",

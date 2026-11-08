@@ -209,6 +209,27 @@ export default function ContactPageClient({
     };
   }, []);
 
+  // Prefill the first quote item from ?part=...&spec=... (selection guide, SKU tables, etc.).
+  // The prefill params are then removed from the URL so sourcePage keeps only attribution
+  // params such as ?source=selection-guide.
+  useEffect(() => {
+    // Same mount-time URL sync pattern as syncModeFromHash above: the URL is only readable
+    // on the client, and reading it during render would cause a hydration mismatch.
+    const applyPrefillFromUrl = () => {
+      const url = new URL(window.location.href);
+      const part = url.searchParams.get("part")?.trim().slice(0, 200) ?? "";
+      const spec = url.searchParams.get("spec")?.trim().slice(0, 500) ?? "";
+      if (!part && !spec) return;
+
+      setItems([{ ...INITIAL_RFQ_ITEMS[0], productId: part, notes: spec }]);
+      url.searchParams.delete("part");
+      url.searchParams.delete("spec");
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+    };
+
+    applyPrefillFromUrl();
+  }, []);
+
   const updateHashForMode = (mode: InquiryMode) => {
     const nextUrl = `${window.location.pathname}${window.location.search}`;
     window.history.replaceState(

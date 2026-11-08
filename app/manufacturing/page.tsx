@@ -262,7 +262,8 @@ export default function ManufacturingPage() {
               </h1>
               <p className="max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
                 From copper processing to final inspection, our manufacturing workflow is designed
-                to deliver stable electrical performance, consistent dimensions, and dependable
+                to deliver stable electrical performance, consistent dimensions held to tolerances
+                down to ±0.01 mm, and dependable
                 batch quality for industrial applications.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -276,7 +277,7 @@ export default function ManufacturingPage() {
               <ul className="space-y-2 pt-1 text-sm text-slate-200">
                 <li className="flex items-center gap-2 transition-colors duration-300">
                   <CheckCircle2 className="h-4 w-4 text-slate-300" />
-                  Precision forming workflows
+                  Tolerances down to ±0.01 mm
                 </li>
                 <li className="flex items-center gap-2 transition-colors duration-300">
                   <CheckCircle2 className="h-4 w-4 text-slate-300" />

@@ -17,10 +17,11 @@ import {
   studSizeRows,
   terminalTypeRows,
 } from "@/lib/selectionGuideData";
+import QuoteSpecBuilder from "./QuoteSpecBuilder";
 
-const pageTitle = "Terminal Type, Insulation & Stud Size Selection Guide";
+const pageTitle = "Ring Terminal Stud Size Chart, AWG Color Code & Type Guide";
 const pageDescription =
-  "Use this engineering reference to match terminal type, insulation code, wire size ranges, and stud dimensions for faster and more reliable terminal selection.";
+  "Ring terminal stud size chart from #2 to 15/16\" with hole sizes in mm and inch, plus AWG/mm² color codes, insulation codes, and terminal type references.";
 const chromeExtensionUrl =
   "https://chromewebstore.google.com/detail/dfdocgenkkgomcccpgeldinfgkkgckgm?utm_source=item-share-cb";
 
@@ -143,30 +144,34 @@ export default function SelectionGuidePage() {
                 Engineering Reference Guide
               </p>
               <h1 className="text-3xl font-bold tracking-tight leading-tight !text-white md:text-5xl">
-                Terminal Type, Insulation & Stud Size Guide
+                Ring Terminal Stud Size Chart & Selection Guide
               </h1>
               <p className="max-w-2xl text-base leading-relaxed text-slate-300 md:text-lg">
                 Match terminal type, insulation code, wire-size interval, and stud dimensions with
                 structured tables designed for engineering selection.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link href="#section-a" className="btn btn-primary w-full justify-center sm:w-auto">
-                  Start with Terminal Type
+                <Link href="#section-c" className="btn btn-primary w-full justify-center sm:w-auto">
+                  Jump to Stud Size Chart
                 </Link>
-                <Link href={requestQuoteUrl()} className="btn btn-hero-secondary w-full justify-center sm:w-auto">
-                  Request Quote
+                <Link href="#get-quote" className="btn btn-hero-secondary w-full justify-center sm:w-auto">
+                  Quote Your Selection
                 </Link>
               </div>
               <div className="flex flex-wrap gap-2.5 text-xs text-slate-200">
-                <span className="rounded-control border border-slate-700/80 bg-slate-900/70 px-3 py-1.5 backdrop-blur-xs">
-                  Type reference
-                </span>
-                <span className="rounded-control border border-slate-700/80 bg-slate-900/70 px-3 py-1.5 backdrop-blur-xs">
-                  Insulation codes
-                </span>
-                <span className="rounded-control border border-slate-700/80 bg-slate-900/70 px-3 py-1.5 backdrop-blur-xs">
-                  Stud size matching
-                </span>
+                {[
+                  { href: "#section-a", label: "Type reference" },
+                  { href: "#section-b", label: "Insulation codes" },
+                  { href: "#section-c", label: "Stud size chart" },
+                ].map((chip) => (
+                  <a
+                    key={chip.href}
+                    href={chip.href}
+                    className="rounded-control border border-slate-700/80 bg-slate-900/70 px-3 py-1.5 backdrop-blur-xs transition-colors hover:border-blue-400 hover:text-white"
+                  >
+                    {chip.label}
+                  </a>
+                ))}
               </div>
             </div>
 
@@ -526,7 +531,14 @@ export default function SelectionGuidePage() {
               <div className="rounded-card border border-amber-200/80 bg-amber-50/80 px-5 py-4 text-sm text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                 Main selection range keeps stable source intervals up to <strong>60.57 mm2</strong>
                 . Large-conductor tail segments at and above 76.28 mm2 are excluded from the main
-                table pending data review.
+                table pending data review. Need a larger cable size?{" "}
+                <Link
+                  href={requestQuoteUrl({ query: { source: "selection-guide", cta: "large-conductor" } })}
+                  className="font-semibold underline underline-offset-2 hover:no-underline"
+                >
+                  Send your drawing for a custom lug quote
+                </Link>
+                .
               </div>
 
               <div className="space-y-3 md:hidden">
@@ -728,7 +740,9 @@ export default function SelectionGuidePage() {
               </figure>
             </section>
 
-            <section id="section-d" className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
+            <QuoteSpecBuilder />
+
+            <section id="section-d"className="min-w-0 scroll-mt-28 space-y-5 md:space-y-6">
               <header className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
                   Section D
@@ -924,7 +938,10 @@ export default function SelectionGuidePage() {
                     {item.title}
                   </a>
                 ))}
-                <div className="pt-2">
+                <div className="space-y-2 pt-2">
+                  <Link href="#get-quote" className="btn btn-primary w-full justify-center text-center">
+                    Quote Your Selection
+                  </Link>
                   <Link href={productsUrl()} className="btn btn-outline w-full text-center">
                     Browse Products
                   </Link>
