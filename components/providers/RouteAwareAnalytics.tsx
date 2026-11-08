@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import {
   GA_MEASUREMENT_ID,
   getPageType,
+  isQuoteLink,
   trackGA4Event,
   type GtagEventParams,
 } from "@/lib/analytics";
@@ -64,6 +65,15 @@ function getDeclaredTrackingEvent(element: Element) {
   }
 
   return { eventName, params, trackedElement };
+}
+
+function getClickPlacement(element: Element) {
+  const placement = element.closest<HTMLElement>("[data-ga-placement]")?.dataset.gaPlacement;
+  if (placement) return placement;
+  if (element.closest("header")) return "header";
+  if (element.closest("footer")) return "footer";
+  if (element.closest(".hero-shell")) return "hero";
+  return element.closest("section[id]")?.id || "content";
 }
 
 export default function RouteAwareAnalytics() {
@@ -128,6 +138,7 @@ export default function RouteAwareAnalytics() {
       const declaredEvent = getDeclaredTrackingEvent(target);
       if (declaredEvent) {
         trackGA4Event(declaredEvent.eventName, {
+          placement: getClickPlacement(target),
           ...declaredEvent.params,
           page_type: getPageType(window.location.pathname),
           link_text: declaredEvent.trackedElement.textContent?.trim().slice(0, 120) || undefined,
@@ -138,6 +149,18 @@ export default function RouteAwareAnalytics() {
 
       if (!(anchor instanceof HTMLAnchorElement)) {
         return;
+      }
+
+      // Keep the quote funnel consistent even when CTAs come from CMS content.
+      // An explicitly declared rfq_click already records this interaction.
+      if (declaredEvent?.eventName !== "rfq_click" && isQuoteLink(anchor.href, window.location.href)) {
+        trackGA4Event("rfq_click", {
+          page_path: window.location.pathname,
+          page_type: getPageType(window.location.pathname),
+          placement: getClickPlacement(anchor),
+          link_text: anchor.textContent?.trim().slice(0, 120) || undefined,
+          link_url: anchor.href,
+        });
       }
 
       const href = anchor.href.toLowerCase();

@@ -763,7 +763,7 @@ export default function FamilyPageClient({ family, locale }: FamilyPageClientPro
                   </>
                 ) : (
                   <>
-                    <Link href={primaryCTA.href} className="btn btn-primary">
+                    <Link href={primaryCTA.href} className="btn btn-primary" data-ga-placement="family_hero">
                       {primaryCTA.label}
                     </Link>
                     <Link href={heroSecondaryCTA.href} className="btn btn-secondary">

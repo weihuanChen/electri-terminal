@@ -42,7 +42,7 @@ export default function BottomRFQSection({
   contactLinks,
 }: BottomRFQSectionProps) {
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-16 md:py-24 bg-background" data-ga-placement="bottom_rfq">
       <div className="container">
         <div className="relative overflow-hidden rounded-card bg-gradient-to-br from-slate-900 via-[#131C27] to-slate-950 text-white p-8 sm:p-12 lg:p-14 shadow-xl border border-slate-800/80">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.16),transparent_42%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.12),transparent_40%)]" />

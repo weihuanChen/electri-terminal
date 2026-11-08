@@ -30,6 +30,7 @@ import {
   normalizePublicContactSettings,
 } from "@/lib/contactConfig";
 import { submitPublicInquiry } from "@/lib/inquiry-client";
+import { getPageType, trackGA4Event } from "@/lib/analytics";
 import { productsUrl, resourcesUrl } from "@/lib/routes";
 
 type InquiryMode = "general" | "rfq";
@@ -330,6 +331,15 @@ export default function ContactPage() {
         });
       }
 
+      trackGA4Event("rfq_submit", {
+        inquiry_type: inquiryMode,
+        source_type: "general",
+        page_path: window.location.pathname,
+        page_type: getPageType(window.location.pathname),
+        has_drawing: Boolean(attachments.drawing),
+        has_bom: Boolean(attachments.bom),
+      });
+
       toast.success(
         isRfqMode
           ? "Your quote request has been submitted successfully."
@@ -460,6 +470,8 @@ export default function ContactPage() {
                   <button
                     type="button"
                     onClick={() => handleModeChange("rfq")}
+                    data-ga-event="rfq_click"
+                    data-ga-param-placement="contact_mode_switch"
                     className={`rounded-control px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
                       isRfqMode
                         ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-50 shadow-xs"

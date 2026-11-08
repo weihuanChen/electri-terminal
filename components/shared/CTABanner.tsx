@@ -34,7 +34,7 @@ export default function CTABanner({
   const TitleTag = titleAs;
 
   return (
-    <div className={`section ${backgroundStyles[variant]}`}>
+    <div className={`section ${backgroundStyles[variant]}`} data-ga-placement="cta_banner">
       <div className="container">
         <div className="max-w-3xl mx-auto text-center">
           <TitleTag className={`mb-4 text-3xl font-semibold md:text-4xl ${titleClass}`}>{title}</TitleTag>

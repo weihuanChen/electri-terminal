@@ -344,7 +344,7 @@ export default function ProductPageClient({ product, locale }: ProductPageClient
               )}
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <a href={primaryCTA.href} className="btn btn-primary w-full justify-center sm:w-auto">
+                <a href={primaryCTA.href} className="btn btn-primary w-full justify-center sm:w-auto" data-ga-placement="product_hero">
                   {primaryCTA.label === "Request Quote" ? t("requestQuote") : primaryCTA.label}
                 </a>
                 {secondaryCTA && (
